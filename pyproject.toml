@@ -1,0 +1,14 @@
+[project]
+name = "dss5105"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas>=3.0.5",
+]
+
+[dependency-groups]
+dev = [
+    "jupyterlab>=4.6.3",
+]
