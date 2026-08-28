@@ -1,0 +1,160 @@
+{% extends 'layouts/box.html' %}
+
+{% block content %}
+<style>
+  .avatar-container {
+    position: relative;
+    width: 144px;
+    margin: 0 auto 20px;
+  }
+  /* 隐藏默认的文件输入框 */
+input[type="file"] {
+    display: none;
+}
+  .avatar-edit {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    z-index: 10;
+  }
+  .form-field {
+    margin-bottom: 1.5rem;
+  }
+  .form-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+</style>
+
+{% if onboarding %}
+<h1 class="mb-6 text-3xl font-bold text-center">完善您的资料</h1>
+{% else %}
+<h1 class="mb-6 text-3xl font-bold text-center">编辑个人资料</h1>
+{% endif %}
+
+<div class="max-w-md mx-auto">
+  <!-- 错误提示 -->
+  {% if form.errors %}
+    <div class="text-red-500 mb-4">
+      {% for field in form %}
+        {% for error in field.errors %}
+          <p>{{ field.label }}: {{ error }}</p>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% if messages %}
+    <div class="mb-4">
+      {% for message in messages %}
+        <p class="{% if message.tags == 'error' %}text-red-500{% else %}text-green-500{% endif %}">{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- 头像上传 -->
+  <div class="avatar-container">
+    <img id="avatar" class="w-36 h-36 rounded-full object-cover border-2 border-white shadow-md" 
+         src="{{ user.profile.avatar|default:'/static/images/avatar.svg' }}" 
+         alt="User Avatar" />
+    <!-- <label class="avatar-edit" title="更换头像" for="id_image">
+      📷
+    </label> -->
+  </div>
+
+  <!-- 显示名称和个人简介 -->
+  <div class="text-center mb-8">
+    <h2 id="displayname" class="text-xl font-semibold">
+      {{ user.profile.displayname|default:"新用户" }}
+    </h2>
+    <div class="text-gray-500">@{{ user.username }}</div>
+    <p id="info" class="text-gray-600 mt-2">
+      {{ user.profile.info|default:"暂无个人简介" }}
+    </p>
+  </div>
+
+  <!-- 表单 -->
+  <form method="POST" enctype="multipart/form-data" class="space-y-4">
+    {% csrf_token %}
+<div class="form-field">
+    <label class="mb-2 text-xl font-bold">头像修改</label>
+    <div class="mt-2">
+        <label for="id_image" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 cursor-pointer transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            上传新头像
+            {{ form.image }}
+        </label>
+        <p class="mt-1 text-sm text-gray-500">支持 JPG, PNG 格式 (建议1:1比例)</p>
+    </div>
+</div>
+    <div class="form-field">
+      <label for="id_displayname" class="mb-6 text-xl font-bold">用户名修改</label>
+      {{ form.displayname }}
+    </div>
+    <div class="form-field">
+      <label for="id_info" class="mb-6 text-xl font-bold">个人简介修改</label>
+      {{ form.info }}
+    </div>
+    <div class="flex gap-3 pt-4">
+      <button type="submit" class="flex-1 py-2 bg-pink-400 text-white rounded-lg hover:bg-pink-500">
+        保存更改
+      </button>
+      {% if onboarding %}
+        <a href="/" class="flex-1 py-2 text-center border rounded-lg hover:bg-gray-50 flex items-center justify-center">
+          稍后设置
+        </a>
+      {% else %}
+        <a href="{{ request.META.HTTP_REFERER }}" class="flex-1 py-2 text-center border rounded-lg hover:bg-gray-50 flex items-center justify-center">
+          取消
+        </a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
+<script>
+  // 实时预览头像
+  const fileInput = document.querySelector('input[type="file"]');
+  fileInput.addEventListener('change', (event) => {
+    console.log('File input changed:', event.target.files); // 调试
+    const file = event.target.files[0];
+    const image = document.querySelector('#avatar');
+    if (file && file.type.includes('image')) {
+      console.log('Valid image file:', file.name); // 调试
+      const url = URL.createObjectURL(file);
+      image.src = url;
+    } else {
+      console.error('Invalid file type:', file ? file.type : 'No file'); // 调试
+    }
+  });
+
+  // 实时更新显示名称
+  const displaynameInput = document.getElementById('id_displayname');
+  const displaynameOutput = document.getElementById('displayname');
+  displaynameInput.addEventListener('input', (event) => {
+    displaynameOutput.innerText = event.target.value || '新用户';
+  });
+
+  // 实时更新个人简介
+  const infoInput = document.getElementById('id_info');
+  const infoOutput = document.getElementById('info');
+  infoInput.addEventListener('input', (event) => {
+    infoOutput.innerText = event.target.value || '暂无个人简介';
+  });
+</script>
+{% endblock %}

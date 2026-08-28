@@ -1,0 +1,8 @@
+venv/
+.venv-mac/
+node/
+media/
+__pycache__/
+db.sqlite3
+.env
+.DS_Store

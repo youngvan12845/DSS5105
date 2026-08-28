@@ -1,0 +1,70 @@
+{% extends 'layouts/blank.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block class %}blog bg-black text-white{% endblock %}
+
+{% block content %}
+
+<div class="max-w-[1600px] mx-auto px-8 py-24">
+
+
+    <div class="flex justify-center pb-6">
+        <form action="{% url 'article_search' %}" method="get" class="relative w-full lg:w-2/3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
+                    class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white">
+                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />
+            </svg>
+            <input 
+                type="text" 
+                name="query" 
+                class="pl-12 pr-4 py-4 w-full m-auto border-gray-300 rounded-full bg-zinc-800 text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500" 
+                placeholder="Search articles ..." 
+                {% if search_query %} value="{{ search_query }}" {% endif %}
+            >
+        </form>
+    </div>
+
+    {% if tag %}
+    <div class="text-neutral-400">
+        Articles tagged "{{ tag }}"
+    </div>
+    {% endif %}
+
+    <h1>{{ page.title }}</h1>
+    <p>{{ page.body|richtext }}</p>
+
+    {% if articles %}
+    <div class="grid mt-8 gap-12 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {% for article in articles %}
+        <article class="relative rounded-2xl border border-gray-500 hover:border-gray-400 bg-neutral-900">
+            <a href="{{ article.url }}" class="flex flex-col justify-between h-full p-4">
+                <div>
+                    <h2>{{ article.title }}</h2>
+                    <p>{{ article.intro }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-neutral-500">{{ article.date }}</p>
+                    <figure class="mb-4">
+                        <pre>Image object: {{ article.image }}</pre>
+                        <pre>{{ article.image.url }}</pre>
+                        <pre>Image URL: {{ article.image_url }}</pre>
+                        <img class="w-full rounded-lg" src="{{ article.image.url }}" alt="{{ article.title }}">
+
+                    </figure>
+                    <span class="hover:underline">Read more</span>
+                </div>
+            </a>
+        </article>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="text-center text-neutral-400">
+        No articles found.
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock content %}
+

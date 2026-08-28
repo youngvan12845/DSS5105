@@ -1,0 +1,28 @@
+# 使用官方 Python 基础镜像，版本为 3.12.3
+# 官方 Python Docker 镜像可以在 https://hub.docker.com/_/python 找到
+FROM python:3.12.3-slim
+
+RUN apt-get update && apt-get install -y libpq-dev
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# 设置工作目录为 /code
+# 所有后续命令将在此目录下执行
+WORKDIR /code
+
+# 安装依赖项
+# 升级 pip 包管理器
+RUN pip install --upgrade pip
+
+# 将本地的 requirements.txt 文件复制到容器的工作目录中
+COPY requirements.txt .
+
+# 使用 pip 安装 requirements.txt 中列出的所有 Python 包
+RUN pip install -r requirements.txt
+
+RUN pip install --no-cache-dir psycopg2-binary
+# 将 Django 项目的源代码从本地目录复制到容器的工作目录中
+# 这样容器中就包含了项目的所有文件
+COPY . .

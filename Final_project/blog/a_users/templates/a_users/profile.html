@@ -1,0 +1,149 @@
+{% extends 'layouts/blank.html' %}
+{% load wagtailcore_tags %}
+{% block content %} 
+
+<div class="pt-16 md:pt-10"> 
+
+<div class="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 pt-20 pb-12">
+  <!-- 主要内容区 --> 
+  <div class="max-w-3xl mx-auto px-4">
+    <!-- 个人信息卡片 - 使用更窄的宽度 --> 
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 mb-8 overflow-hidden max-w-2xl mx-auto">
+      <div class="p-10 text-center">
+        <div class="relative inline-block">
+          <img class="w-24 h-24 rounded-full object-cover border-2 border-blue-300" src="{{ profile.avatar }}" alt="用户头像" />
+        </div>
+        <h1 class="text-2xl font-bold text-gray-800 mt-4">{{ profile.name }}</h1>
+        <div class="text-gray-500 text-sm mb-4">@{{ profile.user.username }}</div>
+        {% if profile.info %}
+        <div class="text-gray-600 text-base mt-4 leading-relaxed">{{ profile.info|linebreaksbr }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- 订阅状态和积分卡片 - 已注释掉 -->
+    <!--
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden h-full">
+        <div class="p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">订阅状态</h2>
+          <div class="text-center">
+            {% if profile.is_subscribed %}
+            <div class="flex items-center justify-center mb-4">
+              <span class="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full font-medium">
+                VIP 会员
+              </span>
+            </div>
+            <p class="text-gray-600 mb-4 text-sm">有效期至 {{ profile.subscription_end_date }}</p>
+            <a href="{% url 'a_order:create_subscription_order' %}" class="inline-block w-full px-4 py-2 bg-pink-400 text-white rounded-lg hover:bg-pink-500 transition-colors font-medium text-sm">
+              续费会员
+            </a>
+            {% else %}
+            <p class="text-gray-600 mb-4 text-sm">您尚未订阅 VIP 服务</p>
+            <a href="{% url 'a_order:create_subscription_order' %}" class="inline-block w-full px-4 py-2 bg-pink-400 text-white rounded-lg hover:bg-pink-500 transition-colors font-medium text-sm">
+              立即订阅
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden h-full">
+        <div class="p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">积分</h2>
+          <div class="flex items-center justify-between mb-6">
+            <p class="text-gray-600 text-sm">当前积分</p>
+            <p class="text-xl font-bold text-blue-600">{{ profile.points }}</p>
+          </div>
+          <div class="space-y-2">
+            <a href="{% url 'a_points:points_records' %}" class="block text-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm">
+              查看积分记录
+            </a>
+            <a href="{% url 'a_order:create_recharge_order' %}" class="block text-center px-3 py-2 bg-pink-400 text-white rounded-lg hover:bg-pink-500 transition-colors font-medium text-sm">
+              充值积分
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    -->
+        <!-- 个人资料设置表格 - 移动到卡片下方 -->
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 mb-8 overflow-hidden max-w-2xl mx-auto p-6">
+      <h1 class="text-xl font-bold text-gray-800 mb-6">个人资料设置</h1>
+      
+      <table class="w-full text-sm text-left text-gray-500">
+        <tbody>
+          <tr>
+            <th scope="row" class="pt-4 pb-1 text-base font-bold text-gray-900 w-1/4">
+              邮箱
+            </th>
+            <td id="email-address" class="pt-4 pb-1 pl-4 w-1/2">
+              {% if user.email %}{{ user.email }}{% else %}暂无邮箱{% endif %}
+            </td>
+            <td class="pt-4 pb-1 pl-4 w-1/4 text-right">
+              <a id="email-edit" class="cursor-pointer font-medium text-blue-600 hover:underline"
+                hx-get="{% url 'profile-emailchange' %}"
+                hx-target="#email-address"
+                hx-swap="innerHTML">
+                修改
+              </a>
+            </td>
+          </tr>
+
+          <tr class="border-b">
+            <th scope="row" class="pb-4 font-medium text-gray-900 w-1/4"></th>
+            <td class="pb-4 pl-4 w-1/2">
+              {% if user.emailaddress_set.first.verified %}
+              <span class="text-green-500">已验证</span>
+              {% else %}
+              <span class="text-amber-500">未验证</span>
+              {% endif %}
+            </td>
+            <td class="pb-4 pl-4 w-1/4 text-right">
+              {% if not user.emailaddress_set.first.verified %}
+              <a href="{% url 'verify-email-code' %}" class="font-medium text-blue-600 hover:underline">
+                去验证
+              </a>
+              {% endif %}
+            </td>
+          </tr>
+
+          <tr class="border-b">
+            <th scope="row" class="py-4 text-base font-bold text-gray-900 w-1/4">
+              用户名
+            </th>
+            <td id="username" class="py-4 pl-4 w-1/2">
+              {{ user.username }}
+            </td>
+            <td class="py-4 pl-4 w-1/4 text-right">
+              <a id="username-edit" class="cursor-pointer font-medium text-blue-600 hover:underline"
+                hx-get="{% url 'profile-usernamechange' %}"
+                hx-target="#username"
+                hx-swap="innerHTML">
+                修改
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <th scope="row" class="py-4 text-base font-bold text-gray-900 w-1/4">
+              删除用户
+            </th>
+            <td class="py-4 pl-4 w-1/2">
+              删除用户后，其所有内容不可恢复
+            </td>
+            <td class="py-4 pl-4 w-1/4 text-right">
+              <a href="{% url 'profile-delete' %}" class="font-medium text-red-600 hover:underline">
+                删除
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "account/base_entrance.html" %}
+{% load allauth i18n %}
+
+{% block head_title %}
+    {% trans "注册" %}
+{% endblock head_title %}
+
+{% block content %}
+<style>
+* {
+    box-sizing: border-box;
+}
+.container {
+    width: 100%;
+    max-width: 90vw;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: auto;
+}
+h1 {
+    font-size: 1.5rem;
+    text-align: center;
+}
+p, a {
+    font-size: 0.875rem;
+}
+form input, form button {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+form button {
+    background: #ec4899;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+form button:hover {
+    background: #db2777;
+}
+hr {
+    margin: 1.25rem 0;
+}
+</style>
+
+<div class="container">
+    <h1>注册</h1>
+    <p style="text-align: center;">
+        已经有账户了？请 
+        <a href="{% url 'account_login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" style="color: #ec4899; text-decoration: none;">登录</a>。
+    </p>
+
+    {% if not SOCIALACCOUNT_ONLY %}
+        {% url 'account_signup' as signup_url %}
+        {% element form form=form method="post" action=signup_url tags="entrance,signup" %}
+            {% slot body %}
+                {% csrf_token %}
+                {% element fields form=form unlabeled=True %}
+                {% endelement %}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+            {% endslot %}
+            {% slot actions %}
+                {% element button type="submit" tags="prominent,signup" %}
+                    {% trans "注册" %}
+                {% endelement %}
+            {% endslot %}
+        {% endelement %}
+    {% endif %}
+
+    {% if PASSKEY_SIGNUP_ENABLED %}
+        <hr>
+        {% element button href=signup_by_passkey_url tags="prominent,signup,outline,primary" %}
+            {% trans "使用通行密钥注册" %}
+        {% endelement %}
+    {% endif %}
+
+    {% if SOCIALACCOUNT_ENABLED %}
+        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+    {% endif %}
+</div>
+{% endblock content %}

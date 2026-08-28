@@ -1,0 +1,44 @@
+{% extends 'layouts/blank.html' %}
+
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block head %}
+<style>
+    .card {
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+    }
+    .btn-primary {
+        background-color: #ec4899;
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        text-align: center;
+        display: inline-block;
+        transition: background-color 0.2s ease;
+    }
+    .btn-primary:hover {
+        background-color: #db2777;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 pt-20 pb-12">
+    <div class="max-w-lg mx-auto px-4">
+        <div class="card">
+            <h1 class="text-2xl font-bold text-gray-800 mb-4 text-center">支付成功！</h1>
+            <p class="text-gray-600 text-center mb-6">您的积分已成功充值。</p>
+            <div class="flex justify-center space-x-4">
+                <a href="{% url 'profile' %}" class="btn-primary" aria-label="返回个人中心">返回个人中心</a>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

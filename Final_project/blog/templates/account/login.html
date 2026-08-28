@@ -1,0 +1,190 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n %}
+{% load allauth account %}
+
+{% block head_title %}
+    {% trans "登录" %}
+{% endblock head_title %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; height: 70vh;">
+    <div style="width: 100%; max-width: 400px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h1 style="text-align: center;">登录</h1>
+                 
+        <p style="text-align: center;">
+            如果您还没有创建账户，请先 
+            <a href="{% url 'account_signup' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" style="color: #ec4899; text-decoration: none;">注册</a>。
+        </p>
+
+        <form method="post" action="/accounts/login/" class="login-form" style="display: flex; flex-direction: column;" id="loginForm">
+            <!-- CSRF 保护令牌 -->
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                 
+            <!-- 邮箱输入框 -->
+            <div class="form-field" style="margin-bottom: 20px;">
+                <input type="email"
+                        name="login"
+                        placeholder="邮箱"
+                        required
+                        autocomplete="email"
+                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+                 
+            <!-- 密码输入框 -->
+            <div class="form-field" style="margin-bottom: 25px;">
+                <input type="password"
+                        name="password"
+                        placeholder="密码"
+                        required
+                        autocomplete="current-password"
+                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+                 
+            <!-- 重定向隐藏字段（如果有） -->
+            {% if redirect_field_value %}
+            <input type="hidden"
+                    name="{{ redirect_field_name }}"
+                    value="{{ redirect_field_value }}">
+            {% endif %}
+                 
+            <!-- 登录提交按钮 -->
+            <button type="submit" class="submit-button" id="loginButton" style="background: #ec4899; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background 0.3s ease;">
+                登录
+            </button>
+        </form>
+                 
+        <!-- 添加忘记密码链接 -->
+        <div style="text-align: center; margin-top: 15px;">
+            <a href="{% url 'password-reset-request' %}" style="color: #ec4899; text-decoration: none; font-size: 14px;">
+                忘记密码？
+            </a>
+        </div>
+                 
+        {% if SOCIALACCOUNT_ENABLED %}
+            {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+        {% endif %}
+    </div>
+</div>
+
+<!-- 错误提示弹窗 -->
+<div id="errorModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); max-width: 400px; width: 90%; text-align: center;">
+        <div style="color: #dc3545; margin-bottom: 15px;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="margin-bottom: 10px;">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+        </div>
+        <h3 style="color: #dc3545; margin: 0 0 15px 0; font-size: 18px;">登录失败</h3>
+        <p style="color: #666; margin: 0 0 20px 0; line-height: 1.5;">邮箱或密码错误，请检查后重试</p>
+        <button id="closeErrorModal" style="background: #ec4899; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; transition: background 0.3s ease;">
+            确定
+        </button>
+    </div>
+</div>
+
+<!-- 加载提示 -->
+<div id="loadingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); text-align: center;">
+        <div style="margin-bottom: 15px;">
+            <div style="border: 3px solid #f3f3f3; border-top: 3px solid #ec4899; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+        </div>
+        <p style="color: #666; margin: 0;">正在登录...</p>
+    </div>
+</div>
+
+<style>
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.submit-button:hover {
+    background: #db2777 !important;
+}
+
+.submit-button:disabled {
+    background: #ccc !important;
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    const loginButton = document.getElementById('loginButton');
+    const errorModal = document.getElementById('errorModal');
+    const loadingModal = document.getElementById('loadingModal');
+    const closeErrorModal = document.getElementById('closeErrorModal');
+
+    // 关闭错误弹窗
+    closeErrorModal.addEventListener('click', function() {
+        errorModal.style.display = 'none';
+    });
+
+    // 点击弹窗外部关闭
+    errorModal.addEventListener('click', function(e) {
+        if (e.target === errorModal) {
+            errorModal.style.display = 'none';
+        }
+    });
+
+    // ESC 键关闭弹窗
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            errorModal.style.display = 'none';
+            loadingModal.style.display = 'none';
+        }
+    });
+
+    // 表单提交处理
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // 阻止默认提交
+
+        // 显示加载状态
+        loadingModal.style.display = 'flex';
+        loginButton.disabled = true;
+
+        // 获取表单数据
+        const formData = new FormData(loginForm);
+
+        // 发送登录请求
+        fetch('/accounts/login/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            loadingModal.style.display = 'none';
+            loginButton.disabled = false;
+
+            if (response.ok) {
+                // 登录成功，检查是否有重定向
+                const redirectUrl = formData.get('next') || '/';
+                window.location.href = redirectUrl;
+            } else {
+                // 登录失败，显示错误弹窗
+                errorModal.style.display = 'flex';
+            }
+        })
+        .catch(error => {
+            console.error('登录请求失败:', error);
+            loadingModal.style.display = 'none';
+            loginButton.disabled = false;
+            errorModal.style.display = 'flex';
+        });
+    });
+
+    // 检查 URL 参数中是否有错误信息（用于处理服务器端重定向回登录页面的情况）
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === 'login_failed') {
+        errorModal.style.display = 'flex';
+        // 清除 URL 参数
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+});
+</script>
+
+{% endblock content %}

@@ -1,0 +1,9 @@
+{% extends 'layouts/blank.html' %}
+
+{% block content %}
+<div class="text-center">
+    <h1>支付失败</h1>
+    <p>很抱歉，您的支付未成功。</p>
+    <a href="{% url 'a_order:create_recharge_order' %}" class="btn btn-primary">重新充值</a>
+</div>
+{% endblock %}

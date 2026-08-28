@@ -1,0 +1,132 @@
+{% extends 'layouts/blank.html' %}
+
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block class %}article{% endblock %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto px-8 py-24">
+    <!-- 标题和作者信息 -->
+    <h1 class="text-4xl font-bold mb-4">{{ page.title }}</h1>
+    <a href="{% url 'profile' page.owner %}" class="flex items-center gap-2 mb-4">
+        <img class="h-10 w-10 rounded-full object-cover" src="{{ page.owner.profile.avatar }}" alt="Avatar">
+        <span class="font-medium">{{ page.owner.profile.name }}</span>
+    </a>
+    <p class="text-sm text-neutral-500 mb-4">{{ page.date }}</p>
+    <p class="text-xl font-serif italic text-neutral-800 mb-8">{{ page.intro }}</p>
+
+    <!-- 封面图 -->
+    <div class="mb-8">
+        <figure>
+            {% image page.image original class="w-full rounded-lg shadow-md" %}
+        </figure>
+
+        {% if page.caption %}
+            <figcaption class="text-sm text-neutral-500 text-center mt-2">
+                {{ page.caption }}
+            </figcaption>
+        {% endif %}
+    </div>
+
+    <!-- 正文内容和遮罩 -->
+    <div id="article-container" class="relative">
+        <div id="article-content" class="relative">
+            <div class="preview-content">
+                {{ page.body|richtext }}
+            </div>
+            {% if show_preview %}
+            <div id="overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-white via-white/90 to-transparent px-6 py-12 text-center">
+                {% if insufficient_points %}
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-red-500">积分不足，无法访问全文</h2>
+                    <p class="text-neutral-600 mt-2">您需要更多积分才能继续阅读此文章。</p>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <a href="/order/create_subscription_order/" class="bg-gray-300 text-black px-6 py-3 rounded-lg shadow-md hover:bg-gray-500">
+                        成为会员
+                    </a>
+                    <form id="continue-read-form" method="post" action="{{ request.path }}">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-black text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-800">
+                            确认支付 {{ points_required }} 积分
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold">成为会员以阅读完整内容</h2>
+                    <p class="text-neutral-600 mt-2">
+                        {{ page.owner.profile.name }} 将此文章设置为付费页面，您可以通过以下方式继续阅读：
+                    </p>
+                    <ul class="text-neutral-600 text-left mt-4 space-y-2">
+                        <li>✔ 支持作者并解锁此文章</li>
+                        <li>✔ 阅读所有会员专属内容</li>
+                        <li>✔ 享受无广告的阅读体验</li>
+                    </ul>
+                </div>
+                <div class="flex items-center justify-center gap-6">
+                    <!-- 成为会员按钮 -->
+                    <a href="/order/create_subscription_order/" 
+                       class="bg-black text-white px-6 py-3 rounded-lg shadow-md hover:bg-gray-800 transition duration-300">
+                        成为会员
+                    </a>
+                
+                    <!-- 确认支付积分按钮 -->
+                    <form id="continue-read-form" method="post" action="{{ request.path }}">
+                        {% csrf_token %}
+                        <button type="submit" 
+                                class="bg-white text-black border border-black px-6 py-3 rounded-lg shadow-md hover:bg-black hover:text-white transition duration-300">
+                            确认支付 {{ points_required }} 积分
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 标签 -->
+    <div class="flex gap-2 pt-6">
+        {% if page.tags %}
+            {% for tag in page.tags.all %}
+                <a href="{{ page.get_parent.url }}?tag={{ tag }}" class="border rounded-full border-gray-400 px-3 py-2">
+                    {{ tag }}
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <!-- 返回博客链接 -->
+    <div class="mt-4 inline-block">
+        <a href="{{ page.get_parent.url }}" class="underline">返回博客</a>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const overlay = document.getElementById('overlay');
+
+        // 检查是否需要显示完整内容
+        fetch(window.location.href, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                // 用户有权限访问文章，隐藏遮罩
+                overlay.classList.add('hidden');
+            } else if (data.error) {
+                // 用户无权限访问文章，显示遮罩
+                overlay.classList.remove('hidden');
+            }
+        });
+    });
+</script>
+{% endblock %}

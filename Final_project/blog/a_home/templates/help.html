@@ -1,0 +1,284 @@
+{% extends 'layouts/blank.html' %}
+
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+    body { 
+        font-family: 'Inter', sans-serif; 
+        color: #334155;
+    }
+    .jakarta { 
+        font-family: 'Plus Jakarta Sans', sans-serif; 
+    }
+    .merriweather {
+        font-family: 'Merriweather', serif;
+    }
+    .article-card {
+        transition: all 0.3s ease;
+    }
+    .article-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    .primary-btn {
+        background-color: #ec4899;
+        transition: all 0.2s ease;
+    }
+    .primary-btn:hover {
+        background-color: #db2777;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+    }
+    .accordion-header {
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .accordion-header:hover {
+        background-color: #f1f5f9;
+    }
+    .accordion-content {
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 0;
+        padding: 0 1.5rem;
+    }
+    .accordion-content.open {
+        height: auto;
+        padding-bottom: 1.5rem;
+    }
+    @media (max-width: 768px) {
+        .grid-cols-1.md\:grid-cols-2 > div:last-child {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block class %}blog bg-slate-50 text-slate-700{% endblock %}
+
+{% block content %}
+<div class="max-w-[1000px] mx-auto px-4 md:px-6 pt-28 pb-20">
+    <!-- 帮助中心标题 -->
+    <div class="text-center mb-16">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">帮助中心</h1>
+        <p class="text-lg md:text-xl text-slate-500 jakarta font-light max-w-2xl mx-auto">查找常见问题的解答或联系我们获取支持</p>
+    </div>
+
+    <!-- 帮助主题分类 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <!-- 第一个图标 - 绿色 -->
+        <div class="article-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 mb-2 merriweather">账户与设置</h3>
+            <p class="text-slate-500 jakarta text-sm mb-4">个人资料、密码重置、账户管理等相关问题</p>
+            <a href="#account" class="text-pink-500 hover:text-green-700 font-medium jakarta">查看详情</a>
+        </div>
+
+        <!-- 第三个图标 - 紫色 -->
+        <div class="article-card bg-white rounded-xl shadow-sm border border-slate-100 p-6 text-center">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-800 mb-2 merriweather">使用指南</h3>
+            <p class="text-slate-500 jakarta text-sm mb-4">功能介绍、使用技巧、常见操作指导</p>
+            <a href="#guide" class="text-pink-500 hover:text-purple-700 font-medium jakarta">查看详情</a>
+        </div>
+    </div>
+    
+    <!-- 常见问题 -->
+    <div id="account" class="article-card bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-8">
+        <div class="border-b border-slate-200">
+            <div class="accordion-header px-6 py-4 flex items-center justify-between">
+                <h2 class="text-xl font-bold text-slate-800 merriweather">账户与设置</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+        </div>
+        <div class="accordion-content p-6">
+            <div class="space-y-6">
+                <div class="border-b border-slate-200 pb-5">
+                    <h3 class="font-medium text-slate-800 mb-3 jakarta">如何修改我的个人资料？</h3>
+                    <div class="text-slate-500 jakarta">
+                        <p class="mb-2">修改个人资料只需几个简单步骤：</p>
+                        <ol class="list-decimal pl-5 space-y-1">
+                            <li>登录您的账户</li>
+                            <li>点击右上角的头像图标</li>
+                            <li>从下拉菜单中选择"编辑资料"</li>
+                            <li>更新您想修改的信息</li>
+                            <li>点击确认</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="border-b border-slate-200 pb-5">
+                    <h3 class="font-medium text-slate-800 mb-3 jakarta">忘记密码怎么办？</h3>
+                    <div class="text-slate-500 jakarta">
+                        <p>如果您忘记了密码，可以通过以下步骤重置：</p>
+                        <ol class="list-decimal pl-5 space-y-1 mt-2">
+                            <li>在登录页面点击"忘记密码"</li>
+                            <li>输入您注册时使用的邮箱地址</li>
+                            <li>按照发送到您邮箱的指引完成密码重置</li>
+                        </ol>
+                        <p class="mt-2">如果您没有收到重置邮件，请检查垃圾邮件文件夹或联系客服支持。</p>
+                    </div>
+                </div>
+                <div class="pb-2">
+                    <h3 class="font-medium text-slate-800 mb-3 jakarta">如何更改绑定的邮箱？</h3>
+                    <div class="text-slate-500 jakarta">
+                        <p class="mb-2">更改联系方式需要验证您的身份：</p>
+                        <ol class="list-decimal pl-5 space-y-1">
+                            <li>登录账户后进入"设置"</li>
+                            <li>选择"修改邮箱"</li>
+                            <li>验证您的身份</li>
+                            <li>输入新的联系方式并完成验证</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 使用指南 -->
+    <div id="guide" class="article-card bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-8">
+        <div class="border-b border-slate-200">
+            <div class="accordion-header px-6 py-4 flex items-center justify-between">
+                <h2 class="text-xl font-bold text-slate-800 merriweather">使用指南</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+        </div>
+        <div class="accordion-content p-6">
+            <div class="space-y-6">
+                <div class="border-b border-slate-200 pb-5">
+                    <h3 class="font-medium text-slate-800 mb-3 jakarta">如何快速开始使用平台？</h3>
+                    <div class="text-slate-500 jakarta">
+                        <p class="mb-2">新用户入门指南：</p>
+                        <ol class="list-decimal pl-5 space-y-1">
+                            <li>完成注册并验证邮箱</li>
+                            <li>填写个人资料</li>
+                            <li>探索首页内容</li>
+                            <li>查看使用教程了解功能</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="border-b border-slate-200 pb-5">
+                    <h3 class="font-medium text-slate-800 mb-3 jakarta">如何使用搜索功能？</h3>
+                    <div class="text-slate-500 jakarta">
+                        <p class="mb-2">我们的搜索功能支持多种筛选方式：</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>关键词搜索：直接输入想查找的内容</li>
+                            <li>高级搜索：使用筛选条件精确查找</li>
+                            <li>标签搜索：点击感兴趣的标签直接查看相关内容</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pb-2">
+                    <h3 class="font-medium text-slate-800 mb-3 jakarta">移动端和电脑端有什么区别？</h3>
+                    <div class="text-slate-500 jakarta">
+                        <p class="mb-2">我们的平台在不同设备上提供一致的核心体验，但有一些细微差别：</p>
+                        <table class="w-full mt-2 border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50">
+                                    <th class="py-2 px-3 text-left border border-slate-200 jakarta">功能</th>
+                                    <th class="py-2 px-3 text-left border border-slate-200 jakarta">移动端</th>
+                                    <th class="py-2 px-3 text-left border border-slate-200 jakarta">电脑端</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="py-2 px-3 border border-slate-200 jakarta">界面布局</td>
+                                    <td class="py-2 px-3 border border-slate-200 jakarta">垂直排列，适合单手操作</td>
+                                    <td class="py-2 px-3 border border-slate-200 jakarta">多列布局，信息展示更丰富</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-3 border border-slate-200 jakarta">快捷操作</td>
+                                    <td class="py-2 px-3 border border-slate-200 jakarta">滑动手势</td>
+                                    <td class="py-2 px-3 border border-slate-200 jakarta">键盘快捷键</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="mt-2">我们建议在不同设备上都尝试使用，以获得最佳体验。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 联系我们卡片 - 已改造 -->
+    <div class="bg-pink-50 rounded-2xl p-12 text-center">
+        <h2 class="text-3xl font-bold text-slate-800 mb-6 merriweather">需要帮助？</h2>
+        <p class="text-xl text-slate-600 mb-8 jakarta max-w-2xl mx-auto">
+            如果您的问题未能在上面找到答案，欢迎随时联系我们！
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <div class="text-pink-600 text-2xl mb-3">📧</div>
+                <h3 class="font-semibold mb-2">邮箱</h3>
+                <p class="text-slate-600">CheeseO@163.com</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <div class="text-pink-600 text-2xl mb-3">🌐</div>
+                <h3 class="font-semibold mb-2">官网</h3>
+                <p class="text-slate-600">www.cheese-o.com</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <div class="text-pink-600 text-2xl mb-3">📞</div>
+                <h3 class="font-semibold mb-2">电话</h3>
+                <p class="text-slate-600">XXX-XXXX-XXXX</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 页脚 -->
+<footer class="bg-slate-900 text-slate-300 py-10 mt-20">
+    <div class="max-w-[1400px] mx-auto px-6">
+        <div class="flex flex-col justify-center items-center text-center">
+            <div class="mb-6">
+                <h2 class="text-2xl font-semibold text-white mb-2 merriweather">芝士圈</h2>
+                <p class="jakarta font-light text-slate-400">分享创意与知识，连接全球思想</p>
+            </div>
+        </div>
+        <div class="mt-2 pt-4 border-t border-slate-800 text-center">
+            <p class="jakarta font-light text-slate-500">© 2025 芝士圈. 保留所有权利.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // 折叠面板功能
+    document.addEventListener('DOMContentLoaded', function() {
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        
+        accordionHeaders.forEach(header => {
+            const content = header.parentElement.nextElementSibling;
+            const arrow = header.querySelector('svg');
+            
+            // 初始化时展开内容
+            content.classList.add('open');
+            arrow.classList.add('rotate-180');
+            
+            header.addEventListener('click', () => {
+                const isOpen = content.classList.contains('open');
+                
+                // 切换内容显示状态
+                content.classList.toggle('open', !isOpen);
+                
+                // 切换箭头旋转
+                arrow.classList.toggle('rotate-180', !isOpen);
+            });
+        });
+    });
+</script>
+{% endblock %}

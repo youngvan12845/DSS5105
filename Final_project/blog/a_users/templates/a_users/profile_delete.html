@@ -1,0 +1,14 @@
+{% extends 'layouts/box.html' %}
+
+{% block content %}
+
+<h1>删除用户</h1>
+<p>你确定要删除此用户吗？</p>
+
+<form method='POST'>
+    {% csrf_token %}
+    <button type="submit" class="button-red mt-6">是的，我要删除此用户</button>
+    <a class="button button-gray ml-1" href="{{ request.META.HTTP_REFERER }}">取消</a>
+</form>
+
+{% endblock %}

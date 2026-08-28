@@ -1,0 +1,176 @@
+{% extends 'layouts/blank.html' %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+<div class="pt-16 md:pt-10">
+  <div class="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 pt-20 pb-12">
+    <!-- 主要内容区 -->
+    <div class="max-w-4xl mx-auto px-4">
+      <!-- 页面标题 -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 mb-8 overflow-hidden">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h1 class="text-2xl font-bold text-gray-800">浏览历史</h1>
+              <p class="text-gray-600 mt-2">共 {{ total_articles }} 篇文章</p>
+            </div>
+            <div class="flex space-x-3">
+              <a href="{% url 'profile' %}" 
+                 class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                返回个人中心
+              </a>
+              {% if total_articles > 0 %}
+              <button onclick="clearAllHistory()" 
+                      class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                清空历史
+              </button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 浏览历史列表 -->
+      {% if history_records %}
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="divide-y divide-gray-100">
+          {% for record in history_records %}
+          <div class="p-6 hover:bg-gray-50 transition-colors group">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                  <a href="{{ record.article_url }}" 
+                     class="hover:text-blue-600 transition-colors">
+                    {{ record.article_title }}
+                  </a>
+                </h3>
+                <div class="flex items-center text-sm text-gray-500 space-x-4">
+                  <span class="flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {{ record.viewed_at|date:"Y-m-d H:i" }}
+                  </span>
+                </div>
+              </div>
+              <div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button data-record-id="{{ record.id }}" 
+                        class="text-red-500 hover:text-red-700 transition-colors p-2">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- 分页 -->
+      {% if history_records.has_other_pages %}
+      <div class="flex justify-center mt-8">
+        <nav class="flex items-center space-x-2">
+          {% if history_records.has_previous %}
+            <a href="?page=1" class="px-3 py-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+              首页
+            </a>
+            <a href="?page={{ history_records.previous_page_number }}" 
+               class="px-3 py-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+              上一页
+            </a>
+          {% endif %}
+
+          <span class="px-3 py-2 text-sm bg-blue-500 text-white border border-blue-500 rounded-md">
+            {{ history_records.number }}
+          </span>
+
+          {% if history_records.has_next %}
+            <a href="?page={{ history_records.next_page_number }}" 
+               class="px-3 py-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+              下一页
+            </a>
+            <a href="?page={{ history_records.paginator.num_pages }}" 
+               class="px-3 py-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+              末页
+            </a>
+          {% endif %}
+        </nav>
+      </div>
+      {% endif %}
+
+      {% else %}
+      <!-- 空状态 -->
+      <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="p-12 text-center">
+          <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">暂无浏览历史</h3>
+          <p class="text-gray-500 mb-6">您还没有浏览过任何文章</p>
+          <a href="/" 
+             class="inline-flex items-center px-4 py-2 bg-pink-400 text-white rounded-lg hover:bg-pink-500 transition-colors">
+            去看看文章
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+function deleteHistoryItem(historyId) {
+  if (confirm('确定要删除这条浏览记录吗？')) {
+    fetch(`/profile/delete-history-item/${historyId}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert(data.message || '删除失败');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('删除失败，请重试');
+    });
+  }
+}
+
+function clearAllHistory() {
+  if (confirm('确定要清空所有浏览历史吗？此操作不可恢复。')) {
+    fetch('/profile/clear-browsing-history/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert(data.message || '清空失败');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('清空失败，请重试');
+    });
+  }
+}
+</script>
+
+{% csrf_token %}
+{% endblock %}

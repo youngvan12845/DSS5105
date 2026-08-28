@@ -1,0 +1,64 @@
+{% extends 'layouts/box.html' %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <h1>邮箱验证</h1>
+    <a href="{% url 'profile-settings' %}" 
+       class="py-2 px-4 bg-gray-500 text-white rounded-md hover:bg-gray-600">
+        返回
+    </a>
+</div>
+
+<form method="post" action="{% url 'verify-email-code' %}">
+    {% csrf_token %}
+    <div class="mb-4">
+        <label for="verification_code" class="block text-sm font-medium text-gray-700">请输入验证码</label>
+        <input type="text" id="verification_code" name="verification_code"
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+               placeholder="6位数字验证码" required>
+    </div>
+    <div class="flex justify-between items-center">
+        <button type="submit" class="py-2 px-4 bg-pink-400 text-white rounded-md hover:bg-pink-500">
+            验证
+        </button>
+        <button type="button" id="send-verification-code" 
+                class="py-2 px-4 bg-pink-400 text-gray-700 rounded-md hover:bg-pink-500"
+                onclick="sendVerificationCode()">
+            发送验证码
+        </button>
+    </div>
+</form>
+
+<script>
+function sendVerificationCode() {
+    const button = document.getElementById('send-verification-code');
+    button.disabled = true;
+    button.textContent = '60秒后重试';
+    
+    // 发起发送验证码的请求
+    fetch("{% url 'profile-emailverify' %}", { method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}' } })
+        .then(response => {
+            if (!response.ok) {
+                alert('发送验证码失败，请稍后重试');
+                button.disabled = false;
+                button.textContent = '重新发送验证码';
+            }
+        });
+    
+    // 60秒后更新按钮
+    let countdown = 60;
+    const interval = setInterval(() => {
+        countdown--;
+        button.textContent = `${countdown}秒后重试`;
+        if (countdown <= 0) {
+            clearInterval(interval);
+            button.disabled = false;
+            button.textContent = '重新发送验证码';
+            button.classList.remove('bg-gray-200', 'text-gray-700');
+            button.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-700');
+        }
+    }, 1000);
+}
+</script>
+
+{% endblock %}

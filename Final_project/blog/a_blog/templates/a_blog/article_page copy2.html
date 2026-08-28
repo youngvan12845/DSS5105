@@ -1,0 +1,179 @@
+{% extends 'layouts/blank.html' %}
+
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block class %}article{% endblock %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto px-8 py-24">
+    <!-- 标题和作者信息 -->
+    <h1 class="text-4xl font-bold mb-4">{{ page.title }}</h1>
+    <a href="{% url 'profile' page.owner %}" class="flex items-center gap-2 mb-4">
+        <img class="h-10 w-10 rounded-full object-cover" src="{{ page.owner.profile.avatar }}" alt="Avatar">
+        <span class="font-medium">{{ page.owner.profile.name }}</span>
+    </a>
+    <p class="text-sm text-neutral-500 mb-4">{{ page.date }}</p>
+    <p class="text-xl font-serif italic text-neutral-800 mb-8">{{ page.intro }}</p>
+
+    <!-- 封面图 -->
+    <div class="mb-8">
+        <figure>
+            {% image page.image original class="w-full rounded-lg shadow-md" %}
+        </figure>
+
+        {% if page.caption %}
+            <figcaption class="text-sm text-neutral-500 text-center mt-2">
+                {{ page.caption }}
+            </figcaption>
+        {% endif %}
+    </div>
+
+    <!-- 正文内容和遮罩 -->
+    <div id="article-container" class="relative">
+        <div id="article-content" class="relative">
+            <div class="preview-content">
+                {{ page.body|richtext }}
+            </div>
+            {% if show_preview %}
+            <div id="overlay" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-white via-white/90 to-transparent px-6 py-12 text-center">
+                {% if insufficient_points %}
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-red-500">积分不足，无法访问全文</h2>
+                    <p class="text-neutral-600 mt-2">您需要更多积分才能继续阅读此文章。</p>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <a href="/order/create_subscription_order/" class="bg-gray-300 text-black px-6 py-3 rounded-lg shadow-md hover:bg-gray-500">
+                        成为会员
+                    </a>
+                    <form id="continue-read-form" method="post" action="{{ request.path }}">
+                        {% csrf_token %}
+                        <button type="submit" 
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow-md"
+                                data-points-required="{{ points_required }}">
+                            确认支付 {{ points_required }} 积分
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="max-w-3xl mx-auto p-8 bg-white rounded-xl shadow-lg mt-12 border border-gray-100">
+                    <div class="mb-10 text-center">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-3">继续阅读完整内容</h2>
+                        <p class="text-gray-600 text-lg">
+                            由 {{ page.owner.profile.name }} 创作的优质内容
+                        </p>
+                    </div>
+                
+                    <!-- 双栏布局 -->
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- 会员方案 -->
+                        <div class="p-6 border-2 border-green-100 rounded-xl bg-green-50">
+                            <div class="mb-5">
+                                <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2">会员无限畅读</h3>
+                                <p class="text-gray-600 text-sm">解锁所有会员内容，享受无广告体验</p>
+                            </div>
+                            <a href="/order/create_subscription_order/" 
+                               class="block w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg
+                                      text-base font-medium transition-colors duration-300 shadow-sm">
+                                加入会员计划
+                            </a>
+                        </div>
+                
+                        <!-- 积分方案 -->
+                        <div class="p-6 border-2 border-blue-100 rounded-xl bg-blue-50">
+                            <div class="mb-5">
+                                <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2">单篇解锁</h3>
+                                <p class="text-gray-600 text-sm">使用积分立即阅读此文章</p>
+                            </div>
+                            <form method="post" action="{{ request.path }}">
+                                {% csrf_token %}
+                                <button type="submit" 
+                                        class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg
+                                               text-base font-medium transition-colors duration-300 shadow-sm
+                                               flex items-center justify-center gap-2">
+                                    <span>支付 {{ points_required }} 积分</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                
+                    <div class="mt-8 text-center">
+                        <p class="text-gray-500 text-sm">
+                            <span class="inline-block mx-2">当前积分：{{ user.profile.points }}</span>
+                            <a href="/points/" class="text-blue-600 hover:underline">获取更多积分</a>
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+        <!-- 标签 -->
+    <div class="flex gap-2 pt-6">
+        {% if page.tags %}
+            {% for tag in page.tags.all %}
+                <a href="{{ page.get_parent.url }}?tag={{ tag }}" class="border rounded-full border-gray-400 px-3 py-2">
+                    {{ tag }}
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- 返回博客链接 -->
+    <div class="mt-4 inline-block">
+        <a href="{{ page.get_parent.url }}" class="underline">返回博客</a>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const overlay = document.getElementById('overlay');
+
+        // 检查是否需要显示完整内容
+        fetch(window.location.href, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                // 用户有权限访问文章，隐藏遮罩
+                overlay.classList.add('hidden');
+            } else if (data.error) {
+                // 用户无权限访问文章，显示遮罩
+                overlay.classList.remove('hidden');
+            }
+        });
+
+        // 添加支付积分的二次确认逻辑
+        document.addEventListener('click', function (event) {
+            const paymentButton = event.target.closest('form#continue-read-form button[type="submit"]');
+            if (paymentButton) {
+                const pointsRequired = paymentButton.getAttribute('data-points-required');
+                const confirmPayment = confirm(`您确定要支付 ${pointsRequired} 积分以解锁此文章吗？`);
+                if (!confirmPayment) {
+                    event.preventDefault(); // 阻止表单提交
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

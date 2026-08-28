@@ -1,0 +1,131 @@
+{% extends 'layouts/blank.html' %}
+{% load static %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        color: #334155;
+    }
+    .jakarta {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .merriweather {
+        font-family: 'Merriweather', serif;
+    }
+    .article-card {
+        transition: all 0.3s ease;
+    }
+    .article-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    .primary-btn {
+        background-color: #ec4899;
+        transition: all 0.2s ease;
+    }
+    .primary-btn:hover {
+        background-color: #db2777;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block class %}bg-slate-50 text-slate-700{% endblock %}
+
+{% block content %}
+<div class="max-w-[1000px] mx-auto px-4 md:px-6 pt-28 pb-20">
+
+    <!-- Hero -->
+    <div class="text-center mb-16">
+        <h1 class="text-5xl font-bold text-slate-800 mb-4 merriweather">Cheese-O 赋能学习数字平台</h1>
+        <p class="text-lg text-slate-500 jakarta max-w-2xl mx-auto">
+            提供知识博文与多类数字服务，助力你高效完成学习与项目
+        </p>
+    </div>
+
+    <!-- 博客图片展示 -->
+    <div class="w-full max-w-5xl mx-auto mb-12">
+        <img src="{% static 'images/首页.png' %}" alt="博客介绍图片" class="rounded-2xl shadow-md w-full object-cover">
+    </div>
+
+    <!-- 技术博客简介 -->
+    <div class="text-center my-20">
+        <h2 class="text-3xl font-bold text-slate-800 mb-4 merriweather">技术博客</h2>
+        <p class="text-lg text-slate-600 jakarta mb-6">探索我们关于计算机、经济、量化等方向的技术专栏与实用干货。</p>
+        <a href="/blog" class="primary-btn text-white text-base px-6 py-3 rounded">进入博客</a>
+    </div>
+
+<!-- 我们的产品（左右分栏） -->
+<div class="my-20 max-w-4xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-slate-800 mb-12 merriweather text-center">我们的产品</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <!-- Left - Cheese-O Studio -->
+        <div class="bg-white rounded-xl p-8 shadow-sm border border-slate-100 flex flex-col justify-between text-center">
+            <div>
+                <h3 class="text-2xl font-semibold text-slate-800 mb-4 merriweather">Cheese-O Studio</h3>
+                <p class="text-slate-600 jakarta mb-6 mx-auto max-w-md">
+                    一个用于学术研究和团队协作的创新平台，支持多人协作、实时同步、讨论与知识管理，让你专注科研本身而非繁琐流程。
+                </p>
+            </div>
+            <a href="/about" class="primary-btn text-white text-sm px-5 py-2 rounded mx-auto">了解更多</a>
+        </div>
+
+        <!-- Right - 编程课程 -->
+        <div class="bg-white rounded-xl p-8 shadow-sm border border-slate-100 flex flex-col justify-between text-center">
+            <div>
+                <h3 class="text-2xl font-semibold text-slate-800 mb-4 merriweather">计算机课程体系</h3>
+                <p class="text-slate-600 jakarta mb-6 mx-auto max-w-md">
+                    我们提供多个面向初学者的计算机课程，包括 Python、Java、JavaScript、AI、Web 开发等主题，结合实战项目，适合小白系统学习。
+                </p>
+            </div>
+            <a href="/about" class="primary-btn text-white text-sm px-5 py-2 rounded mx-auto">查看详情</a>
+        </div>
+    </div>
+</div>
+
+    <!-- 联系方式 -->
+    <div class="bg-pink-50 rounded-2xl p-12 text-center">
+        <h2 class="text-3xl font-bold text-slate-800 mb-6 merriweather">了解更多</h2>
+        <p class="text-xl text-slate-600 mb-8 jakarta max-w-2xl mx-auto">
+            如果您对我们的平台、服务有疑问，欢迎随时联系我们
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <div class="text-pink-600 text-2xl mb-3">📧</div>
+                <h3 class="font-semibold mb-2">邮箱</h3>
+                <p class="text-slate-600">CheeseO@163.com</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <div class="text-pink-600 text-2xl mb-3">🌐</div>
+                <h3 class="font-semibold mb-2">官网</h3>
+                <p class="text-slate-600">www.cheese-o.com</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <div class="text-pink-600 text-2xl mb-3">📞</div>
+                <h3 class="font-semibold mb-2">电话</h3>
+                <p class="text-slate-600">XXX-XXXX-XXXX</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 页脚 -->
+<footer class="bg-slate-900 text-slate-300 py-10 mt-20">
+    <div class="max-w-[1400px] mx-auto px-6">
+        <div class="flex flex-col justify-center items-center text-center">
+            <div class="mb-6">
+                <h2 class="text-2xl font-semibold text-white mb-2 merriweather">芝士圈</h2>
+                <p class="jakarta font-light text-slate-400">分享创意与知识，连接全球思想</p>
+            </div>
+        </div>
+        <div class="mt-2 pt-4 border-t border-slate-800 text-center">
+            <p class="jakarta font-light text-slate-500">© 2025 芝士圈. 保留所有权利.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

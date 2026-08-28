@@ -1,0 +1,171 @@
+{% load static %}
+{% load django_htmx %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Django Template">
+    <title>芝士圈</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'win.ico' %}">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    {% django_htmx_script %}
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style type="text/tailwindcss">
+    
+        [x-cloak] { 
+            display: none !important; 
+        }
+        h1 {
+            @apply text-4xl font-bold mb-4
+        }
+        h2 {
+            @apply text-xl font-bold mb-2
+        }
+    	h3 {
+            @apply text-lg font-bold
+        }
+        p {
+            @apply mb-4
+        }
+        .button, button, [type='submit'], [type='button'] {
+            @apply bg-pink-400 text-white font-bold rounded-lg shadow-lg transition-all cursor-pointer
+        }
+        .button, button a, [type='submit'], [type='button'] {
+            @apply px-6 py-4 inline-block 
+        }
+        .button:hover, button:hover, [type='submit']:hover, [type='button']:hover {
+            @apply bg-pink-500
+        }
+        .button:active, button:active, [type='submit']:active, [type='button']:active {
+            @apply scale-95
+        }
+        .button.alert, button.alert {
+            @apply bg-red-700
+        }
+        .button.alert:hover, button.alert:hover {
+            @apply bg-red-600
+        }
+        .button-red {
+            @apply !bg-red-500 hover:!bg-red-600
+        }
+        .button-gray {
+            @apply !bg-gray-300 hover:!bg-[#c3c9d0]
+        }
+        .navitems>li>a {
+            @apply flex items-center gap-2 h-12 px-4 hover:bg-[rgba(31,41,55,0.3)] rounded-lg;
+        }
+        .hoverlist>* {
+            @apply hover:bg-gray-100 rounded-md transition duration-150;
+        }
+        .hoverlist>*>a {
+            @apply flex items-center p-2;
+        }
+        .highlight {
+            @apply !bg-pink-100;
+        }
+        .allauth content a {
+            @apply underline underline-offset-2
+        }
+        .allauth content a:hover {
+            @apply text-pink-500
+        }
+        .allauth form[action="/accounts/signup/"] ul {
+            @apply hidden
+        }
+        .allauth form[action="/accounts/signup/"] ul.errorlist {
+            @apply block
+        }
+        .allauth .helptext {
+            @apply block mt-4
+        }
+        label {
+            @apply hidden
+        }
+        input[type=file] {
+            @apply bg-white pl-0
+        }
+        .textarea, textarea, input {
+            @apply w-full rounded-lg py-4 px-5 bg-gray-100
+        }
+        .errorlist li {
+            @apply p-1 pl-4 border-l-red-500 border-l-4 border-solid mb-2 text-red-500
+        }
+        label[for="id_remember"] {
+            @apply inline-block w-auto mr-2
+        }
+        input[name="remember"] {
+            @apply w-auto
+        }
+        .alert-info { @apply bg-sky-500 }
+        .alert-success { @apply bg-green-500 }
+        .alert-warning { @apply bg-red-500 }
+        .alert-danger { @apply bg-red-500 }
+
+        .article iframe{
+            width: 100%;
+            height: 470px;
+            border-radius: 12px;
+        }
+
+        .article-body ul {
+            list-style-type: disc !important;
+            padding-left: 2rem !important;
+            margin: 1rem 0 !important;
+        }
+
+        .article-body ol {
+            list-style-type: decimal !important;
+            padding-left: 2rem !important;
+            margin: 1rem 0 !important;
+        }
+        .article-body .MathJax {
+    font-size: 1.1em; /* 调整公式字体大小 */
+    line-height: 1.8;
+        }
+        .article-body .MathJax_Display {
+            margin: 1rem 0; /* 为块级公式添加间距 */
+            text-align: center;
+        }
+    </style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+    };
+</script>
+
+</head>
+
+
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="{% block class %}{% endblock %} pt-16"></body>
+
+    {% include 'includes/messages.html' %}
+
+    {% include 'includes/header.html' %}
+
+    {% block layout %}
+    {% endblock %}
+
+    {% block javascript %}{% endblock %}
+    {% block head %}{% endblock %}
+
+</body>
+
+
+</html>
+

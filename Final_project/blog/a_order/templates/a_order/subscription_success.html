@@ -1,0 +1,24 @@
+{% extends 'layouts/blank.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-8 py-24 text-center">
+    <h1 class="text-4xl font-bold text-green-600 mb-6">订阅成功！</h1>
+    <p class="text-lg text-gray-700 mb-4">感谢您订阅我们的会员服务。</p>
+    <p class="text-gray-600">订阅周期：<strong>
+        {% if order.subscription_period == 'monthly' %}月度
+        {% elif order.subscription_period == 'quarterly' %}季度
+        {% elif order.subscription_period == 'yearly' %}年度
+        {% else %}{{ order.get_subscription_period_display }}{% endif %}
+    </strong></p>
+    <p class="text-gray-600">扣除积分：<strong>{{ order.points }}</strong></p>
+    <p class="text-gray-600">订阅状态：<strong>
+        {% if order.status == 'paid' %}已支付
+        {% elif order.status == 'pending' %}待支付
+        {% elif order.status == 'failed' %}支付失败
+        {% else %}{{ order.get_status_display }}{% endif %}
+    </strong></p>
+    <a href="/" class="mt-6 inline-block bg-pink-400 text-white px-6 py-3 rounded-lg shadow-md hover:bg-pink-500">
+        返回首页
+    </a>
+</div>
+{% endblock %}

@@ -8,3 +8,25 @@ wheels/
 
 # Virtual environments
 .venv
+.venv-mac/
+venv/
+d_env/
+
+# Secrets and notebook artifacts
+.env
+.ipynb_checkpoints/
+
+# Django / local dev
+media/
+debug.log
+db.sqlite3
+db.zip
+postgres_start.log
+.DS_Store
+.idea/
+
+# Payment keys (never commit)
+*.pem
+
+# Local drafts
+草稿/
