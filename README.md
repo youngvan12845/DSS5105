@@ -6,6 +6,7 @@ NUS DSS5105 capstone project: **Blog Reading Co-Pilot Agent** (Track 5).
 
 - `Final_project/blog/` — Django/Wagtail blog platform
 - `Final_project/项目说明.md` — project overview (Chinese)
+- `Final_project/PROJECT_OVERVIEW.md` — project overview (English)
 
 ## Quick start
 
