@@ -28,5 +28,9 @@ postgres_start.log
 # Payment keys (never commit)
 *.pem
 
-# Local drafts
+# Local drafts / junk
 草稿/
+Final_project/1
+
+# Week1 local work (keep local only)
+week1_2/
