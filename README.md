@@ -2,7 +2,81 @@
 
 NUS DSS5105 capstone project: **Blog Reading Co-Pilot Agent** (Track 5 · CheeseO).
 
-**GitHub**: https://github.com/youngvan12845/DSS5105
+**GitHub**: https://github.com/youngvan12845/DSS5105  
+**Clone URL**: `https://github.com/youngvan12845/DSS5105.git`
+
+---
+
+## Teammate onboarding — clone & run (start here)
+
+### Step 0 — Accept the GitHub invite
+
+If you were added as a collaborator, GitHub shows **Pending Invite** until you accept.
+
+1. Check your **email** for an invite from GitHub, **or**
+2. Open https://github.com/youngvan12845/DSS5105 — you should see an **Accept invitation** banner  
+3. After accepting, refresh the repo page — you should see the code, not “404”
+
+### Step 1 — Clone the repository
+
+**Option A — Terminal (recommended)**
+
+```bash
+git clone https://github.com/youngvan12845/DSS5105.git
+cd DSS5105/Final_project/blog
+```
+
+**Option B — GitHub website**
+
+1. Open https://github.com/youngvan12845/DSS5105  
+2. Click the green **Code** button  
+3. Copy the HTTPS URL: `https://github.com/youngvan12845/DSS5105.git`  
+4. Paste into terminal: `git clone <paste-url>`  
+5. `cd DSS5105/Final_project/blog`
+
+**Already cloned? Pull latest:**
+
+```bash
+cd DSS5105
+git pull origin main
+cd Final_project/blog
+```
+
+### Step 2 — Prerequisites (install once)
+
+| Tool | Notes |
+|------|-------|
+| [Git](https://git-scm.com/downloads) | Clone & pull |
+| Python **3.10+** | `python3.10 --version` |
+| [PostgreSQL](https://www.postgresql.org/download/) | Create DB `cheeseoo` locally |
+| [Ollama](https://ollama.com/download) | **Required for full AI Q&A** (local LLM) |
+
+### Step 3 — Local setup & run
+
+```bash
+# you should already be in DSS5105/Final_project/blog
+
+cp .env.example .env          # edit .env — set POSTGRES_PASSWORD
+python3.10 -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py seed_demo_content          # optional demo articles
+./scripts/setup_ollama.sh                   # download local models (required for AI)
+python manage.py build_article_index --embed
+./scripts/run_local.sh
+```
+
+Open:
+
+- Home: http://127.0.0.1:8000/home/
+- Reading Assistant: http://127.0.0.1:8000/agent/
+- Reading list: http://127.0.0.1:8000/agent/reading-list/
+
+**Verify AI works:** top-right badge on `/agent/` should say **`Ollama · … (local)`**, not `Ollama offline · rule-based fallback`.
+
+More detail: [DOCUMENTATION_EN.md](./Final_project/blog/DOCUMENTATION_EN.md) · [DOCUMENTATION.md](./Final_project/blog/DOCUMENTATION.md)（中文）
 
 ---
 
@@ -39,31 +113,23 @@ Quick version:
 
 ---
 
-## Quick start
+## Quick start (summary)
+
+Same steps as **Teammate onboarding** above — for copy-paste only:
 
 ```bash
 git clone https://github.com/youngvan12845/DSS5105.git
 cd DSS5105/Final_project/blog
 
-cp .env.example .env          # set POSTGRES_PASSWORD
-python3.10 -m venv .venv
-source .venv/bin/activate       # Windows: .venv\Scripts\activate
+cp .env.example .env
+python3.10 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py seed_demo_content          # optional
-./scripts/setup_ollama.sh                   # required for full AI Q&A
+python manage.py migrate && python manage.py createsuperuser
+python manage.py seed_demo_content
+./scripts/setup_ollama.sh
 python manage.py build_article_index --embed
 ./scripts/run_local.sh
 ```
-
-Open:
-
-- Home: http://127.0.0.1:8000/home/
-- Reading Assistant: http://127.0.0.1:8000/agent/
-- Reading list: http://127.0.0.1:8000/agent/reading-list/
-
-See [DOCUMENTATION_EN.md](./Final_project/blog/DOCUMENTATION_EN.md) for full setup and demo flow.
 
 ---
 

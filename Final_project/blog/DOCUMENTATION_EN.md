@@ -340,8 +340,14 @@ Paid API key required; paid snippets may be sent to OpenAI. Without Ollama, use 
 
 ### 3.3 First-Time Setup
 
+> **Teammate clone guide**: repo root [README.md](../../README.md#teammate-onboarding--clone--run-start-here) or [项目说明.md](../项目说明.md) §0 (中文).
+
 ```bash
-# 1. Enter project directory
+# 0. Clone (if you have not yet)
+git clone https://github.com/youngvan12845/DSS5105.git
+cd DSS5105/Final_project/blog
+
+# 1. Enter project directory (if already cloned)
 cd Final_project/blog
 
 # 2. Virtual environment and dependencies

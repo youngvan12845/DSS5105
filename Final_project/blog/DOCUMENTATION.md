@@ -340,8 +340,14 @@ OPENAI_MODEL=gpt-4o-mini
 
 ### 3.3 首次安装（逐步）
 
+> **组员 Clone 教程**见仓库根目录 [README.md](../../README.md#teammate-onboarding--clone--run-start-here) 或本文 [项目说明.md](../项目说明.md) §0。
+
 ```bash
-# 1. 进入项目目录
+# 0. Clone（若尚未 clone）
+git clone https://github.com/youngvan12845/DSS5105.git
+cd DSS5105/Final_project/blog
+
+# 1. 进入项目目录（若已 clone，只需这一步）
 cd Final_project/blog
 
 # 2. 创建虚拟环境并安装依赖
