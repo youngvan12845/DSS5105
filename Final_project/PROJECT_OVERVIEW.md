@@ -2,9 +2,10 @@
 
 **Group 4 · Track 5 (Custom)**  
 **Project name: Blog Reading Co-Pilot Agent**  
-**Last updated: 2026-08-28**
+**Last updated: 2026-09-08**
 
-> Chinese version: [项目说明.md](./项目说明.md)
+> Chinese version: [项目说明.md](./项目说明.md)  
+> **Full technical docs**: [blog/DOCUMENTATION_EN.md](./blog/DOCUMENTATION_EN.md) · [blog/DOCUMENTATION.md](./blog/DOCUMENTATION.md)
 
 ---
 
@@ -45,14 +46,19 @@ GitHub: https://github.com/youngvan12845/DSS5105
 | Paywall logic | `is_free`, points, subscriptions | **Paywall-aware** Q&A rules |
 | Frontend | Django + HTMX | Chat UI can be integrated into the same site |
 
-**Not built yet (to add this semester):**
+**Agent layer (`a_agent`) — implemented:**
 
-- LLM / RAG / Agent code
-- Vector index (embeddings)
-- Chat UI
-- Reading list model
-- Reading path configuration
-- Evaluation scripts and test set
+| Component | Status | Location |
+|-----------|--------|----------|
+| LLM / RAG / Agent orchestrator | Done | `blog/a_agent/services/orchestrator.py` |
+| Vector index (embeddings) | Done | `ArticleChunk` + `build_article_index --embed` |
+| Chat UI + article panel | Done | `/agent/`, HTMX templates |
+| Reading list model + page | Done | `/agent/reading-list/` |
+| Reading path configuration | Done | `blog/a_agent/data/reading_paths.json` |
+| Eval scripts + 33-task set + baselines A/B/C | Done (framework) | `run_agent_eval`, `blog/a_agent/eval/` |
+| Auto index on Wagtail publish | Done | `blog/a_agent/signals.py` |
+
+**Still pending for final grading:** run baseline comparison experiments, 3-person user study, Evaluation.pdf / final report.
 
 ---
 
@@ -109,12 +115,12 @@ User ←→ Chat UI (HTMX)
   RAG   Keyword  Browsing   Reading     Paywall
   search search   history    list        check
     ↓
- Vector store (Chroma / pgvector) ← synced from Wagtail articles
+ Embeddings in PostgreSQL JSONField ← auto-sync on Wagtail publish
     ↓
  PostgreSQL (existing blog database)
 ```
 
-**Planned new Django app: `a_agent`**
+**Django app: `a_agent`** (live under `blog/a_agent/`)
 
 ---
 
@@ -162,27 +168,27 @@ At least **3 participants** (classmates OK): task completion time, subjective sa
 
 ### Phase 1 — MVP (demo-ready)
 
-- [ ] Create `a_agent` app
-- [ ] Article chunking + vector index pipeline
-- [ ] Basic RAG Q&A with source links
-- [ ] Simple chat UI
-- [ ] Baseline B (keyword search) working
+- [x] Create `a_agent` app
+- [x] Article chunking + vector index pipeline
+- [x] Basic RAG Q&A with source links
+- [x] Simple chat UI
+- [x] Baseline B (keyword search) working
 
 ### Phase 2 — Agent capabilities
 
-- [ ] Tool layer (retrieval / history / paywall / action)
-- [ ] Recommendations from browsing history
-- [ ] Reading list + confirm flow + audit log
-- [ ] Paywall-aware filtering
+- [x] Tool layer (retrieval / history / paywall / action)
+- [x] Recommendations from browsing history
+- [x] Reading list + confirm flow + audit log
+- [x] Paywall-aware filtering
 
 ### Phase 3 — Report and grading
 
-- [ ] Reading paths (manual curation version)
-- [ ] Session-based continue-reading prompts
-- [ ] 30+ task eval set (team contributes questions and gold answers)
-- [ ] 3-baseline comparison experiments
+- [x] Reading paths (manual curation version)
+- [x] Session-based continue-reading prompts
+- [x] 30+ task eval set (33 tasks in `eval_tasks.json`; refine gold labels as a team)
+- [ ] Run 3-baseline comparison experiments (runner ready: `run_agent_eval --variant all`)
 - [ ] 3-person user study
-- [ ] Final report + demo
+- [ ] Final report + demo video
 
 **Team participation:**
 
@@ -201,17 +207,17 @@ A: We have **multiple tool types** (not just vector search), **personalization**
 A: The proposal commits to **six capability areas**, not every detail. Phase 1–2 are must-haves; path planning and proactive features can ship in simplified form. **Eval and baselines cannot be cut.**
 
 **Q: Where is the code? How do I run it?**  
-A: GitHub repo https://github.com/youngvan12845/DSS5105 — code in `Final_project/blog/`; local run: `blog/scripts/run_local.sh`.
+A: GitHub repo https://github.com/youngvan12845/DSS5105 — code in `Final_project/blog/`. See [blog/DOCUMENTATION_EN.md](./blog/DOCUMENTATION_EN.md) §3 or run `./scripts/run_local.sh`.
 
 ---
 
-## 9. Tasks This Week
+## 9. Current team next steps
 
-1. **Code is on GitHub** — everyone clone the repo over the weekend
-2. **Frank will record a walkthrough** — site architecture and what to add/change next (Chinese/English or bilingual subtitles)
-3. **Frank will record a setup tutorial** — how to run locally
-4. **Discuss division of work** — after Friday’s class or after watching the videos
+1. **Clone & run locally** — follow [blog/DOCUMENTATION_EN.md](./blog/DOCUMENTATION_EN.md) §3
+2. **Demo the Agent** — `/agent/`, article panel, reading list, confirm actions, paywall
+3. **Before final submission** — run eval baselines, 3-person user study, write Evaluation.pdf
+4. **Sprint video** — use demo flow in DOCUMENTATION §3.6
 
 ---
 
-*Maintained by Frank. For updates, see also the Chinese doc [项目说明.md](./项目说明.md).*
+*Maintained by Group 4. For updates, see [项目说明.md](./项目说明.md) and [blog/DOCUMENTATION_EN.md](./blog/DOCUMENTATION_EN.md).*
