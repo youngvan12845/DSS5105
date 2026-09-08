@@ -10,9 +10,46 @@ Django/Wagtail blog with an HTMX-based **Reading Assistant** (`/agent/`) for gro
 
 - Python 3.10+
 - PostgreSQL (local)
-- Optional: [Ollama](https://ollama.com/download) for local LLM + embeddings
+- **[Ollama](https://ollama.com/download) (recommended)** — local LLM + embeddings for full AI Q&A
 
-## Quick start
+## Ollama setup — required for full AI Q&A
+
+**Default config uses local models, not a cloud API.** Every teammate who wants natural-language answers (not rule-based fallback) should complete this checklist.
+
+### Checklist
+
+- [ ] Install [Ollama](https://ollama.com/download) and keep the app running in the background
+- [ ] From `blog/`, run `./scripts/setup_ollama.sh` (downloads chat + embedding models)
+- [ ] Run `python manage.py build_article_index --embed` (needs Ollama for vectors)
+- [ ] Start the site with `./scripts/run_local.sh`
+- [ ] Open `/agent/` — badge should show **`Ollama · … (local)`**, not `Ollama offline · rule-based fallback`
+
+### Models pulled by default
+
+| Model | Purpose | Size (approx.) |
+|-------|---------|----------------|
+| `qwen2.5vl:7b` | Chat / optional image Q&A | ~several GB |
+| `nomic-embed-text` | Vector semantic search | smaller |
+
+**Lighter chat model (optional):** set `OLLAMA_MODEL=qwen2.5:7b` in `.env`, then `ollama pull qwen2.5:7b`.
+
+### Without Ollama
+
+The site still runs, but the Assistant falls back to **retrieval snippets only** — no fluent LLM summaries. Not suitable for demo.
+
+### Alternative: OpenAI (no local model download)
+
+Set in `.env`:
+
+```env
+AGENT_LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4o-mini
+```
+
+Requires a paid API key; paid article snippets may be sent to OpenAI. Vector search still works best if you also run Ollama for embeddings, or use `build_article_index` without `--embed` (keyword/chunk only).
+
+---
 
 ```bash
 cd blog
@@ -28,9 +65,10 @@ python manage.py createsuperuser
 
 # Optional demo articles (first-time setup)
 python manage.py seed_demo_content
+
+./scripts/setup_ollama.sh   # pull local models — do this before --embed
 python manage.py build_article_index --embed
 
-./scripts/setup_ollama.sh   # optional, for local LLM
 ./scripts/run_local.sh
 ```
 
@@ -115,7 +153,7 @@ blog/
 
 ## Group workflow tip
 
-1. Clone repo → follow Quick start above
-2. Each member verifies `/agent/` works locally
+1. Clone repo → follow Quick start + **Ollama checklist** above
+2. Each member verifies `/agent/` shows **Ollama (local)**, not fallback
 3. Expand `eval_tasks.json` together
 4. Record demo video from local run if public hosting is unavailable

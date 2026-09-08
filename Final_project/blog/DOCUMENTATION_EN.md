@@ -300,12 +300,45 @@ Paywall logic is centralized in `access.py` → `can_user_read_full()`.
 | Python | 3.10+ |
 | PostgreSQL | Local install; create database first |
 | Git | Clone the repo |
-| Ollama (recommended) | Local LLM + embeddings — [download](https://ollama.com/download) |
-| OpenAI (optional) | Set `AGENT_LLM_PROVIDER=openai` and API key |
+| Ollama (**recommended for all teammates**) | Local LLM + embeddings; full AI Q&A depends on this — [download](https://ollama.com/download) |
+| OpenAI (optional) | Set `AGENT_LLM_PROVIDER=openai` and API key; no local model download |
 
 ---
 
-### 3.2 First-Time Setup
+### 3.2 Teammate checklist: Ollama setup (full AI Q&A)
+
+**Default config uses local Ollama, not a cloud API.** For natural-language answers (not rule-based fallback), complete every step:
+
+- [ ] Install [Ollama](https://ollama.com/download) and keep it running
+- [ ] From `blog/`: `./scripts/setup_ollama.sh` (downloads chat + embedding models)
+- [ ] Run: `python manage.py build_article_index --embed` (vectors need Ollama)
+- [ ] Start: `./scripts/run_local.sh`
+- [ ] Open `/agent/` — badge must show **`Ollama · … (local)`**, not `Ollama offline · rule-based fallback`
+
+**Default models:**
+
+| Model | Purpose | Size (approx.) |
+|-------|---------|----------------|
+| `qwen2.5vl:7b` | Chat / optional image Q&A | Several GB |
+| `nomic-embed-text` | Vector semantic search | Smaller |
+
+**Lighter chat model (optional):** set `OLLAMA_MODEL=qwen2.5:7b` in `.env`, then `ollama pull qwen2.5:7b`.
+
+**Without Ollama:** the site runs, but the Assistant only stitches retrieval snippets — **not suitable for demo**.
+
+**Alternative: OpenAI (no local download)**
+
+```env
+AGENT_LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4o-mini
+```
+
+Paid API key required; paid snippets may be sent to OpenAI. Without Ollama, use `build_article_index` without `--embed` (weaker semantic search).
+
+---
+
+### 3.3 First-Time Setup
 
 ```bash
 # 1. Enter project directory
@@ -332,16 +365,16 @@ python manage.py createsuperuser
 # 7. (Optional) Demo articles
 python manage.py seed_demo_content
 
-# 8. Build retrieval index (embeddings recommended)
-python manage.py build_article_index --embed
-
-# 9. (Optional) Pull Ollama models
+# 8. Pull Ollama models (required for full AI Q&A — see §3.2)
 ./scripts/setup_ollama.sh
+
+# 9. Build retrieval index (run after Ollama is up)
+python manage.py build_article_index --embed
 ```
 
 ---
 
-### 3.3 Daily Development
+### 3.4 Daily Development
 
 ```bash
 cd Final_project/blog
@@ -359,7 +392,7 @@ Open in browser:
 
 ---
 
-### 3.4 Management Commands
+### 3.5 Management Commands
 
 | Command | Description |
 |---------|-------------|
@@ -374,7 +407,7 @@ Open in browser:
 
 ---
 
-### 3.5 Environment Variables
+### 3.6 Environment Variables
 
 See `.env.example`:
 
@@ -391,7 +424,7 @@ See `.env.example`:
 
 ---
 
-### 3.6 Suggested Demo Flow
+### 3.7 Suggested Demo Flow
 
 After login, use this order for a Sprint video (~5 min):
 
@@ -404,7 +437,7 @@ After login, use this order for a Sprint video (~5 min):
 
 ---
 
-### 3.7 FAQ
+### 3.8 FAQ
 
 **Q: Assistant shows “Ollama offline · rule-based fallback”**  
 A: Start the Ollama app or run `./scripts/setup_ollama.sh`; or switch to OpenAI.

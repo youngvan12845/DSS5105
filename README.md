@@ -26,6 +26,19 @@ NUS DSS5105 capstone project: **Blog Reading Co-Pilot Agent** (Track 5 · Cheese
 
 ---
 
+## Ollama setup (teammates — full AI Q&A)
+
+Default is **local Ollama**, not a cloud API. See [blog/README.md](./Final_project/blog/README.md#ollama-setup--required-for-full-ai-qa) for the checklist, or [DOCUMENTATION.md](./Final_project/blog/DOCUMENTATION.md) §3.2 (中文).
+
+Quick version:
+
+1. Install [Ollama](https://ollama.com/download) and keep it running  
+2. `cd Final_project/blog && ./scripts/setup_ollama.sh`  
+3. `python manage.py build_article_index --embed`  
+4. Verify `/agent/` shows **Ollama (local)**, not fallback  
+
+---
+
 ## Quick start
 
 ```bash
@@ -39,8 +52,8 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py seed_demo_content          # optional
+./scripts/setup_ollama.sh                   # required for full AI Q&A
 python manage.py build_article_index --embed
-./scripts/setup_ollama.sh                   # optional
 ./scripts/run_local.sh
 ```
 

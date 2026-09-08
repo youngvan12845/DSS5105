@@ -300,12 +300,45 @@ Paywall 逻辑集中在 `access.py` 的 `can_user_read_full()`，避免在多处
 | Python | 3.10+ |
 | PostgreSQL | 本地安装，需先创建数据库 |
 | Git | 克隆代码 |
-| Ollama（推荐） | 本地 LLM + Embedding；[下载地址](https://ollama.com/download) |
-| OpenAI（可选） | 设置 `AGENT_LLM_PROVIDER=openai` 与 API Key |
+| Ollama（**组员推荐必装**） | 本地 LLM + Embedding；完整 AI 问答依赖此项；[下载](https://ollama.com/download) |
+| OpenAI（可选） | 设置 `AGENT_LLM_PROVIDER=openai` 与 API Key，无需下载本地模型 |
 
 ---
 
-### 3.2 首次安装（逐步）
+### 3.2 组员必做：Ollama 安装清单（完整 AI 问答）
+
+**默认使用本地 Ollama，不是线上 API。** 组员要用自然语言 AI 回答（而非规则检索 fallback），请逐项完成：
+
+- [ ] 安装 [Ollama](https://ollama.com/download)，并保持后台运行
+- [ ] 在 `blog/` 目录执行：`./scripts/setup_ollama.sh`（下载对话 + embedding 模型）
+- [ ] 执行：`python manage.py build_article_index --embed`（向量检索依赖 Ollama）
+- [ ] 启动：`./scripts/run_local.sh`
+- [ ] 打开 `/agent/`，右上角应显示 **`Ollama · … (local)`**，而不是 `Ollama offline · rule-based fallback`
+
+**默认会下载的模型：**
+
+| 模型 | 用途 | 体积（约） |
+|------|------|-----------|
+| `qwen2.5vl:7b` | 对话 / 可选图片问答 | 数 GB |
+| `nomic-embed-text` | 向量语义检索 | 较小 |
+
+**更轻量的对话模型（可选）：** 在 `.env` 设置 `OLLAMA_MODEL=qwen2.5:7b`，再执行 `ollama pull qwen2.5:7b`。
+
+**不装 Ollama 会怎样？** 网站能跑，但 Assistant 只有检索片段拼接，**没有流畅 LLM 总结**，不适合 demo。
+
+**替代方案：OpenAI（不用下本地模型）**
+
+```env
+AGENT_LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4o-mini
+```
+
+需要付费 API Key；付费文章片段可能发送到 OpenAI。若不装 Ollama，向量检索可改用 `build_article_index`（不加 `--embed`），语义搜索会变弱。
+
+---
+
+### 3.3 首次安装（逐步）
 
 ```bash
 # 1. 进入项目目录
@@ -332,16 +365,16 @@ python manage.py createsuperuser
 # 7. （可选）导入 Demo 文章
 python manage.py seed_demo_content
 
-# 8. 构建检索索引（建议带 embedding）
-python manage.py build_article_index --embed
-
-# 9. （可选）安装 Ollama 模型
+# 8. 安装 Ollama 模型（完整 AI 问答必做，见 §3.2）
 ./scripts/setup_ollama.sh
+
+# 9. 构建检索索引（需在 Ollama 运行后执行）
+python manage.py build_article_index --embed
 ```
 
 ---
 
-### 3.3 日常启动
+### 3.4 日常启动
 
 ```bash
 cd Final_project/blog
@@ -359,7 +392,7 @@ source .venv/bin/activate
 
 ---
 
-### 3.4 常用管理命令
+### 3.5 常用管理命令
 
 | 命令 | 说明 |
 |------|------|
@@ -374,7 +407,7 @@ source .venv/bin/activate
 
 ---
 
-### 3.5 环境变量说明
+### 3.6 环境变量说明
 
 详见 `.env.example`：
 
@@ -391,7 +424,7 @@ source .venv/bin/activate
 
 ---
 
-### 3.6 演示建议流程
+### 3.7 演示建议流程
 
 登录后按以下顺序演示 Agent 能力（适合 Sprint 视频）：
 
@@ -404,7 +437,7 @@ source .venv/bin/activate
 
 ---
 
-### 3.7 常见问题
+### 3.8 常见问题
 
 **Q：Assistant 显示「Ollama offline · rule-based fallback」**  
 A：启动 Ollama 应用，或运行 `./scripts/setup_ollama.sh` 拉取模型；也可改用 OpenAI。
