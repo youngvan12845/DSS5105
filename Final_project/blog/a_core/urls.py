@@ -33,6 +33,7 @@ urlpatterns = [
     
     path('@<username>/', profile_view, name="profile"),
     path('blog/', include('a_blog.urls')),
+    path('agent/', include('a_agent.urls')),
     path('order/', include('a_order.urls', namespace='a_order')),  # 包含 a_order 的路由
     path('points/', include('a_points.urls')),  # 添加 a_points 的路由
 ]

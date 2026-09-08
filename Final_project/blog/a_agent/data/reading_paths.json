@@ -1,0 +1,29 @@
+{
+  "machine learning": {
+    "title": "Machine Learning Starter Path",
+    "steps": [
+      {"slug": "ml-supervised-unsupervised", "note": "Understand supervised vs unsupervised learning"},
+      {"slug": "gradient-descent-intuition", "note": "Build intuition for optimization"},
+      {"slug": "linear-regression-practice", "note": "Apply your first ML model"},
+      {"slug": "what-is-rag", "note": "Connect ML ideas to retrieval systems"}
+    ]
+  },
+  "python web": {
+    "title": "Python Web Development Path",
+    "steps": [
+      {"slug": "python-basics-variables", "note": "Python syntax foundations"},
+      {"slug": "python-functions-modules", "note": "Organize code into modules"},
+      {"slug": "django-project-structure", "note": "Learn Django project layout"},
+      {"slug": "wagtail-quickstart", "note": "Publish content with Wagtail"},
+      {"slug": "web-http-rest", "note": "HTTP and REST fundamentals"}
+    ]
+  },
+  "python": {
+    "title": "Python Foundations Path",
+    "steps": [
+      {"slug": "python-basics-variables"},
+      {"slug": "python-functions-modules"},
+      {"slug": "django-project-structure"}
+    ]
+  }
+}

@@ -2,7 +2,7 @@
 {% load allauth i18n %}
 
 {% block head_title %}
-    {% trans "注册" %}
+    {% trans "Sign Up" %}
 {% endblock head_title %}
 
 {% block content %}
@@ -49,10 +49,10 @@ hr {
 </style>
 
 <div class="container">
-    <h1>注册</h1>
+    <h1>Sign Up</h1>
     <p style="text-align: center;">
-        已经有账户了？请 
-        <a href="{% url 'account_login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" style="color: #ec4899; text-decoration: none;">登录</a>。
+        Already have an account? 
+        <a href="{% url 'account_login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" style="color: #ec4899; text-decoration: none;">Log in</a>.
     </p>
 
     {% if not SOCIALACCOUNT_ONLY %}
@@ -68,7 +68,7 @@ hr {
             {% endslot %}
             {% slot actions %}
                 {% element button type="submit" tags="prominent,signup" %}
-                    {% trans "注册" %}
+                    {% trans "Sign Up" %}
                 {% endelement %}
             {% endslot %}
         {% endelement %}
@@ -77,7 +77,7 @@ hr {
     {% if PASSKEY_SIGNUP_ENABLED %}
         <hr>
         {% element button href=signup_by_passkey_url tags="prominent,signup,outline,primary" %}
-            {% trans "使用通行密钥注册" %}
+            {% trans "Sign up with passkey" %}
         {% endelement %}
     {% endif %}
 

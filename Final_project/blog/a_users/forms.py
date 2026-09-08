@@ -31,7 +31,7 @@ class PasswordResetEmailForm(forms.Form):
     email = forms.EmailField(
         required=True,
         widget=forms.EmailInput(attrs={
-            'placeholder': '请输入您的邮箱地址',
+            'placeholder': 'Enter your email address',
             'class': 'form-control'
         })
     )
@@ -43,10 +43,10 @@ class VerifyCodeForm(forms.Form):
         min_length=6,
         required=True,
         widget=forms.TextInput(attrs={
-            'placeholder': '请输入6位验证码',
+            'placeholder': 'Enter 6-digit verification code',
             'class': 'form-control',
             'pattern': '\\d{6}',
-            'title': '请输入6位数字验证码'
+            'title': 'Enter a 6-digit verification code'
         })
     )
 
@@ -68,7 +68,7 @@ class ResetPasswordForm(forms.Form):
 
         if new_password and confirm_password:
             if new_password != confirm_password:
-                raise forms.ValidationError("两次输入的密码不一致")
+                raise forms.ValidationError("Passwords do not match")
         
         return cleaned_data
   
@@ -79,13 +79,13 @@ class LoginEmailVerificationForm(forms.Form):
         min_length=6,
         widget=forms.TextInput(attrs={
             'class': 'form-control form-control-lg',
-            'placeholder': '请输入6位验证码',
+            'placeholder': 'Enter 6-digit verification code',
             'style': 'text-align: center; font-size: 20px; letter-spacing: 8px; font-weight: bold;',
             'autocomplete': 'off',
             'maxlength': '6'
         }),
-        label='验证码',
-        help_text='请输入发送到您邮箱的6位数字验证码'
+        label='Verification code',
+        help_text='Enter the 6-digit verification code sent to your email'
     )
     
     def __init__(self, user=None, *args, **kwargs):
@@ -96,7 +96,7 @@ class LoginEmailVerificationForm(forms.Form):
         code = self.cleaned_data['verification_code']
         
         if not self.user:
-            raise forms.ValidationError("用户信息缺失")
+            raise forms.ValidationError("User information missing")
         
         try:
             verification = EmailVerificationCode.objects.filter(
@@ -106,9 +106,9 @@ class LoginEmailVerificationForm(forms.Form):
             ).latest('created_at')
             
             if verification.is_expired():
-                raise forms.ValidationError("验证码已过期，请重新获取")
+                raise forms.ValidationError("Verification code has expired. Please request a new one")
                 
         except EmailVerificationCode.DoesNotExist:
-            raise forms.ValidationError("验证码错误")
+            raise forms.ValidationError("Invalid verification code")
         
         return code

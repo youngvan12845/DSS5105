@@ -11,14 +11,14 @@ def daily_check_in(request):
     today = now().date()
 
     if PointsRecord.objects.filter(
-        user=user, type='earn', description='每日签到', created_at__date=today
+        user=user, type='earn', description='Daily check-in', created_at__date=today
     ).exists():
-        return JsonResponse({'error': '您今天已经签到过了！'}, status=400)
+        return JsonResponse({'error': 'You have already checked in today!'}, status=400)
 
     profile = user.profile
-    profile.add_points(10, '每日签到')
+    profile.add_points(10, 'Daily check-in')
 
-    return JsonResponse({'success': True, 'msg': '签到成功，已获得 10 积分'})
+    return JsonResponse({'success': True, 'msg': 'Check-in successful! You earned 10 points'})
 
 
 @login_required

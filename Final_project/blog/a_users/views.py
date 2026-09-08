@@ -112,7 +112,7 @@ def profile_usernamechange(request):
 def profile_emailverify(request):
     # 发送验证码邮件代替原来的验证链接邮件
     send_verification_code_email(request.user)
-    messages.success(request, "验证码已发送到您的邮箱，请查收。")
+    messages.success(request, "Verification code sent to your email. Please check your inbox.")
     return redirect('profile-settings')
 
 # 添加验证码验证视图
@@ -132,9 +132,9 @@ def verify_email_code(request):
             # 清除缓存中的验证码
             cache.delete(cache_key)
             
-            messages.success(request, "邮箱验证成功！")
+            messages.success(request, "Email verified successfully!")
         else:
-            messages.error(request, "验证码不正确或已过期，请重新获取。")
+            messages.error(request, "Verification code is incorrect or has expired. Please request a new one.")
         
         return redirect('profile-settings')
     
@@ -147,7 +147,7 @@ def profile_delete_view(request):
     if request.method == "POST":
         logout(request)
         user.delete()
-        messages.success(request, '账号已删除')
+        messages.success(request, 'Account deleted')
         return redirect('/')
     
     return render(request, 'a_users/profile_delete.html')
@@ -178,7 +178,7 @@ def password_reset_verify(request):
     # 从会话中获取邮箱
     email = request.session.get('password_reset_email')
     if not email:
-        messages.error(request, "会话已过期，请重新开始密码重置流程")
+        messages.error(request, "Session expired. Please restart the password reset process.")
         return redirect('password-reset-request')
     
     if request.method == 'POST':
@@ -191,7 +191,7 @@ def password_reset_verify(request):
                 request.session['password_reset_code'] = code
                 return redirect('password-reset-confirm')
             else:
-                messages.error(request, "验证码不正确或已过期")
+                messages.error(request, "Verification code is incorrect or has expired")
     else:
         form = VerifyCodeForm(initial={'email': email})
     
@@ -208,12 +208,12 @@ def password_reset_confirm(request):
     code = request.session.get('password_reset_code')
     
     if not email or not code:
-        messages.error(request, "会话已过期，请重新开始密码重置流程")
+        messages.error(request, "Session expired. Please restart the password reset process.")
         return redirect('password-reset-request')
     
     # 验证验证码是否仍然有效
     if not verify_password_reset_code(email, code):
-        messages.error(request, "验证码已过期，请重新申请密码重置")
+        messages.error(request, "Verification code has expired. Please request a new password reset.")
         return redirect('password-reset-request')
     
     if request.method == 'POST':
@@ -231,10 +231,10 @@ def password_reset_confirm(request):
                 del request.session['password_reset_email']
                 del request.session['password_reset_code']
                 
-                messages.success(request, "密码重置成功，请使用新密码登录")
+                messages.success(request, "Password reset successful. Please log in with your new password.")
                 return redirect('account_login')
             except User.DoesNotExist:
-                messages.error(request, "用户不存在")
+                messages.error(request, "User not found")
     else:
         form = ResetPasswordForm()
     
@@ -251,10 +251,10 @@ def resend_reset_code(request):
     if email:
         success, message = send_password_reset_code(email)
         if success:
-            return JsonResponse({'success': True, 'message': '验证码已重新发送'})
+            return JsonResponse({'success': True, 'message': 'Verification code resent'})
         else:
             return JsonResponse({'success': False, 'message': message})
-    return JsonResponse({'success': False, 'message': '会话已过期'})
+    return JsonResponse({'success': False, 'message': 'Session expired'})
 
 def login_email_verification(request):
     """登录后邮箱验证页面"""
@@ -298,11 +298,11 @@ def login_email_verification(request):
                 email_address.verified = True
                 email_address.save()
                 
-                messages.success(request, "邮箱验证成功！欢迎使用芝士圈！")
+                messages.success(request, "Email verified successfully! Welcome to CheeseO!")
                 return redirect('/')
                 
             except EmailVerificationCode.DoesNotExist:
-                messages.error(request, "验证过程中出现错误，请重试")
+                messages.error(request, "An error occurred during verification. Please try again.")
         # 如果表单验证失败，错误信息已经在表单中设置了
     else:
         form = LoginEmailVerificationForm(user=request.user)
@@ -325,7 +325,7 @@ def login_email_verification(request):
 def resend_login_verification_code(request):
     """重新发送登录验证码"""
     if not request.user.is_authenticated:
-        return JsonResponse({'success': False, 'message': '用户未登录'})
+        return JsonResponse({'success': False, 'message': 'User not logged in'})
     
     success, message = send_login_verification_code(request.user)
     return JsonResponse({'success': success, 'message': message})
@@ -354,8 +354,8 @@ def clear_browsing_history(request):
     BrowsingHistory.objects.filter(user=request.user).delete()
 
     if request.headers.get('Content-Type') == 'application/json':
-        return JsonResponse({'success': True, 'message': '浏览历史已清空'})
-    messages.success(request, '浏览历史已清空')
+        return JsonResponse({'success': True, 'message': 'Browsing history cleared'})
+    messages.success(request, 'Browsing history cleared')
     return redirect('browsing-history')
 
 
@@ -368,11 +368,11 @@ def delete_history_item(request, history_id):
         history_item.delete()
 
         if request.headers.get('Content-Type') == 'application/json':
-            return JsonResponse({'success': True, 'message': '记录已删除'})
-        messages.success(request, '记录已删除')
+            return JsonResponse({'success': True, 'message': 'Record deleted'})
+        messages.success(request, 'Record deleted')
     except BrowsingHistory.DoesNotExist:
         if request.headers.get('Content-Type') == 'application/json':
-            return JsonResponse({'success': False, 'message': '记录不存在'})
-        messages.error(request, '记录不存在')
+            return JsonResponse({'success': False, 'message': 'Record not found'})
+        messages.error(request, 'Record not found')
 
     return redirect('browsing-history')

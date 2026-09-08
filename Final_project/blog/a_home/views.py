@@ -1,22 +1,24 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import redirect, render
+
+from a_blog.models import ArticlePage
+
 
 def home_view(request):
-    # return render(request, 'home.html')
-    return redirect('home/')
+    return redirect('a_home:homes')
 
 
 def help_view(request):
-    # 帮助页面视图
     return render(request, 'help.html')
 
+
 def about_view(request):
-    # 关于我们页面视图
-    return render(request, 'about.html')
+    return redirect('a_order:create_subscription_order')
+
 
 def find_view(request):
-    # 主推产品页面视图
-    return render(request, 'find.html')
+    return redirect('/blog/')
+
 
 def homes_view(request):
-    # 主页视图
-    return render(request, 'homes.html')
+    articles = ArticlePage.objects.live().order_by('-first_published_at')[:6]
+    return render(request, 'homes.html', {'articles': articles})

@@ -42,5 +42,6 @@ typing_extensions==4.13.2
 tzdata==2025.2
 urllib3==2.4.0
 Willow==1.10.0
+openai>=1.40.0
 
 uwsgi==2.0.20

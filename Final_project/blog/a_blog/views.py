@@ -70,7 +70,7 @@ def add_comment(request, article_id):
     parent_id = request.POST.get('parent_id')
     
     if not content:
-        messages.error(request, '评论内容不能为空')
+        messages.error(request, 'Comment cannot be empty')
         return redirect(article.get_url())
     
     # 创建评论
@@ -81,7 +81,7 @@ def add_comment(request, article_id):
         parent_id=parent_id if parent_id else None
     )
     
-    messages.success(request, '评论发表成功！')
+    messages.success(request, 'Comment posted successfully!')
     return redirect(article.get_url() + '#comments')
 
 
@@ -94,9 +94,9 @@ def delete_comment(request, comment_id):
     # 只允许评论作者或文章作者删除评论
     if request.user == comment.author or request.user == comment.article.owner:
         comment.delete()
-        messages.success(request, '评论已删除')
+        messages.success(request, 'Comment deleted')
     else:
-        messages.error(request, '您没有权限删除此评论')
+        messages.error(request, 'You do not have permission to delete this comment')
     
     return redirect(comment.article.get_url() + '#comments')
 

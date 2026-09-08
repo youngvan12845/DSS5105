@@ -6,28 +6,27 @@ from django.contrib.auth.models import User
 from django.core.cache import cache
 
 def generate_verification_code():
-    """生成6位数字验证码"""
+    """Generate a 6-digit verification code."""
     return ''.join(random.choices(string.digits, k=6))
 
 def send_verification_code_email(user):
-    """发送包含验证码的邮件用于邮箱验证"""
+    """Send a verification code email for email verification."""
     code = generate_verification_code()
     
-    # 将验证码存储在cache中，设置过期时间为10分钟
     cache_key = f"email_verification_code_{user.id}"
-    cache.set(cache_key, code, 60 * 10)  # 10分钟过期
+    cache.set(cache_key, code, 60 * 10)
     
-    subject = "芝士圈网站邮箱验证码"
+    subject = "CheeseO — Email Verification Code"
     message = f"""
-    尊敬的用户 {user.username}，您好！
-    
-    您正在进行邮箱验证操作，您的验证码是：{code}
-    
-    该验证码10分钟内有效，请及时验证。
-    
-    如非本人操作，请忽略此邮件。
-    
-    """
+Hello {user.username},
+
+You are verifying your email address. Your verification code is: {code}
+
+This code expires in 10 minutes. Please verify promptly.
+
+If you did not request this, please ignore this email.
+
+"""
     send_mail(
         subject=subject,
         message=message,
@@ -38,29 +37,28 @@ def send_verification_code_email(user):
     return code
 
 def send_password_reset_code(email):
-    """发送密码重置验证码"""
+    """Send a password reset verification code."""
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
-        return False, "该邮箱未注册"
+        return False, "This email is not registered"
         
     code = generate_verification_code()
         
-    # 将验证码存储在cache中，设置过期时间为10分钟
     cache_key = f"password_reset_code_{email}"
-    cache.set(cache_key, code, 60 * 10)  # 10分钟过期
+    cache.set(cache_key, code, 60 * 10)
         
-    subject = "芝士圈网站密码重置验证码"
+    subject = "CheeseO — Password Reset Code"
     message = f"""
-    尊敬的用户 {user.username}，您好！
-    
-    您正在进行密码重置操作，您的验证码是：{code}
-    
-    该验证码10分钟内有效，请及时验证。
-    
-    如非本人操作，请忽略此邮件。
-    
-    """
+Hello {user.username},
+
+You requested a password reset. Your verification code is: {code}
+
+This code expires in 10 minutes. Please verify promptly.
+
+If you did not request this, please ignore this email.
+
+"""
     send_mail(
         subject=subject,
         message=message,
@@ -68,10 +66,10 @@ def send_password_reset_code(email):
         recipient_list=[email],
         fail_silently=False,
     )
-    return True, "验证码已发送"
+    return True, "Verification code sent"
 
 def verify_password_reset_code(email, code):
-    """验证密码重置验证码"""
+    """Verify a password reset code."""
     cache_key = f"password_reset_code_{email}"
     stored_code = cache.get(cache_key)
         
@@ -80,38 +78,36 @@ def verify_password_reset_code(email, code):
     return False
 
 def clear_password_reset_code(email):
-    """清除密码重置验证码"""
+    """Clear a stored password reset code."""
     cache_key = f"password_reset_code_{email}"
     cache.delete(cache_key)
 
 def send_login_verification_code(user):
-    """为新登录用户发送邮箱验证码"""
+    """Send an email verification code after login."""
     from .models import EmailVerificationCode
         
-    # 生成验证码
     code = generate_verification_code()
         
-    # 保存到数据库
     EmailVerificationCode.objects.create(
         user=user,
         email=user.email,
         code=code
     )
         
-    subject = "芝士圈网站 - 邮箱验证"
+    subject = "CheeseO — Email Verification"
     message = f"""
-尊敬的用户 {user.username}，您好！
+Hello {user.username},
 
-欢迎使用芝士圈网站！为了确保您的账户安全，请验证您的邮箱地址。
+Welcome to CheeseO! To keep your account secure, please verify your email address.
 
-您的验证码是：{code}
+Your verification code is: {code}
 
-该验证码10分钟内有效，请及时验证。
+This code expires in 10 minutes. Please verify promptly.
 
-如非本人操作，请忽略此邮件。
+If you did not request this, please ignore this email.
 
-祝您使用愉快！
-芝士圈团队
+Best regards,
+The CheeseO Team
     """
         
     try:
@@ -122,6 +118,6 @@ def send_login_verification_code(user):
             recipient_list=[user.email],
             fail_silently=False,
         )
-        return True, "验证码已发送到您的邮箱"
+        return True, "Verification code sent to your email"
     except Exception as e:
-        return False, f"邮件发送失败：{str(e)}"
+        return False, f"Failed to send email: {str(e)}"

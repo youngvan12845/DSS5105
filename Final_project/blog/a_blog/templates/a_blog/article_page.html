@@ -172,13 +172,103 @@
         text-align: center;
         color: #92400e;
     }
+    #article-layout {
+        width: 100%;
+    }
+    #article-page-main {
+        max-width: 48rem;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 6rem 1.5rem;
+    }
+    #article-agent-dock {
+        display: none;
+    }
+    @media (min-width: 1024px) {
+        #article-layout.has-agent-panel {
+            display: grid;
+            grid-template-columns: 1fr minmax(0, 48rem) 22rem;
+            gap: 1.25rem;
+            align-items: start;
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 0 0.75rem 0 1.5rem;
+        }
+        #article-layout.has-agent-panel #article-page-main {
+            grid-column: 2;
+            max-width: none;
+            margin: 0;
+            padding: 6rem 0;
+        }
+        #article-layout.has-agent-panel #article-agent-dock {
+            grid-column: 3;
+        }
+        #article-agent-dock {
+            display: block;
+            position: sticky;
+            top: 5.5rem;
+            height: calc(100vh - 6.5rem);
+            width: 22rem;
+            align-self: start;
+        }
+        #article-agent-dock > *,
+        #article-agent-slot {
+            height: 100%;
+        }
+        #article-layout.has-agent-collapsed {
+            display: block;
+            max-width: none;
+            padding: 0;
+        }
+        #article-layout.has-agent-collapsed #article-page-main {
+            max-width: 48rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 6rem 1.5rem;
+        }
+        #article-layout.has-agent-collapsed #article-agent-dock {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: auto;
+            height: auto;
+            z-index: 40;
+        }
+    }
+    #article-agent-mobile-slot .article-agent-chat,
+    #article-agent-mobile-slot .article-agent-panel {
+        height: 100%;
+    }
 </style>
 {% endblock %}
 
 {% block class %}article bg-slate-50 text-slate-700{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto px-6 py-24">
+{% if user.is_authenticated %}
+<button
+    type="button"
+    id="article-agent-mobile-btn"
+    class="lg:hidden fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-5 py-3 text-sm font-semibold text-white shadow-lg"
+>
+    Ask AI
+</button>
+<div id="article-agent-mobile-drawer" class="lg:hidden fixed inset-0 z-50 hidden">
+    <div id="article-agent-mobile-backdrop" class="absolute inset-0 bg-slate-900/40"></div>
+    <div class="absolute inset-x-0 bottom-0 top-16 bg-white rounded-t-2xl shadow-2xl overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 shrink-0">
+            <span class="text-sm font-semibold text-slate-800">Article Q&amp;A</span>
+            <button type="button" id="article-agent-mobile-close" class="text-slate-500 text-xl leading-none px-2">&times;</button>
+        </div>
+        <div class="flex-1 min-h-0 overflow-hidden" id="article-agent-mobile-slot"></div>
+    </div>
+</div>
+{% endif %}
+
+<div id="article-layout" class="article-layout{% if user.is_authenticated %} has-agent-panel{% endif %}">
+<div id="article-page-main" class="article-page-main">
     <!-- 标题和作者信息 -->
     <h1 class="article-title text-4xl md:text-5xl font-bold mb-6 text-slate-800">{{ page.title }}</h1>
     <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-200">
@@ -228,8 +318,8 @@
                 {% if insufficient_points %}
                 <div class="max-w-3xl mx-auto p-8 bg-white rounded-xl shadow-lg mt-12 border border-gray-100">
                     <div class="mb-10 text-center">
-                        <h2 class="text-3xl font-bold text-red-500 mb-3 merriweather">积分不足,无法访问全文</h2>
-                        <p class="text-gray-600 text-lg jakarta">您需要更多积分才能继续阅读此文章。</p>
+                        <h2 class="text-3xl font-bold text-red-500 mb-3 merriweather">Insufficient Points</h2>
+                        <p class="text-gray-600 text-lg jakarta">You need more points to continue reading this article.</p>
                     </div>
 
                     <!-- 双栏布局 -->
@@ -242,14 +332,14 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
                                 </div>
-                                <h3 class="text-xl font-semibold text-gray-900 mb-2 merriweather">会员无限畅读</h3>
-                                <p class="text-gray-600 text-sm jakarta">解锁所有付费内容</p>
-                                <p class="text-gray-600 text-sm jakarta">享受纯净体验</p>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2 merriweather">Unlimited Member Access</h3>
+                                <p class="text-gray-600 text-sm jakarta">Unlock all premium content</p>
+                                <p class="text-gray-600 text-sm jakarta">Enjoy an ad-free experience</p>
                             </div>
                             <a href="/order/create_subscription_order/" 
                             class="block w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg
                                     text-base font-medium transition-colors duration-300 shadow-sm text-center">
-                                加入会员计划
+                                Join Membership
                             </a>
                         </div>
 
@@ -261,18 +351,18 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-xl font-semibold text-gray-900 mb-2 merriweather">单篇解锁</h3>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2 merriweather">Unlock This Article</h3>
                                 <p class="text-gray-600 text-sm jakarta">
-                                    本篇文章需要积分:<strong>{{ points_required }} </strong>
+                                    Points required for this article: <strong>{{ points_required }} </strong>
                                 </p>
                                 <p class="text-gray-600 text-sm jakarta">
-                                     当前积分:<strong>{{ user.profile.points }}</strong>
+                                     Your points: <strong>{{ user.profile.points }}</strong>
                                 </p>
                             </div>
                             <a href="/order/create_recharge_order/" 
                             class="block w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg
                                     text-base font-medium transition-colors duration-300 shadow-sm text-center">
-                                获取更多积分
+                                Get More Points
                             </a>
                         </div>
                     </div>
@@ -280,9 +370,9 @@
                 {% else %}
                 <div class="max-w-3xl mx-auto p-8 bg-white rounded-xl shadow-lg mt-12 border border-gray-100">
                     <div class="mb-10 text-center">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-3 merriweather">继续阅读完整内容</h2>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-3 merriweather">Continue Reading</h2>
                         <p class="text-gray-600 text-lg jakarta">
-                            由 {{ page.owner.profile.name }} 创作的优质内容
+                            Premium content by {{ page.owner.profile.name }}
                         </p>
                     </div>
 
@@ -296,13 +386,13 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
                                 </div>
-                                <h3 class="text-xl font-semibold text-gray-900 mb-2 merriweather">会员无限畅读</h3>
-                                <p class="text-gray-600 text-sm jakarta">解锁所有付费内容,享受体验</p>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2 merriweather">Unlimited Member Access</h3>
+                                <p class="text-gray-600 text-sm jakarta">Unlock all premium content and enjoy full access</p>
                             </div>
                             <a href="/order/create_subscription_order/" 
                                class="block w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg
                                       text-base font-medium transition-colors duration-300 shadow-sm">
-                                加入会员计划
+                                Join Membership
                             </a>
                         </div>
 
@@ -314,8 +404,8 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
-                                <h3 class="text-xl font-semibold text-gray-900 mb-2 merriweather">单篇解锁</h3>
-                                <p class="text-gray-600 text-sm jakarta">使用积分立即阅读此文章</p>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2 merriweather">Unlock This Article</h3>
+                                <p class="text-gray-600 text-sm jakarta">Use points to read this article now</p>
                             </div>
                             <form id="continue-read-form" method="post" action="{{ request.path }}">
                                 {% csrf_token %}
@@ -323,7 +413,7 @@
                                         class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg
                                                text-base font-medium transition-colors duration-300 shadow-sm
                                                flex items-center justify-center gap-2 confirm-payment">
-                                    <span>支付 {{ points_required }} 积分</span>
+                                    <span>Pay {{ points_required }} points</span>
                                 </button>
                             </form>
                         </div>
@@ -331,8 +421,8 @@
 
                     <div class="mt-8 text-center">
                         <p class="text-gray-500 text-sm jakarta">
-                            <span class="inline-block mx-2">当前积分:{{ user.profile.points }}</span>
-                            <a href="/order/create_recharge_order/" class="text-blue-600 hover:underline">获取更多积分</a>
+                            <span class="inline-block mx-2">Your points: {{ user.profile.points }}</span>
+                            <a href="/order/create_recharge_order/" class="text-blue-600 hover:underline">Get More Points</a>
                         </p>
                     </div>
                 </div>
@@ -360,7 +450,7 @@
     <!-- 评论区域 -->
     <div id="comments" class="comment-section">
         <div class="flex items-center gap-3 mb-6">
-            <h2 class="text-2xl font-bold text-slate-800 merriweather">评论</h2>
+            <h2 class="text-2xl font-bold text-slate-800 merriweather">Comments</h2>
             <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">{{ comment_count }}</span>
         </div>
 
@@ -376,14 +466,14 @@
                         <div class="flex-1">
                             <textarea name="content" 
                                       class="comment-textarea w-full" 
-                                      placeholder="写下你的想法..."
+                                      placeholder="Share your thoughts..."
                                       required></textarea>
                             <div class="mt-3 flex justify-end">
                                 <button type="submit" class="comment-btn">
                                     <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                                     </svg>
-                                    发表评论
+                                    Post Comment
                                 </button>
                             </div>
                         </div>
@@ -393,7 +483,7 @@
         {% else %}
             <div class="login-prompt mb-8">
                 <p class="jakarta">
-                    请 <a href="/login/?next={{ request.path }}" class="font-medium underline">登录</a> 后发表评论
+                    Please <a href="/login/?next={{ request.path }}" class="font-medium underline">log in</a> to post a comment
                 </p>
             </div>
         {% endif %}
@@ -421,19 +511,19 @@
                                             <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
                                             </svg>
-                                            回复
+                                            Reply
                                         </button>
                                     {% endif %}
                                 
                                 {% if user == comment.author or user == page.owner %}
                                     <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;" 
-                                          onsubmit="return confirm('确定要删除这条评论吗？')">
+                                          onsubmit="return confirm('Are you sure you want to delete this comment?')">
                                         {% csrf_token %}
                                         <button type="submit" class="delete-btn">
                                             <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                             </svg>
-                                            删除
+                                            Delete
                                         </button>
                                     </form>
                                 {% endif %}
@@ -453,12 +543,12 @@
                                                 <textarea name="content" 
                                                           class="comment-textarea w-full text-sm" 
                                                           rows="3"
-                                                          placeholder="回复 {{ comment.author.profile.name|default:comment.author.username }}..."
+                                                          placeholder="Reply to {{ comment.author.profile.name|default:comment.author.username }}..."
                                                           required></textarea>
                                                 <div class="mt-2 flex gap-2">
-                                                    <button type="submit" class="comment-btn text-sm py-2 px-4">回复</button>
+                                                    <button type="submit" class="comment-btn text-sm py-2 px-4">Reply</button>
                                                     <button type="button" class="reply-btn text-sm py-2 px-4" 
-                                                            data-comment-id="{{ comment.id }}">取消</button>
+                                                            data-comment-id="{{ comment.id }}">Cancel</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -486,13 +576,13 @@
                                     
                                     {% if user == reply.author or user == page.owner %}
                                         <form method="post" action="{% url 'delete_comment' reply.id %}" style="display: inline;" 
-                                              onsubmit="return confirm('确定要删除这条回复吗？')">
+                                              onsubmit="return confirm('Are you sure you want to delete this reply?')">
                                             {% csrf_token %}
                                             <button type="submit" class="delete-btn text-xs py-1 px-2">
                                                 <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                 </svg>
-                                                删除
+                                                Delete
                                             </button>
                                         </form>
                                     {% endif %}
@@ -506,7 +596,7 @@
                     <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                     </svg>
-                    <p class="text-slate-500 jakarta">还没有评论，快来发表第一条评论吧！</p>
+                    <p class="text-slate-500 jakarta">No comments yet. Be the first to share your thoughts!</p>
                 </div>
             {% endfor %}
         </div>
@@ -520,9 +610,23 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
             </svg>
-            返回博客
+            Back to Articles
         </a>
     </div>
+</div>
+
+{% if user.is_authenticated %}
+<aside id="article-agent-dock" class="article-agent-dock hidden lg:block">
+    <div
+        id="article-agent-slot"
+        hx-get="{% url 'a_agent:article_panel' page.id %}"
+        hx-trigger="load"
+        hx-swap="innerHTML"
+    >
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-400 h-full">Loading reading assistant…</div>
+    </div>
+</aside>
+{% endif %}
 </div>
 
 <!-- 底部 -->
@@ -530,12 +634,12 @@
     <div class="max-w-[1400px] mx-auto px-6">
         <div class="flex flex-col justify-center items-center text-center">
             <div class="mb-6"> 
-                <h2 class="text-2xl font-semibold text-white mb-2 merriweather">芝士圈</h2>
-                <p class="jakarta font-light text-slate-400">分享创意与知识,连接全球思想</p>
+                <h2 class="text-2xl font-semibold text-white mb-2 merriweather">CheeseO</h2>
+                <p class="jakarta font-light text-slate-400">Sharing creativity and knowledge, connecting ideas worldwide</p>
             </div>
         </div>
         <div class="mt-2 pt-4 border-t border-slate-800 text-center">
-            <p class="jakarta font-light text-slate-500">© 2025 芝士圈. 保留所有权利.</p>
+            <p class="jakarta font-light text-slate-500">© 2025 CheeseO. All rights reserved.</p>
         </div>
     </div>
 </footer>
@@ -579,7 +683,7 @@
         // 添加支付确认弹窗
         document.querySelectorAll('.confirm-payment').forEach(button => {
             button.addEventListener('click', function (event) {
-                const confirmPayment = confirm('您确定要支付 {{ points_required }} 积分以解锁此文章吗?');
+                const confirmPayment = confirm('Are you sure you want to pay {{ points_required }} points to unlock this article?');
                 if (!confirmPayment) {
                     event.preventDefault(); // 阻止表单提交
                 }
@@ -593,6 +697,33 @@
                 }
             });
         });
+
+        const mobileBtn = document.getElementById('article-agent-mobile-btn');
+        const mobileDrawer = document.getElementById('article-agent-mobile-drawer');
+        const mobileClose = document.getElementById('article-agent-mobile-close');
+        const mobileBackdrop = document.getElementById('article-agent-mobile-backdrop');
+        const mobileSlot = document.getElementById('article-agent-mobile-slot');
+        const panelUrl = '{% url "a_agent:article_panel" page.id %}';
+
+        const openMobileAgent = () => {
+            if (!mobileDrawer || !mobileSlot) return;
+            mobileDrawer.classList.remove('hidden');
+            if (!mobileSlot.dataset.loaded) {
+                fetch(panelUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then((response) => response.text())
+                    .then((html) => {
+                        mobileSlot.innerHTML = html;
+                        mobileSlot.dataset.loaded = '1';
+                        if (window.htmx) htmx.process(mobileSlot);
+                    });
+            }
+        };
+
+        const closeMobileAgent = () => mobileDrawer?.classList.add('hidden');
+
+        mobileBtn?.addEventListener('click', openMobileAgent);
+        mobileClose?.addEventListener('click', closeMobileAgent);
+        mobileBackdrop?.addEventListener('click', closeMobileAgent);
     });
 
     // 切换回复表单显示/隐藏

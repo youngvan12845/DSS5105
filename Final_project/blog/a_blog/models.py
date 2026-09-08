@@ -159,7 +159,7 @@ class ArticlePage(Page):
         # 非会员用户需要消耗积分
         if profile and profile.points >= self.required_points:
             if request.method == "POST":  # 用户确认扣除积分
-                profile.deduct_points(self.required_points,description="购买文章")
+                profile.deduct_points(self.required_points, description="Article purchase")
                 request.session[f"article_access_{self.pk}"] = True  # 标记已支付
                 self._record_browsing_history(request)
                 return super().serve(request)

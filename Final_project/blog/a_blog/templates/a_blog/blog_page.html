@@ -147,8 +147,9 @@
 <div class="max-w-[1400px] mx-auto px-4 md:px-6 pt-28 pb-20">
     <!-- 英雄区 -->
     <div class="text-center mb-16 mt-16">
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">探索思想的海洋</h1>
-        <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-2xl mx-auto">发现创新见解，连接全球思想者，激发你的创造力与灵感</p>
+        <p class="text-pink-500 font-medium mb-3 tracking-wide">Paid Knowledge · In-Depth Articles</p>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">CheeseO Articles</h1>
+        <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-2xl mx-auto">Curated tech and humanities articles with free previews, member access, and an AI reading assistant for efficient learning</p>
     </div>
 
     <!-- 搜索栏 -->
@@ -158,7 +159,7 @@
                 type="text" 
                 name="query" 
                 class="pl-4 pr-16 py-4 w-full rounded-xl bg-white text-slate-800 placeholder-slate-400 shadow-sm border border-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
-                placeholder="探索你感兴趣的主题..." 
+                placeholder="Search articles..." 
                 {% if search_query %} value="{{ search_query }}" {% endif %}
             >
             <button type="submit" class="search-btn">
@@ -174,7 +175,7 @@
         <div class="mb-10 w-full flex justify-center">
             <div class="w-full md:w-5/6 lg:w-3/4 xl:w-2/3">  <!-- 加宽了各断点的宽度 -->
                 <div class="flex flex-col md:flex-row md:items-center mb-4 gap-3 md:gap-0">
-                    <span class="tags-label whitespace-nowrap">热门标签：</span>
+                    <span class="tags-label whitespace-nowrap">Popular Tags:</span>
                     <div class="hidden md:block tag-divider md:mx-4"></div>
                     <div class="tags-container flex-wrap">  <!-- 确保标签可以换行 -->
                         {% for tag in all_tags %}
@@ -202,7 +203,14 @@
                         {% image article.specific.image fill-600x400 class="w-full h-56 object-cover image-hover" %}
                     </div>
                     <div class="p-6 flex flex-col flex-grow">
-                        <h2 class="text-xl font-semibold text-slate-800 mb-3 leading-snug merriweather">{{ article.title }}</h2>
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <h2 class="text-xl font-semibold text-slate-800 leading-snug merriweather">{{ article.title }}</h2>
+                            {% if article.specific.is_free %}
+                            <span class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-green-50 text-green-700">Free</span>
+                            {% else %}
+                            <span class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">Premium</span>
+                            {% endif %}
+                        </div>
                         <p class="text-slate-500 jakarta text-sm leading-relaxed flex-grow mb-4">{{ article.specific.intro|truncatewords:18 }}</p>
                         <div class="flex justify-between items-center">  <!-- 修改为flex布局 -->
                             <span class="text-xs font-medium text-indigo-600 jakarta">{{ article.specific.date }}</span>
@@ -266,8 +274,8 @@
         <svg class="w-16 h-16 mx-auto text-slate-300 mb-4" fill="currentColor" viewBox="0 0 24 24">
             <path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
         </svg>
-        <h3 class="text-xl font-medium text-slate-700 mb-2 merriweather">没有找到相关文章</h3>
-        <p class="text-slate-500 jakarta">尝试使用不同的关键词或浏览全部文章</p>
+        <h3 class="text-xl font-medium text-slate-700 mb-2 merriweather">No articles found</h3>
+        <p class="text-slate-500 jakarta">Try different keywords or browse all articles</p>
     </div>
     {% endif %}
 </div>
@@ -277,12 +285,12 @@
     <div class="max-w-[1400px] mx-auto px-6">
         <div class="flex flex-col justify-center items-center text-center">
             <div class="mb-6"> 
-                <h2 class="text-2xl font-semibold text-white mb-2 merriweather">芝士圈</h2>
-                <p class="jakarta font-light text-slate-400">分享创意与知识，连接全球思想</p>
+                <h2 class="text-2xl font-semibold text-white mb-2 merriweather">CheeseO</h2>
+                <p class="jakarta font-light text-slate-400">Sharing creativity and knowledge, connecting ideas worldwide</p>
             </div>
         </div>
         <div class="mt-2 pt-4 border-t border-slate-800 text-center">
-            <p class="jakarta font-light text-slate-500">© 2025 芝士圈. 保留所有权利.</p>
+            <p class="jakarta font-light text-slate-500">© 2025 CheeseO. All rights reserved.</p>
         </div>
     </div>
 </footer>

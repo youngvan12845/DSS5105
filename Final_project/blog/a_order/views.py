@@ -29,7 +29,7 @@ def create_subscription_order(request):
             # 获取订阅积分配置
             config = SubscriptionConfig.get_config()
             if not config:
-                return render(request, 'a_order/error.html', {'error': '未找到订阅配置'})
+                return render(request, 'a_order/error.html', {'error': 'Subscription configuration not found'})
 
             # 根据订阅周期动态获取积分
             points_required = {
@@ -39,13 +39,13 @@ def create_subscription_order(request):
             }.get(subscription_period)
 
             if points_required is None:
-                return render(request, 'a_order/error.html', {'error': '无效的订阅周期'})
+                return render(request, 'a_order/error.html', {'error': 'Invalid subscription period'})
 
             # 检查用户积分是否足够
             profile = request.user.profile
-            if not profile.deduct_points(points_required, description="会员订阅"):
+            if not profile.deduct_points(points_required, description="Membership subscription"):
                 return render(request, 'a_order/insufficient_points.html', {
-                    'error': '积分不足',
+                    'error': 'Insufficient points',
                     'buy_points_url': '/order/create_recharge_order/'
                 })
 
@@ -66,7 +66,7 @@ def create_subscription_order(request):
 
         except Exception as e:
             logger.error(f"Error creating subscription order: {e}")
-            return render(request, 'a_order/error.html', {'error': '创建订阅订单失败'})
+            return render(request, 'a_order/error.html', {'error': 'Failed to create subscription order'})
 
     return render(request, 'a_order/create_subscription_order.html')
 
@@ -84,7 +84,7 @@ def create_recharge_order(request):
             # 校验支付方式
             if payment_method not in ['wechat', 'alipay', 'unionpay']:
                 logger.error(f"Unsupported payment method: {payment_method}")
-                return JsonResponse({'error': '不支持的支付方式'}, status=400)
+                return JsonResponse({'error': 'Unsupported payment method'}, status=400)
 
             # 计算积分
             points = amount * 10  # 假设 1 元兑换 10 积分
@@ -109,7 +109,7 @@ def create_recharge_order(request):
 
         except Exception as e:
             logger.error(f"Error creating recharge order: {e}")
-            return JsonResponse({'error': '创建充值订单失败'}, status=500)
+            return JsonResponse({'error': 'Failed to create recharge order'}, status=500)
 
     return render(request, 'a_order/create_recharge_order.html')
 

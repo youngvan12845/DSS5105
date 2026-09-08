@@ -65,7 +65,7 @@ class RechargeOrder(models.Model):
         if self.status == 'paid':
             profile = self.user.profile
             logger.info(f"Points before recharge: {profile.points}")
-            profile.add_points(self.points, description="积分充值")
+            profile.add_points(self.points, description="Points recharge")
             logger.info(f"Points after recharge: {profile.points}")
             return True
         logger.warning(f"Order {self.id} is not in 'paid' status, cannot process recharge.")
@@ -100,13 +100,12 @@ class SubscriptionOrder(models.Model):
         """处理会员订阅订单"""
         if self.status == 'paid':
             profile = self.user.profile
-            profile.deduct_points(self.points, description="会员订阅")
+            profile.deduct_points(self.points, description="Membership subscription")
             profile.activate_subscription(self.subscription_period)
 
-            # 发送订阅成功通知
             send_mail(
-                '订阅成功通知',
-                f'尊敬的 {self.user.username}，您的会员订阅已成功激活！',
+                'CheeseO — Subscription Activated',
+                f'Hello {self.user.username}, your membership subscription is now active!',
                 'noreply@example.com',
                 [self.user.email],
                 fail_silently=True,

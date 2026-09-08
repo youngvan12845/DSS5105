@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'a_blog',
     'a_order',
     'a_points',
+    'a_agent',
 ]
 
 SITE_ID = 1
@@ -150,6 +151,19 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 WAGTAIL_SITE_NAME = 'Blog'
 WAGTAILADMIN_BASE_URL = os.environ.get('WAGTAILADMIN_BASE_URL', 'http://127.0.0.1:8000')
 
+# Reading Co-Pilot Agent — default: local Ollama (no article text sent to cloud APIs)
+# Provider: ollama (default) | openai
+AGENT_LLM_PROVIDER = os.environ.get('AGENT_LLM_PROVIDER', 'ollama')
+AGENT_OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+AGENT_OPENAI_MODEL = os.environ.get('OPENAI_MODEL', 'gpt-4o-mini')
+AGENT_OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://127.0.0.1:11434/v1')
+AGENT_OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'qwen2.5vl:7b')
+AGENT_OLLAMA_EMBED_MODEL = os.environ.get('OLLAMA_EMBED_MODEL', 'nomic-embed-text')
+AGENT_OLLAMA_MODELS = [
+    {'id': 'qwen2.5:7b', 'label': 'Qwen 2.5 7B (text)', 'vision': False},
+    {'id': 'qwen2.5vl:7b', 'label': 'Qwen 2.5 VL 7B (multimodal)', 'vision': True},
+]
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -193,6 +207,11 @@ LOGGING = {
             'propagate': False,
         },
         'a_points': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'a_agent': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
             'propagate': False,

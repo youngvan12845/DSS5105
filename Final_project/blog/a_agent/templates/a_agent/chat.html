@@ -1,0 +1,728 @@
+{% extends 'base.html' %}
+{% load agent_extras %}
+
+{% block class %}bg-slate-50 min-h-screen{% endblock %}
+
+{% block layout %}
+<div class="agent-chat max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-10">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-pink-500 mb-2">Co-Pilot</p>
+            <h1 class="!text-3xl md:!text-4xl !mb-1 font-bold text-slate-900">Reading Assistant</h1>
+            <p class="!mb-0 text-slate-500 text-sm md:text-base">Search articles, get citations, continue where you left off.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <span id="llm-status-badge" class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border {% if llm_info.configured %}bg-emerald-50 text-emerald-700 border-emerald-200{% else %}bg-amber-50 text-amber-700 border-amber-200{% endif %}">
+                <span class="w-1.5 h-1.5 rounded-full {% if llm_info.configured %}bg-emerald-500{% else %}bg-amber-500{% endif %}"></span>
+                {{ llm_info.label }}
+            </span>
+            {% if not article_scope %}
+            <a href="{% url 'a_agent:new_session' %}" class="agent-btn-secondary !px-4 !py-2 !text-sm !rounded-full">New chat</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if article_scope %}
+    <div class="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-pink-100 bg-pink-50/70 px-4 py-3">
+        <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold uppercase tracking-wide text-pink-600 mb-1">Article focus</p>
+            <p class="text-sm font-medium text-slate-800 truncate">{{ article_scope.title }}</p>
+            <p class="text-xs text-slate-500 mt-0.5">Answers are limited to this article only.</p>
+        </div>
+        <a href="{% url 'a_agent:chat' %}" class="agent-btn-secondary !px-3 !py-1.5 !text-xs !rounded-full shrink-0">Exit focus</a>
+    </div>
+    {% endif %}
+
+    <div id="agent-layout" class="agent-layout flex gap-4 relative">
+        <!-- Sidebar -->
+        <aside id="agent-sidebar" class="agent-sidebar shrink-0">
+            <div class="agent-panel p-5 space-y-5 h-full">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                    <h2 class="!text-sm font-semibold text-slate-800">Sessions</h2>
+                    <button type="button" id="sidebar-collapse-btn" class="agent-sidebar-toggle" title="Collapse sidebar">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
+                    </button>
+                </div>
+                <a href="{% url 'a_agent:reading_list' %}" class="mb-3 flex items-center gap-2 rounded-xl border border-slate-100 bg-white px-3 py-2.5 text-sm text-slate-600 hover:border-pink-200 hover:text-pink-600 transition-colors">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    Reading list
+                </a>
+                <div>
+                    <ul class="space-y-1" id="agent-session-list">
+                        {% for s in sessions %}
+                        <li class="agent-session-item group">
+                            <div class="agent-session-row flex items-center gap-0.5 rounded-xl transition-colors {% if s.id == session.id %}bg-pink-50 border border-pink-100{% else %}hover:bg-slate-50{% endif %}">
+                                <a href="{% url 'a_agent:chat_session' s.id %}"
+                                   class="flex-1 min-w-0 block px-3 py-2.5 text-sm truncate {% if s.id == session.id %}text-pink-700 font-medium{% else %}text-slate-600{% endif %}">
+                                    {{ s.title|session_title|truncatechars:28 }}
+                                </a>
+                                <form
+                                    method="post"
+                                    action="{% url 'a_agent:delete_session' s.id %}"
+                                    class="agent-session-delete-form shrink-0 pr-1.5"
+                                    onsubmit="return confirm('Delete this chat?');"
+                                >
+                                    {% csrf_token %}
+                                    <button type="submit" class="agent-session-delete" title="Delete chat" aria-label="Delete chat">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="text-sm text-slate-400 px-3">No sessions yet</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                {% if continue_reading %}
+                <div class="pt-4 border-t border-slate-100">
+                    <h3 class="!text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2">Continue reading</h3>
+                    <a href="{{ continue_reading.article_url }}" class="block text-sm text-slate-800 hover:text-pink-600 leading-snug font-medium">
+                        {{ continue_reading.article_title }}
+                    </a>
+                    {% if recent_history|length > 1 %}
+                    <ul class="mt-2 space-y-1">
+                        {% for item in recent_history|slice:"1:3" %}
+                        <li>
+                            <a href="{{ item.article_url }}" class="text-xs text-slate-500 hover:text-pink-600 truncate block">{{ item.article_title|truncatechars:32 }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </aside>
+
+        <!-- Main chat -->
+        <section class="agent-main flex-1 min-w-0 agent-panel flex flex-col min-h-[72vh] overflow-hidden">
+            <div class="flex items-center gap-2 px-4 py-3 border-b border-slate-100 bg-white/80">
+                <button type="button" id="sidebar-expand-btn" class="agent-sidebar-toggle hidden" title="Open sidebar">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <span class="text-sm font-medium text-slate-600 truncate">{{ session.title|session_title|truncatechars:40 }}</span>
+            </div>
+            <!-- Messages -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto px-5 py-6 md:px-8 md:py-7">
+                {% if not chat_messages %}
+                <div class="max-w-lg mx-auto text-center py-10">
+                    <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-pink-100 to-rose-50 flex items-center justify-center text-2xl">💬</div>
+                    {% if article_scope %}
+                    <h3 class="!text-lg font-semibold text-slate-800 mb-2">Ask about this article</h3>
+                    <p class="!mb-5 text-sm text-slate-500">Summaries and Q&amp;A grounded in <strong>{{ article_scope.title|truncatechars:40 }}</strong>.</p>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <button type="button" class="agent-suggestion-chip" data-prompt="Summarize this article">Summarize</button>
+                        <button type="button" class="agent-suggestion-chip" data-prompt="What are the main points?">Main points</button>
+                        <button type="button" class="agent-suggestion-chip" data-prompt="Explain the key concepts">Key concepts</button>
+                    </div>
+                    {% else %}
+                    <h3 class="!text-lg font-semibold text-slate-800 mb-2">Ask anything about the blog</h3>
+                    <p class="!mb-5 text-sm text-slate-500">Answers are grounded in on-site retrieval with source links.</p>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <button type="button" class="agent-suggestion-chip" data-prompt="Which articles mention Python?">Articles about Python</button>
+                        <button type="button" class="agent-suggestion-chip" data-prompt="Where did I leave off last time?">Continue reading</button>
+                        <button type="button" class="agent-suggestion-chip" data-prompt="What should I read next?">Recommend next</button>
+                    </div>
+                    {% endif %}
+                    {% if not llm_info.configured %}
+                    <p class="text-amber-600 text-xs mt-6">Ollama offline — using rule-based fallback.</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% for message in chat_messages %}
+                    {% include 'a_agent/partials/message.html' with message=message %}
+                {% endfor %}
+            </div>
+
+            <!-- Composer -->
+            <div class="border-t border-slate-100 bg-slate-50/80 px-4 py-4 md:px-6 md:py-5">
+                <!-- Model selector -->
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Model</span>
+                    <select
+                        id="llm-model"
+                        name="llm_model"
+                        form="chat-form"
+                        class="agent-select text-sm"
+                    >
+                        {% for option in model_options %}
+                        <option value="{{ option.id }}" data-vision="{{ option.vision|yesno:'true,false' }}" {% if option.id == selected_model %}selected{% endif %}>
+                            {{ option.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <span id="vision-hint" class="text-xs text-slate-400 {% if not llm_info.vision %}hidden{% endif %}">· Image upload enabled</span>
+                </div>
+
+                <form
+                    id="chat-form"
+                    hx-post="{% url 'a_agent:send_message' session.id %}"
+                    hx-target="#chat-messages"
+                    hx-swap="beforeend"
+                    hx-encoding="multipart/form-data"
+                    class="space-y-2"
+                >
+                    {% csrf_token %}
+                    {% if scoped_article_id %}
+                    <input type="hidden" name="article_id" value="{{ scoped_article_id }}" />
+                    {% endif %}
+                    <input id="image-input" type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" class="sr-only" />
+
+                    <!-- Image preview -->
+                    <div id="image-preview-wrap" class="hidden">
+                        <div class="relative inline-block">
+                            <img id="image-preview-img" src="" alt="Preview" class="h-20 w-auto rounded-lg border border-slate-200 shadow-sm" />
+                            <button type="button" id="image-clear-btn" class="agent-icon-btn absolute -top-2 -right-2 !p-1 !rounded-full !bg-white !shadow-md !text-slate-500 hover:!text-red-500" title="Remove image">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Input row -->
+                    <div class="agent-composer flex items-end gap-2 p-2 bg-white rounded-2xl border border-slate-200 shadow-sm focus-within:border-pink-300 focus-within:ring-2 focus-within:ring-pink-100 transition-all">
+                        <button
+                            type="button"
+                            id="image-upload-btn"
+                            class="agent-icon-btn shrink-0 {% if not llm_info.vision %}agent-upload-hidden{% endif %}"
+                            title="Upload image (multimodal model)"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </button>
+                        <input
+                            id="chat-input"
+                            type="text"
+                            name="content"
+                            placeholder="Ask a question…"
+                            class="agent-text-input flex-1 !bg-transparent !py-2.5 !px-1 !shadow-none border-0 focus:ring-0"
+                        />
+                        <button type="submit" id="chat-send-btn" class="agent-send-btn shrink-0 !px-4 !py-2.5 !rounded-xl !text-sm !font-semibold">
+                            Send
+                        </button>
+                    </div>
+
+                    <div class="flex items-center px-1">
+                        <p id="vision-tip" class="text-xs text-slate-400 {% if not llm_info.vision %}hidden{% endif %}">Attach a screenshot or article image when using the VL model.</p>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+
+<style>
+/* Override global base.html styles inside agent chat */
+.agent-chat label { display: none !important; }
+.agent-chat h1, .agent-chat h2, .agent-chat h3, .agent-chat p { margin-bottom: 0; }
+
+.agent-panel {
+    background: #fff;
+    border-radius: 1.25rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.agent-sidebar {
+    width: 15rem;
+    transition: width 0.25s ease, opacity 0.2s ease, margin 0.25s ease;
+    overflow: hidden;
+}
+
+.agent-layout.sidebar-collapsed .agent-sidebar {
+    width: 0;
+    opacity: 0;
+    margin-right: -1rem;
+    pointer-events: none;
+}
+
+.agent-sidebar-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 2rem !important;
+    height: 2rem !important;
+    padding: 0 !important;
+    background: #f8fafc !important;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0.5rem !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+}
+
+.agent-sidebar-toggle:hover {
+    background: #fce7f3 !important;
+    color: #db2777 !important;
+    border-color: #fbcfe8 !important;
+}
+
+#sidebar-expand-btn {
+    display: none !important;
+}
+
+.agent-layout.sidebar-collapsed #sidebar-expand-btn {
+    display: inline-flex !important;
+}
+
+#image-upload-btn.agent-upload-hidden {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .agent-sidebar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 30;
+        width: 16rem;
+        background: #fff;
+        border-radius: 1.25rem;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.12);
+    }
+    .agent-layout.sidebar-collapsed .agent-sidebar {
+        width: 0;
+        margin: 0;
+        box-shadow: none;
+    }
+    .agent-layout:not(.sidebar-collapsed)::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.25);
+        z-index: 20;
+        border-radius: 1.25rem;
+    }
+}
+
+.agent-bubble-user {
+    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+    color: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: 1.125rem 1.125rem 0.25rem 1.125rem;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.25);
+}
+
+.agent-bubble-assistant {
+    background: #f8fafc;
+    color: #1e293b;
+    padding: 0.875rem 1.125rem;
+    border-radius: 1.125rem 1.125rem 1.125rem 0.25rem;
+    border: 1px solid #e2e8f0;
+    line-height: 1.6;
+}
+
+.agent-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.agent-avatar-user {
+    background: #fce7f3;
+    color: #db2777;
+}
+
+.agent-avatar-bot {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+}
+
+.agent-sources {
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+}
+
+.agent-select {
+    appearance: none;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 0.5rem center / 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.625rem;
+    padding: 0.375rem 2rem 0.375rem 0.75rem;
+    color: #334155;
+}
+
+.agent-composer input.agent-text-input {
+    width: auto;
+    min-width: 0;
+}
+
+.agent-icon-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 !important;
+    background: #f1f5f9 !important;
+    color: #64748b !important;
+    border-radius: 0.75rem !important;
+    box-shadow: none !important;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.agent-icon-btn:hover {
+    background: #fce7f3 !important;
+    color: #db2777 !important;
+}
+
+.agent-send-btn {
+    background: linear-gradient(135deg, #ec4899, #db2777) !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3) !important;
+}
+
+.agent-send-btn:hover {
+    filter: brightness(1.05);
+}
+
+.agent-confirm-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0.5rem 1.125rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+    color: #fff !important;
+    background: linear-gradient(135deg, #ec4899, #db2777) !important;
+    border: none;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.25) !important;
+    cursor: pointer;
+}
+
+.agent-confirm-btn:hover {
+    filter: brightness(1.05);
+}
+
+.agent-cancel-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0.5rem 1.125rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+    color: #64748b !important;
+    background: #fff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0.75rem !important;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+
+.agent-cancel-btn:hover {
+    color: #db2777 !important;
+    border-color: #fbcfe8 !important;
+    background: #fdf2f8 !important;
+}
+
+.agent-confirm-block {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.875rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.agent-confirm-draft {
+    margin-bottom: 0.625rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.625rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+}
+
+.agent-confirm-form {
+    display: block;
+}
+
+.agent-confirm-hint {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.agent-continue-cta {
+    margin-top: 0.75rem;
+}
+
+.agent-continue-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem 0.875rem !important;
+    font-size: 0.8125rem !important;
+    font-weight: 600 !important;
+    color: #fff !important;
+    background: linear-gradient(135deg, #ec4899, #db2777) !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 2px 6px rgba(236, 72, 153, 0.2) !important;
+    text-decoration: none !important;
+}
+
+.agent-continue-btn:hover {
+    filter: brightness(1.05);
+}
+
+.agent-btn-secondary {
+    display: inline-block;
+    background: #fff !important;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+    font-weight: 500 !important;
+}
+
+.agent-btn-secondary:hover {
+    background: #f8fafc !important;
+    color: #db2777 !important;
+    border-color: #fbcfe8 !important;
+}
+
+.agent-suggestion-chip {
+    padding: 0.5rem 0.875rem !important;
+    font-size: 0.8125rem !important;
+    font-weight: 500 !important;
+    background: #fff !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 9999px !important;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+
+.agent-suggestion-chip:hover {
+    border-color: #f9a8d4 !important;
+    color: #db2777 !important;
+    background: #fdf2f8 !important;
+}
+
+.agent-session-row {
+    min-height: 2.5rem;
+}
+
+.agent-session-item .agent-session-delete-form {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.agent-session-item:hover .agent-session-delete-form,
+.agent-session-item:focus-within .agent-session-delete-form {
+    opacity: 1;
+}
+
+.agent-session-delete {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    padding: 0 !important;
+    background: transparent !important;
+    color: #94a3b8 !important;
+    border: none !important;
+    border-radius: 0.375rem !important;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+
+.agent-session-item .agent-session-row.bg-pink-50 .agent-session-delete {
+    color: #f472b6 !important;
+}
+
+.agent-session-delete:hover {
+    background: #fee2e2 !important;
+    color: #dc2626 !important;
+}
+
+.agent-thinking-dots span {
+    animation: agent-dot 1.2s infinite;
+    opacity: 0.3;
+}
+.agent-thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.agent-thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes agent-dot {
+    0%, 80%, 100% { opacity: 0.3; }
+    40% { opacity: 1; }
+}
+
+.htmx-request .agent-send-btn { opacity: 0.7; pointer-events: none; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const agentLayout = document.getElementById('agent-layout');
+    const collapseBtn = document.getElementById('sidebar-collapse-btn');
+    const expandBtn = document.getElementById('sidebar-expand-btn');
+    const SIDEBAR_KEY = 'agent-sidebar-collapsed';
+
+    const setSidebarCollapsed = (collapsed) => {
+        agentLayout.classList.toggle('sidebar-collapsed', collapsed);
+        localStorage.setItem(SIDEBAR_KEY, collapsed ? '1' : '0');
+    };
+
+    if (localStorage.getItem(SIDEBAR_KEY) === '1') {
+        setSidebarCollapsed(true);
+    }
+
+    collapseBtn?.addEventListener('click', () => setSidebarCollapsed(true));
+    expandBtn?.addEventListener('click', () => setSidebarCollapsed(false));
+
+    const modelSelect = document.getElementById('llm-model');
+    const imageBtn = document.getElementById('image-upload-btn');
+    const imageInput = document.getElementById('image-input');
+    const imagePreviewWrap = document.getElementById('image-preview-wrap');
+    const imagePreviewImg = document.getElementById('image-preview-img');
+    const imageClearBtn = document.getElementById('image-clear-btn');
+    const visionHint = document.getElementById('vision-hint');
+    const visionTip = document.getElementById('vision-tip');
+    const chatInput = document.getElementById('chat-input');
+    const chatForm = document.getElementById('chat-form');
+    const chatMessages = document.getElementById('chat-messages');
+
+    const syncVisionUi = () => {
+        const option = modelSelect.options[modelSelect.selectedIndex];
+        const isVision = option.dataset.vision === 'true';
+        imageBtn.classList.toggle('agent-upload-hidden', !isVision);
+        visionHint.classList.toggle('hidden', !isVision);
+        visionTip.classList.toggle('hidden', !isVision);
+        if (!isVision) clearImage();
+    };
+
+    const clearImage = () => {
+        imageInput.value = '';
+        imagePreviewWrap.classList.add('hidden');
+        imagePreviewImg.src = '';
+    };
+
+    modelSelect.addEventListener('change', syncVisionUi);
+    syncVisionUi();
+
+    imageBtn.addEventListener('click', () => imageInput.click());
+
+    imageInput.addEventListener('change', () => {
+        const file = imageInput.files[0];
+        if (!file) { clearImage(); return; }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            imagePreviewImg.src = e.target.result;
+            imagePreviewWrap.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    });
+
+    imageClearBtn.addEventListener('click', clearImage);
+
+    const scrollToBottom = () => {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
+
+    const escapeHtml = (text) => {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    };
+
+    const appendUserMessage = (content, imageSrc) => {
+        const imageHtml = imageSrc
+            ? `<img src="${imageSrc}" alt="Uploaded image" class="mt-2 max-w-full rounded-xl border border-white/30 max-h-56 object-contain bg-white/10" />`
+            : '';
+        const html = `
+            <div class="agent-message-group agent-optimistic-user space-y-2 mb-6">
+                <div class="flex items-end gap-3 justify-end">
+                    <div class="max-w-[78%]">
+                        <div class="agent-bubble-user text-sm whitespace-pre-wrap">${escapeHtml(content)}</div>
+                        ${imageHtml}
+                    </div>
+                    <div class="agent-avatar agent-avatar-user shrink-0">You</div>
+                </div>
+            </div>`;
+        chatMessages.insertAdjacentHTML('beforeend', html);
+    };
+
+    const appendThinking = () => {
+        const html = `
+            <div id="chat-thinking" class="agent-message-group mb-6">
+                <div class="flex items-start gap-3">
+                    <div class="agent-avatar agent-avatar-bot shrink-0">AI</div>
+                    <div class="agent-bubble-assistant text-sm text-slate-500">
+                        Thinking<span class="agent-thinking-dots"><span>.</span><span>.</span><span>.</span></span>
+                    </div>
+                </div>
+            </div>`;
+        chatMessages.insertAdjacentHTML('beforeend', html);
+    };
+
+    const removeThinking = () => {
+        document.getElementById('chat-thinking')?.remove();
+    };
+
+    const removeOptimisticUser = () => {
+        chatMessages.querySelector('.agent-optimistic-user')?.remove();
+    };
+
+    chatForm.addEventListener('htmx:beforeRequest', () => {
+        const text = chatInput.value.trim();
+        const hasImage = imageInput.files.length > 0;
+        const content = text || (hasImage ? '[Image attached]' : '');
+        const imageSrc = hasImage && !imagePreviewWrap.classList.contains('hidden')
+            ? imagePreviewImg.src
+            : null;
+
+        appendUserMessage(content, imageSrc);
+        appendThinking();
+        scrollToBottom();
+
+        // Clear input immediately — file input kept for upload until afterRequest
+        chatInput.value = '';
+        imagePreviewWrap.classList.add('hidden');
+
+        const empty = chatMessages.querySelector('.max-w-lg.mx-auto.text-center');
+        if (empty) empty.remove();
+    });
+
+    chatForm.addEventListener('htmx:afterRequest', (e) => {
+        removeThinking();
+        if (e.detail.successful) {
+            chatForm.reset();
+            clearImage();
+            scrollToBottom();
+        }
+    });
+
+    chatForm.addEventListener('htmx:responseError', () => {
+        removeThinking();
+        removeOptimisticUser();
+    });
+
+    document.querySelectorAll('.agent-suggestion-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+            chatInput.value = chip.dataset.prompt;
+            chatInput.focus();
+        });
+    });
+});
+</script>
+{% endblock %}

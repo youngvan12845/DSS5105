@@ -1,0 +1,526 @@
+{% load agent_extras %}
+<div id="article-agent-shell" class="article-agent-chat" data-article-id="{{ article.id }}">
+    <button type="button" id="article-agent-restore" class="article-agent-restore hidden" title="Expand AI reading assistant" aria-label="Expand AI reading assistant">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7"/></svg>
+        <span class="article-agent-restore-label">AI Assistant</span>
+    </button>
+
+    <section id="article-agent-panel" class="article-agent-panel agent-panel flex flex-col h-full overflow-hidden">
+        <div class="article-agent-brand px-4 pt-3 pb-2 border-b border-slate-100 bg-white">
+            <p class="article-agent-kicker">Co-Pilot</p>
+            <h2 class="article-agent-heading">Article Q&amp;A</h2>
+        </div>
+
+        <div class="flex items-center gap-2 px-3 py-2.5 border-b border-slate-100 bg-white/90 shrink-0">
+            <button type="button" id="article-agent-collapse" class="agent-sidebar-toggle" title="Collapse panel" aria-label="Collapse panel">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+            </button>
+            <span class="text-sm font-medium text-slate-600 truncate flex-1">{{ article.title|truncatechars:36 }}</span>
+            <a href="{% url 'a_agent:chat_article' article.id %}" class="agent-sidebar-toggle" title="Open full screen">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+        </div>
+
+        {% if article_scope and not article_scope.can_read_full and not article_scope.is_free %}
+        <p class="article-agent-note shrink-0">Preview only — paid content is not included in answers.</p>
+        {% endif %}
+
+        <div id="article-chat-messages" class="flex-1 min-h-0 overflow-y-auto px-4 py-4">
+            {% if not chat_messages %}
+            <div class="max-w-sm mx-auto text-center py-6">
+                <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-pink-100 to-rose-50 flex items-center justify-center text-xl">💬</div>
+                <h3 class="article-agent-subheading">Ask about this article</h3>
+                <p class="article-agent-muted">Summaries and Q&amp;A grounded in this page.</p>
+                <div class="flex flex-wrap justify-center gap-2 mt-4">
+                    <button type="button" class="agent-suggestion-chip" data-prompt="Summarize this article">Summarize</button>
+                    <button type="button" class="agent-suggestion-chip" data-prompt="What are the main points?">Main points</button>
+                </div>
+            </div>
+            {% endif %}
+            {% for message in chat_messages %}
+                {% include 'a_agent/partials/message.html' with message=message %}
+            {% endfor %}
+        </div>
+
+        <div class="border-t border-slate-100 bg-slate-50/80 px-3 py-3 shrink-0">
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Model</span>
+                <select id="article-llm-model" name="llm_model" form="article-chat-form" class="agent-select text-sm">
+                    {% for option in model_options %}
+                    <option value="{{ option.id }}" data-vision="{{ option.vision|yesno:'true,false' }}" {% if option.id == selected_model %}selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+                <span id="article-vision-hint" class="text-xs text-slate-400 {% if not llm_info.vision %}hidden{% endif %}">· Image upload</span>
+            </div>
+
+            <form
+                id="article-chat-form"
+                hx-post="{% url 'a_agent:article_send_message' article.id %}"
+                hx-target="#article-chat-messages"
+                hx-swap="beforeend"
+                hx-encoding="multipart/form-data"
+                class="space-y-2"
+            >
+                {% csrf_token %}
+                <input type="hidden" name="article_id" value="{{ article.id }}" />
+                <input id="article-image-input" type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" class="sr-only" />
+
+                <div id="article-image-preview-wrap" class="hidden">
+                    <div class="relative inline-block">
+                        <img id="article-image-preview-img" src="" alt="Preview" class="h-16 w-auto rounded-lg border border-slate-200 shadow-sm" />
+                        <button type="button" id="article-image-clear-btn" class="agent-icon-btn absolute -top-2 -right-2 !p-1 !rounded-full !bg-white !shadow-md !text-slate-500 hover:!text-red-500" title="Remove image">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="agent-composer flex items-end gap-2 p-2 bg-white rounded-2xl border border-slate-200 shadow-sm focus-within:border-pink-300 focus-within:ring-2 focus-within:ring-pink-100 transition-all">
+                    <button
+                        type="button"
+                        id="article-image-upload-btn"
+                        class="agent-icon-btn shrink-0 {% if not llm_info.vision %}agent-upload-hidden{% endif %}"
+                        title="Upload image"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </button>
+                    <input
+                        id="article-chat-input"
+                        type="text"
+                        name="content"
+                        placeholder="Ask about this article…"
+                        class="agent-text-input flex-1 !bg-transparent !py-2 !px-1 !shadow-none border-0 focus:ring-0"
+                    />
+                    <button type="submit" class="article-agent-send-btn">Send</button>
+                </div>
+                <p id="article-vision-tip" class="text-xs text-slate-400 px-1 {% if not llm_info.vision %}hidden{% endif %}">Attach a screenshot when using the VL model.</p>
+            </form>
+        </div>
+    </section>
+</div>
+
+<style>
+.article-agent-chat label { display: none !important; }
+.article-agent-chat h2, .article-agent-chat h3, .article-agent-chat p { margin-bottom: 0; }
+
+.article-agent-chat {
+    position: relative;
+    height: 100%;
+}
+.article-agent-chat.is-collapsed {
+    height: auto;
+}
+.article-agent-chat.is-collapsed .article-agent-panel { display: none; }
+.article-agent-chat.is-collapsed .article-agent-restore { display: inline-flex; }
+
+.article-agent-restore {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 3.75rem !important;
+    min-height: 6.5rem;
+    padding: 1rem 0.625rem !important;
+    border: 1px solid #fbcfe8;
+    border-right: none;
+    border-radius: 0.875rem 0 0 0.875rem;
+    background: #fff !important;
+    color: #64748b !important;
+    box-shadow: -2px 0 12px rgba(236, 72, 153, 0.12);
+    cursor: pointer;
+}
+.article-agent-restore:hover {
+    color: #db2777 !important;
+    background: #fdf2f8 !important;
+    border-color: #f9a8d4;
+}
+.article-agent-restore svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    stroke: currentColor;
+    flex-shrink: 0;
+}
+.article-agent-restore-label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #db2777;
+    writing-mode: vertical-rl;
+    letter-spacing: 0.12em;
+}
+
+.article-agent-panel {
+    background: #fff;
+    border-radius: 1.25rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+.article-agent-kicker {
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ec4899;
+    margin: 0 0 0.125rem;
+}
+.article-agent-heading {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+.article-agent-subheading {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 0.375rem;
+}
+.article-agent-muted {
+    font-size: 0.8125rem;
+    color: #64748b;
+    margin: 0;
+}
+.article-agent-note {
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.6875rem;
+    color: #b45309;
+    background: #fffbeb;
+    border-bottom: 1px solid #fde68a;
+}
+
+/* Mirror Reading Assistant component styles */
+.article-agent-chat .agent-sidebar-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 3rem !important;
+    height: 3rem !important;
+    padding: 0 !important;
+    background: #f8fafc !important;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0.5rem !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.article-agent-chat .agent-sidebar-toggle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+.article-agent-chat #article-agent-collapse.agent-sidebar-toggle {
+    width: 2.8rem !important;
+    height: 2.8rem !important;
+}
+.article-agent-chat .agent-sidebar-toggle:hover {
+    background: #fce7f3 !important;
+    color: #db2777 !important;
+    border-color: #fbcfe8 !important;
+}
+.article-agent-chat button,
+.article-agent-chat [type='button'],
+.article-agent-chat [type='submit'] {
+    width: auto !important;
+    padding: 0 !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+.article-agent-chat input[type='text'] {
+    width: auto !important;
+    min-width: 0 !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0.5rem 0.25rem !important;
+}
+.article-agent-chat select.agent-select {
+    width: auto !important;
+    flex: 1;
+    min-width: 0;
+    padding: 0.375rem 2rem 0.375rem 0.75rem !important;
+    background: #fff !important;
+    border-radius: 0.625rem !important;
+}
+.article-agent-chat .agent-bubble-user {
+    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+    color: #fff;
+    padding: 0.625rem 0.875rem;
+    border-radius: 1rem 1rem 0.25rem 1rem;
+}
+.article-agent-chat .agent-bubble-assistant {
+    background: #f8fafc;
+    color: #1e293b;
+    padding: 0.75rem 1rem;
+    border-radius: 1rem 1rem 1rem 0.25rem;
+    border: 1px solid #e2e8f0;
+}
+.article-agent-chat .agent-avatar {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5625rem;
+    font-weight: 700;
+}
+.article-agent-chat .agent-avatar-user { background: #fce7f3; color: #db2777; }
+.article-agent-chat .agent-avatar-bot { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; }
+.article-agent-chat .agent-icon-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    background: #f1f5f9 !important;
+    color: #64748b !important;
+    border-radius: 0.75rem !important;
+    border: none;
+}
+.article-agent-chat .agent-icon-btn:hover { background: #fce7f3 !important; color: #db2777 !important; }
+.article-agent-chat #article-image-upload-btn.agent-upload-hidden { display: none !important; }
+.article-agent-chat .article-agent-send-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: 4.25rem;
+    height: 2.5rem;
+    padding: 0 1rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    white-space: nowrap;
+    color: #fff !important;
+    background: linear-gradient(135deg, #ec4899, #db2777) !important;
+    border: none;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3) !important;
+    cursor: pointer;
+}
+.article-agent-chat .article-agent-send-btn:hover {
+    filter: brightness(1.05);
+}
+.article-agent-chat .agent-confirm-block {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.875rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+.article-agent-chat .agent-confirm-draft {
+    margin-bottom: 0.625rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.625rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    font-size: 0.8125rem;
+    color: #475569;
+}
+.article-agent-chat .agent-confirm-form {
+    display: block;
+}
+.article-agent-chat .agent-confirm-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    min-height: 2.5rem;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+    color: #fff !important;
+    background: linear-gradient(135deg, #ec4899, #db2777) !important;
+    border: none;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.25) !important;
+    cursor: pointer;
+}
+.article-agent-chat .agent-confirm-btn:hover {
+    filter: brightness(1.05);
+}
+.article-agent-chat .agent-cancel-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+    color: #64748b !important;
+    background: #fff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0.75rem !important;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+.article-agent-chat .agent-cancel-btn:hover {
+    color: #db2777 !important;
+    border-color: #fbcfe8 !important;
+    background: #fdf2f8 !important;
+}
+.article-agent-chat .agent-confirm-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.article-agent-chat .agent-confirm-hint {
+    margin-top: 0.5rem;
+    font-size: 0.6875rem;
+    color: #94a3b8;
+}
+.article-agent-chat .agent-suggestion-chip {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.75rem !important;
+    background: #fff !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 9999px !important;
+    cursor: pointer;
+}
+.article-agent-chat .agent-suggestion-chip:hover {
+    border-color: #f9a8d4 !important;
+    color: #db2777 !important;
+    background: #fdf2f8 !important;
+}
+.article-agent-chat .agent-message-group { margin-bottom: 1rem; }
+</style>
+
+<script>
+(function () {
+    const shell = document.getElementById('article-agent-shell');
+    const form = document.getElementById('article-chat-form');
+    const input = document.getElementById('article-chat-input');
+    const messages = document.getElementById('article-chat-messages');
+    const collapseBtn = document.getElementById('article-agent-collapse');
+    const restoreBtn = document.getElementById('article-agent-restore');
+    const modelSelect = document.getElementById('article-llm-model');
+    const imageBtn = document.getElementById('article-image-upload-btn');
+    const imageInput = document.getElementById('article-image-input');
+    const imagePreviewWrap = document.getElementById('article-image-preview-wrap');
+    const imagePreviewImg = document.getElementById('article-image-preview-img');
+    const imageClearBtn = document.getElementById('article-image-clear-btn');
+    const visionHint = document.getElementById('article-vision-hint');
+    const visionTip = document.getElementById('article-vision-tip');
+    const dock = document.getElementById('article-agent-dock');
+    const layout = document.getElementById('article-layout');
+
+    if (!shell || !form || !input || !messages) return;
+
+    const articleId = shell.dataset.articleId;
+    const collapseKey = `article-agent-collapsed-${articleId}`;
+
+    const setCollapsed = (collapsed) => {
+        shell.classList.toggle('is-collapsed', collapsed);
+        dock?.classList.toggle('is-collapsed', collapsed);
+        layout?.classList.toggle('has-agent-collapsed', collapsed);
+        layout?.classList.toggle('has-agent-panel', !collapsed);
+        localStorage.setItem(collapseKey, collapsed ? '1' : '0');
+    };
+
+    if (localStorage.getItem(collapseKey) === '1') setCollapsed(true);
+    collapseBtn?.addEventListener('click', () => setCollapsed(true));
+    restoreBtn?.addEventListener('click', () => setCollapsed(false));
+
+    const clearImage = () => {
+        if (imageInput) imageInput.value = '';
+        imagePreviewWrap?.classList.add('hidden');
+        if (imagePreviewImg) imagePreviewImg.src = '';
+    };
+
+    const syncVisionUi = () => {
+        if (!modelSelect) return;
+        const option = modelSelect.options[modelSelect.selectedIndex];
+        const isVision = option?.dataset.vision === 'true';
+        imageBtn?.classList.toggle('agent-upload-hidden', !isVision);
+        visionHint?.classList.toggle('hidden', !isVision);
+        visionTip?.classList.toggle('hidden', !isVision);
+        if (!isVision) clearImage();
+    };
+
+    modelSelect?.addEventListener('change', syncVisionUi);
+    syncVisionUi();
+
+    imageBtn?.addEventListener('click', () => imageInput?.click());
+    imageInput?.addEventListener('change', () => {
+        const file = imageInput.files?.[0];
+        if (!file) { clearImage(); return; }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            imagePreviewImg.src = e.target.result;
+            imagePreviewWrap.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    });
+    imageClearBtn?.addEventListener('click', clearImage);
+
+    const escapeHtml = (text) => {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    };
+
+    const scrollToBottom = () => { messages.scrollTop = messages.scrollHeight; };
+
+    form.addEventListener('htmx:beforeRequest', () => {
+        const text = input.value.trim();
+        const hasImage = imageInput?.files?.length > 0;
+        const content = text || (hasImage ? '[Image attached]' : '');
+        if (!content) return;
+
+        messages.querySelector('.max-w-sm')?.remove();
+        const imageHtml = hasImage && imagePreviewImg?.src
+            ? `<img src="${imagePreviewImg.src}" alt="Uploaded" class="mt-2 max-w-full rounded-xl max-h-32 object-contain" />`
+            : '';
+        messages.insertAdjacentHTML('beforeend', `
+            <div class="agent-message-group article-optimistic-user mb-4">
+                <div class="flex items-end gap-2 justify-end">
+                    <div class="max-w-[88%]">
+                        <div class="agent-bubble-user text-sm whitespace-pre-wrap">${escapeHtml(content)}</div>
+                        ${imageHtml}
+                    </div>
+                    <div class="agent-avatar agent-avatar-user shrink-0">You</div>
+                </div>
+            </div>
+            <div id="article-chat-thinking" class="agent-message-group mb-4">
+                <div class="flex items-start gap-2">
+                    <div class="agent-avatar agent-avatar-bot shrink-0">AI</div>
+                    <div class="agent-bubble-assistant text-sm text-slate-500">Thinking…</div>
+                </div>
+            </div>`);
+        input.value = '';
+        imagePreviewWrap?.classList.add('hidden');
+        scrollToBottom();
+    });
+
+    form.addEventListener('htmx:afterRequest', (e) => {
+        document.getElementById('article-chat-thinking')?.remove();
+        if (e.detail.successful) {
+            messages.querySelector('.article-optimistic-user')?.remove();
+            form.reset();
+            clearImage();
+            syncVisionUi();
+            scrollToBottom();
+        }
+    });
+
+    form.addEventListener('htmx:responseError', () => {
+        document.getElementById('article-chat-thinking')?.remove();
+        messages.querySelector('.article-optimistic-user')?.remove();
+    });
+
+    document.querySelectorAll('.agent-suggestion-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+            input.value = chip.dataset.prompt;
+            input.focus();
+        });
+    });
+})();
+</script>
