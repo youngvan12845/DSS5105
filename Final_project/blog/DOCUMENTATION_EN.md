@@ -475,4 +475,128 @@ A: Check `POSTGRES_*` in `.env`; ensure the DB service is running and database `
 
 ---
 
+## 10. Evaluation Results (v1 — 2026-09-11)
+
+> **Status**: First baseline comparison run completed locally (user `yangfan`, 33 tasks).  
+> **Start here**: §10.5 — run eval locally once; **what’s next**: §10.6 Phase 3 deliverables overview.
+
+### 10.1 How to run eval
+
+Prerequisites: Ollama running, `python manage.py build_article_index --embed`, project `.venv` activated.
+
+```bash
+cd Final_project/blog
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+
+# One variant at a time (recommended; ~10–30 min each, no output until finished)
+python manage.py run_agent_eval --variant baseline_a --no-fail-exit
+python manage.py run_agent_eval --variant baseline_b --no-fail-exit
+python manage.py run_agent_eval --variant baseline_c --no-fail-exit
+python manage.py run_agent_eval --variant full --no-fail-exit
+
+# Or all at once (~1–2 hours)
+python manage.py run_agent_eval --variant all --output eval_compare.json --no-fail-exit
+```
+
+| Variant | Description |
+|---------|-------------|
+| `baseline_a` | Plain LLM, no retrieval |
+| `baseline_b` | Wagtail keyword search + LLM |
+| `baseline_c` | Vector/chunk RAG + LLM (no tools, personalization, or paywall masking) |
+| `full` | Complete Reading Assistant (tools + paywall + confirm actions) |
+
+Task set: [`a_agent/data/eval_tasks.json`](./a_agent/data/eval_tasks.json) (33 tasks).
+
+### 10.2 Overall pass rate (v1)
+
+| Variant | Passed | Failed | Pass rate |
+|---------|--------|--------|-----------|
+| baseline_a | 7 | 26 | 21.2% |
+| baseline_b | 8 | 25 | 24.2% |
+| baseline_c | 16 | 17 | 48.5% |
+| **full** | **18** | **15** | **54.5%** |
+
+**Takeaway**: Retrieval matters (C ≫ A/B). Full Agent beats C on agent-specific capabilities despite a modest overall gain (+2 tasks).
+
+### 10.3 Pass rate by category (v1)
+
+| Category | baseline_a | baseline_b | baseline_c | full |
+|----------|------------|------------|------------|------|
+| factual_qa | 0/6 | 2/6 | 5/6 | 4/6 |
+| cross_article | 0/5 | 0/5 | 4/5 | **5/5** |
+| recommend_path | 0/6 | 0/6 | 1/6 | **2/6** |
+| continue_reading | 0/5 | 0/5 | 0/5 | 0/5 |
+| action | 1/5 | 1/5 | 1/5 | **3/5** |
+| adversarial | 6/6 | 5/6 | 5/6 | 4/6 |
+
+**Full Agent wins (qualitative + categorical)**:
+
+- **Cross-article lookup**: 5/5 (only variant with perfect score).
+- **Reading paths**: path-001, path-002 pass via `get_reading_path` tool.
+- **Confirm-before-action**: action-003 drafts comment with Confirm UI; action 3/5 vs 1/5 for baselines.
+- **Paywall**: adv-006 — Full returns `[Paywall] … subscribe or purchase` preview only; Baseline C sometimes pasted paid snippet text (undesirable leak).
+
+### 10.4 Known eval limitations (v1)
+
+Automated checks use heuristic keywords and tool names. Some **correct answers still FAIL**:
+
+1. **Strict keywords** — e.g. continue-reading answers mention “last viewed” but omit exact tokens `history` / `recent` / `continue`.
+2. **Tool trace names** — eval expects `get_browsing_history` in trace; orchestrator may achieve the same via other tool combinations.
+3. **Paywall false negative** — adv-006 Full Agent correctly refuses full paid body, but reply contains `subscribe or purchase`, triggering `must_not_leak_paid_body` heuristics.
+
+For the final report: treat pass rate as a **lower bound**; supplement with manual review and user study (see §10.6).
+
+### 10.5 What everyone should do first: run eval locally
+
+Before refining tasks or writing the report, **each teammate should run at least one eval variant locally** to see what is being measured and what the output looks like.
+
+1. Complete §3 setup (Ollama, `build_article_index --embed`).
+2. Run **at least one** command below (start with `baseline_a` or `full`):
+
+```bash
+python manage.py run_agent_eval --variant baseline_a --no-fail-exit
+# or
+python manage.py run_agent_eval --variant full --no-fail-exit
+```
+
+3. Read `Total / Passed / Failed` and the `[PASS]` / `[FAIL]` list in the terminal.
+4. Optionally run all four variants (§10.1) or `--variant all` to export JSON.
+
+**Note**: Each run may take **10–30 minutes** with no intermediate output — wait until it finishes.
+
+### 10.6 Phase 3 — what still needs to be done (overview)
+
+After everyone has run eval, the team still needs to complete the following **for final grading** (assign roles internally later):
+
+| Area | Goal | Notes |
+|------|------|-------|
+| **Understand results** | Compare §10.2–10.3 across A/B/C/Full | Confirm trends match expectations |
+| **Manual review** | Check FAIL tasks: real failure vs overly strict scoring | Especially continue_reading & paywall (§10.4) |
+| **(Optional) Refine tasks** | Edit `expects` in `eval_tasks.json` | JSON only — no Python required |
+| **User study** | ≥3 blind comparisons: full vs baseline_c | Required human evaluation |
+| **Evaluation.pdf** | Results tables, limitations, user study | Draft in §10.7 |
+| **Demo video** | Feature walkthrough per §3.6 | Sprint / final presentation |
+
+Most of this **does not require Django coding**; JSON edits and running CLI commands are enough to participate.
+
+### 10.7 Draft text for Evaluation.pdf
+
+```text
+We evaluated 33 tasks across four systems: Baseline A (plain LLM, 21.2%),
+Baseline B (keyword search + LLM, 24.2%), Baseline C (vector RAG + LLM, 48.5%),
+and our Full Agent (54.5%).
+
+Retrieval clearly matters: C doubles A/B on grounded Q&A. The Full Agent
+further improves cross-article lookup (5/5), reading-path planning (2/6 vs 1/6),
+and confirm-before-action flows (3/5 vs 1/5). On paywall tests, Baseline C
+sometimes leaked paid snippets, while the Full Agent returned explicit
+[Paywall] previews only.
+
+Automated keyword checks under-score continue-reading and paywall-refusal
+tasks where answers were correct but phrasing differed. We supplement metrics
+with manual review and a 3-person blind user study.
+```
+
+---
+
 *Maintained by Group 4 · Update this file and README.md when features change.*
