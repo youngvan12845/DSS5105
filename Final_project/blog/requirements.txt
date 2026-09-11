@@ -43,6 +43,8 @@ tzdata==2025.2
 urllib3==2.4.0
 Willow==1.10.0
 openai>=1.40.0
+dj-database-url==3.1.2
+django-storages[s3]==1.14.6
 
 # Production only (optional — not needed for local `runserver`).
 # See requirements-prod.txt if you deploy with uWSGI.

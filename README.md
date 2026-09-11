@@ -89,6 +89,7 @@ More detail: [DOCUMENTATION_EN.md](./Final_project/blog/DOCUMENTATION_EN.md) · 
 | [Final_project/blog/DOCUMENTATION_EN.md](./Final_project/blog/DOCUMENTATION_EN.md) | English | **Full docs**: features, architecture, setup |
 | [Final_project/blog/DOCUMENTATION.md](./Final_project/blog/DOCUMENTATION.md) | 中文 | **完整文档**：功能、架构、运行 |
 | [Final_project/blog/README.md](./Final_project/blog/README.md) | English | Blog quick reference |
+| [Final_project/blog/SUPABASE.md](./Final_project/blog/SUPABASE.md) | English | Optional shared Supabase database and media storage |
 
 ---
 

@@ -376,7 +376,7 @@ def handle_user_message(
     *,
     request=None,
     model: str | None = None,
-    image_path: str | None = None,
+    image_file=None,
     article_id: int | None = None,
 ) -> AgentReply:
     tool_trace: list[dict] = []
@@ -404,7 +404,7 @@ def handle_user_message(
             'model': llm_info.model,
             'label': llm_info.label,
             'vision': llm_info.vision,
-            'has_image': bool(image_path),
+            'has_image': bool(image_file),
         }
     )
 
@@ -556,7 +556,7 @@ def handle_user_message(
                 system_prompt,
                 user_prompt,
                 model=model,
-                image_path=image_path,
+                image_file=image_file,
             )
             return AgentReply(
                 content=content,

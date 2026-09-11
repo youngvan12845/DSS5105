@@ -137,14 +137,13 @@ def send_message_view(request: HttpRequest, session_id: int) -> HttpResponse:
         image=image_file,
     )
 
-    image_path = user_message.image.path if user_message.image else None
     article_id = _parse_article_id(request.POST.get('article_id'))
     reply = handle_user_message(
         content,
         request.user,
         request=request,
         model=selected_model,
-        image_path=image_path,
+        image_file=user_message.image or None,
         article_id=article_id,
     )
     assistant_message = ChatMessage.objects.create(
@@ -303,13 +302,12 @@ def article_send_message_view(request: HttpRequest, article_id: int) -> HttpResp
         content=content,
         image=image_file,
     )
-    image_path = user_message.image.path if user_message.image else None
     reply = handle_user_message(
         content,
         request.user,
         request=request,
         model=selected_model,
-        image_path=image_path,
+        image_file=user_message.image or None,
         article_id=article_id,
     )
     assistant_message = ChatMessage.objects.create(

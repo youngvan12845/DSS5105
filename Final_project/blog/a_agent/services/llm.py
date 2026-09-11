@@ -2,16 +2,18 @@ from __future__ import annotations
 
 import base64
 import json
+import logging
 import mimetypes
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 from django.conf import settings
 
 from a_agent.config import default_ollama_model, normalize_model
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -92,17 +94,25 @@ def get_llm_info(model: str | None = None) -> LLMInfo:
     )
 
 
-def _build_user_message(user_prompt: str, image_path: str | None) -> str | list[dict]:
-    if not image_path:
+def _build_user_message(user_prompt: str, image_file) -> str | list[dict]:
+    """Attach an uploaded image (a Django FieldFile) to the user message.
+
+    Reads through the storage backend rather than a filesystem path, so it
+    works with local media and with remote storage such as Supabase.
+    """
+    if not image_file:
         return user_prompt
 
-    path = Path(image_path)
-    if not path.exists():
+    try:
+        with image_file.open('rb') as fh:
+            data = fh.read()
+    except Exception:
+        logger.warning('Could not read uploaded image %s; answering without it.', image_file.name)
         return user_prompt
 
-    mime, _ = mimetypes.guess_type(path.name)
+    mime, _ = mimetypes.guess_type(image_file.name)
     mime = mime or 'image/jpeg'
-    encoded = base64.b64encode(path.read_bytes()).decode('ascii')
+    encoded = base64.b64encode(data).decode('ascii')
     return [
         {'type': 'text', 'text': user_prompt},
         {'type': 'image_url', 'image_url': {'url': f'data:{mime};base64,{encoded}'}},
@@ -114,7 +124,7 @@ def generate_answer(
     user_prompt: str,
     *,
     model: str | None = None,
-    image_path: str | None = None,
+    image_file=None,
 ) -> str:
     try:
         from openai import OpenAI
@@ -135,7 +145,7 @@ def generate_answer(
         selected_model = getattr(settings, 'AGENT_OPENAI_MODEL', 'gpt-4o-mini')
         client = OpenAI(api_key=api_key)
 
-    user_content = _build_user_message(user_prompt, image_path)
+    user_content = _build_user_message(user_prompt, image_file)
     response = client.chat.completions.create(
         model=selected_model,
         messages=[

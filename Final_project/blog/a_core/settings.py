@@ -5,6 +5,8 @@ Django settings for a_core project.
 from pathlib import Path
 import os
 
+from a_core.cloud_config import database_from_url, supabase_media_storage
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load local environment variables from .env (not committed to git)
@@ -99,17 +101,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'a_core.wsgi.application'
 
-# PostgreSQL — defaults work for local install; override in .env or Docker env
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'cheeseoo'),
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+# PostgreSQL — defaults work for local install; override in .env or Docker env.
+# Set DATABASE_URL to use a hosted database such as Supabase instead (see SUPABASE.md).
+DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()
+if DATABASE_URL:
+    DATABASES = {'default': database_from_url(DATABASE_URL)}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB', 'cheeseoo'),
+            'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        }
     }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -128,6 +135,16 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Uploaded media stays in MEDIA_ROOT unless the SUPABASE_S3_* variables are set.
+STORAGES = {
+    'default': supabase_media_storage(os.environ) or {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
