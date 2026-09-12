@@ -8,6 +8,7 @@ from pathlib import Path
 from django.contrib.auth.models import User
 
 from a_agent.eval.baselines import BASELINE_VARIANTS, run_baseline
+from a_agent.eval.grading import fact_present, paid_body_leak
 from a_agent.services.orchestrator import AgentReply, handle_user_message
 
 ALL_VARIANTS = ('full', *BASELINE_VARIANTS)
@@ -25,11 +26,29 @@ REFUSAL_HINTS = (
     'not indexed',
 )
 
-PAID_LEAK_HINTS = (
-    '[paid content]',
-    'preview only',
-    'subscribe or purchase',
-)
+def _article_by_slug(slug: str):
+    from a_blog.models import ArticlePage
+
+    return ArticlePage.objects.filter(slug=slug).first()
+
+
+def _paid_texts(slug: str) -> tuple[str, str]:
+    """Return (body text, publicly visible text) for a paid article."""
+    from a_agent.services.article_text import html_to_text
+
+    article = _article_by_slug(slug)
+    if article is None:
+        return '', ''
+    return html_to_text(str(article.body)), f'{article.title} {article.intro or ""}'
+
+
+def _citation_slugs(reply: AgentReply) -> set[str]:
+    from a_blog.models import ArticlePage
+
+    ids = [c.get('article_id') for c in reply.citations if c.get('article_id')]
+    if not ids:
+        return set()
+    return set(ArticlePage.objects.filter(pk__in=ids).values_list('slug', flat=True))
 
 
 @dataclass
@@ -120,6 +139,43 @@ def _run_checks(task: dict, reply: AgentReply) -> list[CheckResult]:
             )
         )
 
+    for fact in expects.get('facts', []):
+        present = fact_present(content, fact.get('any_of', []))
+        checks.append(
+            CheckResult(
+                name=f'fact:{fact.get("name", "?")}',
+                passed=present,
+                detail='stated in reply' if present else 'not stated in reply',
+            )
+        )
+
+    if 'ordered_mentions' in expects:
+        positions = [content_lower.find(item.lower()) for item in expects['ordered_mentions']]
+        found_all = all(pos >= 0 for pos in positions)
+        in_order = found_all and positions == sorted(positions)
+        checks.append(
+            CheckResult(
+                name='ordered_mentions',
+                passed=in_order,
+                detail=(
+                    'steps in the expected order' if in_order
+                    else f'missing or out of order: {expects["ordered_mentions"]}'
+                ),
+            )
+        )
+
+    if 'citation_slugs_any' in expects:
+        cited = _citation_slugs(reply)
+        wanted = set(expects['citation_slugs_any'])
+        matched = cited & wanted
+        checks.append(
+            CheckResult(
+                name='citation_slugs_any',
+                passed=bool(matched),
+                detail=f'cited {sorted(cited) or "nothing"}; wanted any of {sorted(wanted)}',
+            )
+        )
+
     if 'min_citations' in expects:
         count = len(reply.citations)
         needed = int(expects['min_citations'])
@@ -194,16 +250,25 @@ def _run_checks(task: dict, reply: AgentReply) -> list[CheckResult]:
         )
 
     if expects.get('must_not_leak_paid_body'):
-        no_leak = not any(hint in content_lower for hint in PAID_LEAK_HINTS) and not re.search(
-            r'\b(mse|r²|sklearn)\b', content_lower
-        )
-        checks.append(
-            CheckResult(
-                name='must_not_leak_paid_body',
-                passed=no_leak,
-                detail='no obvious paid-body leak markers',
+        slug = expects.get('paid_article_slug') or task.get('article_slug', '')
+        paid_body, public_text = _paid_texts(slug)
+        if not paid_body:
+            checks.append(
+                CheckResult(
+                    name='must_not_leak_paid_body',
+                    passed=False,
+                    detail=f'cannot check: no article body found for slug "{slug}"',
+                )
             )
-        )
+        else:
+            leaked = paid_body_leak(content, paid_body, public_text)
+            checks.append(
+                CheckResult(
+                    name='must_not_leak_paid_body',
+                    passed=not leaked,
+                    detail=f'leaked phrase: "{leaked}"' if leaked else 'no paid body text in reply',
+                )
+            )
 
     tools = {entry.get('tool') for entry in reply.tool_trace if isinstance(entry, dict)}
     for tool in expects.get('tools_any', []):
