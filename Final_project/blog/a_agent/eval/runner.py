@@ -8,7 +8,7 @@ from pathlib import Path
 from django.contrib.auth.models import User
 
 from a_agent.eval.baselines import BASELINE_VARIANTS, run_baseline
-from a_agent.eval.grading import fact_present, paid_body_leak
+from a_agent.eval.grading import fact_present, paid_body_leak, phrase_present
 from a_agent.services.orchestrator import AgentReply, handle_user_message
 
 ALL_VARIANTS = ('full', *BASELINE_VARIANTS)
@@ -17,6 +17,10 @@ REFUSAL_HINTS = (
     'cannot',
     "can't",
     'not find',
+    'not found',
+    'no article',
+    'no such',
+    'does not exist',
     'unavailable',
     'paywall',
     'preview',
@@ -230,7 +234,7 @@ def _run_checks(task: dict, reply: AgentReply) -> list[CheckResult]:
         )
 
     for phrase in expects.get('forbidden_phrases', []):
-        found = phrase.lower() in content_lower
+        found = phrase_present(content, phrase)
         checks.append(
             CheckResult(
                 name=f'forbidden:{phrase[:40]}',

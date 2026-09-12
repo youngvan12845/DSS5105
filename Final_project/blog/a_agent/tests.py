@@ -1,6 +1,6 @@
 from django.test import SimpleTestCase
 
-from a_agent.eval.grading import fact_present, paid_body_leak
+from a_agent.eval.grading import fact_present, paid_body_leak, phrase_present
 
 # The real body of the paid article "Linear Regression in Practice".
 PAID_BODY = (
@@ -41,6 +41,19 @@ class PaidBodyLeakTests(SimpleTestCase):
         reply = 'The article is about fitting linear models and how to evaluate them.'
 
         self.assertEqual(paid_body_leak(reply, PAID_BODY, PUBLIC_TEXT), '')
+
+
+class PhrasePresentTests(SimpleTestCase):
+    """Forbidden phrases match whole words only, so echoing a title is not a false alarm."""
+
+    def test_short_phrase_does_not_match_inside_a_word(self):
+        self.assertFalse(phrase_present('The meeting began at noon.', 'gan'))
+
+    def test_whole_word_matches(self):
+        self.assertTrue(phrase_present('a GAN generates images', 'gan'))
+
+    def test_multi_word_phrase_ignores_punctuation(self):
+        self.assertTrue(phrase_present('uses generative, adversarial networks', 'generative adversarial'))
 
 
 class FactPresentTests(SimpleTestCase):

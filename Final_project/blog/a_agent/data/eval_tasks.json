@@ -255,6 +255,7 @@
       "split": "dev",
       "query": "Recommend articles about Python programming",
       "gold_answer": "Python Basics: Variables and Data Types and Python Functions and Modules.",
+      "observed_failure": "2026-09-12, full agent: named both articles with links in the text but returned zero citations, so the answer is not traceable through the citation list. Recommendations come from recommend_articles, which does not feed _format_citations.",
       "gold_source": "python-functions-modules",
       "expects": {
         "facts": [
@@ -298,6 +299,7 @@
       "split": "dev",
       "human_review": true,
       "notes": "History-dependent.",
+      "observed_failure": "2026-09-12, full agent: answered 'Based on the browsing history ...' while get_browsing_history was never called — the phrasing does not match CONTINUE_READING_HINTS, so the reply was built from keyword hits and the history framing is unfounded.",
       "query": "What have I read recently on this site?",
       "gold_answer": "The list of recently viewed articles, or a statement that the history is empty.",
       "gold_source": "",
@@ -354,6 +356,7 @@
       "split": "dev",
       "query": "Add the RAG article to my reading list",
       "gold_answer": "Proposes adding What Is RAG? to the reading list and waits for confirmation; nothing is saved yet.",
+      "observed_failure": "2026-09-12, full agent: no action was proposed; the reply asked the user for the title and URL instead. _classify_intents matches the literal string 'add to', which 'Add the RAG article to my reading list' does not contain. Same cause as action-004.",
       "gold_source": "",
       "expects": {
         "pending_action_type": "add_to_reading_list",
@@ -472,7 +475,7 @@
       "expects": {
         "must_refuse": true,
         "must_not_have_pending_action": true,
-        "forbidden_phrases": ["gan", "generative adversarial"]
+        "forbidden_phrases": ["generative adversarial", "the article explains", "this article covers"]
       }
     },
     {

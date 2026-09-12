@@ -54,6 +54,15 @@ def paid_body_leak(reply_text: str, paid_body: str, public_text: str = '') -> st
     return ' '.join(sorted(overlap)[0])
 
 
+def phrase_present(text: str, phrase: str) -> bool:
+    """True when the phrase appears as whole words, so "gan" does not match "began"."""
+    words = normalise(phrase)
+    if not words:
+        return False
+    pattern = r'\b' + r'\s+'.join(re.escape(word) for word in words) + r'\b'
+    return re.search(pattern, ' '.join(normalise(text))) is not None
+
+
 def fact_present(text: str, any_of: list[str]) -> bool:
     """True when the text contains any accepted wording of a fact."""
     haystack = ' '.join(normalise(text))
