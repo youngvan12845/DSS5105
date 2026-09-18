@@ -3,7 +3,9 @@ Connect this checkout to a Supabase project, interactively.
 
 Asks for the Session pooler connection string, the database password and the
 Storage S3 keys, checks that each one works, and writes them to .env.
-Secrets are typed at hidden prompts and only ever written to .env.
+Secrets are typed at hidden prompts and only ever written to .env. Database settings
+are saved as soon as the connection works, so a later storage problem does not
+mean starting over.
 
     .venv/bin/python scripts/setup_supabase.py
 """
@@ -24,6 +26,7 @@ from urllib.parse import quote
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR / '.env'
 PASSWORD_PLACEHOLDER = '[YOUR-PASSWORD]'
+ENV_HEADER = '# Supabase (written by scripts/setup_supabase.py)'
 ENV_KEYS = (
     'DATABASE_URL',
     'SUPABASE_S3_ENDPOINT',
@@ -103,9 +106,16 @@ def update_env_text(text: str, values: dict[str, str]) -> str:
         output.append(line)
 
     if remaining:
-        output += ['', '# Supabase (written by scripts/setup_supabase.py)']
+        if ENV_HEADER not in output:
+            output += ['', ENV_HEADER]
         output += [f'{key}={value}' for key, value in remaining.items()]
-    return '\n'.join(output) + '\n'
+    # Earlier runs could write the header more than once; keep only the first.
+    cleaned = []
+    for line in output:
+        if line == ENV_HEADER and ENV_HEADER in cleaned:
+            continue
+        cleaned.append(line)
+    return '\n'.join(cleaned).rstrip('\n') + '\n'
 
 
 def check_database(url: str) -> int:
@@ -120,7 +130,11 @@ def check_database(url: str) -> int:
     except psycopg2.OperationalError as exc:
         message = str(exc).strip().splitlines()[0]
         if 'password authentication failed' in message:
-            hint = 'The database password is wrong. Reset it in Project Settings → Database if needed.'
+            hint = (
+                'The database password is wrong. If you just reset it: make sure you clicked the '
+                'button that saves it (generating one is not enough), then wait a minute or two — '
+                'the pooler takes a moment to pick up a new password.'
+            )
         elif 'Tenant or user not found' in message:
             hint = 'The project reference in the user name does not match this pooler host.'
         else:
@@ -142,21 +156,29 @@ def check_storage(endpoint: str, region: str, key_id: str, secret: str, bucket: 
         aws_secret_access_key=secret,
         config=Config(signature_version='s3v4', s3={'addressing_style': 'path'}),
     )
-    try:
-        client.head_bucket(Bucket=bucket)
-    except ClientError as exc:
-        code = exc.response.get('Error', {}).get('Code', '')
-        if code in ('404', 'NoSuchBucket'):
-            raise SetupError(
-                f'Bucket "{bucket}" does not exist. In Storage, create a bucket named '
-                f'"{bucket}" with "Public bucket" turned on, then run this again.'
-            ) from exc
-        if code in ('403', 'InvalidAccessKeyId', 'SignatureDoesNotMatch', 'AccessDenied'):
-            raise SetupError('The S3 access key or secret is wrong.') from exc
-        raise SetupError(f'Storage check failed: {code or exc}') from exc
-
+    # Upload rather than HEAD the bucket: HEAD responses carry no error body, so a
+    # 403 there cannot tell a wrong secret from a region mismatch.
     key = f'_setup_check/{uuid.uuid4().hex}.txt'
-    client.put_object(Bucket=bucket, Key=key, Body=b'ok', ContentType='text/plain')
+    try:
+        client.put_object(Bucket=bucket, Key=key, Body=b'ok', ContentType='text/plain')
+    except ClientError as exc:
+        error = exc.response.get('Error', {})
+        code = error.get('Code', '')
+        message = error.get('Message', '')
+        hints = {
+            'NoSuchBucket': f'Create a bucket named "{bucket}" in Storage with "Public bucket" on.',
+            'InvalidAccessKeyId': 'The access key ID is wrong.',
+            'SignatureDoesNotMatch': (
+                'The secret does not match the access key ID, or the region is wrong. '
+                'Check the region shown on the S3 Connection page.'
+            ),
+            'AccessDenied': 'The key is valid but not allowed to write to this bucket.',
+        }
+        hint = hints.get(code, '')
+        raise SetupError(
+            f'Storage said: {code or "error"} — {message or exc}'
+            + (f'\n     {hint}' if hint else '')
+        ) from exc
     public_url = f'https://{ref}.supabase.co/storage/v1/object/public/{bucket}/{key}'
     try:
         with urllib.request.urlopen(public_url, timeout=15) as response:
@@ -173,6 +195,19 @@ def check_storage(endpoint: str, region: str, key_id: str, secret: str, bucket: 
         )
 
 
+def read_secret(prompt: str) -> str:
+    """Hidden prompt that confirms the length, so a failed paste is visible without showing the value."""
+    value = getpass.getpass(prompt)
+    if not value:
+        raise SetupError('Nothing was entered. Paste the value and press Enter.')
+    note = ''
+    if value != value.strip():
+        note = ' — includes leading or trailing spaces, which were removed'
+        value = value.strip()
+    print(f'     (received {len(value)} characters{note})')
+    return value
+
+
 def ask(prompt: str, default: str = '') -> str:
     suffix = f' [{default}]' if default else ''
     value = input(f'{prompt}{suffix}: ').strip()
@@ -187,14 +222,14 @@ def with_retries(step, attempts: int = 3):
         except SetupError as exc:
             print(f'\n     {exc}\n')
             if attempt == attempts:
-                raise SetupError('Stopped after repeated failures. .env was not changed.') from exc
+                raise SetupError('Stopped after repeated failures. Run the script again to retry.') from exc
             print('     Try again.\n')
 
 
 def setup_database():
     print('1/3  Database — Supabase → Connect → Session pooler. Paste the string:')
     parts = parse_connection_string(input('> '))
-    password = getpass.getpass('     Database password (hidden): ')
+    password = read_secret('     Database password (hidden): ')
     database_url = build_database_url(parts, password)
     print(f"     Project {parts['ref']}, region {parts['region']}. Connecting ...")
     tables = check_database(database_url)
@@ -208,17 +243,47 @@ def setup_storage(parts: dict):
     region = ask('     Region', parts['region'])
     bucket = ask('     Bucket', 'media')
     key_id = ask('     Access key ID')
-    secret = getpass.getpass('     Secret access key (hidden): ')
+    secret = read_secret('     Secret access key (hidden): ')
     print('     Uploading a test file ...')
     check_storage(endpoint, region, key_id, secret, bucket, parts['ref'])
     print('     Storage works and the bucket is public.\n')
     return endpoint, region, bucket, key_id, secret
 
 
+def write_env(values: dict[str, str]) -> None:
+    existing = ENV_PATH.read_text() if ENV_PATH.exists() else ''
+    ENV_PATH.write_text(update_env_text(existing, values))
+    os.chmod(ENV_PATH, 0o600)
+
+
+def saved_database():
+    """Reuse a DATABASE_URL already in .env if the user wants to, re-checking it first."""
+    from dotenv import dotenv_values
+
+    url = (dotenv_values(ENV_PATH).get('DATABASE_URL') or '') if ENV_PATH.exists() else ''
+    if 'supabase.com' not in url:
+        return None
+    if not ask('The Supabase database is already set in .env. Keep it? (Y/n)', 'y').lower().startswith('y'):
+        return None
+    parts = parse_connection_string(url)
+    print(f"     Project {parts['ref']}, region {parts['region']}. Connecting ...")
+    tables = check_database(url)
+    print(f'     Connected. The database has {tables} tables in the public schema.\n')
+    return parts, url, tables
+
+
 def main() -> None:
     print('Connect this checkout to Supabase. Secrets are typed at hidden prompts.\n')
 
-    parts, database_url, tables = with_retries(setup_database)
+    reused = saved_database()
+    if reused:
+        parts, database_url, tables = reused
+    else:
+        parts, database_url, tables = with_retries(setup_database)
+        # Save as soon as it works, so a storage problem does not mean starting over.
+        write_env({'DATABASE_URL': database_url})
+        print('     Database settings saved to .env.\n')
+
     endpoint, region, bucket, key_id, secret = with_retries(lambda: setup_storage(parts))
 
     print('3/3  Writing .env ...')
@@ -230,9 +295,7 @@ def main() -> None:
         'SUPABASE_S3_SECRET_ACCESS_KEY': secret,
         'SUPABASE_STORAGE_BUCKET': bucket,
     }
-    existing = ENV_PATH.read_text() if ENV_PATH.exists() else ''
-    ENV_PATH.write_text(update_env_text(existing, values))
-    os.chmod(ENV_PATH, 0o600)
+    write_env(values)
     print(f'     Saved to {ENV_PATH} (readable only by you).\n')
 
     print('Reminder: in Project Settings → Data API, turn the Data API off.')
@@ -256,5 +319,5 @@ if __name__ == '__main__':
         print(f'\n{exc}', file=sys.stderr)
         sys.exit(1)
     except (KeyboardInterrupt, EOFError):
-        print('\nCancelled. .env was not changed.', file=sys.stderr)
+        print('\nCancelled. Anything already confirmed (such as the database) stays in .env.', file=sys.stderr)
         sys.exit(1)

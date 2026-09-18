@@ -4,6 +4,7 @@ Django settings for a_core project.
 
 from pathlib import Path
 import os
+import sys
 
 from a_core.cloud_config import database_from_url, supabase_media_storage
 
@@ -101,9 +102,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'a_core.wsgi.application'
 
+# Tests never touch the shared Supabase project: Django would create and drop a
+# test database there, and uploads would land in the real bucket.
+RUNNING_TESTS = len(sys.argv) > 1 and sys.argv[1] == 'test'
+
 # PostgreSQL — defaults work for local install; override in .env or Docker env.
 # Set DATABASE_URL to use a hosted database such as Supabase instead (see SUPABASE.md).
-DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()
+DATABASE_URL = '' if RUNNING_TESTS else os.environ.get('DATABASE_URL', '').strip()
 if DATABASE_URL:
     DATABASES = {'default': database_from_url(DATABASE_URL)}
 else:
@@ -138,7 +143,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Uploaded media stays in MEDIA_ROOT unless the SUPABASE_S3_* variables are set.
 STORAGES = {
-    'default': supabase_media_storage(os.environ) or {
+    'default': (None if RUNNING_TESTS else supabase_media_storage(os.environ)) or {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
     },
     'staticfiles': {

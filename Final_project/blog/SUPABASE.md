@@ -82,6 +82,12 @@ Dashboard labels may differ slightly from these names.
   against a fixed snapshot so numbers are reproducible.
 - **Credentials**: use the pooler user from Supabase, share it privately, and
   rotate the password if it ever lands in a chat or commit.
+- **Tests**: `manage.py test` always uses the local database and local media,
+  even when `DATABASE_URL` is set, so tests never create databases on the
+  shared project or upload to the real bucket.
+- **Region**: every query crosses the network to the database. Keep the
+  database in the same region as the deployed site (Singapore for us); from
+  Singapore to Seoul an article page with 53 queries takes about 4 s.
 - **Free plan**: inactive projects get paused. Open the dashboard before any
   demo or presentation to make sure the project is running.
 
@@ -93,4 +99,5 @@ Dashboard labels may differ slightly from these names.
 | `SSL connection is required` | Remote URLs get `sslmode=require` automatically. Check the URL has no `sslmode=disable`. |
 | Errors about prepared statements or cursors | You are on the transaction pooler (port 6543). The settings handle it, but the session pooler (5432) is simpler. |
 | Images 403 / not found | The bucket must be public and named as in `SUPABASE_STORAGE_BUCKET`. |
+| Pages take several seconds | The database is in a distant region. Each query pays the round trip; move the project closer to where the site runs. |
 | `SUPABASE_S3_ENDPOINT should look like ...` on startup | Use the S3 endpoint ending in `/storage/v1/s3`, not the project URL. |

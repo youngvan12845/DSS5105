@@ -6,6 +6,42 @@ why, how it was verified, and what is still open. Branched from `main` at
 
 ---
 
+## 2026-09-18 — Connected to Supabase
+
+**Result.** The site now runs on a real Supabase project (region
+`ap-northeast-2`, Seoul). `scripts/migrate_to_supabase.py` copied everything
+across with matching row counts — users 1→1, pages 15→15, articles 12→12,
+index chunks 12→12 — uploaded the 4 files in `media/`, and revoked the Data
+API roles on the `public` schema. Pages load, and article images are served
+from the public bucket URL (HTTP 200).
+
+**Latency.** Each query round-trips to Seoul in about 125 ms from here, and an
+article page issues 53 queries, so it takes about 4.1 s (home 0.55 s, article
+list 1.6 s). Two separate fixes: put the database in Singapore, in the same
+region as wherever the demo is deployed, where the round trip is a few
+milliseconds; and cut the query count, since 53 queries for one article is an
+N+1 pattern that will hurt any deployment.
+
+**Incident, fixed.** With `DATABASE_URL` in `.env`, `manage.py test` created a
+`test_postgres` database on the shared Supabase project and ran every
+migration against it. It was stopped, confirmed to hold only empty test
+tables, and dropped; the real database was untouched (12 articles). Settings
+now ignore `DATABASE_URL` and Supabase Storage whenever the command is
+`test`, so tests always use the local database and never upload to the real
+bucket. 34 tests pass locally in about 7 s.
+
+**Setup script, from using it.** The first real run surfaced three rough
+edges, now fixed: hidden prompts give no feedback, so the script now prints
+how many characters it received; a bucket check using HEAD reported "wrong
+key" for any 403, so it now uploads a test file and shows Supabase's actual
+error code; and a storage mistake used to mean re-entering the database
+password, so database settings are saved as soon as the connection works.
+
+**Open.** Decide on the region before more data goes in. Teammates need the
+`.env` values by direct message.
+
+---
+
 ## 2026-09-18 — One-command Supabase setup
 
 **Why.** Connecting to Supabase meant copying six values into `.env` by hand,
@@ -27,6 +63,8 @@ that replace commented lines without touching anything else. Passwords with
 `.env` and Django's settings unchanged. 33 tests pass.
 
 **Open.** Not yet run against the real project.
+
+---
 
 ## 2026-09-13 — First baseline comparison run
 

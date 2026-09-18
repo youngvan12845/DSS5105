@@ -212,3 +212,14 @@ class SetupSupabaseScriptTests(SimpleTestCase):
         result = self.setup.update_env_text(text, {'DATABASE_URL': 'new'})
 
         self.assertEqual(result, 'DATABASE_URL=new\n')
+
+    def test_env_update_keeps_a_single_supabase_header(self):
+        header = self.setup.ENV_HEADER
+        text = f'A=1\n\n{header}\nDATABASE_URL=x\n\n{header}\nSUPABASE_S3_REGION=r\n'
+
+        result = self.setup.update_env_text(text, {'SUPABASE_STORAGE_BUCKET': 'media'})
+
+        self.assertEqual(result.count(header), 1)
+        self.assertIn('DATABASE_URL=x\n', result)
+        self.assertIn('SUPABASE_S3_REGION=r\n', result)
+        self.assertTrue(result.endswith('SUPABASE_STORAGE_BUCKET=media\n'))
