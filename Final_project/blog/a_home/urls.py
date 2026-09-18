@@ -9,4 +9,5 @@ urlpatterns = [
     path('about/', about_view, name="about"),
     path('find/', find_view, name="find"),
     path('home/', homes_view, name="homes"),
+    path('presentation/sprint1/', sprint1_presentation_view, name="sprint1_presentation"),
 ]
