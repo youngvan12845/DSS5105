@@ -43,14 +43,13 @@
         </div>
 
         <div class="border-t border-slate-100 bg-slate-50/80 px-3 py-3 shrink-0">
-            <div class="flex flex-wrap items-center gap-2 mb-2">
-                <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Model</span>
-                <select id="article-llm-model" name="llm_model" form="article-chat-form" class="agent-select text-sm">
+            <div class="hidden">
+                <select id="article-llm-model" name="llm_model" form="article-chat-form">
                     {% for option in model_options %}
                     <option value="{{ option.id }}" data-vision="{{ option.vision|yesno:'true,false' }}" {% if option.id == selected_model %}selected{% endif %}>{{ option.label }}</option>
                     {% endfor %}
                 </select>
-                <span id="article-vision-hint" class="text-xs text-slate-400 {% if not llm_info.vision %}hidden{% endif %}">· Image upload</span>
+                <span id="article-vision-hint"></span>
             </div>
 
             <form
@@ -94,7 +93,7 @@
                     />
                     <button type="submit" class="article-agent-send-btn">Send</button>
                 </div>
-                <p id="article-vision-tip" class="text-xs text-slate-400 px-1 {% if not llm_info.vision %}hidden{% endif %}">Attach a screenshot when using the VL model.</p>
+                <p id="article-vision-tip" class="hidden"></p>
             </form>
         </div>
     </section>

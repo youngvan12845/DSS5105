@@ -138,9 +138,8 @@
 
             <!-- Composer -->
             <div class="border-t border-slate-100 bg-slate-50/80 px-4 py-4 md:px-6 md:py-5">
-                <!-- Model selector -->
-                <div class="flex flex-wrap items-center gap-2 mb-3">
-                    <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Model</span>
+                <!-- Model selector (hidden from users) -->
+                <div class="hidden">
                     <select
                         id="llm-model"
                         name="llm_model"
@@ -153,7 +152,7 @@
                         </option>
                         {% endfor %}
                     </select>
-                    <span id="vision-hint" class="text-xs text-slate-400 {% if not llm_info.vision %}hidden{% endif %}">· Image upload enabled</span>
+                    <span id="vision-hint"></span>
                 </div>
 
                 <form
@@ -204,8 +203,8 @@
                         </button>
                     </div>
 
-                    <div class="flex items-center px-1">
-                        <p id="vision-tip" class="text-xs text-slate-400 {% if not llm_info.vision %}hidden{% endif %}">Attach a screenshot or article image when using the VL model.</p>
+                    <div class="hidden">
+                        <p id="vision-tip"></p>
                     </div>
                 </form>
             </div>
