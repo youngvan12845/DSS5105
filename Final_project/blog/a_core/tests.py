@@ -137,3 +137,78 @@ class ChatImageWithoutLocalPathTests(TestCase):
 
     def test_missing_image_falls_back_to_text_only(self):
         self.assertEqual(_build_user_message('hi', None), 'hi')
+
+
+def _load_setup_script():
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parent.parent / 'scripts' / 'setup_supabase.py'
+    spec = importlib.util.spec_from_file_location('setup_supabase', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class SetupSupabaseScriptTests(SimpleTestCase):
+    POOLER = 'postgresql://postgres.abcd1234:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres'
+
+    def setUp(self):
+        self.setup = _load_setup_script()
+
+    def test_parses_session_pooler_string(self):
+        parts = self.setup.parse_connection_string(self.POOLER)
+
+        self.assertEqual(parts['ref'], 'abcd1234')
+        self.assertEqual(parts['region'], 'ap-southeast-1')
+        self.assertEqual(parts['port'], 5432)
+
+    def test_unencoded_at_sign_in_pasted_password_is_harmless(self):
+        raw = self.POOLER.replace('[YOUR-PASSWORD]', 'p@ss:w/rd')
+
+        parts = self.setup.parse_connection_string(raw)
+
+        self.assertEqual(parts['host'], 'aws-0-ap-southeast-1.pooler.supabase.com')
+        self.assertEqual(parts['user'], 'postgres.abcd1234')
+
+    def test_direct_connection_is_rejected_with_a_hint(self):
+        with self.assertRaisesMessage(self.setup.SetupError, 'Session pooler'):
+            self.setup.parse_connection_string('postgresql://postgres:pw@db.abcd1234.supabase.co:5432/postgres')
+
+    def test_password_survives_encoding_into_django_settings(self):
+        parts = self.setup.parse_connection_string(self.POOLER)
+
+        url = self.setup.build_database_url(parts, 'p@ss/w#rd %1')
+
+        config = database_from_url(url)
+        self.assertEqual(config['PASSWORD'], 'p@ss/w#rd %1')
+        self.assertEqual(config['USER'], 'postgres.abcd1234')
+        self.assertEqual(config['OPTIONS']['sslmode'], 'require')
+
+    def test_env_update_replaces_commented_lines_and_keeps_the_rest(self):
+        text = (
+            'POSTGRES_DB=cheeseoo\n'
+            '# DATABASE_URL=postgresql://example\n'
+            '# SUPABASE_STORAGE_BUCKET=media\n'
+            'EMAIL_HOST_USER=someone@example.com\n'
+        )
+
+        result = self.setup.update_env_text(text, {
+            'DATABASE_URL': 'postgresql://real',
+            'SUPABASE_STORAGE_BUCKET': 'media',
+            'SUPABASE_S3_REGION': 'ap-southeast-1',
+        })
+
+        self.assertIn('POSTGRES_DB=cheeseoo\n', result)
+        self.assertIn('EMAIL_HOST_USER=someone@example.com\n', result)
+        self.assertIn('DATABASE_URL=postgresql://real\n', result)
+        self.assertNotIn('# DATABASE_URL', result)
+        self.assertEqual(result.count('SUPABASE_STORAGE_BUCKET='), 1)
+        self.assertIn('SUPABASE_S3_REGION=ap-southeast-1\n', result)
+
+    def test_env_update_writes_each_key_once_when_duplicated(self):
+        text = 'DATABASE_URL=old\n# DATABASE_URL=older\n'
+
+        result = self.setup.update_env_text(text, {'DATABASE_URL': 'new'})
+
+        self.assertEqual(result, 'DATABASE_URL=new\n')

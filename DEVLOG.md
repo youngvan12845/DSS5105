@@ -6,6 +6,28 @@ why, how it was verified, and what is still open. Branched from `main` at
 
 ---
 
+## 2026-09-18 — One-command Supabase setup
+
+**Why.** Connecting to Supabase meant copying six values into `.env` by hand,
+URL-encoding the database password, and finding out only at startup whether
+any of them were wrong.
+
+**Changed.** `scripts/setup_supabase.py` asks for the Session pooler string,
+the database password and the S3 access key; derives the project ref, region
+and Storage endpoint from the pooler string; connects to the database; uploads
+and deletes a test file to confirm the bucket exists and is public; then
+writes `.env` (mode 600) and offers to run the migration. Secrets are typed at
+hidden prompts and never leave `.env`. Typos get up to three retries, and
+`.env` is untouched unless every check passes.
+
+**Verified.** 6 new tests: pooler parsing, an unencoded `@` in a pasted
+password, rejection of the IPv6-only direct connection, and `.env` updates
+that replace commented lines without touching anything else. Passwords with
+`@ # $ ${VAR}`, quotes, spaces and Chinese characters round-trip through
+`.env` and Django's settings unchanged. 33 tests pass.
+
+**Open.** Not yet run against the real project.
+
 ## 2026-09-13 — First baseline comparison run
 
 Full set of 33 tasks against all four systems, local `qwen2.5vl:7b`,

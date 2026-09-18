@@ -31,7 +31,18 @@ Dashboard labels may differ slightly from these names.
    (article images and avatars are public on the site anyway).
 5. **Create S3 access keys**: Storage → Settings → S3 Connection. Note the
    endpoint, region, access key ID and secret.
-6. Fill `.env` (see the commented block in `.env.example`):
+6. **Easiest: run the setup script**, which asks for the values above, checks
+   that the database and bucket work, writes `.env` and offers to copy the
+   data across (step 7):
+
+   ```bash
+   .venv/bin/python scripts/setup_supabase.py
+   ```
+
+   Passwords and secrets are typed at hidden prompts and only written to
+   `.env`. Special characters in the password are encoded for you.
+
+   Or fill `.env` by hand (see the commented block in `.env.example`):
 
    ```bash
    DATABASE_URL=postgresql://postgres.<project-ref>:<password>@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres
