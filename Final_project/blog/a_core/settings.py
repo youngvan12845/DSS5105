@@ -186,13 +186,19 @@ WAGTAIL_SITE_NAME = 'Blog'
 WAGTAILADMIN_BASE_URL = os.environ.get('WAGTAILADMIN_BASE_URL', 'http://127.0.0.1:8000')
 
 # Reading Co-Pilot Agent — default: local Ollama (no article text sent to cloud APIs)
-# Provider: ollama (default) | openai
+# Provider: ollama (default) | openai | cloudflare
 AGENT_LLM_PROVIDER = os.environ.get('AGENT_LLM_PROVIDER', 'ollama')
 AGENT_OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 AGENT_OPENAI_MODEL = os.environ.get('OPENAI_MODEL', 'gpt-4o-mini')
+AGENT_OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', '')
 AGENT_OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://127.0.0.1:11434/v1')
 AGENT_OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'qwen2.5vl:7b')
 AGENT_OLLAMA_EMBED_MODEL = os.environ.get('OLLAMA_EMBED_MODEL', 'nomic-embed-text')
+
+# Cloudflare Workers AI (free tier 10,000 neurons/day, Qwen 2.5 7B)
+CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID', '5b38fbc6c3f08b3f6aeb75b980ff2e69')
+CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', '')
+CLOUDFLARE_AI_MODEL = os.environ.get('CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-7b-instruct')
 AGENT_OLLAMA_MODELS = [
     {'id': 'qwen2.5:7b', 'label': 'Qwen 2.5 7B (text)', 'vision': False},
     {'id': 'qwen2.5vl:7b', 'label': 'Qwen 2.5 VL 7B (multimodal)', 'vision': True},

@@ -49,6 +49,8 @@ def llm_configured() -> bool:
     provider = _provider()
     if provider == 'ollama':
         return ollama_reachable()
+    if provider == 'cloudflare':
+        return bool(getattr(settings, 'CLOUDFLARE_API_TOKEN', ''))
     return bool(getattr(settings, 'AGENT_OPENAI_API_KEY', ''))
 
 
@@ -71,6 +73,26 @@ def get_llm_info(model: str | None = None) -> LLMInfo:
             provider='fallback',
             model='',
             label='Ollama offline · rule-based fallback',
+            vision=False,
+        )
+
+    if provider == 'cloudflare':
+        token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
+        cf_model = getattr(settings, 'CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-7b-instruct')
+        if token:
+            display_name = cf_model.split('/')[-1]
+            return LLMInfo(
+                configured=True,
+                provider='cloudflare',
+                model=cf_model,
+                label=f'Cloudflare AI · {display_name}',
+                vision=False,
+            )
+        return LLMInfo(
+            configured=False,
+            provider='fallback',
+            model='',
+            label='Cloudflare AI offline · rule-based fallback',
             vision=False,
         )
 
@@ -138,12 +160,21 @@ def generate_answer(
         base_url = getattr(settings, 'AGENT_OLLAMA_BASE_URL', 'http://127.0.0.1:11434/v1')
         selected_model = normalize_model(model)
         client = OpenAI(base_url=base_url, api_key='ollama')
+    elif provider == 'cloudflare':
+        account_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
+        token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
+        if not token:
+            raise RuntimeError('CLOUDFLARE_API_TOKEN is not configured')
+        base_url = f'https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1'
+        selected_model = getattr(settings, 'CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-7b-instruct')
+        client = OpenAI(base_url=base_url, api_key=token)
     else:
         api_key = getattr(settings, 'AGENT_OPENAI_API_KEY', '')
         if not api_key:
             raise RuntimeError('OPENAI_API_KEY is not configured')
+        base_url = getattr(settings, 'AGENT_OPENAI_BASE_URL', None) or None
         selected_model = getattr(settings, 'AGENT_OPENAI_MODEL', 'gpt-4o-mini')
-        client = OpenAI(api_key=api_key)
+        client = OpenAI(base_url=base_url, api_key=api_key)
 
     user_content = _build_user_message(user_prompt, image_file)
     response = client.chat.completions.create(
