@@ -282,12 +282,19 @@
         <div class="flex items-center gap-4 text-sm text-slate-500">
             <p>{{ page.date }}</p>
             <div class="h-4 w-px bg-slate-300"></div>
-            <p class="flex items-center gap-1">
+            <p class="flex items-center gap-1" title="瀏覽數">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-indigo-500">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                 </svg>
                 <span>{{ page.views }}</span>
+            </p>
+            <div class="h-4 w-px bg-slate-300"></div>
+            <p class="flex items-center gap-1 text-rose-500 font-medium" title="讚數">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                    <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+                </svg>
+                <span id="header-like-count">{{ page.likes }}</span>
             </p>
         </div>
     </div>
@@ -430,6 +437,17 @@
             </div>
             {% endif %}
         </div>
+    </div>
+
+    <!-- 點讚按鈕區域 -->
+    <div class="flex flex-col items-center justify-center my-10">
+        <button id="like-btn" data-article-id="{{ page.id }}" class="group flex items-center gap-3 px-8 py-3.5 rounded-full bg-white border border-slate-200 shadow-sm hover:border-rose-300 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer">
+            <svg id="like-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-rose-500 group-hover:scale-110 transition-transform">
+                <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+            </svg>
+            <span id="like-text" class="text-sm font-semibold text-slate-700">給文章點個讚</span>
+            <span id="like-count" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-600">{{ page.likes }}</span>
+        </button>
     </div>
 
     <!-- 分割线 -->
@@ -752,5 +770,34 @@
             this.style.height = this.scrollHeight + 'px';
         });
     });
+
+    // 點讚按鈕互動
+    const likeBtn = document.getElementById('like-btn');
+    if (likeBtn) {
+        likeBtn.addEventListener('click', function() {
+            const articleId = this.dataset.articleId;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+            fetch(`/like/${articleId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const countSpan = document.getElementById('like-count');
+                    const headerCountSpan = document.getElementById('header-like-count');
+                    const textSpan = document.getElementById('like-text');
+                    if (countSpan) countSpan.textContent = data.likes;
+                    if (headerCountSpan) headerCountSpan.textContent = data.likes;
+                    if (textSpan) textSpan.textContent = '已點讚！';
+                    likeBtn.classList.add('bg-rose-50', 'border-rose-300', 'text-rose-600');
+                }
+            })
+            .catch(err => console.error('Like request failed:', err));
+        });
+    }
 </script>
 {% endblock %}
