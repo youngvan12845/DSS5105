@@ -150,5 +150,6 @@ def mark_prerequisite_mastered(session, topic_or_slug: str) -> List[str]:
         session['mastered_prereqs'] = []
     if topic_or_slug not in session['mastered_prereqs']:
         session['mastered_prereqs'].append(topic_or_slug)
-        session.modified = True
+        if hasattr(session, 'modified'):
+            session.modified = True
     return session['mastered_prereqs']

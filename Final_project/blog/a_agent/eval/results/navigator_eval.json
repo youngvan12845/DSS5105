@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-09-19 15:02:42",
+  "total_articles": 22,
+  "tracks": {
+    "track1_gap_and_monotonicity": {
+      "gap_recall": 100.0,
+      "monotonicity": 100.0,
+      "gap_passed": 17,
+      "gap_total": 17,
+      "mono_passed": 20,
+      "mono_total": 20
+    },
+    "track2_bridge_faithfulness": {
+      "bridge_completeness": 100.0,
+      "citation_accuracy": 100.0,
+      "bridge_passed": 20,
+      "bridge_total": 20
+    },
+    "track3_persona_simulation": {
+      "passed": 3,
+      "total": 3,
+      "rate": 100.0
+    },
+    "track4_token_economy": {
+      "full_tokens": 7450,
+      "navigator_tokens": 1180,
+      "token_savings_pct": 84.16
+    }
+  }
+}
