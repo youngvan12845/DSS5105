@@ -204,56 +204,64 @@
     </section>
 
     <!-- ============================================================ -->
-    <!-- SLIDE 3: Four Real-World Commercial Pain Points -->
+    <!-- SLIDE 3: Four Real & Defensible Pain Points -->
     <!-- ============================================================ -->
-    <section class="slide w-full max-w-6xl flex-col justify-center py-6" data-slide="3" data-notes="這是老師最在意的問題之一：解決了什麼真實商業痛點？我們清楚列出 Medium, Substack, 掘金等技術內容平台共同遭遇的 4 大死穴。">
+    <section class="slide w-full max-w-6xl flex-col justify-center py-6" data-slide="3" data-notes="我們完全揚棄無法實證的虛假行銷口號（如提高跳出率、提升付費轉換率）。我們聚焦於技術讀者在部落格閱讀、以及部落格引入 AI 時必定遭遇的 4 個真實工程與互動痛點：通用 AI 的站內失憶、付費牆與 RAG 的洩漏矛盾、傳統搜尋缺乏學習順序，以及自主 Agent 的越權副反應。這 4 個痛點在本專案中都有 100% 可重現的評測數據與工程解法。">
       <div class="mb-6">
-        <span class="text-xs font-mono text-indigo-400 uppercase tracking-wider">02 / 商業價值</span>
-        <h2 class="text-3xl md:text-4xl font-bold text-white mt-1">設定清楚：知識付費與技術媒體的 4 大商業痛點</h2>
+        <span class="text-xs font-mono text-indigo-400 uppercase tracking-wider">02 / 真實痛點與實證解法</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-white mt-1">拒絕浮誇行銷：我們真正解決的 4 大硬核技術痛點</h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-indigo-500/50 transition">
-          <div class="text-3xl font-black text-indigo-500/30 mb-2 font-mono">01</div>
-          <h3 class="text-lg font-bold text-white mb-2">資訊過載與高跳出率</h3>
-          <p class="text-xs text-slate-400 leading-relaxed mb-4">
-            搜尋帶來的讀者缺乏耐心看數千字長文，平均停留時間 &lt;45 秒，無法沉澱為忠實讀者。
-          </p>
+        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-indigo-500/50 transition flex flex-col justify-between">
+          <div>
+            <div class="text-3xl font-black text-indigo-500/30 mb-2 font-mono">01</div>
+            <h3 class="text-base font-bold text-white mb-2">通用 AI 的「站內失憶」與嚴重幻覺</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              直接問 ChatGPT 本站內容，AI 完全不知道站內有什麼，會嚴重幻覺瞎掰，給出不存在的偽造連結。
+            </p>
+          </div>
           <div class="mt-auto pt-3 border-t border-slate-800 text-xs font-semibold text-indigo-400">
-            解法：側邊 AI 核心提煉與錨點跳轉
+            ✓ 解法：混合向量檢索 + 事實溯源（跨篇 100% 通過）
           </div>
         </div>
 
-        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-amber-500/50 transition">
-          <div class="text-3xl font-black text-amber-500/30 mb-2 font-mono">02</div>
-          <h3 class="text-lg font-bold text-white mb-2">付費門檻的黑盒抗拒</h3>
-          <p class="text-xs text-slate-400 leading-relaxed mb-4">
-            傳統付費文章直接鎖死，讀者害怕踩雷拒絕盲買，免費轉付費轉換率長期停滯於 1.5% 瓶頸。
-          </p>
+        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-amber-500/50 transition flex flex-col justify-between">
+          <div>
+            <div class="text-3xl font-black text-amber-500/30 mb-2 font-mono">02</div>
+            <h3 class="text-base font-bold text-white mb-2">付費牆與 AI 致命矛盾：防白嫖 vs 防洩漏</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              傳統付費牆全鎖死讀者盲買；而隨便接傳統 RAG，非會員一問「輸出代碼」，付費內容全被提取洩漏！
+            </p>
+          </div>
           <div class="mt-auto pt-3 border-t border-slate-800 text-xs font-semibold text-amber-400">
-            解法：付費感知問答與點數階梯解鎖
+            ✓ 解法：檢索層物理脫敏（對抗測試 100% 零洩漏）
           </div>
         </div>
 
-        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-emerald-500/50 transition">
-          <div class="text-3xl font-black text-emerald-500/30 mb-2 font-mono">03</div>
-          <h3 class="text-lg font-bold text-white mb-2">碎片孤島缺乏系統路徑</h3>
-          <p class="text-xs text-slate-400 leading-relaxed mb-4">
-            零散單篇文章無法提供技能成長閉環，初學者不知下一篇讀什麼，學習動力迅速耗竭。
-          </p>
+        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-emerald-500/50 transition flex flex-col justify-between">
+          <div>
+            <div class="text-3xl font-black text-emerald-500/30 mb-2 font-mono">03</div>
+            <h3 class="text-base font-bold text-white mb-2">傳統搜尋只能查「單詞」，查不出「順序」</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              搜尋「機器學習怎麼學」，Wagtail 搜尋只傳回零散文章，順序顛倒，無法提供循序漸進的技能學習路徑。
+            </p>
+          </div>
           <div class="mt-auto pt-3 border-t border-slate-800 text-xs font-semibold text-emerald-400">
-            解法：系列主題化 + AI 路徑自動規劃
+            ✓ 解法：結構化學習路徑規劃（概覽 ➔ 數學 ➔ 實戰）
           </div>
         </div>
 
-        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition">
-          <div class="text-3xl font-black text-purple-500/30 mb-2 font-mono">04</div>
-          <h3 class="text-lg font-bold text-white mb-2">參與門檻高與社群冷啟動</h3>
-          <p class="text-xs text-slate-400 leading-relaxed mb-4">
-            讀者懶得打字留言或整理收藏夾，平台缺乏互動數據，社群難以形成正向激勵飛輪。
-          </p>
+        <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-purple-500/50 transition flex flex-col justify-between">
+          <div>
+            <div class="text-3xl font-black text-purple-500/30 mb-2 font-mono">04</div>
+            <h3 class="text-base font-bold text-white mb-2">AI 代理越權操作與資料副反應風險</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              很多 Agent 示範讓 AI 自動執行寫入動作（留言、改書籤），極易造成誤操作或惡意濫用污染資料庫。
+            </p>
+          </div>
           <div class="mt-auto pt-3 border-t border-slate-800 text-xs font-semibold text-purple-400">
-            解法：接續閱讀提示 + AI 評論起草
+            ✓ 解法：Human-in-the-loop 雙階段確認 + 審計日誌
           </div>
         </div>
       </div>
