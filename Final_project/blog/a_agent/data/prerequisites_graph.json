@@ -1,0 +1,513 @@
+{
+  "python-basics-variables": {
+    "title": "Python Basics: Variables and Data Types",
+    "series": "python-algorithms",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "Python 中的變數本質是物件參照（Object Reference）。對可變物件（如 list, dict）進行預設參數賦值時，會導致 cross-request 狀態污染漏洞。",
+      "tradeoff_challenge": "在記憶體受限情境下，若需要存儲數百萬個結構化記錄，使用 dataclass、TypedDict 還是 __slots__ 的效能最優？"
+    },
+    "next_milestones": [
+      {
+        "slug": "python-functions-modules",
+        "title": "Python Functions and Modules",
+        "reason": "掌握變數與資料型別後，下一步是學習模組化封裝與高階函數用法。"
+      }
+    ]
+  },
+  "python-functions-modules": {
+    "title": "Python Functions and Modules",
+    "series": "python-algorithms",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "python-basics-variables",
+        "title": "Python Basics: Variables and Data Types",
+        "key_concept": "變數作用域 (Scope) 與可變型別特性",
+        "bridge_summary": "Python 遵循 LEGB 作用域解析規則（Local, Enclosing, Global, Built-in）。函數內修改全域變數需明確宣告 global。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "閉包（Closure）捕捉變數延遲綁定（Late Binding）問題：在迴圈內定義 lambda 時所有實例會共享最後一個 index 值，需透過預設參數強制立即綁定。",
+      "tradeoff_challenge": "高並發下使用 Python 裝飾器（Decorator）注入日誌時，如何保證 functools.wraps 正確保留型別簽章以通過 mypy 靜態檢查？"
+    },
+    "next_milestones": [
+      {
+        "slug": "i-built-a-version-bump-tool-in-rust-that-is-1",
+        "title": "I Built a Version Bump Tool in Rust That Is 10,000x Faster Than Its Python Counterparts.",
+        "reason": "了解 Python 腳本的直譯瓶頸後，探討 Rust 系統級擴展與效能極限。"
+      }
+    ]
+  },
+  "path-python-web": {
+    "title": "Reading Path: Python Web Development",
+    "series": "python-algorithms",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "python-basics-variables",
+        "title": "Python Basics: Variables and Data Types",
+        "key_concept": "基礎語法與資料型別",
+        "bridge_summary": "Web 開發需要處理字串剖析、字典序列化與 JSON 轉換，基礎資料結構必須熟練。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Django ORM 的 N+1 查詢問題：未妥善使用 select_related 與 prefetch_related 會導致首頁連線數暴增癱瘓連線池。",
+      "tradeoff_challenge": "大型單體架構 vs 微服務：在 100 萬用戶量級下，過早拆分微服務帶來的分散式事務成本是否大於模組化單體的收益？"
+    },
+    "next_milestones": [
+      {
+        "slug": "django-project-structure",
+        "title": "Django Project Structure Explained",
+        "reason": "路徑導引完成後，直接切入 Django 專案工程化目錄組織實戰。"
+      }
+    ]
+  },
+  "i-built-a-version-bump-tool-in-rust-that-is-1": {
+    "title": "I Built a Version Bump Tool in Rust That Is 10,000x Faster Than Its Python Counterparts.",
+    "series": "python-algorithms",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "python-functions-modules",
+        "title": "Python Functions and Modules",
+        "key_concept": "Python 腳本啟動成本與直譯機制",
+        "bridge_summary": "Python CLI 工具每次啟動需加載直譯器與模組依賴，在大型 Monorepo 頻繁呼叫時會累積顯著延遲。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Rust FFI 跨語言調用開銷：頻繁在 Python 與 Rust 之間轉換非平坦資料結構（如巢狀 Dict）可能吃掉原生加速優勢。",
+      "tradeoff_challenge": "何時使用 PyO3 編寫 C-Extension，何時直接構建獨立靜態二進位 CLI 工具？"
+    },
+    "next_milestones": [
+      {
+        "slug": "i-tried-to-beat-peter-norvig-and-accidentally",
+        "title": "I Tried to Beat Peter Norvig and Accidentally Became Ryan Gosling",
+        "reason": "進入旗艦演算法篇，探討如何用系統底層最佳化擊敗經典演算法大師的實作。"
+      }
+    ]
+  },
+  "i-tried-to-beat-peter-norvig-and-accidentally": {
+    "title": "I Tried to Beat Peter Norvig and Accidentally Became Ryan Gosling",
+    "series": "python-algorithms",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "python-functions-modules",
+        "title": "Python Functions and Modules",
+        "key_concept": "演算法複雜度與資料結構最佳化",
+        "bridge_summary": "拼寫校正算法的核心在於編輯距離（Levenshtein Distance）的狀態轉移剪枝，資料結構的記憶體局部性直接決定命中效率。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "過度追求微架構優化（如手寫 SIMD / 位元操作）可能導致代碼維護性歸零，在編譯器自動向量化面前甚至可能產生負優化。",
+      "tradeoff_challenge": "在 Trie 樹與 SymSpell 哈希索引之間，面對 100 萬詞彙庫的高頻查詢，誰能在 CPU L3 Cache 內完成無鎖檢索？"
+    },
+    "next_milestones": [
+      {
+        "slug": "a-4-gb-laptop-gpu-beats-a-12-core-cpu-by-43x-",
+        "title": "A 4 GB Laptop GPU Beats a 12-Core CPU by 4.3x on Gemma 4",
+        "reason": "將 CPU 演算法極限推進至 GPU 平行矩陣運算領域。"
+      }
+    ]
+  },
+  "path-ml-getting-started": {
+    "title": "Reading Path: Machine Learning Getting Started",
+    "series": "machine-learning",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "資料洩漏（Data Leakage）：在進行特徵標準化（StandardScaler）時對整個資料集 fit，導致測試集資訊提前外洩至訓練模型。",
+      "tradeoff_challenge": "Bias-Variance 權衡：在模型欠擬合與過擬合之間，如何透過交叉驗證（K-Fold）設定正則化參數超平面？"
+    },
+    "next_milestones": [
+      {
+        "slug": "ml-supervised-unsupervised",
+        "title": "Machine Learning Overview: Supervised vs Unsupervised",
+        "reason": "展開機器學習第一站：釐清監督學習與非監督學習的本質差異。"
+      }
+    ]
+  },
+  "ml-supervised-unsupervised": {
+    "title": "Machine Learning Overview: Supervised vs Unsupervised",
+    "series": "machine-learning",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "標籤雜訊與樣本不均衡：在欺詐檢測中負樣本佔 99.9%，盲目使用 Accuracy 指標會產生模型完美的致命假象，必須改用 PR-AUC 或 F1-Score。",
+      "tradeoff_challenge": "面對無標籤資料時，先用自監督學習（Self-supervised）預訓練特徵抽取器，還是直接進行 K-Means 分群？"
+    },
+    "next_milestones": [
+      {
+        "slug": "gradient-descent-intuition",
+        "title": "Gradient Descent Intuition",
+        "reason": "搞懂監督學習的目標後，進一步理解如何透過梯度下降演算法自動求解最佳權重。"
+      }
+    ]
+  },
+  "gradient-descent-intuition": {
+    "title": "Gradient Descent Intuition",
+    "series": "machine-learning",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "ml-supervised-unsupervised",
+        "title": "Machine Learning Overview: Supervised vs Unsupervised",
+        "key_concept": "損失函數與最佳化目標",
+        "bridge_summary": "梯度下降透過計算損失函數對權重參數的偏導數（負梯度方向），以學習率步長反覆迭代直至收斂。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "學習率過大引發梯度爆炸或震盪發散，未對特徵做歸一化導致損失曲面呈現細長狹谷，造成收斂速度呈指數級變慢。",
+      "tradeoff_challenge": "BGD (全量梯度)、SGD (隨機梯度) 與 Mini-batch SGD 之間的計算效率 vs 泛化能力取捨。"
+    },
+    "next_milestones": [
+      {
+        "slug": "linear-regression-practice",
+        "title": "Linear Regression in Practice",
+        "reason": "將梯度下降原理實際套用至首個完整機器學習實戰模型：線性迴歸。"
+      }
+    ]
+  },
+  "linear-regression-practice": {
+    "title": "Linear Regression in Practice",
+    "series": "machine-learning",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "ml-supervised-unsupervised",
+        "title": "Machine Learning Overview: Supervised vs Unsupervised",
+        "key_concept": "迴歸問題與連續標籤預測",
+        "bridge_summary": "線性迴歸屬於監督學習範疇，試圖尋找特徵與連續值標籤之間的最佳擬合超平面。"
+      },
+      {
+        "slug": "gradient-descent-intuition",
+        "title": "Gradient Descent Intuition",
+        "key_concept": "MSE 損失函數最小化",
+        "bridge_summary": "均方誤差 (MSE) 是凸函數，可透過閉式解 (Normal Equation) 或梯度下降迭代求解全局最優權重。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Sklearn 的 LinearRegression 預設採用 SVD 閉式解，矩陣維度過大時會造成 O(N^3) 運算與記憶體爆炸。百萬資料級別應改用 SGDRegressor。",
+      "tradeoff_challenge": "特徵間存在高度多重共線性時，單純最小平方法估計方差極大，何時選擇 L1 Lasso（特徵稀疏化）vs L2 Ridge（權重平滑衰減）？"
+    },
+    "next_milestones": [
+      {
+        "slug": "a-4-gb-laptop-gpu-beats-a-12-core-cpu-by-43x-",
+        "title": "A 4 GB Laptop GPU Beats a 12-Core CPU by 4.3x on Gemma 4",
+        "reason": "當迴歸與張量運算數據量暴增時，利用 GPU 並行硬體架構進行底層極限加速。"
+      }
+    ]
+  },
+  "a-4-gb-laptop-gpu-beats-a-12-core-cpu-by-43x-": {
+    "title": "A 4 GB Laptop GPU Beats a 12-Core CPU by 4.3x on Gemma 4",
+    "series": "machine-learning",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "linear-regression-practice",
+        "title": "Linear Regression in Practice",
+        "key_concept": "矩陣乘法與張量計算底層",
+        "bridge_summary": "機器學習推理由數以億計的 GEMM（通用矩陣乘法）構成，硬體的記憶體頻寬（Bandwidth）與平行核心數決定了執行速度極限。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "小顯存情境下的 KV Cache 溢出與記憶體碎片化：未啟用 PagedAttention 或量化時，並發連線數稍增即觸發 CUDA OOM 崩潰。",
+      "tradeoff_challenge": "INT4/INT8 量化（如 AWQ、GPTQ）與 FP16 全精度推理：在 4GB 顯存邊緣設備上，如何平衡延遲降低與模型困惑度（Perplexity）衰退？"
+    },
+    "next_milestones": [
+      {
+        "slug": "what-is-rag",
+        "title": "What Is RAG?",
+        "reason": "有了高能效的模型推理底座後，進一步結合外掛知識庫打造 RAG 智慧問答系統。"
+      }
+    ]
+  },
+  "web-http-rest": {
+    "title": "Web Development Basics: HTTP and REST",
+    "series": "backend-architecture",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "HTTP 連線未正確復用（Keep-Alive 失效）：在高並發微服務調用中頻繁建立 TCP 三向交握與 TLS 握手，導致端口耗盡 (TIME_WAIT)。",
+      "tradeoff_challenge": "RESTful 語意嚴格性 vs 效能實務：當查詢條件過長超出 URL 長度限制時，該破壞 GET 冪等性改用 POST，還是採用新型 HTTP QUERY 方法？"
+    },
+    "next_milestones": [
+      {
+        "slug": "django-project-structure",
+        "title": "Django Project Structure Explained",
+        "reason": "掌握 HTTP 請求生命週期後，學習現代後端框架 Django 如何優雅組織工程代碼。"
+      }
+    ]
+  },
+  "django-project-structure": {
+    "title": "Django Project Structure Explained",
+    "series": "backend-architecture",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "web-http-rest",
+        "title": "Web Development Basics: HTTP and REST",
+        "key_concept": "URL 路由映射與請求分發",
+        "bridge_summary": "Django 的核心架構圍繞 MTV（Model-Template-View）展開，由根路由 urls.py 將 HTTP 請求派發給對應的 View 函數。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "循環引用（Circular Import）：在多個 App 的 models.py 之間直接 import 對方模型，在 Django 啟動註冊階段引發死鎖崩潰。",
+      "tradeoff_challenge": "肥 Model 瘦 View vs 服務層架構（Service Layer）：當業務邏輯複雜度攀升時，何時將業務抽離至獨立 services.py 以保持單元測試可測性？"
+    },
+    "next_milestones": [
+      {
+        "slug": "wagtail-quickstart",
+        "title": "Wagtail CMS Quick Start",
+        "reason": "在標準 Django 基礎上，引入 Wagtail 內容管理系統擴展動態頁面樹能力。"
+      }
+    ]
+  },
+  "wagtail-quickstart": {
+    "title": "Wagtail CMS Quick Start",
+    "series": "backend-architecture",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "django-project-structure",
+        "title": "Django Project Structure Explained",
+        "key_concept": "Django Page 模型繼承體系",
+        "bridge_summary": "Wagtail 架構在 Django 之上，將所有內容節點抽象為 PageTree（頁面樹），並提供友善的後台編輯流。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Page.objects.all() 的多型查詢（Polymorphic Query）開銷：在深層頁面樹中遍歷子頁面時，若未搭配 specific_class 過濾會導致大量跨表 JOIN 拖垮資料庫。",
+      "tradeoff_challenge": "StreamField 靈活區塊存儲 vs 關聯表設計：JSON 區塊帶來的後台自由度是否犧牲了跨區塊 SQL 檢索效率？"
+    },
+    "next_milestones": [
+      {
+        "slug": "fixing-delicate-cache-mismatches-in-a-brownfi",
+        "title": "Fixing Delicate Cache Mismatches in a Brownfield SPA: A Pragmatic Solution",
+        "reason": "當內容管理系統面臨高並發與前後端分離時，如何解決複雜快取不一致問題。"
+      }
+    ]
+  },
+  "the-cicd-pipeline-that-was-lying-to-us-a-depl": {
+    "title": "The CI/CD Pipeline That Was Lying to Us: A Deploy Debugging Story",
+    "series": "backend-architecture",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "django-project-structure",
+        "title": "Django Project Structure Explained",
+        "key_concept": "自動化部署與生產環境變數隔離",
+        "bridge_summary": "CI/CD 管線需要嚴格確保測試環境與生產環境的相依套件鎖定（requirements.txt/poetry.lock）與資料庫遷移一致。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Docker 快取層污染：CI 建置指令中使用動態依賴拉取，導致 Docker cache 未被正確失效，部署了包含過期依賴的舊鏡像。",
+      "tradeoff_challenge": "藍綠部署（Blue-Green）vs 滾動更新（Rolling Update）：當資料庫 Migration 包含非向後相容的破壞性變更時，如何避免短暫流量報錯？"
+    },
+    "next_milestones": [
+      {
+        "slug": "fixing-delicate-cache-mismatches-in-a-brownfi",
+        "title": "Fixing Delicate Cache Mismatches in a Brownfield SPA: A Pragmatic Solution",
+        "reason": "深入架構維護深水區：解決長期運行的舊系統中棘手的快取一致性死穴。"
+      }
+    ]
+  },
+  "fixing-delicate-cache-mismatches-in-a-brownfi": {
+    "title": "Fixing Delicate Cache Mismatches in a Brownfield SPA: A Pragmatic Solution",
+    "series": "backend-architecture",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "web-http-rest",
+        "title": "Web Development Basics: HTTP and REST",
+        "key_concept": "HTTP 快取標頭 (Cache-Control, ETag)",
+        "bridge_summary": "瀏覽器與 CDN 依據 ETag 及 Last-Modified 進行條件式請求（304 Not Modified），快取鍵命名策略直接決定髒讀發生的機率。"
+      },
+      {
+        "slug": "django-project-structure",
+        "title": "Django Project Structure Explained",
+        "key_concept": "快取層 (Redis/Memcached) 整合",
+        "bridge_summary": "Cache-Aside 模式中，資料更新時必須先更新資料庫再淘汰快取，但極端並發下仍存在讀寫競爭條件。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "快取擊穿（Cache Stampede）：熱點 Key 過期瞬間，上千並發請求同時穿透至資料庫重算，應採用互斥鎖 (Mutex) 或邏輯過期非同步續期。",
+      "tradeoff_challenge": "強一致性 vs 最終一致性：在分散式系統中，為了保證毫秒級響應，究竟該容忍多少秒的快取延遲視窗？"
+    },
+    "next_milestones": [
+      {
+        "slug": "nginx-silently-rejects-the-new-http-query-met",
+        "title": "nginx silently rejects the new HTTP QUERY method",
+        "reason": "進階至網絡邊緣反向代理層：探討 Nginx 底層協定解析引發的靜默拒絕問題。"
+      }
+    ]
+  },
+  "nginx-silently-rejects-the-new-http-query-met": {
+    "title": "nginx silently rejects the new HTTP QUERY method",
+    "series": "backend-architecture",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "web-http-rest",
+        "title": "Web Development Basics: HTTP and REST",
+        "key_concept": "HTTP 請求方法與反向代理規範",
+        "bridge_summary": "Nginx 作為 Web 伺服器第一道防線，會依據 RFC 嚴格校驗請求方法。新興草案 HTTP QUERY 帶請求體時若未配置轉發會被直接丟棄。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "反向代理緩衝區溢出：當客戶端請求 Header 或 Body 稍微超出 proxy_buffer_size 時，Nginx 會靜默寫入暫存磁碟或回傳 502/400 錯誤。",
+      "tradeoff_challenge": "在邊緣 Envoy / Nginx 攔截所有非標準方法以增強安全性，還是放行自定義方法以適配微服務 GraphQL / RPC 演進？"
+    },
+    "next_milestones": [
+      {
+        "slug": "agent-tool-design",
+        "title": "Agent Tool Design Principles",
+        "reason": "將後端架構原則升級應用至現代 AI Agent 工具設計與 API 邊界控制。"
+      }
+    ]
+  },
+  "what-is-rag": {
+    "title": "What Is RAG?",
+    "series": "ai-agents",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "切片過長或過短（Chunking Dilemma）：切太碎遺失上下文語意，切太大檢索雜訊過多，應採用父子切片（Parent-Child Chunking）或句子窗口檢索。",
+      "tradeoff_challenge": "密集向量檢索（Dense Vector）vs 稀疏關鍵字（BM25）：在專有名詞密集的技術文檔中，雙路召回加重排序（Reranking）是否為最佳標配？"
+    },
+    "next_milestones": [
+      {
+        "slug": "20-agentic-ai-terms-every-developer-should-kn",
+        "title": "20 Agentic AI Terms Every Developer Should Know (Explained Simply)",
+        "reason": "從單純的檢索增強（RAG）擴展到具備規劃、反思與行動的完整 Agentic 體系。"
+      }
+    ]
+  },
+  "20-agentic-ai-terms-every-developer-should-kn": {
+    "title": "20 Agentic AI Terms Every Developer Should Know (Explained Simply)",
+    "series": "ai-agents",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "what-is-rag",
+        "title": "What Is RAG?",
+        "key_concept": "外部知識檢索與上下文注入",
+        "bridge_summary": "Agent 不僅僅是檢索知識，更具備自主規劃（Planning）、工具呼叫（Tool Use）與自我反思（Reflection）三位一體的能力。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "ReAct 循環死鎖：Agent 因工具回傳錯誤陷入無休止的嘗試死循環，必須設定嚴格的 Max Iteration 與超時熔斷保護機制。",
+      "tradeoff_challenge": "單一全能 Agent 呼叫數十個工具，還是多 Agent 專家集群（Multi-Agent System）通訊分工？"
+    },
+    "next_milestones": [
+      {
+        "slug": "agent-tool-design",
+        "title": "Agent Tool Design Principles",
+        "reason": "深入研究 Agent 最核心的執行器官：如何設計高可靠、具備權限邊界的工具協同。"
+      }
+    ]
+  },
+  "vibe-coding-isnt-the-problem-calling-it-engin": {
+    "title": "Vibe Coding Isn't the Problem. Calling It Engineering Is",
+    "series": "ai-agents",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "20-agentic-ai-terms-every-developer-should-kn",
+        "title": "20 Agentic AI Terms Every Developer Should Know (Explained Simply)",
+        "key_concept": "工程規範 vs 隨機生成",
+        "bridge_summary": "AI 生成程式碼速度極快，但真正的軟體工程核心在於架構約束、型別系統、單元測試覆蓋與邊界安全防禦。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "技術債爆炸：完全依賴 LLM 生成大量無法維護的義大利麵代碼，缺乏架構邊界，重構成本遠高於重新編寫。",
+      "tradeoff_challenge": "在 AI 時代，工程師的價值從「純編寫語法」轉移到「架構評審（Reviewer）與形式化驗證（Verification）」。"
+    },
+    "next_milestones": [
+      {
+        "slug": "ai-is-already-better-at-coding-than-most-soft",
+        "title": "AI Is Already Better at Coding Than Most Software Developers",
+        "reason": "進階思考 AI 程式設計能力跨越奇點後，對未來軟體架構模式的顛覆性衝擊。"
+      }
+    ]
+  },
+  "ai-is-already-better-at-coding-than-most-soft": {
+    "title": "AI Is Already Better at Coding Than Most Software Developers",
+    "series": "ai-agents",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "vibe-coding-isnt-the-problem-calling-it-engin",
+        "title": "Vibe Coding Isn't the Problem. Calling It Engineering Is",
+        "key_concept": "人機共生與高階架構決策",
+        "bridge_summary": "當 LLM 掌握常規演算法與 CRUD 代碼後，開發者的核心防線退守至大規模分散式架構權衡與業務領域建模。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "自動化程式碼生成引入的隱蔽 CVE 安全漏洞：模型訓練集中過時或帶有安全缺陷的代碼被靜默引入生產系統。",
+      "tradeoff_challenge": "靜態分析工具（SonarQube / CodeQL）在 PR 管線中是否應被賦予一票否決權？"
+    },
+    "next_milestones": [
+      {
+        "slug": "agent-tool-design",
+        "title": "Agent Tool Design Principles",
+        "reason": "將高階工程思維直接落實為安全可控的企業級 Agent 工具設計實踐。"
+      }
+    ]
+  },
+  "agent-tool-design": {
+    "title": "Agent Tool Design Principles",
+    "series": "ai-agents",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "what-is-rag",
+        "title": "What Is RAG?",
+        "key_concept": "檢索切片與上下文組裝",
+        "bridge_summary": "工具呼叫是 RAG 的主動化延伸，Agent 透過結構化 JSON 決定何時檢索、何時呼叫特定 API。"
+      },
+      {
+        "slug": "20-agentic-ai-terms-every-developer-should-kn",
+        "title": "20 Agentic AI Terms Every Developer Should Know (Explained Simply)",
+        "key_concept": "函數呼叫 (Function Calling) 與二階段確認",
+        "bridge_summary": "工具定義必須遵守單一職責原則（Single Responsibility），並對所有寫入操作強制執行 Human-in-the-loop 確認。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "工具參數幻覺（Argument Hallucination）：模型隨機生成非預期的枚舉值或惡意路徑，後端必須進行 Pydantic/JSONSchema 硬性攔截驗證。",
+      "tradeoff_challenge": "權限最小化原則：Agent 工具是給予直接執行權力，還是生成可撤銷的預演事務（Dry-run Transaction）？"
+    },
+    "next_milestones": [
+      {
+        "slug": "fixing-delicate-cache-mismatches-in-a-brownfi",
+        "title": "Fixing Delicate Cache Mismatches in a Brownfield SPA: A Pragmatic Solution",
+        "reason": "跨領域融合：將後端高可用架構原則與 AI 代理審計系統進行深度閉環。"
+      }
+    ]
+  },
+  "5-devto-features-i-wish-existed-3-im-genuinel": {
+    "title": "5 DEV.to Features I Wish Existed. 3 I'm Genuinely Relieved They Don't.",
+    "series": "community-platform",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "wagtail-quickstart",
+        "title": "Wagtail CMS Quick Start",
+        "key_concept": "開發者社群平台產品設計與內容治理",
+        "bridge_summary": "技術社群的產品設計必須在閱讀激勵、作者回饋與垃圾內容治理之間取得微妙平衡。"
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "互動機制被爬蟲濫用：若點讚與留言缺乏人機驗證與頻率限制（Rate Limit），會導致首頁排行被刷榜垃圾號佔據。",
+      "tradeoff_challenge": "推薦演算法依賴點擊率還是閱讀完畢率？如何避免社群標題黨泛濫？"
+    },
+    "next_milestones": [
+      {
+        "slug": "path-python-web",
+        "title": "Reading Path: Python Web Development",
+        "reason": "回到技術主線，繼續精進完整技術專欄系統架構實務。"
+      }
+    ]
+  }
+}
