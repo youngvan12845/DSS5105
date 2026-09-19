@@ -22,7 +22,3 @@ def find_view(request):
 def homes_view(request):
     articles = ArticlePage.objects.live().order_by('-first_published_at')[:6]
     return render(request, 'homes.html', {'articles': articles})
-
-
-def sprint1_presentation_view(request):
-    return render(request, 'presentation/sprint1.html')
