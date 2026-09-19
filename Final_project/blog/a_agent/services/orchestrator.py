@@ -518,9 +518,11 @@ def handle_user_message(
     if llm_configured():
         if article_scope:
             system_prompt = (
-                'You are a blog reading co-pilot focused on ONE article. '
-                'Answer ONLY using passages from the scoped article below. '
-                'Do not mention or cite other articles. '
+                'You are an active blog reading co-pilot and learning path navigator focused on ONE article. '
+                'Answer ONLY using passages and prerequisite diagnosis from the scoped article below. '
+                'If the user asks whether they can understand this article or asks about prerequisites, reference the provided prerequisite diagnosis. '
+                'If the user is an experienced or senior reader, provide architectural insights and production pitfalls instead of basic definitions. '
+                'Do not mention or cite other articles unless discussing prerequisites. '
                 'Respond in English unless the user writes in another language. '
                 'If the user asks for a summary, synthesize the provided passages. '
                 'If content is paywalled and passages are preview-only, say so clearly. '
@@ -528,7 +530,8 @@ def handle_user_message(
             )
         else:
             system_prompt = (
-                'You are a blog reading co-pilot. Answer ONLY using the provided tool results. '
+                'You are a blog reading co-pilot and learning path navigator. Answer ONLY using the provided tool results. '
+                'Guide readers with structured learning paths from foundational concepts to advanced production architecture. '
                 'Respond in English unless the user writes in another language. '
                 'Cite article titles and include markdown links when URLs are available. '
                 'If content is paywalled and the user cannot read the full text, do not leak paid body text. '
@@ -541,6 +544,12 @@ def handle_user_message(
         )
         if article_scope:
             user_prompt += f'Focused article:\n{article_scope_to_dict(article_scope)}\n\n'
+            if article_scope.slug:
+                from a_agent.services.navigator import calculate_article_readiness
+                session_mastered = request.session.get('mastered_prereqs', []) if request and hasattr(request, 'session') else []
+                readiness_diag = calculate_article_readiness(user, article_scope.slug, session_mastered=session_mastered)
+                tool_trace.append({'tool': 'calculate_article_readiness', 'status': readiness_diag.get('status'), 'score': readiness_diag.get('score')})
+                user_prompt += f'Prerequisite diagnosis & readiness:\n{readiness_diag}\n\n'
         user_prompt += (
             f'Browsing history:\n{history_to_dicts(history_items)}\n\n'
             f'Keyword hits:\n{hits_to_dicts(keyword_hits)}\n\n'

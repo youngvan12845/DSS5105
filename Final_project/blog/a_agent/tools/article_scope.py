@@ -24,6 +24,7 @@ class ArticleScope:
     is_free: bool
     can_read_full: bool
     access_reason: str
+    slug: str = ''
 
 
 def get_article_scope(
@@ -41,11 +42,12 @@ def get_article_scope(
     return ArticleScope(
         article_id=article.pk,
         title=article.title,
-        url=access.url,
+        url=article.url or '',
         intro=article.intro or '',
-        is_free=article.is_free,
+        is_free=access.is_free,
         can_read_full=access.can_read_full,
         access_reason=access.reason,
+        slug=article.slug or '',
     )
 
 
