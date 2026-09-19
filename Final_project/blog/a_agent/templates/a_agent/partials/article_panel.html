@@ -25,6 +25,10 @@
         <p class="article-agent-note shrink-0">Preview only — paid content is not included in answers.</p>
         {% endif %}
 
+        {% if readiness %}
+        {% include 'a_agent/partials/readiness_panel.html' with readiness=readiness article=article %}
+        {% endif %}
+
         <div id="article-chat-messages" class="flex-1 min-h-0 overflow-y-auto px-4 py-4">
             {% if not chat_messages %}
             <div class="max-w-sm mx-auto text-center py-6">

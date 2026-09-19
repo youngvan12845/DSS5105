@@ -71,3 +71,10 @@ class NavigatorServiceTests(TestCase):
         self.assertIn('title', bridge)
         self.assertIn('bridge_summary', bridge)
         self.assertTrue(len(bridge['bridge_summary']) > 10)
+
+    def test_concept_bridge_view_endpoint(self):
+        resp = self.client.get('/agent/bridge/gradient-descent-intuition/')
+        self.assertEqual(resp.status_code, 200)
+        content = resp.content.decode('utf-8')
+        self.assertIn('1 分鐘核心架橋', content)
+        self.assertIn('梯度下降', content)
