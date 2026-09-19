@@ -289,7 +289,7 @@ def concept_bridge_view(request: HttpRequest, prereq_slug: str) -> HttpResponse:
     bridge = get_concept_bridge(prereq_slug)
     if not bridge:
         return HttpResponse(
-            f"<div class='mt-2 p-2 rounded bg-rose-50 border border-rose-200 text-rose-700 text-[11px]'>查無《{prereq_slug}》概念架橋切片</div>"
+            f"<div class='mt-2 p-2 rounded bg-rose-50 border border-rose-200 text-rose-700 text-[11px]'>No concept bridge found for '{prereq_slug}'.</div>"
         )
     return render(request, 'a_agent/partials/concept_bridge_card.html', {'bridge': bridge})
 

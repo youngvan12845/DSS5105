@@ -44,7 +44,7 @@ def get_concept_bridge(prereq_slug: str) -> Optional[Dict[str, Any]]:
             'slug': prereq_slug,
             'title': meta.get('title'),
             'key_concept': meta.get('title'),
-            'bridge_summary': f"這是《{meta.get('title')}》的核心先修模組，建議讀者在進入進階應用前掌握相關基礎觀念。",
+            'bridge_summary': f"This is a foundational prerequisite for '{meta.get('title')}'. Understanding these core concepts is recommended before advancing.",
         }
     return None
 
