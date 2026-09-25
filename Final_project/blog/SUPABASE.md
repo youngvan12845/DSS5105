@@ -72,6 +72,34 @@ Dashboard labels may differ slightly from these names.
 2. `pip install -r requirements.txt`, then `./scripts/run_local.sh`.
    A local PostgreSQL is no longer required for day-to-day use.
 
+## Per-person database access
+
+Teammates do not get the project's master connection string. Each person has
+their own database role (`dss_frank`, `dss_yuqian`, `dss_ruihan`, `dss_shiyu`),
+sent privately as a ready-to-paste `DATABASE_URL`.
+
+| Can | Cannot |
+|---|---|
+| Read and write every table — run the site, publish articles, comment | Create, alter or drop tables (so no `migrate`) |
+| Keep working if someone else's access is revoked | Create roles or change anyone's password |
+
+Migrations stay with the project owner's account, which matches the rule that
+only one person applies schema changes to the shared database.
+
+**Revoke one person** (for example after a leaked laptop):
+
+```sql
+REVOKE ALL ON ALL TABLES IN SCHEMA public FROM dss_yuqian;
+REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM dss_yuqian;
+REVOKE ALL ON SCHEMA public FROM dss_yuqian;
+DROP ROLE dss_yuqian;
+```
+
+**Note on RLS**: row-level security is on for the Django tables, which keeps
+Supabase's public API out. The app's roles are created with `BYPASSRLS`
+because access control lives in Django (paywall, permissions), not in the
+database.
+
 ## Rules for a shared database
 
 - **Migrations**: only migrations that are merged into `main` are applied to
