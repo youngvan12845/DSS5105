@@ -89,6 +89,7 @@ class ArticlePage(Page):
     tags = ClusterTaggableManager(through='ArticleTag', blank=True)
     
     views = models.PositiveIntegerField(default=0, editable=False)
+    likes = models.PositiveIntegerField(default=0, verbose_name="点赞数")
 
     is_free = models.BooleanField(default=True, verbose_name="是否为免费页面")
     required_points = models.PositiveIntegerField(default=0, verbose_name="所需积分")
@@ -96,6 +97,10 @@ class ArticlePage(Page):
     def increment_view_count(self):
         self.views += 1
         self.save(update_fields=["views"])
+    
+    def increment_like_count(self):
+        self.likes += 1
+        self.save(update_fields=["likes"])
     
     def image_url(self):
         return self.image.get_rendition('fill-1200x675|jpegquality-80').url
@@ -192,6 +197,7 @@ class ArticlePage(Page):
         FieldPanel('body'),
         FieldPanel('date'),
         FieldPanel('tags'),
+        FieldPanel('likes'),
         FieldPanel('is_free'),
         FieldPanel('required_points'),
     ]

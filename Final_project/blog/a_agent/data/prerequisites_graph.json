@@ -1,0 +1,487 @@
+{
+  "python-basics-variables": {
+    "title": "Python Basics: Variables and Data Types",
+    "series": "python-algorithms",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "Variables in Python are object references. Using mutable default arguments (like list or dict) in functions causes state leakage across requests.",
+      "tradeoff_challenge": "When storing millions of structured records under memory constraints, how do dataclass, TypedDict, and __slots__ compare in memory and CPU overhead?"
+    },
+    "next_milestones": [
+      {
+        "slug": "python-functions-modules",
+        "title": "Python Functions and Modules",
+        "reason": "After mastering data types, modularizing code with functions and scope rules is the next step."
+      }
+    ]
+  },
+  "python-functions-modules": {
+    "title": "Python Functions and Modules",
+    "series": "python-algorithms",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "python-basics-variables",
+        "title": "Python Basics: Variables and Data Types",
+        "key_concept": "Variable Scope (LEGB) and Mutability",
+        "bridge_summary": "Python resolves variable names using the LEGB rule (Local, Enclosing, Global, Built-in). Mutating global variables inside functions requires explicit global declarations."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Late binding in closures: lambdas created inside loops share the loop variable's final value unless captured via default arguments.",
+      "tradeoff_challenge": "When injecting structured logging with decorators in high-concurrency services, how do you ensure functools.wraps preserves full type signatures for mypy?"
+    },
+    "next_milestones": [
+      {
+        "slug": "i-built-a-version-bump-tool-in-rust-that-is-1",
+        "title": "I Built a Version Bump Tool in Rust That Is 10,000x Faster Than Its Python Counterparts.",
+        "reason": "After understanding Python's interpreted runtime limits, explore Rust native systems extensions and performance optimization."
+      }
+    ]
+  },
+  "path-python-web": {
+    "title": "Reading Path: Python Web Development",
+    "series": "python-algorithms",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "python-basics-variables",
+        "title": "Python Basics: Variables and Data Types",
+        "key_concept": "Fundamental Data Structures and Parsing",
+        "bridge_summary": "Web backends rely on string parsing, dictionary serialization, and JSON decoding. Mastery of primitive data types is essential."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "The N+1 query trap in Django ORM: omitting select_related and prefetch_related can flood DB connections and exhaust pool limits.",
+      "tradeoff_challenge": "Monolith vs Microservices: At 100k DAU, does early microservice decomposition introduce more distributed transaction overhead than a modular monolith?"
+    },
+    "next_milestones": [
+      {
+        "slug": "django-project-structure",
+        "title": "Django Project Structure Explained",
+        "reason": "Take the foundational Python web concepts into real-world production Django architecture."
+      }
+    ]
+  },
+  "i-built-a-version-bump-tool-in-rust-that-is-1": {
+    "title": "I Built a Version Bump Tool in Rust That Is 10,000x Faster Than Its Python Counterparts.",
+    "series": "python-algorithms",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "python-functions-modules",
+        "title": "Python Functions and Modules",
+        "key_concept": "CLI Script Execution and I/O Bottlenecks",
+        "bridge_summary": "Python CLI startup includes interpreter initialization and module imports; Rust compiles to native machine code with zero runtime overhead."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Naively rewriting scripts in Rust without buffered I/O can still bottleneck on disk syscalls; BufReader and memory-mapped files are required.",
+      "tradeoff_challenge": "Developer velocity vs execution speed: When is the Rust compilation and borrow-checker overhead justified over a 20-line Python script?"
+    },
+    "next_milestones": [
+      {
+        "slug": "i-tried-to-beat-peter-norvig-and-accidentally",
+        "title": "I Tried to Beat Peter Norvig and Accidentally Became Ryan Gosling",
+        "reason": "Push algorithmic optimization further by analyzing classic heuristics and cache locality."
+      }
+    ]
+  },
+  "i-tried-to-beat-peter-norvig-and-accidentally": {
+    "title": "I Tried to Beat Peter Norvig and Accidentally Became Ryan Gosling",
+    "series": "python-algorithms",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "python-functions-modules",
+        "title": "Python Functions and Modules",
+        "key_concept": "Recursive Search and State Backtracking",
+        "bridge_summary": "Norvig's classic spelling corrector uses probability models, edit distance heuristics, and pruning to traverse search spaces efficiently."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Unmemoized recursive search causes exponential O(2^N) call stacks and stack overflow crashes on production inputs.",
+      "tradeoff_challenge": "Trie tree vs Bitwise Bloom filter: For fuzzy text search in memory-constrained environments, which offers the better accuracy-memory tradeoff?"
+    },
+    "next_milestones": []
+  },
+  "path-ml-getting-started": {
+    "title": "Reading Path: Machine Learning Getting Started",
+    "series": "machine-learning",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "Data leakage: Normalizing or scaling the entire dataset before train-test split leads to overly optimistic eval metrics that fail in production.",
+      "tradeoff_challenge": "Model complexity vs interpretability: When should linear models be favored over gradient boosted trees or deep nets for regulatory compliance?"
+    },
+    "next_milestones": [
+      {
+        "slug": "ml-supervised-unsupervised",
+        "title": "Machine Learning Overview: Supervised vs Unsupervised",
+        "reason": "Start with foundational ML paradigms before diving into specific loss functions and gradient updates."
+      }
+    ]
+  },
+  "ml-supervised-unsupervised": {
+    "title": "Machine Learning Overview: Supervised vs Unsupervised",
+    "series": "machine-learning",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "Treating unsupervised clustering as ground-truth labels without domain validation causes phantom customer segmentation in production.",
+      "tradeoff_challenge": "Semi-supervised self-training vs fully supervised fine-tuning: How to budget labeling costs against pseudo-label drift?"
+    },
+    "next_milestones": [
+      {
+        "slug": "gradient-descent-intuition",
+        "title": "Gradient Descent Intuition",
+        "reason": "Understand the core mathematical engine that optimizes loss functions across all supervised models."
+      }
+    ]
+  },
+  "gradient-descent-intuition": {
+    "title": "Gradient Descent Intuition",
+    "series": "machine-learning",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "ml-supervised-unsupervised",
+        "title": "Machine Learning Overview: Supervised vs Unsupervised",
+        "key_concept": "Objective Loss Function and Error Surfaces",
+        "bridge_summary": "Gradient descent calculates the partial derivatives of the loss function with respect to weights, updating parameters in the direction of steepest descent."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Vanishing/exploding gradients: Poor learning rate schedules or missing batch normalization can stall convergence or cause NaN weights in deep nets.",
+      "tradeoff_challenge": "SGD vs Adam vs L-BFGS: For sparse high-dimensional data, when does Adam's adaptive learning rate beat standard momentum SGD?"
+    },
+    "next_milestones": [
+      {
+        "slug": "linear-regression-practice",
+        "title": "Linear Regression in Practice",
+        "reason": "Implement gradient descent to fit real-world continuous data and evaluate Mean Squared Error (MSE)."
+      }
+    ]
+  },
+  "linear-regression-practice": {
+    "title": "Linear Regression in Practice",
+    "series": "machine-learning",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "ml-supervised-unsupervised",
+        "title": "Machine Learning Overview: Supervised vs Unsupervised",
+        "key_concept": "Supervised Target Fitting and Residuals",
+        "bridge_summary": "Linear regression models relationships between dependent variables y and independent features X using closed-form OLS or iterative gradient descent."
+      },
+      {
+        "slug": "gradient-descent-intuition",
+        "title": "Gradient Descent Intuition",
+        "key_concept": "MSE Convex Optimization and Learning Rate Tuning",
+        "bridge_summary": "Mean Squared Error (MSE) creates a convex loss bowl where gradient descent is guaranteed to find the global minimum if alpha is well-tuned."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Multicollinearity: Highly correlated features destabilize OLS weight estimation; Ridge/Lasso regularization (L1/L2) must be applied.",
+      "tradeoff_challenge": "L1 Lasso (feature sparsity) vs L2 Ridge (weight decay): When do you choose ElasticNet over pure Lasso in genomic/financial data?"
+    },
+    "next_milestones": [
+      {
+        "slug": "a-4-gb-laptop-gpu-beats-a-12-core-cpu-by-43x-",
+        "title": "A 4 GB Laptop GPU Beats a 12-Core CPU by 4.3x on Gemma 4",
+        "reason": "Transition from CPU-bound classical models to modern GPU tensor operations and quantized inference."
+      }
+    ]
+  },
+  "a-4-gb-laptop-gpu-beats-a-12-core-cpu-by-43x-": {
+    "title": "A 4 GB Laptop GPU Beats a 12-Core CPU by 4.3x on Gemma 4",
+    "series": "machine-learning",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "linear-regression-practice",
+        "title": "Linear Regression in Practice",
+        "key_concept": "Matrix Multiplication and Parallel Tensor Acceleration",
+        "bridge_summary": "Modern LLM inference is fundamentally massive parallel GEMM (General Matrix Multiply) operations, where GPU memory bandwidth heavily outpaces CPU caches."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "VRAM fragmentation during KV-cache allocation causes Out-Of-Memory (OOM) crashes even when theoretical model weights fit within memory limits.",
+      "tradeoff_challenge": "4-bit GGUF quantization vs 8-bit AWQ: How much perplexity degradation is acceptable in exchange for a 2x throughput gain on edge devices?"
+    },
+    "next_milestones": []
+  },
+  "web-http-rest": {
+    "title": "Web Development Basics: HTTP and REST",
+    "series": "web-architecture",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "Non-idempotent GET/DELETE APIs: Browsers or CDN prefetch bots can inadvertently trigger state modifications or record deletions.",
+      "tradeoff_challenge": "Strict RESTful nested URIs vs GraphQL vs RPC: How to balance over-fetching overhead against HTTP caching simplicity?"
+    },
+    "next_milestones": [
+      {
+        "slug": "django-project-structure",
+        "title": "Django Project Structure Explained",
+        "reason": "Apply HTTP request-response lifecycles and URL routing inside the Django web framework."
+      }
+    ]
+  },
+  "django-project-structure": {
+    "title": "Django Project Structure Explained",
+    "series": "web-architecture",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "web-http-rest",
+        "title": "Web Development Basics: HTTP and REST",
+        "key_concept": "HTTP Request/Response Lifecycle in Web Frameworks",
+        "bridge_summary": "Django maps HTTP requests through URLConf to View functions, queries the database via ORM models, and returns HttpResponse or rendered templates."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Circular imports in models.py: Defining foreign keys across apps using direct class imports instead of string references ('app.Model') breaks migrations.",
+      "tradeoff_challenge": "Placing business logic in fat models vs service layers: How to prevent Django models from ballooning into 3,000-line God objects?"
+    },
+    "next_milestones": [
+      {
+        "slug": "wagtail-quickstart",
+        "title": "Wagtail CMS Quick Start",
+        "reason": "Extend Django's project structure with Wagtail CMS page trees and StreamFields."
+      },
+      {
+        "slug": "the-cicd-pipeline-that-was-lying-to-us-a-depl",
+        "title": "The CI/CD Pipeline That Was Lying to Us: A Deploy Debugging Story",
+        "reason": "Take Django projects into production deployment, automated testing, and release pipelines."
+      }
+    ]
+  },
+  "wagtail-quickstart": {
+    "title": "Wagtail CMS Quick Start",
+    "series": "web-architecture",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "django-project-structure",
+        "title": "Django Project Structure Explained",
+        "key_concept": "Django Page Models and Admin Routing",
+        "bridge_summary": "Wagtail extends Django's Page model into a hierarchical tree, providing rich content blocks (StreamField) and publishing workflows."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Querying page children without .specific causes base Page instances to load, requiring N+1 secondary queries to fetch polymorphic sub-models.",
+      "tradeoff_challenge": "StreamField JSON blocks vs traditional relational sub-models: When does flexible JSON schema hurt structured relational analytics?"
+    },
+    "next_milestones": [
+      {
+        "slug": "5-devto-features-i-wish-existed-3-im-genuinel",
+        "title": "5 DEV.to Features I Wish Existed. 3 I'm Genuinely Relieved They Don't.",
+        "reason": "Examine enterprise content platform features and developer experience tradeoffs."
+      }
+    ]
+  },
+  "the-cicd-pipeline-that-was-lying-to-us-a-depl": {
+    "title": "The CI/CD Pipeline That Was Lying to Us: A Deploy Debugging Story",
+    "series": "web-architecture",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "django-project-structure",
+        "title": "Django Project Structure Explained",
+        "key_concept": "Deployment Artifacts and Environment Variables",
+        "bridge_summary": "Production deployments require strict separation between configuration (.env) and stateless container code to prevent deployment drifts."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Green builds with masked failures: Pipelines that omit 'set -e' in shell steps report success even when migration scripts fail.",
+      "tradeoff_challenge": "Fast CI feedback loops vs full end-to-end regression suites: How to split parallel test runners without ballooning runner costs?"
+    },
+    "next_milestones": [
+      {
+        "slug": "fixing-delicate-cache-mismatches-in-a-brownfi",
+        "title": "Fixing Delicate Cache Mismatches in a Brownfield SPA: A Pragmatic Solution",
+        "reason": "Master cache invalidation and state synchronization between CI/CD deploys and frontend SPAs."
+      }
+    ]
+  },
+  "fixing-delicate-cache-mismatches-in-a-brownfi": {
+    "title": "Fixing Delicate Cache Mismatches in a Brownfield SPA: A Pragmatic Solution",
+    "series": "web-architecture",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "web-http-rest",
+        "title": "Web Development Basics: HTTP and REST",
+        "key_concept": "HTTP Cache-Control and ETag Validation",
+        "bridge_summary": "Browsers and CDN edges check Cache-Control headers, max-age, and If-None-Match ETags to decide between HTTP 200 and HTTP 304 Not Modified."
+      },
+      {
+        "slug": "django-project-structure",
+        "title": "Django Project Structure Explained",
+        "key_concept": "Static Asset Hashing and Invalidation",
+        "bridge_summary": "Whitenoise and Django ManifestStaticFilesStorage append content hashes (MD5) to asset filenames to prevent stale cached JavaScript assets."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Caching HTML entrypoints alongside hashed assets: If index.html is cached by CDNs, users continue loading obsolete JS bundles after a deployment.",
+      "tradeoff_challenge": "Stale-While-Revalidate vs Hard Purge: How to prevent cache stampedes (thundering herds) when invalidating high-traffic CDN endpoints?"
+    },
+    "next_milestones": [
+      {
+        "slug": "nginx-silently-rejects-the-new-http-query-met",
+        "title": "nginx silently rejects the new HTTP QUERY method",
+        "reason": "Explore edge proxy behavior and low-level HTTP specification compliance."
+      }
+    ]
+  },
+  "nginx-silently-rejects-the-new-http-query-met": {
+    "title": "nginx silently rejects the new HTTP QUERY method",
+    "series": "web-architecture",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "web-http-rest",
+        "title": "Web Development Basics: HTTP and REST",
+        "key_concept": "HTTP Verbs, Payloads, and Reverse Proxy RFC Compliance",
+        "bridge_summary": "The HTTP QUERY method allows safe, idempotent queries with request bodies, overcoming URL length limitations in standard GET requests."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Reverse proxies silently stripping unstandardized HTTP headers or methods, returning misleading 400 or 405 errors that confuse upstream debugging.",
+      "tradeoff_challenge": "Upgrading edge Nginx/Envoy configs for cutting-edge RFCs vs using POST for complex queries: When does standard compliance outweigh proxy compatibility?"
+    },
+    "next_milestones": []
+  },
+  "5-devto-features-i-wish-existed-3-im-genuinel": {
+    "title": "5 DEV.to Features I Wish Existed. 3 I'm Genuinely Relieved They Don't.",
+    "series": "web-architecture",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "wagtail-quickstart",
+        "title": "Wagtail CMS Quick Start",
+        "key_concept": "Community Platform Architecture and Content Moderation",
+        "bridge_summary": "Developer communities require moderation workflows, spam detection, and real-time interaction features alongside basic publishing engines."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Unthrottled notification dispatch on viral posts can overwhelm Celery worker queues and lock user interaction tables.",
+      "tradeoff_challenge": "Rich inline markdown rendering vs XSS sanitization: Balancing user expression against security boundaries."
+    },
+    "next_milestones": []
+  },
+  "what-is-rag": {
+    "title": "What Is RAG?",
+    "series": "ai-agentic",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "Chunking boundary fragmentation: Splitting text purely by fixed character count cuts code blocks and tables in half, causing hallucinated retrievals.",
+      "tradeoff_challenge": "Dense Vector Search (semantic) vs BM25 Keyword Search (exact token): Why is Hybrid Search with Reciprocal Rank Fusion (RRF) the industry standard?"
+    },
+    "next_milestones": [
+      {
+        "slug": "20-agentic-ai-terms-every-developer-should-kn",
+        "title": "20 Agentic AI Terms Every Developer Should Know (Explained Simply)",
+        "reason": "Expand from passive RAG retrieval into autonomous tool calling, reflection loops, and agentic workflows."
+      }
+    ]
+  },
+  "20-agentic-ai-terms-every-developer-should-kn": {
+    "title": "20 Agentic AI Terms Every Developer Should Know (Explained Simply)",
+    "series": "ai-agentic",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "what-is-rag",
+        "title": "What Is RAG?",
+        "key_concept": "Context Windows and External Memory Augmentation",
+        "bridge_summary": "RAG provides static reference memory, while Agents actively orchestrate multi-step reasoning, tool execution, and state verification."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Infinite execution loops: Agents encountering unexpected tool error payloads can repeatedly re-prompt themselves until API token quotas are exhausted.",
+      "tradeoff_challenge": "ReAct step-by-step reasoning vs single-turn Parallel Function Calling: How to balance execution latency against multi-step reasoning accuracy?"
+    },
+    "next_milestones": [
+      {
+        "slug": "vibe-coding-isnt-the-problem-calling-it-engin",
+        "title": "Vibe Coding Isn't the Problem. Calling It Engineering Is",
+        "reason": "Examine why relying purely on AI generation without strict software engineering rigor leads to technical debt."
+      },
+      {
+        "slug": "agent-tool-design",
+        "title": "Agent Tool Design Principles",
+        "reason": "Learn how to design robust, deterministic, and idempotent tools for LLM agent interaction."
+      }
+    ]
+  },
+  "vibe-coding-isnt-the-problem-calling-it-engin": {
+    "title": "Vibe Coding Isn't the Problem. Calling It Engineering Is",
+    "series": "ai-agentic",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "20-agentic-ai-terms-every-developer-should-kn",
+        "title": "20 Agentic AI Terms Every Developer Should Know (Explained Simply)",
+        "key_concept": "Engineering Rigor vs Stochastic Generation",
+        "bridge_summary": "Vibe coding rapidly prototypes through LLM prompts, but production engineering requires determinism, regression tests, edge case coverage, and architectural ownership."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Ghost architectural debt: AI-generated code that passes basic happy paths often conceals subtle race conditions, memory leaks, and unhandled edge cases.",
+      "tradeoff_challenge": "Fast LLM prototyping vs test-driven verification: When does writing formal specs and evaluation harnesses save more time than iterative chatting?"
+    },
+    "next_milestones": [
+      {
+        "slug": "ai-is-already-better-at-coding-than-most-soft",
+        "title": "AI Is Already Better at Coding Than Most Software Developers",
+        "reason": "Debate the evolution of developer skillsets in the post-AI programming era."
+      }
+    ]
+  },
+  "ai-is-already-better-at-coding-than-most-soft": {
+    "title": "AI Is Already Better at Coding Than Most Software Developers",
+    "series": "ai-agentic",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "vibe-coding-isnt-the-problem-calling-it-engin",
+        "title": "Vibe Coding Isn't the Problem. Calling It Engineering Is",
+        "key_concept": "Automated Code Synthesis vs System Architecture Design",
+        "bridge_summary": "LLMs excel at synthesizing well-defined, localized functions, but human engineers remain essential for trade-offs, system boundaries, and business domain modeling."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Over-reliance on AI code reviews: LLMs can generate convincing yet incorrect justifications for security vulnerabilities (e.g. subtle SQLi or auth bypasses).",
+      "tradeoff_challenge": "AI-assisted coding speed vs long-term maintainability: How do engineering teams evaluate codebases when engineers no longer write every line by hand?"
+    },
+    "next_milestones": []
+  },
+  "agent-tool-design": {
+    "title": "Agent Tool Design Principles",
+    "series": "ai-agentic",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "what-is-rag",
+        "title": "What Is RAG?",
+        "key_concept": "Retrieval as an Isolated Tool Execution",
+        "bridge_summary": "RAG retrieval is essentially a read-only tool in an agent harness; designing tools requires structured parameter schemas and deterministic error contracts."
+      },
+      {
+        "slug": "20-agentic-ai-terms-every-developer-should-kn",
+        "title": "20 Agentic AI Terms Every Developer Should Know (Explained Simply)",
+        "key_concept": "Function Calling Interfaces and Schema Constraints",
+        "bridge_summary": "Agents rely on JSON schema function definitions to interact with external systems. Clear parameter descriptions prevent invalid arguments."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Non-idempotent write tools: Network timeouts during agent tool calls can cause duplicate charges or actions unless idempotency keys are enforced.",
+      "tradeoff_challenge": "Fine-grained tools (high precision, multiple turns) vs coarse-grained multi-action tools (single turn, lower flexibility): How to optimize agent tool design?"
+    },
+    "next_milestones": []
+  }
+}

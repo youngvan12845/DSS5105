@@ -21,4 +21,6 @@ urlpatterns = [
     path('session/<int:session_id>/send/', views.send_message_view, name='send_message'),
     path('actions/<int:action_id>/confirm/', views.confirm_action_view, name='confirm_action'),
     path('actions/<int:action_id>/cancel/', views.cancel_action_view, name='cancel_action'),
+    path('bridge/<slug:prereq_slug>/', views.concept_bridge_view, name='concept_bridge'),
+    path('master-prerequisite/', views.master_prerequisite_view, name='master_prerequisite'),
 ]

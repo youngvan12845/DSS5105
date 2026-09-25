@@ -139,36 +139,37 @@ def get_comments_ajax(request, article_id):
 
 # from a_users.models import BrowsingHistory
 
-# 添加一个新的视图来处理文章详情页面（如果还没有的话）
 def article_detail_view(request, article_id):
     """文章详情页面"""
     article = get_object_or_404(ArticlePage, id=article_id)
-    
-    # 记录浏览历史（只对已登录用户）
-    # if request.user.is_authenticated:
-    #     BrowsingHistory.add_or_update_history(
-    #         user=request.user,
-    #         article_id=article.id,
-    #         article_title=article.title,
-    #         article_url=article.get_url()
-    #     )
-    
-    # 获取评论
     comments = article.comments.filter(is_active=True, parent=None).order_by('-created_at')
-    
     context = {
         'article': article,
         'comments': comments,
     }
-    
     return render(request, 'a_blog/article_page.html', context)
 
-# def record_article_view(request, article):
-#     """记录文章浏览历史的辅助函数"""
-#     if request.user.is_authenticated:
-#         BrowsingHistory.add_or_update_history(
-#             user=request.user,
-#             article_id=article.id,
-#             article_title=article.title,
-#             article_url=article.get_url()
-#         )
+
+@require_POST
+def like_article(request, article_id):
+    """AJAX 點讚功能，支援 Session 防重複點讚"""
+    article = get_object_or_404(ArticlePage, id=article_id)
+    session_key = f'article_liked_{article_id}'
+    already_liked = request.session.get(session_key, False)
+    
+    if not already_liked:
+        article.increment_like_count()
+        request.session[session_key] = True
+        return JsonResponse({
+            'success': True,
+            'likes': article.likes,
+            'already_liked': True,
+            'message': 'Liked!',
+        })
+    else:
+        return JsonResponse({
+            'success': True,
+            'likes': article.likes,
+            'already_liked': True,
+            'message': 'Already liked',
+        })

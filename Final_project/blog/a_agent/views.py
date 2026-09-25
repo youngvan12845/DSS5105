@@ -18,6 +18,12 @@ from .services.llm import get_llm_info
 from .services.orchestrator import handle_user_message
 from .tools.article_scope import get_article_scope
 from .tools.browsing_history import get_browsing_history
+from .services.navigator import (
+    calculate_article_readiness,
+    get_concept_bridge,
+    get_prerequisites_graph,
+    mark_prerequisite_mastered,
+)
 
 
 def _parse_article_id(value) -> int | None:
@@ -137,14 +143,13 @@ def send_message_view(request: HttpRequest, session_id: int) -> HttpResponse:
         image=image_file,
     )
 
-    image_path = user_message.image.path if user_message.image else None
     article_id = _parse_article_id(request.POST.get('article_id'))
     reply = handle_user_message(
         content,
         request.user,
         request=request,
         model=selected_model,
-        image_path=image_path,
+        image_file=user_message.image or None,
         article_id=article_id,
     )
     assistant_message = ChatMessage.objects.create(
@@ -258,6 +263,12 @@ def article_panel_view(request: HttpRequest, article_id: int) -> HttpResponse:
     selected_model = _session_model(session)
     chat_messages = session.messages.all()[:20]
     article_scope = get_article_scope(article_id, request.user, request=request)
+    session_mastered = request.session.get('mastered_prereqs', [])
+    readiness = calculate_article_readiness(
+        request.user,
+        article.slug,
+        session_mastered=session_mastered
+    )
     return render(
         request,
         'a_agent/partials/article_panel.html',
@@ -269,7 +280,49 @@ def article_panel_view(request: HttpRequest, article_id: int) -> HttpResponse:
             'llm_info': get_llm_info(selected_model),
             'model_options': OLLAMA_MODEL_OPTIONS,
             'selected_model': selected_model,
+            'readiness': readiness,
         },
+    )
+
+
+def concept_bridge_view(request: HttpRequest, prereq_slug: str) -> HttpResponse:
+    bridge = get_concept_bridge(prereq_slug)
+    if not bridge:
+        return HttpResponse(
+            f"<div class='mt-2 p-2 rounded bg-rose-50 border border-rose-200 text-rose-700 text-[11px]'>No concept bridge found for '{prereq_slug}'.</div>"
+        )
+    return render(request, 'a_agent/partials/concept_bridge_card.html', {'bridge': bridge})
+
+
+@require_POST
+def master_prerequisite_view(request: HttpRequest) -> HttpResponse:
+    article_slug = request.POST.get('article_slug', '').strip()
+    prereq_slug = request.POST.get('prereq_slug', '').strip()
+    mark_all = request.POST.get('mark_all') == 'true'
+
+    article = get_object_or_404(ArticlePage.objects.live(), slug=article_slug)
+
+    if mark_all:
+        graph = get_prerequisites_graph()
+        meta = graph.get(article_slug, {})
+        for p in meta.get('prerequisites', []):
+            mark_prerequisite_mastered(request.session, p['slug'])
+    elif prereq_slug:
+        mark_prerequisite_mastered(request.session, prereq_slug)
+
+    session_mastered = request.session.get('mastered_prereqs', [])
+    readiness = calculate_article_readiness(
+        request.user,
+        article.slug,
+        session_mastered=session_mastered
+    )
+    return render(
+        request,
+        'a_agent/partials/readiness_panel.html',
+        {
+            'readiness': readiness,
+            'article': article,
+        }
     )
 
 
@@ -303,13 +356,12 @@ def article_send_message_view(request: HttpRequest, article_id: int) -> HttpResp
         content=content,
         image=image_file,
     )
-    image_path = user_message.image.path if user_message.image else None
     reply = handle_user_message(
         content,
         request.user,
         request=request,
         model=selected_model,
-        image_path=image_path,
+        image_file=user_message.image or None,
         article_id=article_id,
     )
     assistant_message = ChatMessage.objects.create(

@@ -1,0 +1,17 @@
+<div class="mt-2.5 p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-xs text-slate-300 shadow-sm animate-fadeIn">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-indigo-800/40">
+        <span class="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-indigo-400">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            1-Min Concept Bridge
+        </span>
+        <button type="button" onclick="this.closest('.mt-2\\.5').remove()" class="text-slate-400 hover:text-slate-200 text-sm leading-none">&times;</button>
+    </div>
+    <p class="font-semibold text-white mb-1">Key Concept from "{{ bridge.title }}":</p>
+    <p class="text-slate-300 leading-relaxed text-[12px] bg-slate-900/60 p-2 rounded-lg border border-slate-800 font-mono">
+        {{ bridge.bridge_summary }}
+    </p>
+    <div class="mt-2 flex items-center justify-between text-[11px]">
+        <span class="text-emerald-400">&#10003; Core intuition loaded. Continue with the article.</span>
+        <a href="/blog/articles/{{ bridge.slug }}/" target="_blank" class="text-indigo-400 hover:text-indigo-300 underline font-medium">Read Full Article &rarr;</a>
+    </div>
+</div>

@@ -4,6 +4,9 @@ Django settings for a_core project.
 
 from pathlib import Path
 import os
+import sys
+
+from a_core.cloud_config import database_from_url, supabase_media_storage
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,6 +16,12 @@ try:
     load_dotenv(BASE_DIR / '.env')
 except ImportError:
     pass
+
+try:
+    import whitenoise  # noqa: F401
+    HAS_WHITENOISE = True
+except ImportError:
+    HAS_WHITENOISE = False
 
 SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY',
@@ -62,6 +71,7 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    *(['whitenoise.middleware.WhiteNoiseMiddleware'] if HAS_WHITENOISE else []),
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -99,17 +109,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'a_core.wsgi.application'
 
-# PostgreSQL — defaults work for local install; override in .env or Docker env
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'cheeseoo'),
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+# Tests never touch the shared Supabase project: Django would create and drop a
+# test database there, and uploads would land in the real bucket.
+RUNNING_TESTS = len(sys.argv) > 1 and sys.argv[1] == 'test'
+
+# PostgreSQL — defaults work for local install; override in .env or Docker env.
+# Set DATABASE_URL to use a hosted database such as Supabase instead (see SUPABASE.md).
+DATABASE_URL = '' if RUNNING_TESTS else os.environ.get('DATABASE_URL', '').strip()
+if DATABASE_URL:
+    DATABASES = {'default': database_from_url(DATABASE_URL)}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB', 'cheeseoo'),
+            'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        }
     }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -125,9 +144,24 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Uploaded media stays in MEDIA_ROOT unless the SUPABASE_S3_* variables are set.
+STORAGES = {
+    'default': (None if RUNNING_TESTS else supabase_media_storage(os.environ)) or {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': (
+            'whitenoise.storage.CompressedStaticFilesStorage'
+            if HAS_WHITENOISE
+            else 'django.contrib.staticfiles.storage.StaticFilesStorage'
+        ),
+    },
+}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -152,13 +186,19 @@ WAGTAIL_SITE_NAME = 'Blog'
 WAGTAILADMIN_BASE_URL = os.environ.get('WAGTAILADMIN_BASE_URL', 'http://127.0.0.1:8000')
 
 # Reading Co-Pilot Agent — default: local Ollama (no article text sent to cloud APIs)
-# Provider: ollama (default) | openai
+# Provider: ollama (default) | openai | cloudflare
 AGENT_LLM_PROVIDER = os.environ.get('AGENT_LLM_PROVIDER', 'ollama')
 AGENT_OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 AGENT_OPENAI_MODEL = os.environ.get('OPENAI_MODEL', 'gpt-4o-mini')
+AGENT_OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', '')
 AGENT_OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://127.0.0.1:11434/v1')
 AGENT_OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'qwen2.5vl:7b')
 AGENT_OLLAMA_EMBED_MODEL = os.environ.get('OLLAMA_EMBED_MODEL', 'nomic-embed-text')
+
+# Cloudflare Workers AI (free tier 10,000 neurons/day)
+CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID', '5b38fbc6c3f08b3f6aeb75b980ff2e69')
+CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', '')
+CLOUDFLARE_AI_MODEL = os.environ.get('CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
 AGENT_OLLAMA_MODELS = [
     {'id': 'qwen2.5:7b', 'label': 'Qwen 2.5 7B (text)', 'vision': False},
     {'id': 'qwen2.5vl:7b', 'label': 'Qwen 2.5 VL 7B (multimodal)', 'vision': True},
