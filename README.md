@@ -48,15 +48,42 @@ cd Final_project/blog
 |------|-------|
 | [Git](https://git-scm.com/downloads) | Clone & pull |
 | Python **3.10+** | `python3.10 --version` |
-| [PostgreSQL](https://www.postgresql.org/download/) | Create DB `cheeseoo` locally |
 | [Ollama](https://ollama.com/download) | **Required for full AI Q&A** (local LLM) |
+| [PostgreSQL](https://www.postgresql.org/download/) | **Optional** if you use the team shared Supabase DB (see Step 3A) |
 
-### Step 3 — Local setup & run
+### Step 3A — Team shared database (recommended)
+
+The team runs one **Supabase** project so everyone sees the same articles, images, and test data.
+
+1. `git pull origin main` (merge from 2026-09-25 includes Supabase support)
+2. `cp .env.example .env`
+3. **Copy the `DATABASE_URL` + `SUPABASE_S3_*` block from the team group chat** into `.env`  
+   (credentials are **never** committed to GitHub — only shared in chat)
+4. Keep your existing email / Ollama lines in `.env`
+5. Install deps and run:
+
+```bash
+cd DSS5105/Final_project/blog
+python3.10 -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate        # only if a new migration was merged; ask in chat first
+./scripts/setup_ollama.sh
+python manage.py build_article_index --embed
+./scripts/run_local.sh
+```
+
+6. **Login**: register at `/accounts/signup/` or use a test account shared in chat  
+7. Details: [SUPABASE.md](./Final_project/blog/SUPABASE.md)
+
+### Step 3B — Local-only database (optional)
+
+Use this if you do **not** want the shared Supabase project:
 
 ```bash
 # you should already be in DSS5105/Final_project/blog
 
-cp .env.example .env          # edit .env — set POSTGRES_PASSWORD
+cp .env.example .env          # edit .env — set POSTGRES_* only (leave DATABASE_URL commented)
 python3.10 -m venv .venv
 source .venv/bin/activate       # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -94,11 +121,11 @@ More detail: [DOCUMENTATION_EN.md](./Final_project/blog/DOCUMENTATION_EN.md) · 
 
 ---
 
-## Project status (2026-09-08)
+## Project status (2026-09-25)
 
-**Implemented**: Reading Assistant (`/agent/`), RAG retrieval + citations, paywall-aware Q&A, reading paths, recommendations, confirm-before-action (reading list & comments), reading list page, auto index on publish, eval framework + baselines A/B/C, English UI.
+**Implemented**: Reading Assistant (`/agent/`), RAG + citations, paywall-aware Q&A, reading paths, recommendations, confirm-before-action, **Learning Path Navigator** (readiness panel + concept bridges), **article likes**, shared **Supabase** DB + media, optional **Cloudflare Workers AI**, eval framework + baselines A/B/C, eval v1 results (DOCUMENTATION §10).
 
-**Still pending (grading deliverables)**: run eval experiments, 3-person user study, final report PDFs.
+**Still pending (grading deliverables)**: 3-person user study, final report / demo video polish.
 
 ---
 
@@ -117,13 +144,15 @@ Quick version:
 
 ## Quick start (summary)
 
-Same steps as **Teammate onboarding** above — for copy-paste only:
+**Shared team DB (recommended):** follow **Step 3A** — paste Supabase vars from group chat into `.env`.
+
+**Local-only fallback:**
 
 ```bash
 git clone https://github.com/youngvan12845/DSS5105.git
 cd DSS5105/Final_project/blog
 
-cp .env.example .env
+cp .env.example .env   # POSTGRES_* only — no DATABASE_URL
 python3.10 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate && python manage.py createsuperuser
