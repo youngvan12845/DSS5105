@@ -475,4 +475,128 @@ A：检查 `.env` 中 `POSTGRES_*` 配置，确认数据库服务已启动且 `c
 
 ---
 
+## 10. 评估结果（v1 — 2026-09-11）
+
+> **状态**：已在本地完成首轮 baseline 对比（用户 `yangfan`，33 题）。  
+> **大家先做**：§10.5 本地跑一遍 eval；**之后方向**：§10.6 Phase 3 交付物概览。
+
+### 10.1 如何跑 eval
+
+前置：Ollama 在运行、`python manage.py build_article_index --embed`、已激活项目 `.venv`。
+
+```bash
+cd Final_project/blog
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+
+# 建议一条一条跑（每条约 10–30 分钟，跑完才输出）
+python manage.py run_agent_eval --variant baseline_a --no-fail-exit
+python manage.py run_agent_eval --variant baseline_b --no-fail-exit
+python manage.py run_agent_eval --variant baseline_c --no-fail-exit
+python manage.py run_agent_eval --variant full --no-fail-exit
+
+# 或一次跑齐（约 1–2 小时）
+python manage.py run_agent_eval --variant all --output eval_compare.json --no-fail-exit
+```
+
+| Variant | 说明 |
+|---------|------|
+| `baseline_a` | 纯 LLM，不检索 |
+| `baseline_b` | Wagtail 关键词搜索 + LLM |
+| `baseline_c` | 向量/切块 RAG + LLM（无 tools、个性化、paywall 掩码） |
+| `full` | 完整 Reading Assistant（tools + paywall + confirm actions） |
+
+题目集：[`a_agent/data/eval_tasks.json`](./a_agent/data/eval_tasks.json)（33 题）。
+
+### 10.2 总 Pass 率（v1）
+
+| Variant | Passed | Failed | Pass 率 |
+|---------|--------|--------|---------|
+| baseline_a | 7 | 26 | 21.2% |
+| baseline_b | 8 | 25 | 24.2% |
+| baseline_c | 16 | 17 | 48.5% |
+| **full** | **18** | **15** | **54.5%** |
+
+**结论**：检索很重要（C 远高于 A/B）。Full Agent 在 Agent 专属能力上优于 C，总分仅 +2 题，需结合分类与定性分析。
+
+### 10.3 按类别 Pass 率（v1）
+
+| 类别 | baseline_a | baseline_b | baseline_c | full |
+|------|------------|------------|------------|------|
+| factual_qa | 0/6 | 2/6 | 5/6 | 4/6 |
+| cross_article | 0/5 | 0/5 | 4/5 | **5/5** |
+| recommend_path | 0/6 | 0/6 | 1/6 | **2/6** |
+| continue_reading | 0/5 | 0/5 | 0/5 | 0/5 |
+| action | 1/5 | 1/5 | 1/5 | **3/5** |
+| adversarial | 6/6 | 5/6 | 5/6 | 4/6 |
+
+**Full Agent 亮点（定性 + 分类）**：
+
+- **跨文章检索**：5/5（唯一满分）。
+- **阅读路径**：path-001、path-002 通过 `get_reading_path` tool 完成。
+- **Confirm-before-action**：action-003 生成评论草稿 + Confirm；action 3/5 vs baseline 1/5。
+- **Paywall**：adv-006 — Full 返回 `[Paywall] … subscribe or purchase` 预览；Baseline C 曾直接贴付费片段（不应发生的泄露）。
+
+### 10.4 自动评分的已知局限（v1）
+
+启发式 keyword / tool 检查会导致 **答对仍 FAIL**：
+
+1. **关键词过严** — 续读题已答「last viewed」，但缺少 `history` / `recent` / `continue` 等 exact token。
+2. **Tool 名不匹配** — eval 要求 trace 含 `get_browsing_history`；orchestrator 可能用其他 tool 组合实现同等能力。
+3. **Paywall 误杀** — adv-006 Full 正确拒绝全文，但回复含 `subscribe or purchase`，触发 `must_not_leak_paid_body` 启发式。
+
+最终报告：Pass 率作 **下界**；需补充人工 review 与 user study（见 §10.6）。
+
+### 10.5 大家先做什么：本地跑一遍 eval
+
+在讨论改题目或写报告之前，**每位组员先在本地跑通至少一个 variant**，目的是理解 eval 在测什么、终端输出长什么样。
+
+1. 按 §3 跑通项目（Ollama、`build_article_index --embed`）。
+2. 至少执行下面**一条**（建议从 `baseline_a` 或 `full` 开始）：
+
+```bash
+python manage.py run_agent_eval --variant baseline_a --no-fail-exit
+# 或
+python manage.py run_agent_eval --variant full --no-fail-exit
+```
+
+3. 跑完后看终端里的 `Total / Passed / Failed` 和 `[PASS]` / `[FAIL]` 列表。
+4. 有余力再按 §10.1 跑齐四个 variant，或 `--variant all` 导出 JSON。
+
+**说明**：每条命令可能要 **10–30 分钟**，中间终端无输出是正常的，等跑完再关。
+
+### 10.6 Phase 3 还要完成什么（交付方向）
+
+跑过 eval 之后，组内还需要 toward 最终评分完成下面几类工作（**具体谁做哪块稍后组内再定**）：
+
+| 方向 | 做什么 | 说明 |
+|------|--------|------|
+| **理解结果** | 对照 §10.2–10.3 看四组差异 | 确认 A/B/C/Full 的趋势是否符合预期 |
+| **人工复核** | 看 FAIL 题是「真错」还是「评分太严」 | 尤其 continue_reading、paywall 类（§10.4） |
+| **（可选）优化题目** | 改 `eval_tasks.json` 里的 `expects` | 只改 JSON，不必写 Python |
+| **User study** | ≥3 人盲测 full vs baseline_c | 课程要求的 human evaluation |
+| **Evaluation.pdf** | 写入结果表、局限分析、user study | 可复用 §10.7 英文草稿 |
+| **Demo 视频** | 按 §3.6 录功能演示 | Sprint / 最终展示 |
+
+以上大多**不需要写 Django 代码**；会改 JSON 或愿意学命令行即可参与。
+
+### 10.7 Evaluation.pdf 英文草稿（可直接粘贴）
+
+```text
+We evaluated 33 tasks across four systems: Baseline A (plain LLM, 21.2%),
+Baseline B (keyword search + LLM, 24.2%), Baseline C (vector RAG + LLM, 48.5%),
+and our Full Agent (54.5%).
+
+Retrieval clearly matters: C doubles A/B on grounded Q&A. The Full Agent
+further improves cross-article lookup (5/5), reading-path planning (2/6 vs 1/6),
+and confirm-before-action flows (3/5 vs 1/5). On paywall tests, Baseline C
+sometimes leaked paid snippets, while the Full Agent returned explicit
+[Paywall] previews only.
+
+Automated keyword checks under-score continue-reading and paywall-refusal
+tasks where answers were correct but phrasing differed. We supplement metrics
+with manual review and a 3-person blind user study.
+```
+
+---
+
 *文档维护：Group 4 · 如有功能变更请同步更新本节与 README.md。*

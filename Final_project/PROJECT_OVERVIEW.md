@@ -186,15 +186,14 @@ At least **3 participants** (classmates OK): task completion time, subjective sa
 - [x] Reading paths (manual curation version)
 - [x] Session-based continue-reading prompts
 - [x] 30+ task eval set (33 tasks in `eval_tasks.json`; refine gold labels as a team)
-- [ ] Run 3-baseline comparison experiments (runner ready: `run_agent_eval --variant all`)
+- [x] Run 3-baseline comparison experiments (v1 results: see [blog/DOCUMENTATION_EN.md §10](./blog/DOCUMENTATION_EN.md#10-evaluation-results-v1--2026-09-11))
 - [ ] 3-person user study
 - [ ] Final report + demo video
 
-**Team participation:**
+**Team participation (overview):**
 
-1. Brainstorm eval tasks together (30 questions)
-2. Blind-test which system answers better
-3. Record demo and write report
+1. Everyone runs `run_agent_eval` locally at least once (see DOCUMENTATION §10.5)
+2. Then: manual FAIL review, optional `eval_tasks.json` refine, user study, Evaluation.pdf, demo video (§10.6)
 
 ---
 
@@ -215,7 +214,7 @@ A: GitHub repo https://github.com/youngvan12845/DSS5105 — code in `Final_proje
 
 1. **Clone & run locally** — follow [blog/DOCUMENTATION_EN.md](./blog/DOCUMENTATION_EN.md) §3
 2. **Demo the Agent** — `/agent/`, article panel, reading list, confirm actions, paywall
-3. **Before final submission** — run eval baselines, 3-person user study, write Evaluation.pdf
+3. **Before final submission** — refine eval (optional JSON), 3-person user study, write Evaluation.pdf (baseline v1 done — DOCUMENTATION §10)
 4. **Sprint video** — use demo flow in DOCUMENTATION §3.6
 
 ---
