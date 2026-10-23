@@ -2294,5 +2294,652 @@
       "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Exploring GitHub's Additional Features."
     },
     "next_milestones": []
+  },
+  "docker-chapter-1-docker-introduction": {
+    "title": "Chapter 1. Docker Introduction",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 1. Docker Introduction without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 1. Docker Introduction?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-computing-environment-and-dependency-conflict",
+        "title": "Computing Environment and Dependency Conflict",
+        "reason": "Proceed to the next container milestone: Computing Environment and Dependency Conflict."
+      }
+    ]
+  },
+  "docker-computing-environment-and-dependency-conflict": {
+    "title": "Computing Environment and Dependency Conflict",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-1-docker-introduction",
+        "title": "Chapter 1. Docker Introduction",
+        "key_concept": "Foundations from Chapter 1. Docker Introduction",
+        "bridge_summary": "Understanding Chapter 1. Docker Introduction is essential before moving to Computing Environment and Dependency Conflict."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Computing Environment and Dependency Conflict without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Computing Environment and Dependency Conflict?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-containers-vs-virtual-machines",
+        "title": "Containers vs. Virtual Machines",
+        "reason": "Proceed to the next container milestone: Containers vs. Virtual Machines."
+      }
+    ]
+  },
+  "docker-containers-vs-virtual-machines": {
+    "title": "Containers vs. Virtual Machines",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-computing-environment-and-dependency-conflict",
+        "title": "Computing Environment and Dependency Conflict",
+        "key_concept": "Foundations from Computing Environment and Dependency Conflict",
+        "bridge_summary": "Understanding Computing Environment and Dependency Conflict is essential before moving to Containers vs. Virtual Machines."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Assuming Docker containers provide hypervisor-grade kernel isolation; a kernel panic or privilege escalation in a container can compromise the host OS.",
+      "tradeoff_challenge": "Heavyweight VM isolation (Type-2 hypervisor) vs lightweight Linux cgroups/namespaces: How to design multi-tenant security architectures?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-what-is-docker",
+        "title": "What Is Docker?",
+        "reason": "Proceed to the next container milestone: What Is Docker?."
+      }
+    ]
+  },
+  "docker-what-is-docker": {
+    "title": "What Is Docker?",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-containers-vs-virtual-machines",
+        "title": "Containers vs. Virtual Machines",
+        "key_concept": "Foundations from Containers vs. Virtual Machines",
+        "bridge_summary": "Understanding Containers vs. Virtual Machines is essential before moving to What Is Docker?."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Treating containers as persistent stateful virtual machines; writes to container rootfs without volumes cause silent data loss upon container restart.",
+      "tradeoff_challenge": "Bare-metal / Virtual Machines vs Containerization: Balancing kernel isolation security boundaries against container startup speed and resource density."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-chapter-2-getting-started-with-docker",
+        "title": "Chapter 2. Getting Started with Docker",
+        "reason": "Proceed to the next container milestone: Chapter 2. Getting Started with Docker."
+      }
+    ]
+  },
+  "docker-chapter-2-getting-started-with-docker": {
+    "title": "Chapter 2. Getting Started with Docker",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-what-is-docker",
+        "title": "What Is Docker?",
+        "key_concept": "Foundations from What Is Docker?",
+        "bridge_summary": "Understanding What Is Docker? is essential before moving to Chapter 2. Getting Started with Docker."
+      },
+      {
+        "slug": "git-what-is-git",
+        "title": "What Is Git?",
+        "key_concept": "Version Control and Project Environment",
+        "bridge_summary": "Docker standardizes runtime environments while Git version-controls source code; understanding both forms the modern DevOps core."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 2. Getting Started with Docker without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 2. Getting Started with Docker?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-setting-up-docker-environment",
+        "title": "Setting Up Docker Environment",
+        "reason": "Proceed to the next container milestone: Setting Up Docker Environment."
+      }
+    ]
+  },
+  "docker-setting-up-docker-environment": {
+    "title": "Setting Up Docker Environment",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-2-getting-started-with-docker",
+        "title": "Chapter 2. Getting Started with Docker",
+        "key_concept": "Foundations from Chapter 2. Getting Started with Docker",
+        "bridge_summary": "Understanding Chapter 2. Getting Started with Docker is essential before moving to Setting Up Docker Environment."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Setting Up Docker Environment without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Setting Up Docker Environment?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-overview-of-docker-workflow",
+        "title": "Overview of Docker Workflow",
+        "reason": "Proceed to the next container milestone: Overview of Docker Workflow."
+      }
+    ]
+  },
+  "docker-overview-of-docker-workflow": {
+    "title": "Overview of Docker Workflow",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-setting-up-docker-environment",
+        "title": "Setting Up Docker Environment",
+        "key_concept": "Foundations from Setting Up Docker Environment",
+        "bridge_summary": "Understanding Setting Up Docker Environment is essential before moving to Overview of Docker Workflow."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Overview of Docker Workflow without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Overview of Docker Workflow?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-commands",
+        "title": "Docker Commands",
+        "reason": "Proceed to the next container milestone: Docker Commands."
+      }
+    ]
+  },
+  "docker-commands": {
+    "title": "Docker Commands",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-overview-of-docker-workflow",
+        "title": "Overview of Docker Workflow",
+        "key_concept": "Foundations from Overview of Docker Workflow",
+        "bridge_summary": "Understanding Overview of Docker Workflow is essential before moving to Docker Commands."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Docker Commands without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Docker Commands?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-chapter-3-docker-image-and-container",
+        "title": "Chapter 3. Docker Image and Container",
+        "reason": "Proceed to the next container milestone: Chapter 3. Docker Image and Container."
+      }
+    ]
+  },
+  "docker-chapter-3-docker-image-and-container": {
+    "title": "Chapter 3. Docker Image and Container",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-commands",
+        "title": "Docker Commands",
+        "key_concept": "Foundations from Docker Commands",
+        "bridge_summary": "Understanding Docker Commands is essential before moving to Chapter 3. Docker Image and Container."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 3. Docker Image and Container without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 3. Docker Image and Container?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-images-and-registries-docker-hub",
+        "title": "Docker Images and Registries (Docker Hub)",
+        "reason": "Proceed to the next container milestone: Docker Images and Registries (Docker Hub)."
+      }
+    ]
+  },
+  "docker-images-and-registries-docker-hub": {
+    "title": "Docker Images and Registries (Docker Hub)",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-3-docker-image-and-container",
+        "title": "Chapter 3. Docker Image and Container",
+        "key_concept": "Foundations from Chapter 3. Docker Image and Container",
+        "bridge_summary": "Understanding Chapter 3. Docker Image and Container is essential before moving to Docker Images and Registries (Docker Hub)."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Using the 'latest' image tag in production Dockerfiles; upstream breaking changes automatically pull into production builds, causing unreproducible deploys.",
+      "tradeoff_challenge": "Public Docker Hub registry vs private image registry (ECR/GCR) with automated vulnerability scanning and air-gapped cache."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-container-lifecycle",
+        "title": "Docker Container Lifecycle",
+        "reason": "Proceed to the next container milestone: Docker Container Lifecycle."
+      }
+    ]
+  },
+  "docker-container-lifecycle": {
+    "title": "Docker Container Lifecycle",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-images-and-registries-docker-hub",
+        "title": "Docker Images and Registries (Docker Hub)",
+        "key_concept": "Foundations from Docker Images and Registries (Docker Hub)",
+        "bridge_summary": "Understanding Docker Images and Registries (Docker Hub) is essential before moving to Docker Container Lifecycle."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Ignoring PID 1 init signal forwarding: apps running as PID 1 without tini fail to handle SIGTERM, causing 10-second SIGKILL delays and dirty DB connection disconnects.",
+      "tradeoff_challenge": "Ephemeral container restart policies (unless-stopped vs on-failure) vs Kubernetes pod lifecycle controllers."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-advanced-container-lifecycle-management",
+        "title": "Advanced Container Lifecycle Management",
+        "reason": "Proceed to the next container milestone: Advanced Container Lifecycle Management."
+      }
+    ]
+  },
+  "docker-advanced-container-lifecycle-management": {
+    "title": "Advanced Container Lifecycle Management",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-container-lifecycle",
+        "title": "Docker Container Lifecycle",
+        "key_concept": "Foundations from Docker Container Lifecycle",
+        "bridge_summary": "Understanding Docker Container Lifecycle is essential before moving to Advanced Container Lifecycle Management."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Advanced Container Lifecycle Management without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Advanced Container Lifecycle Management?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-commands-to-interact-with-inside-of-containers",
+        "title": "Docker Commands to Interact with Inside of Containers",
+        "reason": "Proceed to the next container milestone: Docker Commands to Interact with Inside of Containers."
+      }
+    ]
+  },
+  "docker-commands-to-interact-with-inside-of-containers": {
+    "title": "Docker Commands to Interact with Inside of Containers",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-advanced-container-lifecycle-management",
+        "title": "Advanced Container Lifecycle Management",
+        "key_concept": "Foundations from Advanced Container Lifecycle Management",
+        "bridge_summary": "Understanding Advanced Container Lifecycle Management is essential before moving to Docker Commands to Interact with Inside of Containers."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Docker Commands to Interact with Inside of Containers without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Docker Commands to Interact with Inside of Containers?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-chapter-4-docker-networking-and-storage",
+        "title": "Chapter 4. Docker Networking and Storage",
+        "reason": "Proceed to the next container milestone: Chapter 4. Docker Networking and Storage."
+      }
+    ]
+  },
+  "docker-chapter-4-docker-networking-and-storage": {
+    "title": "Chapter 4. Docker Networking and Storage",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-commands-to-interact-with-inside-of-containers",
+        "title": "Docker Commands to Interact with Inside of Containers",
+        "key_concept": "Foundations from Docker Commands to Interact with Inside of Containers",
+        "bridge_summary": "Understanding Docker Commands to Interact with Inside of Containers is essential before moving to Chapter 4. Docker Networking and Storage."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 4. Docker Networking and Storage without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 4. Docker Networking and Storage?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-networking",
+        "title": "Docker Networking",
+        "reason": "Proceed to the next container milestone: Docker Networking."
+      }
+    ]
+  },
+  "docker-networking": {
+    "title": "Docker Networking",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-4-docker-networking-and-storage",
+        "title": "Chapter 4. Docker Networking and Storage",
+        "key_concept": "Foundations from Chapter 4. Docker Networking and Storage",
+        "bridge_summary": "Understanding Chapter 4. Docker Networking and Storage is essential before moving to Docker Networking."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Exposing internal databases to host port 0.0.0.0 instead of relying on Docker internal bridge network DNS discovery, exposing unauthenticated database ports to public internet.",
+      "tradeoff_challenge": "Bridge networking vs Host networking: When does avoiding Linux network namespace overhead outweigh port conflict isolation?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-persistent-storage-with-docker-volumes",
+        "title": "Persistent Storage with Docker Volumes",
+        "reason": "Proceed to the next container milestone: Persistent Storage with Docker Volumes."
+      }
+    ]
+  },
+  "docker-persistent-storage-with-docker-volumes": {
+    "title": "Persistent Storage with Docker Volumes",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-networking",
+        "title": "Docker Networking",
+        "key_concept": "Foundations from Docker Networking",
+        "bridge_summary": "Understanding Docker Networking is essential before moving to Persistent Storage with Docker Volumes."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Mounting host directories into containers with inconsistent UID/GID permissions, causing root-owned files that the container non-root user cannot read or write.",
+      "tradeoff_challenge": "Docker Named Volumes (managed by daemon) vs Host Bind Mounts: How to optimize local development sync speed while ensuring production storage portability."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-chapter-5-building-and-sharing-docker-images",
+        "title": "Chapter 5. Building and Sharing Docker Images",
+        "reason": "Proceed to the next container milestone: Chapter 5. Building and Sharing Docker Images."
+      }
+    ]
+  },
+  "docker-chapter-5-building-and-sharing-docker-images": {
+    "title": "Chapter 5. Building and Sharing Docker Images",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-persistent-storage-with-docker-volumes",
+        "title": "Persistent Storage with Docker Volumes",
+        "key_concept": "Foundations from Persistent Storage with Docker Volumes",
+        "bridge_summary": "Understanding Persistent Storage with Docker Volumes is essential before moving to Chapter 5. Building and Sharing Docker Images."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 5. Building and Sharing Docker Images without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 5. Building and Sharing Docker Images?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-what-is-a-dockerfile",
+        "title": "What Is a Dockerfile?",
+        "reason": "Proceed to the next container milestone: What Is a Dockerfile?."
+      }
+    ]
+  },
+  "docker-what-is-a-dockerfile": {
+    "title": "What Is a Dockerfile?",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-5-building-and-sharing-docker-images",
+        "title": "Chapter 5. Building and Sharing Docker Images",
+        "key_concept": "Foundations from Chapter 5. Building and Sharing Docker Images",
+        "bridge_summary": "Understanding Chapter 5. Building and Sharing Docker Images is essential before moving to What Is a Dockerfile?."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Invalidating Docker build cache early: Placing 'COPY . .' before 'RUN pip install' forces slow dependency re-downloads on every single code change.",
+      "tradeoff_challenge": "Single-stage build vs Multi-stage build (builder + minimal runtime image): Cutting image size from 1.2 GB down to 80 MB."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-build-context-and-dockerignore-file",
+        "title": "Build Context and .dockerignore File",
+        "reason": "Proceed to the next container milestone: Build Context and .dockerignore File."
+      }
+    ]
+  },
+  "docker-build-context-and-dockerignore-file": {
+    "title": "Build Context and .dockerignore File",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-what-is-a-dockerfile",
+        "title": "What Is a Dockerfile?",
+        "key_concept": "Foundations from What Is a Dockerfile?",
+        "bridge_summary": "Understanding What Is a Dockerfile? is essential before moving to Build Context and .dockerignore File."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Omitting .dockerignore, sending gigabytes of .git histories, virtual environments, and local credentials into the Docker daemon build context.",
+      "tradeoff_challenge": "Lean build context vs build-time caching: How to structure CI pipelines to minimize Docker build context transfer latency."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-dockerfile-syntax",
+        "title": "Dockerfile Syntax",
+        "reason": "Proceed to the next container milestone: Dockerfile Syntax."
+      }
+    ]
+  },
+  "docker-dockerfile-syntax": {
+    "title": "Dockerfile Syntax",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-build-context-and-dockerignore-file",
+        "title": "Build Context and .dockerignore File",
+        "key_concept": "Foundations from Build Context and .dockerignore File",
+        "bridge_summary": "Understanding Build Context and .dockerignore File is essential before moving to Dockerfile Syntax."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Dockerfile Syntax without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Dockerfile Syntax?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-sharing-your-docker-images",
+        "title": "Sharing Your Docker Images",
+        "reason": "Proceed to the next container milestone: Sharing Your Docker Images."
+      }
+    ]
+  },
+  "docker-sharing-your-docker-images": {
+    "title": "Sharing Your Docker Images",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-dockerfile-syntax",
+        "title": "Dockerfile Syntax",
+        "key_concept": "Foundations from Dockerfile Syntax",
+        "bridge_summary": "Understanding Dockerfile Syntax is essential before moving to Sharing Your Docker Images."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Sharing Your Docker Images without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Sharing Your Docker Images?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-chapter-6-docker-compose-and-deployment-practice",
+        "title": "Chapter 6. Docker Compose and Deployment Practice",
+        "reason": "Proceed to the next container milestone: Chapter 6. Docker Compose and Deployment Practice."
+      }
+    ]
+  },
+  "docker-chapter-6-docker-compose-and-deployment-practice": {
+    "title": "Chapter 6. Docker Compose and Deployment Practice",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-sharing-your-docker-images",
+        "title": "Sharing Your Docker Images",
+        "key_concept": "Foundations from Sharing Your Docker Images",
+        "bridge_summary": "Understanding Sharing Your Docker Images is essential before moving to Chapter 6. Docker Compose and Deployment Practice."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 6. Docker Compose and Deployment Practice without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 6. Docker Compose and Deployment Practice?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-writing-a-docker-compose-file",
+        "title": "Writing a Docker Compose File",
+        "reason": "Proceed to the next container milestone: Writing a Docker Compose File."
+      }
+    ]
+  },
+  "docker-writing-a-docker-compose-file": {
+    "title": "Writing a Docker Compose File",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-6-docker-compose-and-deployment-practice",
+        "title": "Chapter 6. Docker Compose and Deployment Practice",
+        "key_concept": "Foundations from Chapter 6. Docker Compose and Deployment Practice",
+        "bridge_summary": "Understanding Chapter 6. Docker Compose and Deployment Practice is essential before moving to Writing a Docker Compose File."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Relying on 'depends_on' without healthchecks: 'depends_on' only waits for container start, not socket readiness, causing web apps to crash before Postgres finishes initialization.",
+      "tradeoff_challenge": "Docker Compose for local development & single-node deployments vs Kubernetes / Nomad for distributed multi-node orchestrations."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-compose-commands",
+        "title": "Docker Compose Commands",
+        "reason": "Proceed to the next container milestone: Docker Compose Commands."
+      }
+    ]
+  },
+  "docker-compose-commands": {
+    "title": "Docker Compose Commands",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-writing-a-docker-compose-file",
+        "title": "Writing a Docker Compose File",
+        "key_concept": "Foundations from Writing a Docker Compose File",
+        "bridge_summary": "Understanding Writing a Docker Compose File is essential before moving to Docker Compose Commands."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Docker Compose Commands without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Docker Compose Commands?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-web-app-development-with-docker-compose",
+        "title": "Web App Development with Docker Compose",
+        "reason": "Proceed to the next container milestone: Web App Development with Docker Compose."
+      }
+    ]
+  },
+  "docker-web-app-development-with-docker-compose": {
+    "title": "Web App Development with Docker Compose",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-compose-commands",
+        "title": "Docker Compose Commands",
+        "key_concept": "Foundations from Docker Compose Commands",
+        "bridge_summary": "Understanding Docker Compose Commands is essential before moving to Web App Development with Docker Compose."
+      },
+      {
+        "slug": "web-http-rest",
+        "title": "Web Development Basics: HTTP and REST",
+        "key_concept": "HTTP Communication Across Services",
+        "bridge_summary": "Docker Compose networks communicate via HTTP and TCP ports; understanding REST architecture is key to multi-service configuration."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Web App Development with Docker Compose without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Web App Development with Docker Compose?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-production-deployment-with-docker-compose",
+        "title": "Production Deployment with Docker Compose",
+        "reason": "Proceed to the next container milestone: Production Deployment with Docker Compose."
+      }
+    ]
+  },
+  "docker-production-deployment-with-docker-compose": {
+    "title": "Production Deployment with Docker Compose",
+    "series": "docker-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "docker-web-app-development-with-docker-compose",
+        "title": "Web App Development with Docker Compose",
+        "key_concept": "Foundations from Web App Development with Docker Compose",
+        "bridge_summary": "Understanding Web App Development with Docker Compose is essential before moving to Production Deployment with Docker Compose."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Hardcoding sensitive database passwords and JWT secrets in docker-compose.yml files instead of Docker secrets or environment variable files excluded from Git.",
+      "tradeoff_challenge": "Blue-Green Compose zero-downtime deployment vs rolling deployment overhead in production environments."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-advancing-your-docker-skills",
+        "title": "Advancing Your Docker Skills",
+        "reason": "Proceed to the next container milestone: Advancing Your Docker Skills."
+      }
+    ]
+  },
+  "docker-advancing-your-docker-skills": {
+    "title": "Advancing Your Docker Skills",
+    "series": "docker-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "docker-production-deployment-with-docker-compose",
+        "title": "Production Deployment with Docker Compose",
+        "key_concept": "Foundations from Production Deployment with Docker Compose",
+        "bridge_summary": "Understanding Production Deployment with Docker Compose is essential before moving to Advancing Your Docker Skills."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Advancing Your Docker Skills without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Advancing Your Docker Skills?"
+    },
+    "next_milestones": []
   }
 }
