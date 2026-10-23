@@ -147,9 +147,23 @@
 <div class="max-w-[1400px] mx-auto px-4 md:px-6 pt-28 pb-20">
     <!-- 英雄区 -->
     <div class="text-center mb-16 mt-16">
-        <p class="text-pink-500 font-medium mb-3 tracking-wide">Paid Knowledge · In-Depth Articles</p>
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">CheeseO Articles</h1>
-        <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-2xl mx-auto">Curated tech and humanities articles with free previews, member access, and an AI reading assistant for efficient learning</p>
+        {% if page.slug == 'series' %}
+            <p class="text-pink-500 font-semibold mb-3 tracking-wide uppercase text-sm">Systematic Curriculum · 7 Chapters · 75 Lessons</p>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">Git & GitHub Master Course</h1>
+            <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-3xl mx-auto">
+                A structured, hands-on curriculum from Git key concepts, staging, and commit lifecycle to advanced branching, rebase vs merge, and GitHub remote team collaboration with interactive diagrams.
+            </p>
+        {% elif page.slug == 'articles' %}
+            <p class="text-indigo-600 font-semibold mb-3 tracking-wide uppercase text-sm">Engineering Blog · Production Insights</p>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">Engineering Blog</h1>
+            <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-3xl mx-auto">
+                In-depth stories, backend architectural tradeoffs, systems performance debugging, and machine learning explorations from engineering trenches.
+            </p>
+        {% else %}
+            <p class="text-pink-500 font-medium mb-3 tracking-wide">Paid Knowledge · In-Depth Articles</p>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">{{ page.title }}</h1>
+            <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-2xl mx-auto">{{ page.body|striptags|default:"Curated tech and humanities articles with free previews, member access, and an AI reading assistant" }}</p>
+        {% endif %}
     </div>
 
     <!-- 搜索栏 -->

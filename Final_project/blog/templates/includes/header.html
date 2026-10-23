@@ -10,7 +10,8 @@
         <nav class="hidden md:block mx-4">
             <ul class="flex items-center gap-6">
                 <li><a href="{% url 'a_home:homes' %}" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Home</a></li>
-                <li><a href="/blog/" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Articles</a></li>
+                <li><a href="/blog/series/" class="text-gray-700 hover:text-pink-500 font-semibold transition-colors flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-pink-500 inline-block"></span>Series</a></li>
+                <li><a href="/blog/articles/" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Blog</a></li>
                 <li><a href="{% url 'a_agent:chat' %}" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Reading Assistant</a></li>
                 <li><a href="{% url 'a_order:create_subscription_order' %}" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Membership</a></li>
                 <li><a href="{% url 'a_home:help' %}" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Help</a></li>
@@ -54,7 +55,8 @@
                 <div id="mobile-menu" class="hidden absolute right-0 bg-white text-gray-900 shadow-lg rounded-xl w-48 p-2 mt-2 z-20">
                     <ul class="space-y-2">
                         <li><a href="{% url 'a_home:homes' %}" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Home</a></li>
-                        <li><a href="/blog/" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Articles</a></li>
+                        <li><a href="/blog/series/" class="block py-2 px-3 text-sm font-semibold text-pink-600 hover:bg-pink-50 rounded">Series (系列專區)</a></li>
+                        <li><a href="/blog/articles/" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Blog (部落格)</a></li>
                         <li><a href="{% url 'a_agent:chat' %}" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Reading Assistant</a></li>
                         <li><a href="{% url 'a_order:create_subscription_order' %}" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Membership</a></li>
                         <li><a href="{% url 'a_home:help' %}" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Help</a></li>
