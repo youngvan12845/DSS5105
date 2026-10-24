@@ -289,6 +289,18 @@
             z-index: 40;
         }
     }
+    /* The shared slot must fill the remaining drawer space, not its content. */
+    #article-agent-mobile-drawer { height: 100vh; height: 100dvh; }
+    #article-agent-mobile-slot { min-height: 0; min-width: 0; }
+    #article-agent-mobile-slot #article-agent-slot {
+        height: 100%;
+        max-height: 100%;
+        min-height: 0;
+        overflow: hidden;
+    }
+    /* The drawer already has a title; avoid a second large heading at zoom. */
+    #article-agent-mobile-slot .article-agent-brand { display: none; }
+    #article-agent-mobile-slot #article-image-preview-img { max-height: 64px; }
     #article-agent-mobile-slot .article-agent-chat,
     #article-agent-mobile-slot .article-agent-panel {
         height: 100%;
