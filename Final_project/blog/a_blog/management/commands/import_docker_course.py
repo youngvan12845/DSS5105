@@ -173,6 +173,10 @@ class Command(BaseCommand):
                         existing.image = fallback_cover
                     existing.is_free = is_free
                     existing.required_points = required_points
+                    existing.series_slug = "docker"
+                    existing.series_title = "Docker Basics Course"
+                    existing.chapter_number = ch_idx
+                    existing.chapter_title = ch_name
                     existing.save()
                     existing.save_revision().publish()
                     self.stdout.write(self.style.SUCCESS(f"    Updated: {final_title} ({slug})"))
@@ -186,18 +190,21 @@ class Command(BaseCommand):
                         image=cover_image_obj,
                         is_free=is_free,
                         required_points=required_points,
+                        series_slug="docker",
+                        series_title="Docker Basics Course",
+                        chapter_number=ch_idx,
+                        chapter_title=ch_name,
                         owner=user,
                     )
                     series_page.add_child(instance=new_article)
                     new_article.save_revision().publish()
 
-                    # Add taxonomy tags
+                    # Add taxonomy tags (excluding chapter - chapter is now a model field)
                     new_article.tags.add(
                         "docker",
                         "container",
                         "devops",
                         "deployment",
-                        f"chapter-{ch_idx}",
                         "docker-series"
                     )
                     new_article.save()

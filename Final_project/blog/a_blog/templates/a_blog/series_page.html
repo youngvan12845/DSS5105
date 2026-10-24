@@ -1,0 +1,250 @@
+{% extends 'layouts/blank.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+    body { font-family: 'Inter', sans-serif; color: #334155; }
+    .jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .merriweather { font-family: 'Merriweather', serif; }
+    
+    .course-card {
+        transition: all 0.3s ease;
+    }
+    .lesson-item {
+        transition: all 0.2s ease;
+    }
+    .lesson-item:hover {
+        background-color: #f8fafc;
+        transform: translateX(4px);
+    }
+    .track-pill {
+        transition: all 0.2s ease;
+    }
+</style>
+{% endblock %}
+
+{% block class %}series bg-slate-50 text-slate-700{% endblock %}
+
+{% block content %}
+<div class="max-w-[1400px] mx-auto px-4 md:px-6 pt-28 pb-20">
+
+    <!-- 頂部切換提示 -->
+    <div class="mb-6 flex items-center justify-between bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
+        <div class="flex items-center gap-3">
+            <span class="flex h-3 w-3 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-pink-500"></span>
+            </span>
+            <span class="text-sm font-medium text-slate-700">
+                You are viewing the <strong class="text-pink-600 font-semibold">Series Learning Tracks (系列學習專區)</strong>.
+            </span>
+        </div>
+        <a href="/blog/articles/" class="text-xs md:text-sm font-medium text-slate-500 hover:text-pink-600 transition flex items-center gap-1.5">
+            Switch to Engineering Blog (部落格) →
+        </a>
+    </div>
+
+    <!-- 英雄區 (Hero Section) -->
+    <div class="text-center mb-12 mt-6">
+        <p class="text-pink-500 font-semibold mb-3 tracking-wide uppercase text-sm">
+            Curated Engineering Tracks · Step-by-Step Curriculum · 102 Lessons
+        </p>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-4 leading-tight merriweather">
+            Engineering Series Learning Tracks
+        </h1>
+        <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-3xl mx-auto">
+            Systematic engineering tracks covering Git & GitHub version control workflows and Docker container architecture. Follow the chapter progression to master core developer tools.
+        </p>
+
+        <!-- 系列專案快速切換按鈕 -->
+        <div class="flex flex-wrap justify-center gap-3 mb-8">
+            <a href="?{% if query %}query={{ query }}&{% endif %}" 
+               class="track-pill px-5 py-2.5 rounded-full text-sm font-semibold transition {% if not active_track %}bg-pink-500 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
+                🚀 All Tracks (全部 102 篇)
+            </a>
+            <a href="?track=git{% if query %}&query={{ query }}{% endif %}" 
+               class="track-pill px-5 py-2.5 rounded-full text-sm font-semibold transition {% if active_track == 'git' %}bg-pink-500 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
+                🐙 Git & GitHub Master Course (75 篇 · 7 章)
+            </a>
+            <a href="?track=docker{% if query %}&query={{ query }}{% endif %}" 
+               class="track-pill px-5 py-2.5 rounded-full text-sm font-semibold transition {% if active_track == 'docker' %}bg-sky-600 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
+                🐳 Docker Basics Course (27 篇 · 6 章)
+            </a>
+        </div>
+
+        <!-- 課程內部搜尋欄 -->
+        <div class="flex justify-center mb-4">
+            <form action="" method="get" class="relative w-full md:w-2/3 lg:w-1/2">
+                {% if active_track %}
+                <input type="hidden" name="track" value="{{ active_track }}">
+                {% endif %}
+                <input 
+                    type="text" 
+                    name="query" 
+                    class="pl-4 pr-16 py-3.5 w-full rounded-xl bg-white text-slate-800 placeholder-slate-400 shadow-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent text-sm" 
+                    placeholder="Search chapters or topics in series curriculum (e.g., git rebase, docker compose)..." 
+                    {% if query %} value="{{ query }}" {% endif %}
+                >
+                <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-lg transition">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+        {% if query %}
+        <p class="text-xs text-slate-500 mt-2">
+            Searching for "<span class="font-semibold text-slate-700">{{ query }}</span>" · 
+            <a href="?{% if active_track %}track={{ active_track }}{% endif %}" class="text-pink-500 hover:underline">Clear search</a>
+        </p>
+        {% endif %}
+    </div>
+
+    <!-- 課程與章節內容區 -->
+    <div class="space-y-16">
+        {% for course in courses %}
+        <section class="course-card bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden" x-data="{ allOpen: true }">
+            <!-- 課程頭部 Banner -->
+            <div class="p-8 md:p-10 border-b border-slate-100 {% if course.slug == 'git' %}bg-gradient-to-r from-pink-50/60 via-rose-50/40 to-white{% else %}bg-gradient-to-r from-sky-50/60 via-blue-50/40 to-white{% endif %}">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-3xl">{{ course.icon }}</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider {% if course.slug == 'git' %}bg-pink-100 text-pink-700{% else %}bg-sky-100 text-sky-700{% endif %}">
+                                {{ course.badge }}
+                            </span>
+                            <span class="text-xs text-slate-500 font-medium">
+                                {{ course.chapter_count }} Chapters · {{ course.lesson_count }} Lessons
+                            </span>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2 merriweather">
+                            {{ course.title }}
+                        </h2>
+                        <p class="text-slate-600 max-w-3xl text-sm md:text-base leading-relaxed jakarta">
+                            {{ course.description }}
+                        </p>
+                    </div>
+
+                    <!-- 操作按鈕 -->
+                    <div class="shrink-0 flex items-center gap-3">
+                        {% if course.first_lesson %}
+                        <a href="{{ course.first_lesson.url }}" 
+                           class="px-6 py-3 rounded-full text-sm font-semibold text-white shadow-md transition flex items-center gap-2 {% if course.slug == 'git' %}bg-pink-500 hover:bg-pink-600{% else %}bg-sky-600 hover:bg-sky-700{% endif %}">
+                            <span>▶</span> Start Course (從第 1 課開始)
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 課程課綱：章節列表 (Chapter Syllabus) -->
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">Course Syllabus & Chapters</h3>
+                    <button @click="allOpen = !allOpen" class="text-xs font-medium text-pink-600 hover:text-pink-700 transition">
+                        <span x-show="allOpen">Collapse All Chapters</span>
+                        <span x-show="!allOpen">Expand All Chapters</span>
+                    </button>
+                </div>
+
+                {% for chapter in course.chapters %}
+                <div class="border border-slate-200/70 rounded-2xl overflow-hidden bg-slate-50/40" x-data="{ open: true }" x-init="$watch('allOpen', value => open = value)">
+                    <!-- 章節標題列 -->
+                    <div @click="open = !open" 
+                         class="cursor-pointer p-4 md:p-5 bg-white hover:bg-slate-50/80 transition flex items-center justify-between border-b border-slate-100 select-none">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs {% if course.slug == 'git' %}bg-pink-100 text-pink-700{% else %}bg-sky-100 text-sky-700{% endif %}">
+                                {{ chapter.number }}
+                            </span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-base md:text-lg merriweather">
+                                    {{ chapter.title }}
+                                </h4>
+                                <span class="text-xs text-slate-500">
+                                    {{ chapter.lessons|length }} Lessons in this chapter
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-slate-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- 章節課時條目 (Lessons List) -->
+                    <div x-show="open" class="divide-y divide-slate-100 bg-white" x-transition>
+                        {% for lesson in chapter.lessons %}
+                        <a href="{{ lesson.url }}" class="lesson-item p-4 md:px-6 flex items-center justify-between gap-4 group">
+                            <div class="flex items-center gap-4 flex-grow min-w-0">
+                                <span class="text-xs font-medium text-slate-400 w-8 shrink-0">
+                                    {{ chapter.number }}.{{ forloop.counter }}
+                                </span>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <h5 class="text-sm md:text-base font-medium text-slate-800 group-hover:text-pink-600 transition truncate">
+                                            {{ lesson.title }}
+                                        </h5>
+                                        {% if lesson.is_free %}
+                                        <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                            Free
+                                        </span>
+                                        {% else %}
+                                        <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/60">
+                                            Premium
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="text-xs text-slate-500 line-clamp-1 mt-0.5 jakarta">
+                                        {{ lesson.intro }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 shrink-0">
+                                <span class="hidden sm:inline-flex items-center gap-1 text-xs text-slate-400">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"></path>
+                                    </svg>
+                                    {{ lesson.views }}
+                                </span>
+                                <span class="text-xs font-semibold text-pink-500 group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
+                                    Read <span aria-hidden="true">→</span>
+                                </span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% empty %}
+        <div class="bg-white rounded-2xl p-12 text-center border border-dashed border-slate-200">
+            <p class="text-lg text-slate-600 mb-2 font-medium">No series lessons found</p>
+            <p class="text-sm text-slate-400 mb-4">Try clearing your search query or switching tracks.</p>
+            <a href="/blog/series/" class="px-5 py-2 bg-pink-500 text-white rounded-full text-sm font-medium hover:bg-pink-600 transition">
+                Reset Filters
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- 底部 -->
+<footer class="bg-slate-900 text-slate-300 py-10 mt-16">
+    <div class="max-w-[1400px] mx-auto px-6">
+        <div class="flex flex-col justify-center items-center text-center">
+            <div class="mb-6"> 
+                <h2 class="text-2xl font-semibold text-white mb-2 merriweather">CheeseO</h2>
+                <p class="jakarta font-light text-slate-400">Sharing creativity and knowledge, connecting ideas worldwide</p>
+            </div>
+        </div>
+        <div class="mt-2 pt-4 border-t border-slate-800 text-center">
+            <p class="jakarta font-light text-slate-500">© 2025 CheeseO. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+{% endblock content %}

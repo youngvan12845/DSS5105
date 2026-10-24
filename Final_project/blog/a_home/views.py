@@ -20,5 +20,7 @@ def find_view(request):
 
 
 def homes_view(request):
-    articles = ArticlePage.objects.live().order_by('-first_published_at')[:6]
+    articles = ArticlePage.objects.live().filter(series_slug='').order_by('-first_published_at')[:6]
+    if not articles.exists():
+        articles = ArticlePage.objects.live().order_by('-first_published_at')[:6]
     return render(request, 'homes.html', {'articles': articles})

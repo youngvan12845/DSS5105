@@ -145,55 +145,30 @@
 {% block content %}
 <!-- 主容器 -->
 <div class="max-w-[1400px] mx-auto px-4 md:px-6 pt-28 pb-20">
-    <!-- 英雄区 -->
-    <div class="text-center mb-12 mt-16">
-        {% if page.slug == 'series' %}
-            {% if request.GET.tag == 'docker-series' or request.GET.tag == 'docker' %}
-                <p class="text-sky-600 font-semibold mb-3 tracking-wide uppercase text-sm">Container Track · 6 Chapters · 27 Lessons</p>
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">Docker Basics Course</h1>
-                <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-3xl mx-auto">
-                    Master containerization, Dockerfile multi-stage builds, networking, persistent storage volumes, and multi-service Docker Compose deployment.
-                </p>
-            {% elif request.GET.tag == 'git-github-series' or request.GET.tag == 'git' %}
-                <p class="text-pink-500 font-semibold mb-3 tracking-wide uppercase text-sm">Version Control Track · 7 Chapters · 75 Lessons</p>
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">Git & GitHub Master Course</h1>
-                <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-3xl mx-auto">
-                    A structured, hands-on curriculum from Git key concepts, staging, and commit lifecycle to advanced branching, rebase vs merge, and GitHub remote team collaboration.
-                </p>
-            {% else %}
-                <p class="text-pink-500 font-semibold mb-3 tracking-wide uppercase text-sm">Curated Engineering Tracks · 2 Tracks · 102 Lessons</p>
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">Engineering Series Learning Tracks</h1>
-                <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-3xl mx-auto">
-                    Hands-on curriculum spanning Git, GitHub, Docker, container architecture, and production collaboration with interactive architecture diagrams and code snippets.
-                </p>
-            {% endif %}
 
-            <!-- 系列專題快速切換按鈕 -->
-            <div class="flex flex-wrap justify-center gap-3 mb-6">
-                <a href="/blog/series/" 
-                   class="px-5 py-2.5 rounded-full text-sm font-semibold transition {% if not request.GET.tag %}bg-pink-500 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
-                    🚀 All Tracks (全部 102 篇)
-                </a>
-                <a href="/blog/series/?tag=git-github-series" 
-                   class="px-5 py-2.5 rounded-full text-sm font-semibold transition {% if request.GET.tag == 'git-github-series' or request.GET.tag == 'git' %}bg-pink-500 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
-                    🐙 Git & GitHub Master Course (75 篇)
-                </a>
-                <a href="/blog/series/?tag=docker-series" 
-                   class="px-5 py-2.5 rounded-full text-sm font-semibold transition {% if request.GET.tag == 'docker-series' or request.GET.tag == 'docker' %}bg-sky-600 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
-                    🐳 Docker Basics Course (27 篇)
-                </a>
+    <!-- 頂部導航提示 Banner -->
+    <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gradient-to-r from-pink-50/70 via-purple-50/40 to-white border border-pink-100/80 rounded-2xl p-4 shadow-sm gap-3">
+        <div class="flex items-center gap-3">
+            <span class="text-xl">🚀</span>
+            <div>
+                <span class="text-sm font-semibold text-slate-800">Looking for our structured curriculum?</span>
+                <span class="text-xs text-slate-500 block sm:inline sm:ml-2">Git & GitHub (75 lessons) and Docker (27 lessons) with chapter breakdowns.</span>
             </div>
-        {% elif page.slug == 'articles' %}
-            <p class="text-indigo-600 font-semibold mb-3 tracking-wide uppercase text-sm">Engineering Blog · Production Insights</p>
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">Engineering Blog</h1>
-            <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-3xl mx-auto">
-                In-depth stories, backend architectural tradeoffs, systems performance debugging, and machine learning explorations from engineering trenches.
-            </p>
-        {% else %}
-            <p class="text-pink-500 font-medium mb-3 tracking-wide">Paid Knowledge · In-Depth Articles</p>
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-800 mb-4 leading-tight merriweather">{{ page.title }}</h1>
-            <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-2xl mx-auto">{{ page.body|striptags|default:"Curated tech and humanities articles with free previews, member access, and an AI reading assistant" }}</p>
-        {% endif %}
+        </div>
+        <a href="/blog/series/" class="shrink-0 px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-full text-xs font-semibold shadow-sm transition">
+            Explore Series Tracks (系列專區) →
+        </a>
+    </div>
+
+    <!-- 英雄区 -->
+    <div class="text-center mb-12 mt-8">
+        <p class="text-pink-500 font-semibold mb-3 tracking-wide uppercase text-sm">Tech & Humanities · Deep-Dive Engineering</p>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-4 leading-tight merriweather">
+            CheeseO Engineering Blog
+        </h1>
+        <p class="text-lg md:text-xl text-slate-500 jakarta font-light mb-8 max-w-3xl mx-auto">
+            In-depth stories, backend architectural tradeoffs, systems performance debugging, and machine learning explorations from engineering trenches.
+        </p>
     </div>
 
     <!-- 搜索栏 -->
@@ -202,8 +177,8 @@
             <input 
                 type="text" 
                 name="query" 
-                class="pl-4 pr-16 py-4 w-full rounded-xl bg-white text-slate-800 placeholder-slate-400 shadow-sm border border-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" 
-                placeholder="Search articles..." 
+                class="pl-4 pr-16 py-4 w-full rounded-xl bg-white text-slate-800 placeholder-slate-400 shadow-sm border border-slate-100 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent" 
+                placeholder="Search blog articles (e.g., Python, Rust, RAG, Django)..." 
                 {% if search_query %} value="{{ search_query }}" {% endif %}
             >
             <button type="submit" class="search-btn">
