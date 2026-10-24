@@ -672,6 +672,7 @@ def handle_user_message(
                 model=model,
                 image_file=image_file,
             )
+            tool_trace.append({'tool': 'response_mode', 'mode': 'ai'})
             return AgentReply(
                 content=content,
                 citations=citations,
@@ -681,6 +682,7 @@ def handle_user_message(
         except Exception as exc:
             tool_trace.append({'tool': 'llm', 'error': str(exc)})
 
+    tool_trace.append({'tool': 'response_mode', 'mode': 'fallback'})
     content = _fallback_answer(
         query,
         keyword_hits,

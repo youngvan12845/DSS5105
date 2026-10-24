@@ -60,7 +60,8 @@
     }
     function open() {
         returnFocus = document.activeElement;
-        mobileOpen = true; sync(); closer?.focus();
+        mobileOpen = true; sync();
+        (slot.querySelector('#article-agent-collapse') || closer)?.focus();
     }
     function close() {
         mobileOpen = false; sync();

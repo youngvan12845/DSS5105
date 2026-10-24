@@ -1,5 +1,5 @@
 {% load agent_extras static %}
-<link rel="stylesheet" href="{% static 'css/article-agent-panel.css' %}">
+<link rel="stylesheet" href="{% static 'css/article-agent-panel.css' %}?v=3">
 <div id="article-agent-shell" class="article-agent-chat" data-article-id="{{ article.id }}">
     <button type="button" id="article-agent-restore" class="article-agent-restore hidden" title="Expand AI reading assistant" aria-label="Expand AI reading assistant">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7"/></svg>
@@ -7,25 +7,15 @@
     </button>
 
     <section id="article-agent-panel" class="article-agent-panel agent-panel flex flex-col h-full overflow-hidden">
-        <div class="article-agent-brand px-4 pt-3 pb-2 border-b border-slate-100 bg-white">
-            <p class="article-agent-kicker">Co-Pilot</p>
-            <h2 class="article-agent-heading">Article Q&amp;A</h2>
-        </div>
-
-        <div class="flex items-center gap-2 px-3 py-2.5 border-b border-slate-100 bg-white/90 shrink-0">
-            <button type="button" id="article-agent-collapse" class="agent-sidebar-toggle" title="Collapse panel" aria-label="Collapse panel">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-            </button>
+        <header class="assistant-prototype-header">
+            <div class="assistant-headrow">
+                <div><p class="assistant-kicker">CO-PILOT</p><h2>Article Q&amp;A</h2></div>
+                <button type="button" id="article-agent-collapse" class="assistant-close" title="Close or collapse assistant" aria-label="Close or collapse assistant">×</button>
+            </div>
             <details class="article-agent-title"><summary title="{{ article.title }}">{{ article.title }}</summary></details>
-            <a href="{% url 'a_agent:chat_article' article.id %}" class="agent-sidebar-toggle" title="Open full screen" aria-label="Open full screen">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-            </a>
-        </div>
+        </header>
 
-        {% if article_scope and not article_scope.can_read_full and not article_scope.is_free %}
-        <p class="article-agent-note shrink-0">Preview only — paid content is not included in answers.</p>
-        {% endif %}
-
+        {% include 'a_agent/partials/panel_status.html' %}
 
         <div id="article-chat-messages" class="flex-1 min-h-0 overflow-y-auto px-4 py-4" role="region" aria-label="Article guidance and conversation" tabindex="0">
         {% if readiness %}
@@ -34,9 +24,9 @@
 
             {% if not chat_messages %}
             <div class="article-agent-empty max-w-sm mx-auto text-center py-6">
-                <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-pink-100 to-rose-50 flex items-center justify-center text-xl">💬</div>
+                <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-pink-100 to-rose-50 flex items-center justify-center text-xl">✦</div>
                 <h3 class="article-agent-subheading">Ask about this article</h3>
-                <p class="article-agent-muted">Summaries and Q&amp;A grounded in this page.</p>
+                <p class="article-agent-muted">Explain a concept, summarize the article, or choose your next read.</p>
                 <div class="flex flex-wrap justify-center gap-2 mt-4">
                     <button type="button" class="agent-suggestion-chip" data-prompt="Summarize this article">Summarize</button>
                     <button type="button" class="agent-suggestion-chip" data-prompt="What are the main points?">Main points</button>
@@ -48,7 +38,7 @@
             {% endfor %}
         </div>
 
-        <div class="border-t border-slate-100 bg-slate-50/80 px-3 py-3 shrink-0">
+        <div class="assistant-prototype-composer">
             <div class="hidden">
                 <select id="article-llm-model" name="llm_model" form="article-chat-form">
                     {% for option in model_options %}
@@ -79,7 +69,18 @@
                     </div>
                 </div>
 
-                <div class="agent-composer flex items-end gap-2 p-2 bg-white rounded-2xl border border-slate-200 shadow-sm focus-within:border-pink-300 focus-within:ring-2 focus-within:ring-pink-100 transition-all">
+                <div class="agent-composer assistant-input-row">
+                    <textarea
+                        id="article-chat-input"
+                        rows="2"
+                        aria-label="Ask about this article"
+                        name="content"
+                        placeholder="Ask about this article…"
+                        class="agent-text-input flex-1 !bg-transparent !py-2 !px-1 !shadow-none border-0 focus:ring-0"
+                    ></textarea>
+                    <button type="submit" class="article-agent-send-btn">Send</button>
+                </div>
+                <div class="assistant-composer-tools">
                     <button
                         type="button"
                         id="article-image-upload-btn"
@@ -90,15 +91,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </button>
-                    <textarea
-                        id="article-chat-input"
-                        rows="2"
-                        aria-label="Ask about this article"
-                        name="content"
-                        placeholder="Ask about this article…"
-                        class="agent-text-input flex-1 !bg-transparent !py-2 !px-1 !shadow-none border-0 focus:ring-0"
-                    ></textarea>
-                    <button type="submit" class="article-agent-send-btn">Send</button>
+                    <span>Enter adds a line. Select Send to submit.</span>
                 </div>
                 <p id="article-vision-tip" class="hidden"></p>
             </form>

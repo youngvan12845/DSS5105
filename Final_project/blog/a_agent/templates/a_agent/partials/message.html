@@ -14,6 +14,11 @@
     <div class="flex items-start gap-3">
         <div class="agent-avatar agent-avatar-bot shrink-0">AI</div>
         <div class="max-w-[78%] space-y-2">
+            {% for trace in message.tool_trace %}
+            {% if trace.tool == 'response_mode' and trace.mode == 'fallback' %}
+            <p class="text-xs text-amber-800" role="note">Search-based reply · AI did not generate this response.</p>
+            {% endif %}
+            {% endfor %}
             <div class="agent-bubble-assistant text-sm">{{ message.content|agent_markdown }}</div>
             {% if message.citations %}
             <div class="agent-sources">

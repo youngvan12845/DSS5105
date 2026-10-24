@@ -1,2 +1,4 @@
 {% include 'a_agent/partials/message.html' with message=user_message %}
 {% include 'a_agent/partials/message.html' with message=assistant_message %}
+
+{% if panel_status %}{% include 'a_agent/partials/panel_status.html' with status_oob=True %}{% endif %}

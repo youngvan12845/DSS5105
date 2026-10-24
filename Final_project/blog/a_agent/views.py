@@ -15,6 +15,7 @@ from .tools.reading_list import (
 )
 from .services.proactive import ensure_session_continue_nudge
 from .services.llm import get_llm_info
+from .services.panel_status import build_panel_status, describe_readiness
 from .services.orchestrator import handle_user_message
 from .tools.article_scope import get_article_scope
 from .tools.browsing_history import get_browsing_history
@@ -269,6 +270,8 @@ def article_panel_view(request: HttpRequest, article_id: int) -> HttpResponse:
         article.slug,
         session_mastered=session_mastered
     )
+    llm_info = get_llm_info(selected_model)
+    panel_status = build_panel_status(request.user, article_scope, llm_info)
     return render(
         request,
         'a_agent/partials/article_panel.html',
@@ -277,10 +280,11 @@ def article_panel_view(request: HttpRequest, article_id: int) -> HttpResponse:
             'article': article,
             'article_scope': article_scope,
             'chat_messages': chat_messages,
-            'llm_info': get_llm_info(selected_model),
+            'llm_info': llm_info,
+            'panel_status': panel_status,
             'model_options': OLLAMA_MODEL_OPTIONS,
             'selected_model': selected_model,
-            'readiness': readiness,
+            'readiness': describe_readiness(readiness, article.slug),
         },
     )
 
@@ -320,7 +324,7 @@ def master_prerequisite_view(request: HttpRequest) -> HttpResponse:
         request,
         'a_agent/partials/readiness_panel.html',
         {
-            'readiness': readiness,
+            'readiness': describe_readiness(readiness, article.slug),
             'article': article,
         }
     )
@@ -381,6 +385,12 @@ def article_send_message_view(request: HttpRequest, article_id: int) -> HttpResp
             {
                 'user_message': user_message,
                 'assistant_message': assistant_message,
+                'panel_status': build_panel_status(
+                    request.user,
+                    get_article_scope(article_id, request.user, request=request),
+                    get_llm_info(selected_model),
+                    tool_trace=reply.tool_trace,
+                ),
             },
         )
 
