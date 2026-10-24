@@ -23,40 +23,110 @@ class BlogPage(Page):
     
     template = "a_blog/blog_page.html"
     
+    def get_template(self, request, *args, **kwargs):
+        if self.slug == "series":
+            return "a_blog/series_page.html"
+        return "a_blog/blog_page.html"
+
     def get_context(self, request): 
+        if self.slug == "series":
+            track = request.GET.get("track", "").strip().lower()
+            query = request.GET.get("query", "").strip()
+            
+            series_articles = ArticlePage.objects.child_of(self).live()
+            if query:
+                series_articles = series_articles.filter(
+                    models.Q(title__icontains=query) | models.Q(intro__icontains=query)
+                )
+
+            course_meta = [
+                {
+                    "slug": "git",
+                    "title": "Git & GitHub Master Course",
+                    "subtitle": "7 Chapters · 75 Lessons · Comprehensive Version Control Mastery",
+                    "badge": "Version Control Track",
+                    "icon": "🐙",
+                    "color": "pink",
+                    "description": "A systematic, hands-on curriculum from Git key concepts, staging, and commit lifecycle to advanced branching, rebase vs merge, and GitHub remote team collaboration.",
+                },
+                {
+                    "slug": "docker",
+                    "title": "Docker Basics Course",
+                    "subtitle": "6 Chapters · 27 Lessons · Container Architecture & Compose Deployment",
+                    "badge": "Container Track",
+                    "icon": "🐳",
+                    "color": "sky",
+                    "description": "Master containerization, Dockerfile multi-stage builds, networking, persistent storage volumes, and multi-service Docker Compose deployment.",
+                },
+            ]
+
+            courses = []
+            for meta in course_meta:
+                if track and track != meta["slug"]:
+                    continue
+                
+                c_articles = series_articles.filter(series_slug=meta["slug"]).order_by("chapter_number", "lesson_number", "path")
+                if not c_articles.exists() and query:
+                    continue
+                
+                chapters_dict = {}
+                for art in c_articles:
+                    ch_num = art.chapter_number or 1
+                    ch_title = art.chapter_title or f"Chapter {ch_num}"
+                    if ch_num not in chapters_dict:
+                        chapters_dict[ch_num] = {
+                            "number": ch_num,
+                            "title": ch_title,
+                            "lessons": []
+                        }
+                    chapters_dict[ch_num]["lessons"].append(art)
+                
+                sorted_chapters = [chapters_dict[k] for k in sorted(chapters_dict.keys())]
+                total_lessons = sum(len(c["lessons"]) for c in sorted_chapters)
+                
+                courses.append({
+                    **meta,
+                    "chapters": sorted_chapters,
+                    "lesson_count": total_lessons,
+                    "chapter_count": len(sorted_chapters),
+                })
+            
+            context = super().get_context(request)
+            context["courses"] = courses
+            context["active_track"] = track
+            context["query"] = query
+            return context
+
+        # Regular Blog context
         tag = request.GET.get("tag")
         articles = ArticlePage.objects.child_of(self).live()
         if tag:
             articles = articles.filter(tags__name=tag)
             
-        if self.slug == "series":
-            articles = articles.order_by("path")
-        else:
-            articles = articles.order_by("-first_published_at")
+        articles = articles.order_by("-first_published_at")
             
-        # 获取当前分类下的标签
-        all_tags = Tag.objects.filter(articlepage__in=ArticlePage.objects.child_of(self).live()).distinct()
+        # 获取当前分类下的标签 (排除 chapter 内部标签)
+        all_tags = Tag.objects.filter(
+            articlepage__in=ArticlePage.objects.child_of(self).live()
+        ).exclude(name__startswith='chapter-').distinct()
         if not all_tags.exists():
-            all_tags = Tag.objects.all()
+            all_tags = Tag.objects.exclude(name__startswith='chapter-')
         
-        # 添加分页逻辑
-        paginator = Paginator(articles, 12)  # 每页显示12篇文章
+        paginator = Paginator(articles, 12)
         page = request.GET.get('page')
         
         try:
             paginated_articles = paginator.page(page)
         except PageNotAnInteger:
-            # 如果页码不是整数，返回第一页
             paginated_articles = paginator.page(1)
         except EmptyPage:
-            # 如果页码超出范围，返回最后一页
             paginated_articles = paginator.page(paginator.num_pages)
             
         context = super().get_context(request)
-        context['articles'] = paginated_articles  # 使用分页后的文章列表
-        context['paginator'] = paginator  # 添加分页器到上下文
+        context['articles'] = paginated_articles
+        context['paginator'] = paginator
         context["tag"] = tag
-        context['all_tags'] = all_tags  # 将所有标签传递到模板
+        context['all_tags'] = all_tags
         return context
 
 
@@ -94,12 +164,57 @@ class ArticlePage(Page):
     
     tags = ClusterTaggableManager(through='ArticleTag', blank=True)
     
+    # 專屬系列學習與章節欄位（取代以 tag 表示 chapter）
+    series_slug = models.CharField(max_length=50, blank=True, default='', db_index=True, verbose_name="系列代稱")
+    series_title = models.CharField(max_length=120, blank=True, default='', verbose_name="系列名稱")
+    chapter_number = models.PositiveIntegerField(default=0, db_index=True, verbose_name="章節編號")
+    chapter_title = models.CharField(max_length=150, blank=True, default='', verbose_name="章節名稱")
+    lesson_number = models.PositiveIntegerField(default=0, verbose_name="課時編號")
+
     views = models.PositiveIntegerField(default=0, editable=False)
     likes = models.PositiveIntegerField(default=0, verbose_name="点赞数")
 
     is_free = models.BooleanField(default=True, verbose_name="是否为免费页面")
     required_points = models.PositiveIntegerField(default=0, verbose_name="所需积分")
     
+    @property
+    def is_series_article(self):
+        return bool(self.series_slug)
+
+    def get_clean_tags(self):
+        """返回乾淨的標籤列表（過濾掉內部的 chapter- 標籤）"""
+        return [tag for tag in self.tags.all() if not tag.name.startswith('chapter-')]
+
+    def get_prev_lesson(self):
+        """獲取同一系列中的上一課"""
+        if not self.series_slug:
+            return None
+        return (
+            ArticlePage.objects.live()
+            .filter(series_slug=self.series_slug)
+            .filter(
+                models.Q(chapter_number__lt=self.chapter_number) |
+                models.Q(chapter_number=self.chapter_number, lesson_number__lt=self.lesson_number)
+            )
+            .order_by('-chapter_number', '-lesson_number')
+            .first()
+        )
+
+    def get_next_lesson(self):
+        """獲取同一系列中的下一課"""
+        if not self.series_slug:
+            return None
+        return (
+            ArticlePage.objects.live()
+            .filter(series_slug=self.series_slug)
+            .filter(
+                models.Q(chapter_number__gt=self.chapter_number) |
+                models.Q(chapter_number=self.chapter_number, lesson_number__gt=self.lesson_number)
+            )
+            .order_by('chapter_number', 'lesson_number')
+            .first()
+        )
+
     def increment_view_count(self):
         self.views += 1
         self.save(update_fields=["views"])
@@ -120,6 +235,12 @@ class ArticlePage(Page):
         context['comments'] = comments
         context['comment_count'] = self.comments.filter(is_active=True).count()
         
+        # 標籤與系列課程上一篇/下一篇導航
+        context['clean_tags'] = self.get_clean_tags()
+        if self.series_slug:
+            context['prev_lesson'] = self.get_prev_lesson()
+            context['next_lesson'] = self.get_next_lesson()
+            
         return context
     
     def get_tags(self):
@@ -203,6 +324,11 @@ class ArticlePage(Page):
         FieldPanel('body'),
         FieldPanel('date'),
         FieldPanel('tags'),
+        FieldPanel('series_slug'),
+        FieldPanel('series_title'),
+        FieldPanel('chapter_number'),
+        FieldPanel('chapter_title'),
+        FieldPanel('lesson_number'),
         FieldPanel('likes'),
         FieldPanel('is_free'),
         FieldPanel('required_points'),

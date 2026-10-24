@@ -16,15 +16,16 @@ def article_search(request):
     search_query = request.GET.get('query', '').strip()
     tag = request.GET.get('tag')
     
+    # 部落格專區：只展示純部落格文章 (series_slug 為空)，不與系列課程文章混雜
+    base_articles = ArticlePage.objects.live().filter(series_slug='')
+    
     if search_query:
-        # 使用 Wagtail 的 autocomplete 进行更宽松的搜索
-        articles = ArticlePage.objects.live().autocomplete(search_query)
-        
-        # 如果没有结果，尝试普通搜索
+        # 使用 Wagtail 的 autocomplete 進行搜索
+        articles = base_articles.autocomplete(search_query)
         if not articles:
-            articles = ArticlePage.objects.live().search(search_query)
+            articles = base_articles.search(search_query)
     else:
-        articles = ArticlePage.objects.live()
+        articles = base_articles
     
     # 标签过滤
     if tag:
@@ -50,8 +51,10 @@ def article_search(request):
     except EmptyPage:
         paginated_articles = paginator.page(paginator.num_pages)
     
-    # 获取所有标签
-    all_tags = Tag.objects.all()
+    # 获取属于部落格文章的所有有效标签 (排除內部 chapter 標籤)
+    all_tags = Tag.objects.filter(articlepage__in=base_articles).exclude(name__startswith='chapter-').distinct()
+    if not all_tags.exists():
+        all_tags = Tag.objects.exclude(name__startswith='chapter-')
     
     context = {
         'articles': paginated_articles,

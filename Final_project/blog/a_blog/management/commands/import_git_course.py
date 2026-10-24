@@ -174,6 +174,10 @@ class Command(BaseCommand):
                         existing.image = fallback_cover
                     existing.is_free = is_free
                     existing.required_points = required_points
+                    existing.series_slug = "git"
+                    existing.series_title = "Git & GitHub Master Course"
+                    existing.chapter_number = ch_idx
+                    existing.chapter_title = ch_name
                     existing.save()
                     existing.save_revision().publish()
                     self.stdout.write(self.style.SUCCESS(f"    Updated: {final_title} ({slug})"))
@@ -187,17 +191,20 @@ class Command(BaseCommand):
                         image=cover_image_obj,
                         is_free=is_free,
                         required_points=required_points,
+                        series_slug="git",
+                        series_title="Git & GitHub Master Course",
+                        chapter_number=ch_idx,
+                        chapter_title=ch_name,
                         owner=user,
                     )
                     series_page.add_child(instance=new_article)
                     new_article.save_revision().publish()
 
-                    # Add taxonomy tags
+                    # Add taxonomy tags (excluding chapter - chapter is now a model field)
                     new_article.tags.add(
                         "git",
                         "github",
                         "version-control",
-                        f"chapter-{ch_idx}",
                         "git-github-series"
                     )
                     new_article.save()
