@@ -1,5 +1,5 @@
 {% extends 'layouts/blank.html' %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
 {% block head %}
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
@@ -255,12 +255,13 @@
 >
     Ask AI
 </button>
-<div id="article-agent-mobile-drawer" class="lg:hidden fixed inset-0 z-50 hidden">
+<style>body.assistant-drawer-open{overflow:hidden}#article-agent-mobile-drawer .assistant-load-status,#article-agent-dock .assistant-load-status{padding:1.25rem;background:white;border-radius:1rem}#article-agent-mobile-close{display:inline-flex!important;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:.25rem!important;background:#f8fafc!important;color:#475569!important;box-shadow:none!important}#article-agent-mobile-slot .article-agent-restore{display:none!important}</style>
+<div id="article-agent-mobile-drawer" role="dialog" aria-modal="true" aria-label="Article Q&A" class="lg:hidden fixed inset-0 z-50 hidden">
     <div id="article-agent-mobile-backdrop" class="absolute inset-0 bg-slate-900/40"></div>
-    <div class="absolute inset-x-0 bottom-0 top-16 bg-white rounded-t-2xl shadow-2xl overflow-hidden flex flex-col">
+    <div class="absolute inset-y-0 right-0 w-full max-w-[440px] bg-white rounded-l-2xl shadow-2xl overflow-hidden flex flex-col">
         <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 shrink-0">
             <span class="text-sm font-semibold text-slate-800">Article Q&amp;A</span>
-            <button type="button" id="article-agent-mobile-close" class="text-slate-500 text-xl leading-none px-2">&times;</button>
+            <button type="button" id="article-agent-mobile-close" aria-label="Close assistant" class="text-slate-500 text-xl leading-none px-2">&times;</button>
         </div>
         <div class="flex-1 min-h-0 overflow-hidden" id="article-agent-mobile-slot"></div>
     </div>
@@ -634,14 +635,15 @@
 </div>
 
 {% if user.is_authenticated %}
+<script src="{% static 'js/article-assistant-layout.js' %}" defer></script>
 <aside id="article-agent-dock" class="article-agent-dock hidden lg:block">
     <div
         id="article-agent-slot"
         hx-get="{% url 'a_agent:article_panel' page.id %}"
-        hx-trigger="load"
+        hx-trigger="assistant:load"
         hx-swap="innerHTML"
     >
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-400 h-full">Loading reading assistant…</div>
+        <div class="assistant-load-status" role="status">Loading assistant…</div>
     </div>
 </aside>
 {% endif %}
@@ -716,32 +718,6 @@
             });
         });
 
-        const mobileBtn = document.getElementById('article-agent-mobile-btn');
-        const mobileDrawer = document.getElementById('article-agent-mobile-drawer');
-        const mobileClose = document.getElementById('article-agent-mobile-close');
-        const mobileBackdrop = document.getElementById('article-agent-mobile-backdrop');
-        const mobileSlot = document.getElementById('article-agent-mobile-slot');
-        const panelUrl = '{% url "a_agent:article_panel" page.id %}';
-
-        const openMobileAgent = () => {
-            if (!mobileDrawer || !mobileSlot) return;
-            mobileDrawer.classList.remove('hidden');
-            if (!mobileSlot.dataset.loaded) {
-                fetch(panelUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-                    .then((response) => response.text())
-                    .then((html) => {
-                        mobileSlot.innerHTML = html;
-                        mobileSlot.dataset.loaded = '1';
-                        if (window.htmx) htmx.process(mobileSlot);
-                    });
-            }
-        };
-
-        const closeMobileAgent = () => mobileDrawer?.classList.add('hidden');
-
-        mobileBtn?.addEventListener('click', openMobileAgent);
-        mobileClose?.addEventListener('click', closeMobileAgent);
-        mobileBackdrop?.addEventListener('click', closeMobileAgent);
     });
 
     // 切换回复表单显示/隐藏

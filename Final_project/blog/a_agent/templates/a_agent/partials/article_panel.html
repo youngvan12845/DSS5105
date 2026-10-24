@@ -420,20 +420,8 @@
 
     if (!shell || !form || !input || !messages) return;
 
-    const articleId = shell.dataset.articleId;
-    const collapseKey = `article-agent-collapsed-${articleId}`;
-
-    const setCollapsed = (collapsed) => {
-        shell.classList.toggle('is-collapsed', collapsed);
-        dock?.classList.toggle('is-collapsed', collapsed);
-        layout?.classList.toggle('has-agent-collapsed', collapsed);
-        layout?.classList.toggle('has-agent-panel', !collapsed);
-        localStorage.setItem(collapseKey, collapsed ? '1' : '0');
-    };
-
-    if (localStorage.getItem(collapseKey) === '1') setCollapsed(true);
-    collapseBtn?.addEventListener('click', () => setCollapsed(true));
-    restoreBtn?.addEventListener('click', () => setCollapsed(false));
+    collapseBtn?.addEventListener('click', () => window.ArticleAssistantLayout?.collapse());
+    restoreBtn?.addEventListener('click', () => window.ArticleAssistantLayout?.expand());
 
     const clearImage = () => {
         if (imageInput) imageInput.value = '';
@@ -475,11 +463,27 @@
 
     const scrollToBottom = () => { messages.scrollTop = messages.scrollHeight; };
 
-    form.addEventListener('htmx:beforeRequest', () => {
+    let sending = false;
+    const sendButton = form.querySelector('.article-agent-send-btn');
+    const requestStatus = document.createElement('p');
+    requestStatus.setAttribute('role', 'status');
+    requestStatus.style.cssText = 'font-size:.8125rem;color:#b45309;margin-top:.5rem';
+    form.append(requestStatus);
+    const setSending = (value) => {
+        sending = value;
+        input.readOnly = value;
+        if (sendButton) { sendButton.disabled = value; sendButton.textContent = value ? 'Sending…' : 'Send'; }
+        if (imageBtn) imageBtn.disabled = value;
+        if (imageClearBtn) imageClearBtn.disabled = value;
+    };
+    form.addEventListener('htmx:beforeRequest', (event) => {
+        if (sending) { event.preventDefault(); return; }
         const text = input.value.trim();
         const hasImage = imageInput?.files?.length > 0;
         const content = text || (hasImage ? '[Image attached]' : '');
-        if (!content) return;
+        if (!content) { event.preventDefault(); return; }
+        setSending(true);
+        requestStatus.textContent = '';
 
         messages.querySelector('.article-agent-empty')?.remove();
         const imageHtml = hasImage && imagePreviewImg?.src
@@ -501,29 +505,36 @@
                     <div class="agent-bubble-assistant text-sm text-slate-500">Thinking…</div>
                 </div>
             </div>`);
-        input.value = '';
-        imagePreviewWrap?.classList.add('hidden');
         scrollToBottom();
     });
 
     form.addEventListener('htmx:afterRequest', (e) => {
         document.getElementById('article-chat-thinking')?.remove();
+        setSending(false);
         if (e.detail.successful) {
             messages.querySelector('.article-optimistic-user')?.remove();
             form.reset();
             clearImage();
             syncVisionUi();
             scrollToBottom();
+        } else {
+            messages.querySelector('.article-optimistic-user')?.remove();
+            requestStatus.textContent = 'Message failed to send. Your draft and attachment are preserved. Please retry.';
         }
     });
 
-    form.addEventListener('htmx:responseError', () => {
-        document.getElementById('article-chat-thinking')?.remove();
-        messages.querySelector('.article-optimistic-user')?.remove();
-    });
+    for (const name of ['htmx:responseError', 'htmx:sendError', 'htmx:timeout']) {
+        form.addEventListener(name, () => {
+            setSending(false);
+            document.getElementById('article-chat-thinking')?.remove();
+            messages.querySelector('.article-optimistic-user')?.remove();
+            requestStatus.textContent = 'Message failed to send. Your draft and attachment are preserved. Please retry.';
+        });
+    }
 
     document.querySelectorAll('.agent-suggestion-chip').forEach((chip) => {
         chip.addEventListener('click', () => {
+            if (sending) return;
             input.value = chip.dataset.prompt;
             input.focus();
         });
