@@ -1,4 +1,52 @@
 {
+  "version control": {
+    "title": "Git & Version Control Starter Path",
+    "steps": [
+      {"slug": "git-what-is-git", "note": "Understand distributed version control system basics"},
+      {"slug": "git-chapter-1-git-github-overview", "note": "Connect with remote repository services like GitHub"},
+      {"slug": "git-add-files-to-staging-area-git-add", "note": "Stage files and prepare snapshots for local repository"}
+    ]
+  },
+  "git": {
+    "title": "Git & Version Control Starter Path",
+    "steps": [
+      {"slug": "git-what-is-git", "note": "Understand distributed version control system basics"},
+      {"slug": "git-chapter-1-git-github-overview", "note": "Connect with remote repository services like GitHub"},
+      {"slug": "git-add-files-to-staging-area-git-add", "note": "Stage files and prepare snapshots for local repository"}
+    ]
+  },
+  "containerization": {
+    "title": "Docker Containerization Fundamentals Path",
+    "steps": [
+      {"slug": "docker-what-is-docker", "note": "Understand lightweight container basics and virtualization"},
+      {"slug": "docker-chapter-1-docker-introduction", "note": "Explore core Docker features and environment isolation"},
+      {"slug": "docker-what-is-a-dockerfile", "note": "Build container images for application deployment and scaling"}
+    ]
+  },
+  "docker": {
+    "title": "Docker Containerization Fundamentals Path",
+    "steps": [
+      {"slug": "docker-what-is-docker", "note": "Understand lightweight container basics and virtualization"},
+      {"slug": "docker-chapter-1-docker-introduction", "note": "Explore core Docker features and environment isolation"},
+      {"slug": "docker-what-is-a-dockerfile", "note": "Build container images for application deployment and scaling"}
+    ]
+  },
+  "branch conflict": {
+    "title": "Git Branching and Conflict Resolution Path",
+    "steps": [
+      {"slug": "git-fast-forward-merge", "note": "Learn fast-forward branch merging mechanisms"},
+      {"slug": "git-managing-conflict", "note": "Resolve conflicts when editing same file simultaneously with master code"},
+      {"slug": "git-rebase-branch-git-rebase", "note": "Streamline commit history across feature branches"}
+    ]
+  },
+  "conflict resolution": {
+    "title": "Git Branching and Conflict Resolution Path",
+    "steps": [
+      {"slug": "git-fast-forward-merge", "note": "Learn fast-forward branch merging mechanisms"},
+      {"slug": "git-managing-conflict", "note": "Resolve conflicts when editing same file simultaneously with master code"},
+      {"slug": "git-rebase-branch-git-rebase", "note": "Streamline commit history across feature branches"}
+    ]
+  },
   "machine learning": {
     "title": "Machine Learning Starter Path",
     "steps": [

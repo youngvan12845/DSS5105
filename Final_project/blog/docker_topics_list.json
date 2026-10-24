@@ -1,0 +1,200 @@
+[
+  {
+    "chapter_idx": 1,
+    "chapter_name": "Chapter 1. Docker Introduction",
+    "topics": [
+      {
+        "url": "https://d-libro.com/topic/chapter-1-docker-introduction/",
+        "slug": "docker-chapter-1-docker-introduction",
+        "title": "Chapter 1. Docker Introduction",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/chapter-1-docker-introduction-id203110010010.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/computing-environment-and-dependency-conflict/",
+        "slug": "docker-computing-environment-and-dependency-conflict",
+        "title": "Computing Environment and Dependency Conflict",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/computing-environment-and-dependency-conflict-id203110010110.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/containers-vs-virtual-machines/",
+        "slug": "docker-containers-vs-virtual-machines",
+        "title": "Containers vs. Virtual Machines",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/containers-vs-virtual-machines-id203110010210.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/what-is-docker/",
+        "slug": "docker-what-is-docker",
+        "title": "What Is Docker?",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/what-is-docker-id203110010310.webp"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 2,
+    "chapter_name": "Chapter 2. Getting Started with Docker",
+    "topics": [
+      {
+        "url": "https://d-libro.com/topic/chapter-2-getting-started-with-docker/",
+        "slug": "docker-chapter-2-getting-started-with-docker",
+        "title": "Chapter 2. Getting Started with Docker",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/chapter-2-getting-started-with-docker-id203110020010.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/setting-up-docker-environment/",
+        "slug": "docker-setting-up-docker-environment",
+        "title": "Setting Up Docker Environment",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/setting-up-docker-environment-id203110020110.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/overview-of-docker-workflow/",
+        "slug": "docker-overview-of-docker-workflow",
+        "title": "Overview of Docker Workflow",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/overview-of-docker-workflow-id203110020210.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/docker-commands/",
+        "slug": "docker-commands",
+        "title": "Docker Commands",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/docker-commands-id203110020310.webp"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 3,
+    "chapter_name": "Chapter 3. Docker Image and Container",
+    "topics": [
+      {
+        "url": "https://d-libro.com/topic/chapter-3-docker-image-and-container/",
+        "slug": "docker-chapter-3-docker-image-and-container",
+        "title": "Chapter 3. Docker Image and Container",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/chapter-3-docker-image-and-container-id203110030010.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/docker-images-and-registries-docker-hub/",
+        "slug": "docker-images-and-registries-docker-hub",
+        "title": "Docker Images and Registries (Docker Hub)",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/docker-images-and-registries-docker-hub-id203110030110.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/docker-container-lifecycle/",
+        "slug": "docker-container-lifecycle",
+        "title": "Docker Container Lifecycle",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/docker-container-lifecycle-id203110030210.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/advanced-container-lifecycle-management/",
+        "slug": "docker-advanced-container-lifecycle-management",
+        "title": "Advanced Container Lifecycle Management",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/advanced-container-lifecycle-management-id203110030310.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/docker-commands-to-interact-with-inside-of-containers/",
+        "slug": "docker-commands-to-interact-with-inside-of-containers",
+        "title": "Docker Commands to Interact with Inside of Containers",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/docker-commands-to-interact-with-inside-of-containers-id203110030410.webp"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 4,
+    "chapter_name": "Chapter 4. Docker Networking and Storage",
+    "topics": [
+      {
+        "url": "https://d-libro.com/topic/chapter-4-docker-networking-and-storage/",
+        "slug": "docker-chapter-4-docker-networking-and-storage",
+        "title": "Chapter 4. Docker Networking and Storage",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/chapter-4-docker-networking-and-storage-id203110040010.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/docker-networking/",
+        "slug": "docker-networking",
+        "title": "Docker Networking",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/docker-networking-id203110040110.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/persistent-storage-with-docker-volumes/",
+        "slug": "docker-persistent-storage-with-docker-volumes",
+        "title": "Persistent Storage with Docker Volumes",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/persistent-storage-with-docker-volumes-id203110040210.webp"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 5,
+    "chapter_name": "Chapter 5. Building and Sharing Docker Images",
+    "topics": [
+      {
+        "url": "https://d-libro.com/topic/chapter-5-building-and-sharing-docker-images/",
+        "slug": "docker-chapter-5-building-and-sharing-docker-images",
+        "title": "Chapter 5. Building and Sharing Docker Images",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/chapter-5-building-and-sharing-docker-images-id203110050010.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/what-is-a-dockerfile/",
+        "slug": "docker-what-is-a-dockerfile",
+        "title": "What Is a Dockerfile?",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/what-is-a-dockerfile-id203110050110.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/build-context-and-dockerignore-file/",
+        "slug": "docker-build-context-and-dockerignore-file",
+        "title": "Build Context and .dockerignore File",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/build-context-and-dockerignore-file-id203110050210.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/dockerfile-syntax/",
+        "slug": "docker-dockerfile-syntax",
+        "title": "Dockerfile Syntax",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/dockerfile-syntax-id203110050310.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/sharing-your-docker-images/",
+        "slug": "docker-sharing-your-docker-images",
+        "title": "Sharing Your Docker Images",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/sharing-your-docker-images-id203110050410.webp"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 6,
+    "chapter_name": "Chapter 6. Docker Compose and Deployment Practice",
+    "topics": [
+      {
+        "url": "https://d-libro.com/topic/chapter-6-docker-compose-and-deployment-practice/",
+        "slug": "docker-chapter-6-docker-compose-and-deployment-practice",
+        "title": "Chapter 6. Docker Compose and Deployment Practice",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/chapter-6-docker-compose-and-deployment-practice-id203110060010.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/writing-a-docker-compose-file/",
+        "slug": "docker-writing-a-docker-compose-file",
+        "title": "Writing a Docker Compose File",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/writing-a-docker-compose-file-id203110060110.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/docker-compose-commands/",
+        "slug": "docker-compose-commands",
+        "title": "Docker Compose Commands",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/docker-compose-commands-id203110060210.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/web-app-development-with-docker-compose/",
+        "slug": "docker-web-app-development-with-docker-compose",
+        "title": "Web App Development with Docker Compose",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/web-app-development-with-docker-compose-id203110060310.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/production-deployment-with-docker-compose/",
+        "slug": "docker-production-deployment-with-docker-compose",
+        "title": "Production Deployment with Docker Compose",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/production-deployment-with-docker-compose-id203110060410.webp"
+      },
+      {
+        "url": "https://d-libro.com/topic/advancing-your-docker-skills/",
+        "slug": "docker-advancing-your-docker-skills",
+        "title": "Advancing Your Docker Skills",
+        "cover_src": "https://static.d-libro.com/01-course-content-images/2031-10-Docker-Basics/010-main-figures/advancing-your-docker-skills-id203110060510.webp"
+      }
+    ]
+  }
+]

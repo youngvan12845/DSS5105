@@ -1,0 +1,344 @@
+[
+  {
+    "chapter_idx": 1,
+    "chapter_name": "Chapter 1. Git & GitHub Key Concepts",
+    "topics": [
+      {
+        "slug": "git-chapter-1-git-github-overview",
+        "title": "Git & GitHub Overview"
+      },
+      {
+        "slug": "git-what-is-git",
+        "title": "What Is Git?"
+      },
+      {
+        "slug": "git-what-is-version-control",
+        "title": "Understanding Version Control"
+      },
+      {
+        "slug": "git-how-to-save-versions-in-git",
+        "title": "How to Save Versions in Git"
+      },
+      {
+        "slug": "git-collaborating-on-git-github-remote-repository",
+        "title": "Collaborating on Git & GitHub - Remote Repository"
+      },
+      {
+        "slug": "git-collaborating-on-git-git-hub-branch",
+        "title": "Collaborating on Git & Git Hub - Branch"
+      },
+      {
+        "slug": "git-github-basic-life-cycle",
+        "title": "Git & GitHub Basic Life Cycle"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 2,
+    "chapter_name": "Chapter 2. Git & GitHub Initial Settings",
+    "topics": [
+      {
+        "slug": "git-chapter-2-git-github-initial-settings",
+        "title": "Configuring Git & GitHub Settings"
+      },
+      {
+        "slug": "git-github-initial-settings-overview",
+        "title": "Git & GitHub Initial Settings Overview"
+      },
+      {
+        "slug": "git-key-tool-preparation-1-mac",
+        "title": "Setting Up Git & GitHub on Mac"
+      },
+      {
+        "slug": "git-key-tool-preparation-2-windows",
+        "title": "Setting Up Git & GitHub on Windows"
+      },
+      {
+        "slug": "git-key-tool-preparation-3-linux-remote-server",
+        "title": "Git & GitHub Configuration for Linux Remote Servers"
+      },
+      {
+        "slug": "git-user-settings-git-config",
+        "title": "Configuring Git User Settings"
+      },
+      {
+        "slug": "git-create-github-account",
+        "title": "Creating a GitHub Account"
+      },
+      {
+        "slug": "git-github-access-authentication-settings",
+        "title": "How to Configure GitHub Access"
+      },
+      {
+        "slug": "git-generating-pat-personal-access-token",
+        "title": "Generating Personal Access Tokens (PAT)"
+      },
+      {
+        "slug": "git-github-ssh-setup",
+        "title": "How to Establish GitHub SSH Connection"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 3,
+    "chapter_name": "Chapter 3. Git & GitHub Project Setup",
+    "topics": [
+      {
+        "slug": "git-chapter-3-git-github-project-setup",
+        "title": "Initiating Git & GitHub Project"
+      },
+      {
+        "slug": "git-three-cases-in-git-github-project-setup",
+        "title": "Git & GitHub Project Setup Scenarios"
+      },
+      {
+        "slug": "git-github-project-setup-overview-in-different-cases",
+        "title": "How to Set Up Git & GitHub Projects for Different Roles"
+      },
+      {
+        "slug": "git-building-remote-collaboration-practice-environment",
+        "title": "Building a Remote Collaboration Environment with Git & GitHub"
+      },
+      {
+        "slug": "git-project-initiator-key-steps-to-launch-git-project",
+        "title": "Launching Your Git Project: Key Steps Explained"
+      },
+      {
+        "slug": "git-project-initiator-create-local-repository-git-init",
+        "title": "How to Create a Local Repository with git init"
+      },
+      {
+        "slug": "git-project-initiator-make-the-first-commit",
+        "title": "Making the First Commit in Your Git Project"
+      },
+      {
+        "slug": "git-project-initiator-gitignore-file",
+        "title": "Understanding the .gitignore File in Git Projects"
+      },
+      {
+        "slug": "git-project-initiator-create-remote-repository",
+        "title": "Creating a Remote Repository on GitHub"
+      },
+      {
+        "slug": "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add",
+        "title": "How to Link Your Local and Remote Repositories with git remote add"
+      },
+      {
+        "slug": "git-project-initiator-upload-local-repository-to-remote-repository-git-push",
+        "title": "How to Use git push to Upload Your Local Repository"
+      },
+      {
+        "slug": "git-project-initiator-grant-remote-repository-access-to-project-members",
+        "title": "Granting Remote Repository Access on GitHub"
+      },
+      {
+        "slug": "git-project-member-start-project-as-collaborator",
+        "title": "Starting a Project as a Collaborator with Git & GitHub"
+      },
+      {
+        "slug": "git-project-member-create-copy-of-project-code-on-local-computer-git-clone",
+        "title": "Creating a Local Copy of a Project with git clone"
+      },
+      {
+        "slug": "git-non-member-start-project-with-replica-of-existing-repository-fork",
+        "title": "Forking: How to Start a Project with a Replica of an Existing Git Repository"
+      },
+      {
+        "slug": "git-fork-vs-clone",
+        "title": "Understanding Fork vs. Clone in Git & GitHub"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 4,
+    "chapter_name": "Chapter 4. Edit & Commit",
+    "topics": [
+      {
+        "slug": "git-chapter-4-edit-commit",
+        "title": "How to Edit and Commit using Git Commands"
+      },
+      {
+        "slug": "git-regular-workflow-edit-commit",
+        "title": "Using Git's Regular Workflow: Edit & Commit"
+      },
+      {
+        "slug": "git-edit-and-commit-overview-1",
+        "title": "Git's Edit and Commit Overview"
+      },
+      {
+        "slug": "git-add-files-to-staging-area-git-add",
+        "title": "Adding Files to the Staging Area with git add"
+      },
+      {
+        "slug": "git-commit-files-git-commit",
+        "title": "How to Commit Files with git commit"
+      },
+      {
+        "slug": "git-head-and-index",
+        "title": "Understanding Git's HEAD and INDEX"
+      },
+      {
+        "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+        "title": "Using git status to Check Your Working Tree"
+      },
+      {
+        "slug": "git-check-commit-histories-git-log",
+        "title": "Viewing Commit Histories with git log"
+      },
+      {
+        "slug": "git-check-differences-git-diff",
+        "title": "Identifying Changes with git diff"
+      },
+      {
+        "slug": "git-restore-files-to-working-tree-git-restore",
+        "title": "Restoring Files with git restore"
+      },
+      {
+        "slug": "git-undo-changes-git-reset",
+        "title": "Resetting Changes with git reset"
+      },
+      {
+        "slug": "git-delete-files-git-rm",
+        "title": "Deleting Files with git rm"
+      },
+      {
+        "slug": "git-edit-and-commit-overview-2",
+        "title": "Preparing for Git Branches in Edit and Commit"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 5,
+    "chapter_name": "Chapter 5. Work With Branches",
+    "topics": [
+      {
+        "slug": "git-chapter-5-work-with-branches",
+        "title": "How to Work with Branches in Git"
+      },
+      {
+        "slug": "git-regular-workflow-work-with-branches",
+        "title": "How to Use Branch Management in Git Workflow"
+      },
+      {
+        "slug": "git-what-is-branch",
+        "title": "Understanding Branches in Git with Diagrams"
+      },
+      {
+        "slug": "git-branch-operation-basic-life-cycle",
+        "title": "Git Branch Operation Lifecycle Steps"
+      },
+      {
+        "slug": "git-create-branch-and-check-branch-status-git-branch",
+        "title": "Creating and Managing Branches with git branch"
+      },
+      {
+        "slug": "git-switch-current-branch-1-git-checkout",
+        "title": "How to Switch Branches Using git checkout"
+      },
+      {
+        "slug": "git-switch-current-branch-2-git-switch",
+        "title": "Switching Branches Easily with git switch"
+      },
+      {
+        "slug": "git-merge-branches-git-merge",
+        "title": "Understanding Different Git Merge Types"
+      },
+      {
+        "slug": "git-fast-forward-merge",
+        "title": "What is Fast-Forward Merge in Git"
+      },
+      {
+        "slug": "git-non-fast-forward-merge-no-option",
+        "title": "Exploring Non-Fast-Forward Merge in Git"
+      },
+      {
+        "slug": "git-non-fast-forward-merge-no-ff-option",
+        "title": "Using --no-ff Option for Non-Fast-Forward Merge in Git"
+      },
+      {
+        "slug": "git-squash-merge",
+        "title": "How to Use Squash Merge in Git"
+      },
+      {
+        "slug": "git-rebase-branch-git-rebase",
+        "title": "Applying Changes with Git Rebase"
+      },
+      {
+        "slug": "git-managing-conflict",
+        "title": "How to Manage Conflicts in Git"
+      },
+      {
+        "slug": "git-stash-changes-git-stash",
+        "title": "Stashing Work-in-Progress with Git Stash"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 6,
+    "chapter_name": "Chapter 6. Remote Collaboration",
+    "topics": [
+      {
+        "slug": "git-chapter-6-remote-collaboration",
+        "title": "Collaborating Remotely with Git and GitHub"
+      },
+      {
+        "slug": "git-regular-workflow-remote-collaboration",
+        "title": "How to Remote Collaboration in Git"
+      },
+      {
+        "slug": "git-remote-collaboration-overview",
+        "title": "Overview of Remote Collaboration with Git and GitHub"
+      },
+      {
+        "slug": "git-link-with-remote-repository-git-remote",
+        "title": "Establishing a Link with git remote"
+      },
+      {
+        "slug": "git-upload-to-remote-repository-git-push",
+        "title": "How to Upload Changes with git push"
+      },
+      {
+        "slug": "git-download-remote-repository-and-merge-to-local-repository-git-pull",
+        "title": "Merging Remote Changes Locally with git pull"
+      },
+      {
+        "slug": "git-get-remote-repository-information-to-local-repository-git-fetch",
+        "title": "Updating Local Repository with git fetch"
+      },
+      {
+        "slug": "git-pull-vs-fetch",
+        "title": "Understanding the Differences Between Pull and Fetch"
+      },
+      {
+        "slug": "git-request-for-review-and-merge-pull-request",
+        "title": "How to Make a Pull Request on GitHub"
+      },
+      {
+        "slug": "git-merge-operation-using-github",
+        "title": "How to Merge Using GitHub"
+      }
+    ]
+  },
+  {
+    "chapter_idx": 7,
+    "chapter_name": "Chapter 7. Supplemental Topics",
+    "topics": [
+      {
+        "slug": "git-chapter-7-supplemental-topics",
+        "title": "Mastering Git and GitHub: Supplemental Topics"
+      },
+      {
+        "slug": "git-key-commands-and-github-key-features",
+        "title": "Key Git Commands and GitHub Features Cheat Sheet"
+      },
+      {
+        "slug": "git-github-glossary",
+        "title": "Git and GitHub Glossary of Terms"
+      },
+      {
+        "slug": "git-github-other-features",
+        "title": "Exploring GitHub's Additional Features"
+      }
+    ]
+  }
+]

@@ -116,6 +116,10 @@ def _resolve_remove_article_ids(
         title = row.article_title.lower()
         if title in q or q in title:
             matched.append(row.article_id)
+    if not matched:
+        for a in ArticlePage.objects.live():
+            if a.title.lower() in q:
+                matched.append(a.pk)
     return matched
 
 
@@ -133,6 +137,16 @@ def propose_remove_from_reading_list(
     for article_id in unique_ids:
         row = ReadingListItem.objects.filter(user=user, article_id=article_id).first()
         if row is None:
+            article = ArticlePage.objects.filter(pk=article_id).live().first()
+            if article:
+                articles.append(
+                    {
+                        'article_id': article.pk,
+                        'title': article.title,
+                        'url': article.url or '',
+                        'is_free': article.is_free,
+                    }
+                )
             continue
         articles.append(
             {

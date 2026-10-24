@@ -3,7 +3,12 @@ from __future__ import annotations
 from django.core.management.base import BaseCommand
 
 from a_agent.services.article_index import index_all_articles
-from a_agent.services.embeddings import embed_model, embed_text, embeddings_available
+from a_agent.services.embeddings import (
+    embed_model,
+    embed_provider,
+    embed_text,
+    embeddings_available,
+)
 
 
 class Command(BaseCommand):
@@ -13,14 +18,17 @@ class Command(BaseCommand):
         parser.add_argument(
             '--embed',
             action='store_true',
-            help='Compute Ollama embeddings for vector search (requires nomic-embed-text).',
+            help='Compute embeddings for vector search (Ollama, Cloudflare, or OpenAI).',
         )
 
     def handle(self, *args, **options):
         do_embed = options['embed']
         if do_embed:
+            provider = embed_provider()
             if not embeddings_available():
-                self.stderr.write(self.style.ERROR('Ollama is not running.'))
+                self.stderr.write(
+                    self.style.ERROR(f'Embedding provider "{provider}" is not configured or reachable.')
+                )
                 return
 
             model_name = embed_model()
@@ -28,8 +36,7 @@ class Command(BaseCommand):
             if probe is None:
                 self.stderr.write(
                     self.style.ERROR(
-                        f'Embedding model "{model_name}" is unavailable. '
-                        f'Run: ollama pull {model_name}'
+                        f'Embedding model "{model_name}" ({provider}) failed health check.'
                     )
                 )
                 return

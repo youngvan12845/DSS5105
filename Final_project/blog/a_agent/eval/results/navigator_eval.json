@@ -1,20 +1,20 @@
 {
-  "timestamp": "2026-09-19 16:52:18",
-  "total_articles": 22,
+  "timestamp": "2026-10-24 01:22:51",
+  "total_articles": 124,
   "tracks": {
     "track1_gap_and_monotonicity": {
       "gap_recall": 100.0,
       "monotonicity": 100.0,
-      "gap_passed": 17,
-      "gap_total": 17,
-      "mono_passed": 20,
-      "mono_total": 20
+      "gap_passed": 117,
+      "gap_total": 117,
+      "mono_passed": 126,
+      "mono_total": 126
     },
     "track2_bridge_faithfulness": {
       "bridge_completeness": 100.0,
       "citation_accuracy": 100.0,
-      "bridge_passed": 20,
-      "bridge_total": 20
+      "bridge_passed": 126,
+      "bridge_total": 126
     },
     "track3_persona_simulation": {
       "passed": 3,

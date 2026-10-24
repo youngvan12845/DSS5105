@@ -25,13 +25,19 @@ class BlogPage(Page):
     
     def get_context(self, request): 
         tag = request.GET.get("tag")
+        articles = ArticlePage.objects.child_of(self).live()
         if tag:
-            articles = ArticlePage.objects.filter(tags__name=tag).live().order_by('-first_published_at')
-        else:     
-            articles = self.get_children().live().order_by('-first_published_at')
+            articles = articles.filter(tags__name=tag)
             
-        # 获取所有标签
-        all_tags = Tag.objects.all()
+        if self.slug == "series":
+            articles = articles.order_by("path")
+        else:
+            articles = articles.order_by("-first_published_at")
+            
+        # 获取当前分类下的标签
+        all_tags = Tag.objects.filter(articlepage__in=ArticlePage.objects.child_of(self).live()).distinct()
+        if not all_tags.exists():
+            all_tags = Tag.objects.all()
         
         # 添加分页逻辑
         paginator = Paginator(articles, 12)  # 每页显示12篇文章
