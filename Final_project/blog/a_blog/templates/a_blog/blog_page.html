@@ -77,7 +77,7 @@
         flex-wrap: wrap;
         align-items: center;
     }
-    /* 分页样式 */
+    /* Pagination styles */
     .pagination {
         display: flex;
         justify-content: center;
@@ -118,7 +118,7 @@
         opacity: 0.5;
         cursor: not-allowed;
     }
-    /* 响应式标签调整 */
+    /* Responsive tag styles */
     @media (max-width: 768px) {
         .tags-header {
             flex-direction: column;
@@ -129,7 +129,7 @@
             display: none;
         }
     }
-    /* 滚动条美化 */
+    /* Scrollbar styling */
     .scrollbar-hide::-webkit-scrollbar {
         display: none;
     }
@@ -143,7 +143,7 @@
 {% block class %}blog bg-slate-50 text-slate-700{% endblock %}
 
 {% block content %}
-<!-- 主容器 -->
+<!-- Main container -->
 <div class="max-w-[1400px] mx-auto px-4 md:px-6 pt-28 pb-20">
 
     <!-- Top Navigation Prompt Banner -->
@@ -160,7 +160,7 @@
         </a>
     </div>
 
-    <!-- 英雄区 -->
+    <!-- Hero section -->
     <div class="text-center mb-12 mt-8">
         <p class="text-pink-500 font-semibold mb-3 tracking-wide uppercase text-sm">Tech & Humanities · Deep-Dive Engineering</p>
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-4 leading-tight merriweather">
@@ -171,7 +171,7 @@
         </p>
     </div>
 
-    <!-- 搜索栏 -->
+    <!-- Search bar -->
     <div class="flex justify-center mb-10">
         <form action="{% url 'article_search' %}" method="get" class="relative w-full md:w-2/3 lg:w-1/2">
             <input 
@@ -189,14 +189,14 @@
         </form>
     </div>
 
-    <!-- 标签 - 改为响应式设计 -->
-    {% if not request.GET.query %}  <!-- 当没有搜索关键词时才显示标签栏 -->
+    <!-- Responsive tag pills -->
+    {% if not request.GET.query %}  <!-- Only display tags when no query -->
         <div class="mb-10 w-full flex justify-center">
-            <div class="w-full md:w-5/6 lg:w-3/4 xl:w-2/3">  <!-- 加宽了各断点的宽度 -->
+            <div class="w-full md:w-5/6 lg:w-3/4 xl:w-2/3">  <!-- Wider container breakpoints -->
                 <div class="flex flex-col md:flex-row md:items-center mb-4 gap-3 md:gap-0">
                     <span class="tags-label whitespace-nowrap">Popular Tags:</span>
                     <div class="hidden md:block tag-divider md:mx-4"></div>
-                    <div class="tags-container flex-wrap">  <!-- 确保标签可以换行 -->
+                    <div class="tags-container flex-wrap">  <!-- Flex-wrap tags -->
                         {% for tag in all_tags %}
                             <a href="?tag={{ tag.name }}" 
                             class="tag-pill px-4 py-2 text-sm font-medium border border-slate-200 rounded-full text-slate-600 bg-white hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition {% if request.GET.tag == tag.name %}active{% endif %}">
@@ -209,10 +209,10 @@
         </div>
     {% endif %}
 
-    <!-- 标签和文章区域之间的分割线 -->
+    <!-- Divider between tags and articles -->
     <div class="w-full h-px bg-slate-200 mb-10"></div>
 
-    <!-- 文章网格 -->
+    <!-- Article grid -->
     {% if articles %}
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {% for article in articles %}
@@ -255,7 +255,7 @@
         {% endfor %}
     </div>
 
-    <!-- 分页控件 -->
+    <!-- Pagination -->
     {% if paginator.num_pages > 1 %}
     <div class="pagination">
         {% if articles.has_previous %}
@@ -307,7 +307,7 @@
     {% endif %}
 </div>
 
-<!-- 底部 -->
+<!-- Footer -->
 <footer class="bg-slate-900 text-slate-300 py-10">
     <div class="max-w-[1400px] mx-auto px-6">
         <div class="flex flex-col justify-center items-center text-center">

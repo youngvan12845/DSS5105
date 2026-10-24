@@ -73,7 +73,7 @@
             </a>
         </div>
 
-        <!-- 課程內部搜尋欄 -->
+        <!-- Course curriculum search bar -->
         <div class="flex justify-center mb-4">
             <form action="" method="get" class="relative w-full md:w-2/3 lg:w-1/2">
                 {% if active_track %}
@@ -101,11 +101,11 @@
         {% endif %}
     </div>
 
-    <!-- 課程與章節內容區 -->
+    <!-- Courses and Chapters section -->
     <div class="space-y-16">
         {% for course in courses %}
         <section class="course-card bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden" x-data="{ allOpen: true }">
-            <!-- 課程頭部 Banner -->
+            <!-- Course Header Banner -->
             <div class="p-8 md:p-10 border-b border-slate-100 {% if course.slug == 'git' %}bg-gradient-to-r from-pink-50/60 via-rose-50/40 to-white{% else %}bg-gradient-to-r from-sky-50/60 via-blue-50/40 to-white{% endif %}">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
@@ -126,7 +126,7 @@
                         </p>
                     </div>
 
-                    <!-- 操作按鈕 -->
+                    <!-- Action buttons -->
                     <div class="shrink-0 flex items-center gap-3">
                         {% if course.first_lesson %}
                         <a href="{{ course.first_lesson.url }}" 
@@ -138,7 +138,7 @@
                 </div>
             </div>
 
-            <!-- 課程課綱：章節列表 (Chapter Syllabus) -->
+            <!-- Course Syllabus & Chapters -->
             <div class="p-6 md:p-8 space-y-6">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                     <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">Course Syllabus & Chapters</h3>
@@ -150,7 +150,7 @@
 
                 {% for chapter in course.chapters %}
                 <div class="border border-slate-200/70 rounded-2xl overflow-hidden bg-slate-50/40" x-data="{ open: true }" x-init="$watch('allOpen', value => open = value)">
-                    <!-- 章節標題列 -->
+                    <!-- Chapter header bar -->
                     <div @click="open = !open" 
                          class="cursor-pointer p-4 md:p-5 bg-white hover:bg-slate-50/80 transition flex items-center justify-between border-b border-slate-100 select-none">
                         <div class="flex items-center gap-3">
@@ -173,7 +173,7 @@
                         </div>
                     </div>
 
-                    <!-- 章節課時條目 (Lessons List) -->
+                    <!-- Chapter lesson items -->
                     <div x-show="open" class="divide-y divide-slate-100 bg-white" x-transition>
                         {% for lesson in chapter.lessons %}
                         <a href="{{ lesson.url }}" class="lesson-item p-4 md:px-6 flex items-center justify-between gap-4 group">
@@ -233,7 +233,7 @@
 
 </div>
 
-<!-- 底部 -->
+<!-- Footer -->
 <footer class="bg-slate-900 text-slate-300 py-10 mt-16">
     <div class="max-w-[1400px] mx-auto px-6">
         <div class="flex flex-col justify-center items-center text-center">

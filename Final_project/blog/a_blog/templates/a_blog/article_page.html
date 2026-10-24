@@ -123,7 +123,7 @@
         box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
     }
     
-    /* 评论样式 */
+    /* Comment styles */
     .comment-section {
         background: #f8fafc;
         border-radius: 12px;
@@ -322,7 +322,7 @@
 <div id="article-layout" class="article-layout{% if user.is_authenticated %} has-agent-panel{% endif %}">
 <div id="article-page-main" class="article-page-main">
 
-    <!-- 麵包屑導航與課程章節標識 -->
+    <!-- Breadcrumbs & Course indicators -->
     {% if page.series_slug %}
     <nav class="flex items-center gap-2 text-xs md:text-sm text-slate-500 mb-3 flex-wrap">
         <a href="/" class="hover:text-pink-600 transition">Home</a>
@@ -353,7 +353,7 @@
     </nav>
     {% endif %}
 
-    <!-- 标题和作者信息 -->
+    <!-- Title and author metadata -->
     <h1 class="article-title text-4xl md:text-5xl font-bold mb-6 text-slate-800">{{ page.title }}</h1>
     <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-200">
         <div class="flex items-center gap-3">
@@ -385,7 +385,7 @@
 
     <p class="article-intro text-xl text-slate-700 mb-10 leading-relaxed">{{ page.intro }}</p>
 
-    <!-- 封面图 -->
+    <!-- Cover image -->
     <div class="mb-10">
         <figure class="rounded-xl overflow-hidden shadow-md">
             {% image page.image original class="w-full h-auto object-cover" %}
@@ -398,7 +398,7 @@
         {% endif %}
     </div>
 
-    <!-- 正文内容和遮罩 -->
+    <!-- Article body content and paywall overlay -->
     <div id="article-container" class="relative" onselectstart="return false">
         <div id="article-content" class="relative">
             <div class="preview-content article-body text-slate-700 text-lg{% if show_preview %} preview-content--restricted{% endif %}">
@@ -413,9 +413,9 @@
                         <p class="text-gray-600 text-lg jakarta">You need more points to continue reading this article.</p>
                     </div>
 
-                    <!-- 双栏布局 -->
+                    <!-- Two-column pricing options -->
                     <div class="grid md:grid-cols-2 gap-8">
-                        <!-- 会员方案 -->
+                        <!-- Subscription membership card -->
                         <div class="p-6 border-2 border-green-100 rounded-xl bg-green-50 min-h-[280px] flex flex-col">
                             <div class="mb-6 flex-1">
                                 <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
@@ -434,7 +434,7 @@
                             </a>
                         </div>
 
-                        <!-- 积分方案 -->
+                        <!-- Points purchase card -->
                         <div class="p-6 border-2 border-blue-100 rounded-xl bg-blue-50 min-h-[280px] flex flex-col">
                             <div class="mb-6 flex-1">
                                 <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
@@ -467,9 +467,9 @@
                         </p>
                     </div>
 
-                    <!-- 双栏布局 -->
+                    <!-- Two-column pricing options -->
                     <div class="grid md:grid-cols-2 gap-8">
-                        <!-- 会员方案 -->
+                        <!-- Subscription membership card -->
                         <div class="p-6 border-2 border-green-100 rounded-xl bg-green-50">
                             <div class="mb-5">
                                 <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
@@ -487,7 +487,7 @@
                             </a>
                         </div>
 
-                        <!-- 积分方案 -->
+                        <!-- Points purchase card -->
                         <div class="p-6 border-2 border-blue-100 rounded-xl bg-blue-50">
                             <div class="mb-5">
                                 <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
@@ -523,7 +523,7 @@
         </div>
     </div>
 
-    <!-- 點讚按鈕區域 -->
+    <!-- Like button section -->
     <div class="flex flex-col items-center justify-center my-10">
         <button id="like-btn" data-article-id="{{ page.id }}" class="group flex items-center gap-3 px-8 py-3.5 rounded-full bg-white border border-slate-200 shadow-sm hover:border-rose-300 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer">
             <svg id="like-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-rose-500 group-hover:scale-110 transition-transform">
@@ -534,7 +534,7 @@
         </button>
     </div>
 
-    <!-- 系列課程章節課時導航 (Previous / Next Lesson) -->
+    <!-- Lesson Previous/Next navigation -->
     {% if page.series_slug %}
     <div class="my-10 p-6 bg-slate-50 border border-slate-200/90 rounded-2xl">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 gap-2">
@@ -574,10 +574,10 @@
     </div>
     {% endif %}
 
-    <!-- 分割线 -->
+    <!-- Divider -->
     <div class="w-full h-px bg-slate-200 my-8"></div>
 
-    <!-- 标签 (只顯示非 chapter- 的主題標籤) -->
+    <!-- Article tags -->
     {% if clean_tags %}
     <div class="flex flex-wrap items-center gap-2 mb-10">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2">Tags:</span>
@@ -590,14 +590,14 @@
     </div>
     {% endif %}
 
-    <!-- 评论区域 -->
+    <!-- Comments section -->
     <div id="comments" class="comment-section">
         <div class="flex items-center gap-3 mb-6">
             <h2 class="text-2xl font-bold text-slate-800 merriweather">Comments</h2>
             <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">{{ comment_count }}</span>
         </div>
 
-        <!-- 评论表单 -->
+        <!-- Comment form -->
         {% if user.is_authenticated %}
             <div class="comment-form mb-8">
                 <form method="post" action="{% url 'add_comment' page.id %}">
@@ -631,7 +631,7 @@
             </div>
         {% endif %}
 
-        <!-- 评论列表 -->
+        <!-- Comments list -->
         <div class="space-y-4">
             {% for comment in comments %}
                 <div class="comment-item">
@@ -672,7 +672,7 @@
                                 {% endif %}
                             </div>
 
-                            <!-- 回复表单 -->
+                            <!-- Reply form -->
                             {% if user.is_authenticated %}
                                 <div id="reply-form-{{ comment.id }}" class="reply-form">
                                     <form method="post" action="{% url 'add_comment' page.id %}">
@@ -701,7 +701,7 @@
                         </div>
                     </div>
 
-                    <!-- 回复列表 -->
+                    <!-- Replies list -->
                     {% for reply in comment.replies.all %}
                         <div class="comment-reply">
                             <div class="flex items-start gap-3">
@@ -745,7 +745,7 @@
         </div>
     </div>
 
-    <!-- 返回博客链接 -->
+    <!-- Back to blog link -->
     <div class="flex justify-center mt-12">
         <a href="{{ page.get_parent.url }}"
            class="back-button inline-flex items-center gap-2 text-white px-6 py-3 rounded-lg
@@ -772,7 +772,7 @@
 {% endif %}
 </div>
 
-<!-- 底部 -->
+<!-- Footer -->
 <footer class="bg-slate-900 text-slate-300 py-10">
     <div class="max-w-[1400px] mx-auto px-6">
         <div class="flex flex-col justify-center items-center text-center">
@@ -888,7 +888,7 @@
         }
     }
 
-    // 自动调整文本框高度
+    // Auto-resize comment textarea
     document.querySelectorAll('.comment-textarea').forEach(textarea => {
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
@@ -896,7 +896,7 @@
         });
     });
 
-    // 點讚按鈕互動
+    // Like button interaction
     const likeBtn = document.getElementById('like-btn');
     if (likeBtn) {
         likeBtn.addEventListener('click', function() {
