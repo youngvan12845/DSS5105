@@ -56,11 +56,24 @@ def _embed_texts_cloudflare(texts: Sequence[str]) -> list[list[float]]:
         },
         method='POST',
     )
-    try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            data = json.loads(resp.read().decode('utf-8'))
-    except Exception as exc:
-        logger.warning('Cloudflare embedding failed: %s', exc)
+    data = None
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+                break
+        except urllib.error.HTTPError as exc:
+            if exc.code == 429 and attempt < 3:
+                import time
+                time.sleep(1.0 * (attempt + 1))
+                continue
+            logger.warning('Cloudflare embedding failed: %s', exc)
+            return []
+        except Exception as exc:
+            logger.warning('Cloudflare embedding failed: %s', exc)
+            return []
+
+    if not data:
         return []
 
     raw_data = data.get('result', {}).get('data', [])
@@ -142,12 +155,21 @@ def embed_texts(texts: Sequence[str], *, batch_size: int = 40) -> list[list[floa
     return results
 
 
+_TEXT_EMBED_CACHE: dict[str, list[float]] = {}
+
+
 def embed_text(text: str) -> list[float] | None:
     """Generate an embedding vector for a single text."""
-    if not text.strip():
+    text_key = text.strip()
+    if not text_key:
         return None
+    if text_key in _TEXT_EMBED_CACHE:
+        return _TEXT_EMBED_CACHE[text_key]
     vectors = embed_texts([text])
-    return vectors[0] if vectors else None
+    if vectors:
+        _TEXT_EMBED_CACHE[text_key] = vectors[0]
+        return vectors[0]
+    return None
 
 
 def cosine_similarity(a: list[float], b: list[float]) -> float:

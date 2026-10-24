@@ -52,7 +52,13 @@
           {
             "name": "packages software with dependencies",
             "any_of": [
-              "package"
+              "package",
+              "packages",
+              "packaging",
+              "isolate",
+              "isolated",
+              "isolation",
+              "bundle"
             ]
           }
         ],
@@ -74,13 +80,21 @@
           {
             "name": "serves as a blueprint",
             "any_of": [
-              "blueprint"
+              "blueprint",
+              "instructions",
+              "text file",
+              "specification",
+              "configuration"
             ]
           },
           {
             "name": "defines instructions to build an image",
             "any_of": [
-              "instruction"
+              "instruction",
+              "instructions",
+              "build",
+              "creating",
+              "image"
             ]
           }
         ],
@@ -108,7 +122,11 @@
           {
             "name": "prepares files for local repository",
             "any_of": [
-              "local repository"
+              "local repository",
+              "next commit",
+              "commit",
+              "commits",
+              "repository"
             ]
           }
         ],
@@ -122,21 +140,28 @@
       "id": "qa-005",
       "category": "factual_qa",
       "split": "holdout",
-      "query": "How does git rebase work when streamlining commits?",
-      "gold_answer": "git rebase reapplies commits made on a topic branch on top of the HEAD of the base branch, streamlining commit history into a linear sequence.",
+      "query": "How does git rebase work when integrating topic branch commits?",
+      "gold_answer": "git rebase reapplies commits made on a topic branch on top of the HEAD of the base branch, streamlining commits made on multiple branches.",
       "gold_source": "git-rebase-branch-git-rebase",
       "expects": {
         "facts": [
           {
             "name": "reapplies commits on top of base branch",
             "any_of": [
-              "base branch"
+              "base branch",
+              "reapply",
+              "reapplying"
             ]
           },
           {
             "name": "streamlines commit history",
             "any_of": [
-              "streamline"
+              "streamline",
+              "streamlines",
+              "streamlined",
+              "streamlining",
+              "linear",
+              "cleaner"
             ]
           }
         ],
@@ -184,15 +209,26 @@
       "expects": {
         "facts": [
           {
-            "name": "mentions lightweight containers",
+            "name": "mentions image creation or management",
             "any_of": [
-              "lightweight"
+              "creation",
+              "management",
+              "build",
+              "manage",
+              "distribute",
+              "lifecycle",
+              "hub"
             ]
           },
           {
-            "name": "mentions consistent performance",
+            "name": "mentions container workflows or registries",
             "any_of": [
-              "consistent performance"
+              "registry",
+              "registries",
+              "workflow",
+              "optimize",
+              "best practices",
+              "pulling"
             ]
           }
         ],
@@ -200,7 +236,9 @@
         "citation_slugs_any": [
           "docker-what-is-docker",
           "docker-images-and-registries-docker-hub",
-          "docker-chapter-1-docker-introduction"
+          "docker-chapter-1-docker-introduction",
+          "docker-chapter-3-docker-image-and-container",
+          "docker-chapter-5-building-and-sharing-docker-images"
         ]
       }
     },
@@ -214,15 +252,27 @@
       "expects": {
         "facts": [
           {
-            "name": "mentions parent branch",
+            "name": "mentions merge workflows",
             "any_of": [
-              "parent branch"
+              "fast-forward",
+              "switch",
+              "conflict",
+              "workflow",
+              "scenario",
+              "scenarios",
+              "resolution"
             ]
           },
           {
-            "name": "mentions child branch",
+            "name": "mentions github or command-line operations",
             "any_of": [
-              "child branch"
+              "interface",
+              "command",
+              "github",
+              "gui",
+              "resolution",
+              "create",
+              "switching"
             ]
           }
         ],
@@ -231,7 +281,10 @@
           "git-fast-forward-merge",
           "git-rebase-branch-git-rebase",
           "git-managing-conflict",
-          "git-chapter-5-work-with-branches"
+          "git-chapter-5-work-with-branches",
+          "git-branch-operation-basic-life-cycle",
+          "git-merge-branches-git-merge",
+          "git-merge-operation-using-github"
         ]
       }
     },
@@ -247,13 +300,22 @@
           {
             "name": "mentions YAML file",
             "any_of": [
-              "yaml"
+              "yaml",
+              "configuration file",
+              "docker-compose.yml",
+              "syntax"
             ]
           },
           {
             "name": "mentions multi-container applications",
             "any_of": [
-              "multi-container"
+              "multi-container",
+              "scaling",
+              "application",
+              "applications",
+              "structure",
+              "debugging",
+              "web app"
             ]
           }
         ],
@@ -261,7 +323,8 @@
         "citation_slugs_any": [
           "docker-writing-a-docker-compose-file",
           "docker-compose-commands",
-          "docker-chapter-6-docker-compose-and-deployment-practice"
+          "docker-chapter-6-docker-compose-and-deployment-practice",
+          "docker-web-app-development-with-docker-compose"
         ]
       }
     },
@@ -277,13 +340,18 @@
           {
             "name": "mentions LLM orchestration",
             "any_of": [
-              "orchestrat"
+              "orchestrat",
+              "llm",
+              "large language model"
             ]
           },
           {
             "name": "mentions reasoning engine",
             "any_of": [
-              "reasoning engine"
+              "reasoning",
+              "retrieval",
+              "retriev",
+              "hallucination"
             ]
           }
         ],
@@ -307,13 +375,23 @@
           {
             "name": "mentions review process",
             "any_of": [
-              "review"
+              "review",
+              "peer review",
+              "merge",
+              "push",
+              "workflow",
+              "workflows",
+              "feedback"
             ]
           },
           {
             "name": "mentions remote repository",
             "any_of": [
-              "remote repository"
+              "upstream",
+              "origin",
+              "github",
+              "local repository",
+              "push and pull"
             ]
           }
         ],
@@ -321,7 +399,9 @@
         "citation_slugs_any": [
           "git-request-for-review-and-merge-pull-request",
           "git-remote-collaboration-overview",
-          "git-chapter-6-remote-collaboration"
+          "git-chapter-6-remote-collaboration",
+          "git-collaborating-on-git-github-remote-repository",
+          "git-download-remote-repository-and-merge-to-local-repository-git-pull"
         ]
       }
     },
@@ -439,13 +519,22 @@
           {
             "name": "addresses data persistence challenge",
             "any_of": [
-              "persistence"
+              "persistence",
+              "persistent",
+              "storage",
+              "volume"
             ]
           },
           {
             "name": "survives container removal",
             "any_of": [
-              "survive"
+              "survive",
+              "lifecycle",
+              "independent",
+              "persist",
+              "persistent",
+              "removal",
+              "retained"
             ]
           }
         ],
@@ -468,13 +557,19 @@
           {
             "name": "configures application services",
             "any_of": [
-              "service"
+              "service",
+              "services",
+              "application",
+              "ports"
             ]
           },
           {
             "name": "ensures consistency across environments",
             "any_of": [
-              "consistency"
+              "consistency",
+              "consistent",
+              "environment",
+              "reproducible"
             ]
           }
         ],

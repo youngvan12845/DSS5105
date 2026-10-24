@@ -39,12 +39,13 @@ def find_reading_path(query: str) -> ReadingPath | None:
     q = query.lower()
     config = _load_paths_config()
     matched_topic = None
-    for topic in config:
+    sorted_topics = sorted(config.keys(), key=len, reverse=True)
+    for topic in sorted_topics:
         if topic in q:
             matched_topic = topic
             break
     if matched_topic is None:
-        for topic in config:
+        for topic in sorted_topics:
             tokens = topic.split()
             if all(token in q for token in tokens):
                 matched_topic = topic

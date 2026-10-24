@@ -45,7 +45,7 @@ def search_article_vectors(
     hits: list[VectorHit] = []
     seen_articles: set[int] = set()
     for score, chunk in scored:
-        if chunk.article_id in seen_articles and len(hits) >= limit:
+        if chunk.article_id in seen_articles:
             continue
         try:
             article = ArticlePage.objects.get(pk=chunk.article_id)

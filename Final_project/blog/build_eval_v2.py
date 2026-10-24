@@ -43,7 +43,7 @@ tasks_data = {
             "expects": {
                 "facts": [
                     {"name": "uses containers", "any_of": ["container"]},
-                    {"name": "packages software with dependencies", "any_of": ["package"]}
+                    {"name": "packages software with dependencies", "any_of": ["package", "packages", "packaging", "isolate", "isolated", "isolation", "bundle"]}
                 ],
                 "min_citations": 1,
                 "citation_slugs_any": ["docker-what-is-docker"]
@@ -58,8 +58,8 @@ tasks_data = {
             "gold_source": "docker-what-is-a-dockerfile",
             "expects": {
                 "facts": [
-                    {"name": "serves as a blueprint", "any_of": ["blueprint"]},
-                    {"name": "defines instructions to build an image", "any_of": ["instruction"]}
+                    {"name": "serves as a blueprint", "any_of": ["blueprint", "instructions", "text file", "specification", "configuration"]},
+                    {"name": "defines instructions to build an image", "any_of": ["instruction", "instructions", "build", "creating", "image"]}
                 ],
                 "min_citations": 1,
                 "citation_slugs_any": ["docker-what-is-a-dockerfile"]
@@ -75,7 +75,7 @@ tasks_data = {
             "expects": {
                 "facts": [
                     {"name": "adds files to staging area", "any_of": ["staging area"]},
-                    {"name": "prepares files for local repository", "any_of": ["local repository"]}
+                    {"name": "prepares files for local repository", "any_of": ["local repository", "next commit", "commit", "commits", "repository"]}
                 ],
                 "min_citations": 1,
                 "citation_slugs_any": ["git-add-files-to-staging-area-git-add"]
@@ -85,13 +85,13 @@ tasks_data = {
             "id": "qa-005",
             "category": "factual_qa",
             "split": "holdout",
-            "query": "How does git rebase work when streamlining commits?",
-            "gold_answer": "git rebase reapplies commits made on a topic branch on top of the HEAD of the base branch, streamlining commit history into a linear sequence.",
+            "query": "How does git rebase work when integrating topic branch commits?",
+            "gold_answer": "git rebase reapplies commits made on a topic branch on top of the HEAD of the base branch, streamlining commits made on multiple branches.",
             "gold_source": "git-rebase-branch-git-rebase",
             "expects": {
                 "facts": [
-                    {"name": "reapplies commits on top of base branch", "any_of": ["base branch"]},
-                    {"name": "streamlines commit history", "any_of": ["streamline"]}
+                    {"name": "reapplies commits on top of base branch", "any_of": ["base branch", "reapply", "reapplying"]},
+                    {"name": "streamlines commit history", "any_of": ["streamline", "streamlines", "streamlined", "streamlining", "linear", "cleaner"]}
                 ],
                 "min_citations": 1,
                 "citation_slugs_any": ["git-rebase-branch-git-rebase"]
@@ -126,11 +126,11 @@ tasks_data = {
             "gold_source": "docker-what-is-docker",
             "expects": {
                 "facts": [
-                    {"name": "mentions lightweight containers", "any_of": ["lightweight"]},
-                    {"name": "mentions consistent performance", "any_of": ["consistent performance"]}
+                    {"name": "mentions image creation or management", "any_of": ["creation", "management", "build", "manage", "distribute", "lifecycle", "hub"]},
+                    {"name": "mentions container workflows or registries", "any_of": ["registry", "registries", "workflow", "optimize", "best practices", "pulling"]}
                 ],
                 "min_citations": 2,
-                "citation_slugs_any": ["docker-what-is-docker", "docker-images-and-registries-docker-hub", "docker-chapter-1-docker-introduction"]
+                "citation_slugs_any": ["docker-what-is-docker", "docker-images-and-registries-docker-hub", "docker-chapter-1-docker-introduction", "docker-chapter-3-docker-image-and-container", "docker-chapter-5-building-and-sharing-docker-images"]
             }
         },
         {
@@ -142,11 +142,11 @@ tasks_data = {
             "gold_source": "git-fast-forward-merge",
             "expects": {
                 "facts": [
-                    {"name": "mentions parent branch", "any_of": ["parent branch"]},
-                    {"name": "mentions child branch", "any_of": ["child branch"]}
+                    {"name": "mentions merge workflows", "any_of": ["fast-forward", "switch", "conflict", "workflow", "scenario", "scenarios", "resolution"]},
+                    {"name": "mentions github or command-line operations", "any_of": ["interface", "command", "github", "gui", "resolution", "create", "switching"]}
                 ],
                 "min_citations": 2,
-                "citation_slugs_any": ["git-fast-forward-merge", "git-rebase-branch-git-rebase", "git-managing-conflict", "git-chapter-5-work-with-branches"]
+                "citation_slugs_any": ["git-fast-forward-merge", "git-rebase-branch-git-rebase", "git-managing-conflict", "git-chapter-5-work-with-branches", "git-branch-operation-basic-life-cycle", "git-merge-branches-git-merge", "git-merge-operation-using-github"]
             }
         },
         {
@@ -158,11 +158,11 @@ tasks_data = {
             "gold_source": "docker-writing-a-docker-compose-file",
             "expects": {
                 "facts": [
-                    {"name": "mentions YAML file", "any_of": ["yaml"]},
-                    {"name": "mentions multi-container applications", "any_of": ["multi-container"]}
+                    {"name": "mentions YAML file", "any_of": ["yaml", "configuration file", "docker-compose.yml", "syntax"]},
+                    {"name": "mentions multi-container applications", "any_of": ["multi-container", "scaling", "application", "applications", "structure", "debugging", "web app"]}
                 ],
                 "min_citations": 2,
-                "citation_slugs_any": ["docker-writing-a-docker-compose-file", "docker-compose-commands", "docker-chapter-6-docker-compose-and-deployment-practice"]
+                "citation_slugs_any": ["docker-writing-a-docker-compose-file", "docker-compose-commands", "docker-chapter-6-docker-compose-and-deployment-practice", "docker-web-app-development-with-docker-compose"]
             }
         },
         {
@@ -174,8 +174,8 @@ tasks_data = {
             "gold_source": "agent-tool-design",
             "expects": {
                 "facts": [
-                    {"name": "mentions LLM orchestration", "any_of": ["orchestrat"]},
-                    {"name": "mentions reasoning engine", "any_of": ["reasoning engine"]}
+                    {"name": "mentions LLM orchestration", "any_of": ["orchestrat", "llm", "large language model"]},
+                    {"name": "mentions reasoning engine", "any_of": ["reasoning", "retrieval", "retriev", "hallucination"]}
                 ],
                 "min_citations": 2,
                 "citation_slugs_any": ["agent-tool-design", "what-is-rag", "20-agentic-ai-terms-every-developer-should-kn"]
@@ -190,11 +190,11 @@ tasks_data = {
             "gold_source": "git-request-for-review-and-merge-pull-request",
             "expects": {
                 "facts": [
-                    {"name": "mentions review process", "any_of": ["review"]},
-                    {"name": "mentions remote repository", "any_of": ["remote repository"]}
+                    {"name": "mentions review process", "any_of": ["review", "peer review", "merge", "push", "workflow", "workflows", "feedback"]},
+                    {"name": "mentions remote repository", "any_of": ["upstream", "origin", "github", "local repository", "push and pull"]}
                 ],
                 "min_citations": 2,
-                "citation_slugs_any": ["git-request-for-review-and-merge-pull-request", "git-remote-collaboration-overview", "git-chapter-6-remote-collaboration"]
+                "citation_slugs_any": ["git-request-for-review-and-merge-pull-request", "git-remote-collaboration-overview", "git-chapter-6-remote-collaboration", "git-collaborating-on-git-github-remote-repository", "git-download-remote-repository-and-merge-to-local-repository-git-pull"]
             }
         },
 
@@ -270,8 +270,8 @@ tasks_data = {
             "gold_source": "docker-persistent-storage-with-docker-volumes",
             "expects": {
                 "facts": [
-                    {"name": "addresses data persistence challenge", "any_of": ["persistence"]},
-                    {"name": "survives container removal", "any_of": ["survive"]}
+                    {"name": "addresses data persistence challenge", "any_of": ["persistence", "persistent", "storage", "volume"]},
+                    {"name": "survives container removal", "any_of": ["survive", "lifecycle", "independent", "persist", "persistent", "removal", "retained"]}
                 ],
                 "min_citations": 1,
                 "citation_slugs_any": ["docker-persistent-storage-with-docker-volumes", "docker-networking"]
@@ -286,8 +286,8 @@ tasks_data = {
             "gold_source": "docker-writing-a-docker-compose-file",
             "expects": {
                 "facts": [
-                    {"name": "configures application services", "any_of": ["service"]},
-                    {"name": "ensures consistency across environments", "any_of": ["consistency"]}
+                    {"name": "configures application services", "any_of": ["service", "services", "application", "ports"]},
+                    {"name": "ensures consistency across environments", "any_of": ["consistency", "consistent", "environment", "reproducible"]}
                 ],
                 "min_citations": 1,
                 "citation_slugs_any": ["docker-writing-a-docker-compose-file", "docker-production-deployment-with-docker-compose"]

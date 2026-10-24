@@ -333,6 +333,8 @@ def run_eval(
             model=model,
             article_id=article_id,
         )
+        import time
+        time.sleep(0.4)
         checks = _run_checks(task, reply)
         passed = all(check.passed for check in checks) if checks else True
         results.append(
