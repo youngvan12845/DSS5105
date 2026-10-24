@@ -36,6 +36,9 @@ def can_user_read_full(
     if not user.is_authenticated:
         return False, 'login_required'
 
+    if getattr(user, 'is_superuser', False) or getattr(user, 'is_staff', False):
+        return True, 'staff'
+
     profile = user.profile
     if profile.has_valid_subscription():
         return True, 'subscription'

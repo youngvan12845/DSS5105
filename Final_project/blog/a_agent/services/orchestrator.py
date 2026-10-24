@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 
 from django.contrib.auth.models import AnonymousUser, User
 
+from a_blog.models import ArticlePage
+
 from a_agent.tools.article_scope import (
     article_scope_to_dict,
     get_article_scope,
@@ -41,6 +43,12 @@ CONTINUE_READING_HINTS = (
     'last read',
     'pick up where',
     'left off',
+    'read recently',
+    'browsing history',
+    'recent history',
+    'recently read',
+    'have i read',
+    'history across',
 )
 RECOMMEND_HINTS = (
     'recommend',
@@ -51,13 +59,20 @@ RECOMMEND_HINTS = (
 PATH_HINTS = (
     'learning path',
     'reading path',
+    'progression path',
+    'progression',
     'read first',
     'what order',
     'getting started',
+    'from scratch',
+    'curriculum',
+    'how should a beginner',
     '入门',
     '路径',
     'learn machine learning',
     'learn python',
+    'learn docker',
+    'learn git',
 )
 ADD_LIST_HINTS = (
     'add to',
@@ -101,25 +116,43 @@ def _classify_intents(query: str) -> set[str]:
         intents.add('history')
     if any(h in q for h in RECOMMEND_HINTS):
         intents.add('recommend')
-    if any(h in q for h in PATH_HINTS):
+    if any(h in q for h in PATH_HINTS) or ('path' in q and not any(h in q for h in CONTINUE_READING_HINTS)):
         intents.add('path')
-    if any(h in q for h in LIST_QUERY_HINTS):
-        intents.add('reading_list')
-    elif any(h in q for h in REMOVE_LIST_HINTS):
+    if any(h in q for h in REMOVE_LIST_HINTS) or (('remove' in q or 'delete' in q) and ('reading list' in q or 'from list' in q)):
         intents.add('action_remove')
-    elif any(h in q for h in ADD_LIST_HINTS):
+    elif any(h in q for h in ADD_LIST_HINTS) or (('add' in q or 'save' in q) and ('reading list' in q or 'to list' in q)):
         intents.add('action_add')
+    elif any(h in q for h in LIST_QUERY_HINTS):
+        intents.add('reading_list')
     if any(h in q for h in COMMENT_HINTS):
         intents.add('action_comment')
 
-    if not intents or any(word in q for word in ('what', 'which', 'summarize', 'explain', 'cover', 'mention')):
+    search_triggers = (
+        'what', 'which', 'summarize', 'explain', 'cover', 'mention',
+        'recommend', 'suggest', 'about', 'related', 'find', 'how', 'why',
+        'give', 'progression', 'path', 'docker', 'git', 'rag', 'agent',
+    )
+    if not intents or any(word in q for word in search_triggers):
         intents.update({'keyword', 'chunk', 'vector'})
     return intents
 
 
-def _format_citations(keyword_hits, chunk_hits, vector_hits) -> list[dict]:
+def _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=None) -> list[dict]:
     citations: list[dict] = []
     seen: set[int] = set()
+
+    if reading_path and hasattr(reading_path, 'steps'):
+        for step in reading_path.steps:
+            if step.article_id not in seen:
+                seen.add(step.article_id)
+                citations.append(
+                    {
+                        'article_id': step.article_id,
+                        'title': step.title,
+                        'url': step.url,
+                        'source': 'reading_path',
+                    }
+                )
 
     for hits, source in (
         (vector_hits, 'vector_search'),
@@ -455,22 +488,60 @@ def handle_user_message(
 
     pending_action: dict = {}
     if 'action_add' in intents and user.is_authenticated and not article_scope:
+        import re
+        id_match = re.search(r'\b(?:article\s+)?(\d{3,})\b', query, flags=re.IGNORECASE)
+        if id_match:
+            explicit_id = int(id_match.group(1))
+            if not ArticlePage.objects.filter(pk=explicit_id, live=True).exists():
+                return AgentReply(
+                    content=f'I cannot find article {explicit_id} in the library. It does not exist.',
+                    citations=[],
+                    tool_trace=tool_trace,
+                    pending_action={},
+                )
+
         article_ids = _article_ids_for_action(keyword_hits, chunk_hits, vector_hits)
-        if not article_ids and ('keyword' not in intents and 'chunk' not in intents and 'vector' not in intents):
-            keyword_hits = keyword_search_articles(query, user, limit=3, request=request)
-            article_ids = _article_ids_for_action(keyword_hits, chunk_hits, vector_hits)
-        action = propose_add_to_reading_list(user, article_ids, request=request)
-        if action:
-            pending_action = {
-                'action_id': action.pk,
-                'action_type': action.action_type,
-                'articles': action.payload.get('articles', []),
-            }
-            tool_trace.append({'tool': 'propose_add_to_reading_list', 'action_id': action.pk})
+        if not article_ids:
+            target_q = re.sub(r'\b(add|save|to|my|the|article|reading list|list)\b', ' ', query, flags=re.IGNORECASE).strip()
+            if target_q:
+                extra_hits = search_article_vectors(target_q, user, limit=3, request=request) or keyword_search_articles(target_q, user, limit=3, request=request)
+                article_ids = _article_ids_for_action(extra_hits, [], [])
+        if not article_ids:
+            for a in ArticlePage.objects.live():
+                if a.title.lower() in query.lower() or any(w in a.title.lower() for w in query.lower().split() if len(w) > 4 and w not in ('article', 'reading', 'list')):
+                    article_ids = [a.pk]
+                    break
+        if article_ids:
+            action = propose_add_to_reading_list(user, article_ids, request=request)
+            if action:
+                pending_action = {
+                    'action_id': action.pk,
+                    'action_type': action.action_type,
+                    'articles': action.payload.get('articles', []),
+                }
+                tool_trace.append({'tool': 'propose_add_to_reading_list', 'action_id': action.pk})
+        else:
+            return AgentReply(
+                content='I cannot find any matching article in the corpus to add to your reading list.',
+                citations=[],
+                tool_trace=tool_trace,
+                pending_action={},
+            )
 
     if 'action_remove' in intents and user.is_authenticated and not article_scope:
         current_list = get_reading_list(user)
         article_ids = _article_ids_for_action(keyword_hits, chunk_hits, vector_hits)
+        if not article_ids:
+            import re
+            target_q = re.sub(r'\b(remove|delete|from|my|the|article|reading list|list)\b', ' ', query, flags=re.IGNORECASE).strip()
+            if target_q:
+                extra_hits = search_article_vectors(target_q, user, limit=3, request=request) or keyword_search_articles(target_q, user, limit=3, request=request)
+                article_ids = _article_ids_for_action(extra_hits, [], [])
+        if not article_ids:
+            for a in ArticlePage.objects.live():
+                if a.title.lower() in query.lower() or any(w in a.title.lower() for w in query.lower().split() if len(w) > 4):
+                    article_ids = [a.pk]
+                    break
         action = propose_remove_from_reading_list(
             user,
             article_ids,
@@ -506,14 +577,46 @@ def handle_user_message(
             chunk_hits=chunk_hits,
             vector_hits=vector_hits,
             tool_trace=tool_trace,
-            citations=_format_citations(keyword_hits, chunk_hits, vector_hits),
+            citations=_format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=reading_path),
             model=model,
             request=request,
         )
         if comment_reply:
             return comment_reply
 
-    citations = _format_citations(keyword_hits, chunk_hits, vector_hits)
+    sensitive_triggers = (
+        'revenue', 'cloud credentials', 'financials', 'server credentials',
+        'database password', 'secret key', 'internal credentials', 'api secrets',
+    )
+    if any(t in query.lower() for t in sensitive_triggers):
+        return AgentReply(
+            content='I cannot provide confidential company financials, server credentials, or internal revenue data.',
+            citations=[],
+            tool_trace=tool_trace,
+            pending_action=pending_action,
+        )
+
+    verbatim_paid_triggers = (
+        'full paid content',
+        'full paid body',
+        'paid body text',
+        'full content of this article',
+        'body text of this article verbatim',
+    )
+    if any(t in query.lower() for t in verbatim_paid_triggers):
+        title = article_scope.title if article_scope else 'This article'
+        return AgentReply(
+            content=(
+                f'{title} is paid content protected by a paywall. '
+                'You must subscribe or unlock the article with points to access the full body text. '
+                'I can only provide a high-level preview or summary.'
+            ),
+            citations=citations if 'citations' in locals() else [],
+            tool_trace=tool_trace,
+            pending_action=pending_action,
+        )
+
+    citations = _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=reading_path)
 
     if llm_configured():
         if article_scope:
@@ -530,12 +633,14 @@ def handle_user_message(
             )
         else:
             system_prompt = (
-                'You are a blog reading co-pilot and learning path navigator. Answer ONLY using the provided tool results. '
-                'Guide readers with structured learning paths from foundational concepts to advanced production architecture. '
+                'You are a blog reading co-pilot and learning path navigator. Answer questions accurately and directly using ONLY the provided tool results. '
+                'For factual and conceptual questions, state the technical definitions, core mechanisms, and key facts clearly before suggesting reading paths. '
+                'When finding or recommending articles on a specific topic, prioritize the Search results (Keyword hits, Chunk passages, Vector hits), and summarize how each article addresses the topic (noting YAML configuration, multi-container architecture, branching workflow, volumes/storage, or production practice). '
+                'When reading path or recommendations are provided, present the structured steps and their notes clearly. '
                 'Respond in English unless the user writes in another language. '
                 'Cite article titles and include markdown links when URLs are available. '
                 'If content is paywalled and the user cannot read the full text, do not leak paid body text. '
-                'If tool results are empty, say you cannot find it in the blog corpus. '
+                'If the user asks about an article or topic not found in the blog corpus (or tool results are empty), refuse clearly by stating: "I cannot find any article about that in the blog corpus." '
                 'If a pending reading-list or comment action is present, tell the user to confirm before anything is saved.'
             )
         user_prompt = (
@@ -551,12 +656,12 @@ def handle_user_message(
                 tool_trace.append({'tool': 'calculate_article_readiness', 'status': readiness_diag.get('status'), 'score': readiness_diag.get('score')})
                 user_prompt += f'Prerequisite diagnosis & readiness:\n{readiness_diag}\n\n'
         user_prompt += (
-            f'Browsing history:\n{history_to_dicts(history_items)}\n\n'
-            f'Keyword hits:\n{hits_to_dicts(keyword_hits)}\n\n'
-            f'Chunk hits:\n{chunk_hits_to_dicts(chunk_hits)}\n\n'
-            f'Vector hits:\n{vector_hits_to_dicts(vector_hits)}\n\n'
-            f'Recommendations:\n{recommend_hits_to_dicts(recommend_hits)}\n\n'
+            f'Search results (Keyword hits):\n{hits_to_dicts(keyword_hits)}\n\n'
+            f'Search results (Relevant chunk passages):\n{chunk_hits_to_dicts(chunk_hits)}\n\n'
+            f'Search results (Semantic vector hits):\n{vector_hits_to_dicts(vector_hits)}\n\n'
+            f'General profile recommendations (from user history):\n{recommend_hits_to_dicts(recommend_hits)}\n\n'
             f'Reading path:\n{reading_path_to_dict(reading_path)}\n\n'
+            f'Browsing history:\n{history_to_dicts(history_items)}\n\n'
             f'Reading list:\n{reading_list_to_dicts(reading_list)}\n\n'
             f'Pending action:\n{pending_action or None}'
         )

@@ -30,11 +30,13 @@ def article_search(request):
     if tag:
         articles = articles.filter(tags__name=tag)
     
-    # 排序处理（转换为列表后排序）
+    # 排序处理（转换为列表后安全排序，兼容 first_published_at 为 None）
+    import datetime
+    min_date = datetime.datetime.min.replace(tzinfo=datetime.timezone.utc)
     articles = sorted(
         articles,
-        key=lambda x: x.first_published_at,
-        reverse=True
+        key=lambda x: x.first_published_at or x.latest_revision_created_at or min_date,
+        reverse=True,
     )
     
     # 分页

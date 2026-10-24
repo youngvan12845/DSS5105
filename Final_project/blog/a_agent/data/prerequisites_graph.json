@@ -483,5 +483,2463 @@
       "tradeoff_challenge": "Fine-grained tools (high precision, multiple turns) vs coarse-grained multi-action tools (single turn, lower flexibility): How to optimize agent tool design?"
     },
     "next_milestones": []
+  },
+  "git-chapter-1-git-github-overview": {
+    "title": "Git & GitHub Overview",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Git & GitHub Overview without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Git & GitHub Overview."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-what-is-git",
+        "title": "What Is Git?",
+        "reason": "Continue to the next curriculum milestone: What Is Git?."
+      }
+    ]
+  },
+  "git-what-is-git": {
+    "title": "What Is Git?",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-chapter-1-git-github-overview",
+        "title": "Git & GitHub Overview",
+        "key_concept": "Foundational concepts from Git & GitHub Overview",
+        "bridge_summary": "Mastering Git & GitHub Overview provides the prerequisite mental model needed for What Is Git?."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Treating Git as cloud storage rather than a content-addressable DAG snapshot engine leads to confusing commit histories and detached HEAD states.",
+      "tradeoff_challenge": "Distributed VCS (Git) vs Centralized VCS (Perforce / SVN): In enterprise monorepos exceeding 100 GB, how do you handle large binary asset bloat with Git LFS?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-what-is-version-control",
+        "title": "Understanding Version Control",
+        "reason": "Continue to the next curriculum milestone: Understanding Version Control."
+      }
+    ]
+  },
+  "git-what-is-version-control": {
+    "title": "Understanding Version Control",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-what-is-git",
+        "title": "What Is Git?",
+        "key_concept": "Foundational concepts from What Is Git?",
+        "bridge_summary": "Mastering What Is Git? provides the prerequisite mental model needed for Understanding Version Control."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Understanding Version Control without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Understanding Version Control."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-how-to-save-versions-in-git",
+        "title": "How to Save Versions in Git",
+        "reason": "Continue to the next curriculum milestone: How to Save Versions in Git."
+      }
+    ]
+  },
+  "git-how-to-save-versions-in-git": {
+    "title": "How to Save Versions in Git",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-what-is-version-control",
+        "title": "Understanding Version Control",
+        "key_concept": "Foundational concepts from Understanding Version Control",
+        "bridge_summary": "Mastering Understanding Version Control provides the prerequisite mental model needed for How to Save Versions in Git."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Relying on working directory backups instead of commits means unstaged changes cannot be recovered once overwritten by checkout or reset.",
+      "tradeoff_challenge": "Fine-grained atomic commits vs large squashed feature commits: Which strategy provides better git bisect regression isolation?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-collaborating-on-git-github-remote-repository",
+        "title": "Collaborating on Git & GitHub - Remote Repository",
+        "reason": "Continue to the next curriculum milestone: Collaborating on Git & GitHub - Remote Repository."
+      }
+    ]
+  },
+  "git-collaborating-on-git-github-remote-repository": {
+    "title": "Collaborating on Git & GitHub - Remote Repository",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-how-to-save-versions-in-git",
+        "title": "How to Save Versions in Git",
+        "key_concept": "Foundational concepts from How to Save Versions in Git",
+        "bridge_summary": "Mastering How to Save Versions in Git provides the prerequisite mental model needed for Collaborating on Git & GitHub - Remote Repository."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Collaborating on Git & GitHub - Remote Repository without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Collaborating on Git & GitHub - Remote Repository."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-collaborating-on-git-git-hub-branch",
+        "title": "Collaborating on Git & Git Hub - Branch",
+        "reason": "Continue to the next curriculum milestone: Collaborating on Git & Git Hub - Branch."
+      }
+    ]
+  },
+  "git-collaborating-on-git-git-hub-branch": {
+    "title": "Collaborating on Git & Git Hub - Branch",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-collaborating-on-git-github-remote-repository",
+        "title": "Collaborating on Git & GitHub - Remote Repository",
+        "key_concept": "Foundational concepts from Collaborating on Git & GitHub - Remote Repository",
+        "bridge_summary": "Mastering Collaborating on Git & GitHub - Remote Repository provides the prerequisite mental model needed for Collaborating on Git & Git Hub - Branch."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Collaborating on Git & Git Hub - Branch without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Collaborating on Git & Git Hub - Branch."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-github-basic-life-cycle",
+        "title": "Git & GitHub Basic Life Cycle",
+        "reason": "Continue to the next curriculum milestone: Git & GitHub Basic Life Cycle."
+      }
+    ]
+  },
+  "git-github-basic-life-cycle": {
+    "title": "Git & GitHub Basic Life Cycle",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-collaborating-on-git-git-hub-branch",
+        "title": "Collaborating on Git & Git Hub - Branch",
+        "key_concept": "Foundational concepts from Collaborating on Git & Git Hub - Branch",
+        "bridge_summary": "Mastering Collaborating on Git & Git Hub - Branch provides the prerequisite mental model needed for Git & GitHub Basic Life Cycle."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Committing sensitive API secrets or private keys directly to a local repo; even if deleted in a later commit, keys remain visible in historical tree blobs.",
+      "tradeoff_challenge": "Local-first autonomy vs centralized trunk governance: How do asynchronous distributed teams balance immediate local iteration with global merge gating?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-chapter-2-git-github-initial-settings",
+        "title": "Configuring Git & GitHub Settings",
+        "reason": "Continue to the next curriculum milestone: Configuring Git & GitHub Settings."
+      }
+    ]
+  },
+  "git-chapter-2-git-github-initial-settings": {
+    "title": "Configuring Git & GitHub Settings",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-github-basic-life-cycle",
+        "title": "Git & GitHub Basic Life Cycle",
+        "key_concept": "Foundational concepts from Git & GitHub Basic Life Cycle",
+        "bridge_summary": "Mastering Git & GitHub Basic Life Cycle provides the prerequisite mental model needed for Configuring Git & GitHub Settings."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Configuring Git & GitHub Settings without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Configuring Git & GitHub Settings."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-github-initial-settings-overview",
+        "title": "Git & GitHub Initial Settings Overview",
+        "reason": "Continue to the next curriculum milestone: Git & GitHub Initial Settings Overview."
+      }
+    ]
+  },
+  "git-github-initial-settings-overview": {
+    "title": "Git & GitHub Initial Settings Overview",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-chapter-2-git-github-initial-settings",
+        "title": "Configuring Git & GitHub Settings",
+        "key_concept": "Foundational concepts from Configuring Git & GitHub Settings",
+        "bridge_summary": "Mastering Configuring Git & GitHub Settings provides the prerequisite mental model needed for Git & GitHub Initial Settings Overview."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Git & GitHub Initial Settings Overview without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Git & GitHub Initial Settings Overview."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-key-tool-preparation-1-mac",
+        "title": "Setting Up Git & GitHub on Mac",
+        "reason": "Continue to the next curriculum milestone: Setting Up Git & GitHub on Mac."
+      }
+    ]
+  },
+  "git-key-tool-preparation-1-mac": {
+    "title": "Setting Up Git & GitHub on Mac",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-github-initial-settings-overview",
+        "title": "Git & GitHub Initial Settings Overview",
+        "key_concept": "Foundational concepts from Git & GitHub Initial Settings Overview",
+        "bridge_summary": "Mastering Git & GitHub Initial Settings Overview provides the prerequisite mental model needed for Setting Up Git & GitHub on Mac."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Setting Up Git & GitHub on Mac without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Setting Up Git & GitHub on Mac."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-key-tool-preparation-2-windows",
+        "title": "Setting Up Git & GitHub on Windows",
+        "reason": "Continue to the next curriculum milestone: Setting Up Git & GitHub on Windows."
+      }
+    ]
+  },
+  "git-key-tool-preparation-2-windows": {
+    "title": "Setting Up Git & GitHub on Windows",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-key-tool-preparation-1-mac",
+        "title": "Setting Up Git & GitHub on Mac",
+        "key_concept": "Foundational concepts from Setting Up Git & GitHub on Mac",
+        "bridge_summary": "Mastering Setting Up Git & GitHub on Mac provides the prerequisite mental model needed for Setting Up Git & GitHub on Windows."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Setting Up Git & GitHub on Windows without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Setting Up Git & GitHub on Windows."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-key-tool-preparation-3-linux-remote-server",
+        "title": "Git & GitHub Configuration for Linux Remote Servers",
+        "reason": "Continue to the next curriculum milestone: Git & GitHub Configuration for Linux Remote Servers."
+      }
+    ]
+  },
+  "git-key-tool-preparation-3-linux-remote-server": {
+    "title": "Git & GitHub Configuration for Linux Remote Servers",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-key-tool-preparation-2-windows",
+        "title": "Setting Up Git & GitHub on Windows",
+        "key_concept": "Foundational concepts from Setting Up Git & GitHub on Windows",
+        "bridge_summary": "Mastering Setting Up Git & GitHub on Windows provides the prerequisite mental model needed for Git & GitHub Configuration for Linux Remote Servers."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Git & GitHub Configuration for Linux Remote Servers without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Git & GitHub Configuration for Linux Remote Servers."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-user-settings-git-config",
+        "title": "Configuring Git User Settings",
+        "reason": "Continue to the next curriculum milestone: Configuring Git User Settings."
+      }
+    ]
+  },
+  "git-user-settings-git-config": {
+    "title": "Configuring Git User Settings",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-key-tool-preparation-3-linux-remote-server",
+        "title": "Git & GitHub Configuration for Linux Remote Servers",
+        "key_concept": "Foundational concepts from Git & GitHub Configuration for Linux Remote Servers",
+        "bridge_summary": "Mastering Git & GitHub Configuration for Linux Remote Servers provides the prerequisite mental model needed for Configuring Git User Settings."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Committing to corporate repositories using personal email addresses in user.email, leaking employee identities or failing enterprise commit-signature hooks.",
+      "tradeoff_challenge": "Global gitconfig vs directory-scoped includeIf configuration: How do multi-client consultants isolate corporate SSH signing keys and emails cleanly?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-create-github-account",
+        "title": "Creating a GitHub Account",
+        "reason": "Continue to the next curriculum milestone: Creating a GitHub Account."
+      }
+    ]
+  },
+  "git-create-github-account": {
+    "title": "Creating a GitHub Account",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-user-settings-git-config",
+        "title": "Configuring Git User Settings",
+        "key_concept": "Foundational concepts from Configuring Git User Settings",
+        "bridge_summary": "Mastering Configuring Git User Settings provides the prerequisite mental model needed for Creating a GitHub Account."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Creating a GitHub Account without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Creating a GitHub Account."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-github-access-authentication-settings",
+        "title": "How to Configure GitHub Access",
+        "reason": "Continue to the next curriculum milestone: How to Configure GitHub Access."
+      }
+    ]
+  },
+  "git-github-access-authentication-settings": {
+    "title": "How to Configure GitHub Access",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-create-github-account",
+        "title": "Creating a GitHub Account",
+        "key_concept": "Foundational concepts from Creating a GitHub Account",
+        "bridge_summary": "Mastering Creating a GitHub Account provides the prerequisite mental model needed for How to Configure GitHub Access."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Configure GitHub Access without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Configure GitHub Access."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-generating-pat-personal-access-token",
+        "title": "Generating Personal Access Tokens (PAT)",
+        "reason": "Continue to the next curriculum milestone: Generating Personal Access Tokens (PAT)."
+      }
+    ]
+  },
+  "git-generating-pat-personal-access-token": {
+    "title": "Generating Personal Access Tokens (PAT)",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-github-access-authentication-settings",
+        "title": "How to Configure GitHub Access",
+        "key_concept": "Foundational concepts from How to Configure GitHub Access",
+        "bridge_summary": "Mastering How to Configure GitHub Access provides the prerequisite mental model needed for Generating Personal Access Tokens (PAT)."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Generating Personal Access Tokens (PAT) without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Generating Personal Access Tokens (PAT)."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-github-ssh-setup",
+        "title": "How to Establish GitHub SSH Connection",
+        "reason": "Continue to the next curriculum milestone: How to Establish GitHub SSH Connection."
+      }
+    ]
+  },
+  "git-github-ssh-setup": {
+    "title": "How to Establish GitHub SSH Connection",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-generating-pat-personal-access-token",
+        "title": "Generating Personal Access Tokens (PAT)",
+        "key_concept": "Foundational concepts from Generating Personal Access Tokens (PAT)",
+        "bridge_summary": "Mastering Generating Personal Access Tokens (PAT) provides the prerequisite mental model needed for How to Establish GitHub SSH Connection."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Establish GitHub SSH Connection without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Establish GitHub SSH Connection."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-chapter-3-git-github-project-setup",
+        "title": "Initiating Git & GitHub Project",
+        "reason": "Continue to the next curriculum milestone: Initiating Git & GitHub Project."
+      }
+    ]
+  },
+  "git-chapter-3-git-github-project-setup": {
+    "title": "Initiating Git & GitHub Project",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-github-ssh-setup",
+        "title": "How to Establish GitHub SSH Connection",
+        "key_concept": "Foundational concepts from How to Establish GitHub SSH Connection",
+        "bridge_summary": "Mastering How to Establish GitHub SSH Connection provides the prerequisite mental model needed for Initiating Git & GitHub Project."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Initiating Git & GitHub Project without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Initiating Git & GitHub Project."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-three-cases-in-git-github-project-setup",
+        "title": "Git & GitHub Project Setup Scenarios",
+        "reason": "Continue to the next curriculum milestone: Git & GitHub Project Setup Scenarios."
+      }
+    ]
+  },
+  "git-three-cases-in-git-github-project-setup": {
+    "title": "Git & GitHub Project Setup Scenarios",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-chapter-3-git-github-project-setup",
+        "title": "Initiating Git & GitHub Project",
+        "key_concept": "Foundational concepts from Initiating Git & GitHub Project",
+        "bridge_summary": "Mastering Initiating Git & GitHub Project provides the prerequisite mental model needed for Git & GitHub Project Setup Scenarios."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Git & GitHub Project Setup Scenarios without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Git & GitHub Project Setup Scenarios."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-github-project-setup-overview-in-different-cases",
+        "title": "How to Set Up Git & GitHub Projects for Different Roles",
+        "reason": "Continue to the next curriculum milestone: How to Set Up Git & GitHub Projects for Different Roles."
+      }
+    ]
+  },
+  "git-github-project-setup-overview-in-different-cases": {
+    "title": "How to Set Up Git & GitHub Projects for Different Roles",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-three-cases-in-git-github-project-setup",
+        "title": "Git & GitHub Project Setup Scenarios",
+        "key_concept": "Foundational concepts from Git & GitHub Project Setup Scenarios",
+        "bridge_summary": "Mastering Git & GitHub Project Setup Scenarios provides the prerequisite mental model needed for How to Set Up Git & GitHub Projects for Different Roles."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Set Up Git & GitHub Projects for Different Roles without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Set Up Git & GitHub Projects for Different Roles."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-building-remote-collaboration-practice-environment",
+        "title": "Building a Remote Collaboration Environment with Git & GitHub",
+        "reason": "Continue to the next curriculum milestone: Building a Remote Collaboration Environment with Git & GitHub."
+      }
+    ]
+  },
+  "git-building-remote-collaboration-practice-environment": {
+    "title": "Building a Remote Collaboration Environment with Git & GitHub",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-github-project-setup-overview-in-different-cases",
+        "title": "How to Set Up Git & GitHub Projects for Different Roles",
+        "key_concept": "Foundational concepts from How to Set Up Git & GitHub Projects for Different Roles",
+        "bridge_summary": "Mastering How to Set Up Git & GitHub Projects for Different Roles provides the prerequisite mental model needed for Building a Remote Collaboration Environment with Git & GitHub."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Building a Remote Collaboration Environment with Git & GitHub without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Building a Remote Collaboration Environment with Git & GitHub."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-project-initiator-key-steps-to-launch-git-project",
+        "title": "Launching Your Git Project: Key Steps Explained",
+        "reason": "Continue to the next curriculum milestone: Launching Your Git Project: Key Steps Explained."
+      }
+    ]
+  },
+  "git-project-initiator-key-steps-to-launch-git-project": {
+    "title": "Launching Your Git Project: Key Steps Explained",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-building-remote-collaboration-practice-environment",
+        "title": "Building a Remote Collaboration Environment with Git & GitHub",
+        "key_concept": "Foundational concepts from Building a Remote Collaboration Environment with Git & GitHub",
+        "bridge_summary": "Mastering Building a Remote Collaboration Environment with Git & GitHub provides the prerequisite mental model needed for Launching Your Git Project: Key Steps Explained."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Launching Your Git Project: Key Steps Explained without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Launching Your Git Project: Key Steps Explained."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-project-initiator-create-local-repository-git-init",
+        "title": "How to Create a Local Repository with git init",
+        "reason": "Continue to the next curriculum milestone: How to Create a Local Repository with git init."
+      }
+    ]
+  },
+  "git-project-initiator-create-local-repository-git-init": {
+    "title": "How to Create a Local Repository with git init",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-project-initiator-key-steps-to-launch-git-project",
+        "title": "Launching Your Git Project: Key Steps Explained",
+        "key_concept": "Foundational concepts from Launching Your Git Project: Key Steps Explained",
+        "bridge_summary": "Mastering Launching Your Git Project: Key Steps Explained provides the prerequisite mental model needed for How to Create a Local Repository with git init."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Create a Local Repository with git init without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Create a Local Repository with git init."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-project-initiator-make-the-first-commit",
+        "title": "Making the First Commit in Your Git Project",
+        "reason": "Continue to the next curriculum milestone: Making the First Commit in Your Git Project."
+      }
+    ]
+  },
+  "git-project-initiator-make-the-first-commit": {
+    "title": "Making the First Commit in Your Git Project",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-project-initiator-create-local-repository-git-init",
+        "title": "How to Create a Local Repository with git init",
+        "key_concept": "Foundational concepts from How to Create a Local Repository with git init",
+        "bridge_summary": "Mastering How to Create a Local Repository with git init provides the prerequisite mental model needed for Making the First Commit in Your Git Project."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Making the First Commit in Your Git Project without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Making the First Commit in Your Git Project."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-project-initiator-gitignore-file",
+        "title": "Understanding the .gitignore File in Git Projects",
+        "reason": "Continue to the next curriculum milestone: Understanding the .gitignore File in Git Projects."
+      }
+    ]
+  },
+  "git-project-initiator-gitignore-file": {
+    "title": "Understanding the .gitignore File in Git Projects",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-project-initiator-make-the-first-commit",
+        "title": "Making the First Commit in Your Git Project",
+        "key_concept": "Foundational concepts from Making the First Commit in Your Git Project",
+        "bridge_summary": "Mastering Making the First Commit in Your Git Project provides the prerequisite mental model needed for Understanding the .gitignore File in Git Projects."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Understanding the .gitignore File in Git Projects without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Understanding the .gitignore File in Git Projects."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-project-initiator-create-remote-repository",
+        "title": "Creating a Remote Repository on GitHub",
+        "reason": "Continue to the next curriculum milestone: Creating a Remote Repository on GitHub."
+      }
+    ]
+  },
+  "git-project-initiator-create-remote-repository": {
+    "title": "Creating a Remote Repository on GitHub",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-project-initiator-gitignore-file",
+        "title": "Understanding the .gitignore File in Git Projects",
+        "key_concept": "Foundational concepts from Understanding the .gitignore File in Git Projects",
+        "bridge_summary": "Mastering Understanding the .gitignore File in Git Projects provides the prerequisite mental model needed for Creating a Remote Repository on GitHub."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Creating a Remote Repository on GitHub without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Creating a Remote Repository on GitHub."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add",
+        "title": "How to Link Your Local and Remote Repositories with git remote add",
+        "reason": "Continue to the next curriculum milestone: How to Link Your Local and Remote Repositories with git remote add."
+      }
+    ]
+  },
+  "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add": {
+    "title": "How to Link Your Local and Remote Repositories with git remote add",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-project-initiator-create-remote-repository",
+        "title": "Creating a Remote Repository on GitHub",
+        "key_concept": "Foundational concepts from Creating a Remote Repository on GitHub",
+        "bridge_summary": "Mastering Creating a Remote Repository on GitHub provides the prerequisite mental model needed for How to Link Your Local and Remote Repositories with git remote add."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Link Your Local and Remote Repositories with git remote add without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Link Your Local and Remote Repositories with git remote add."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-project-initiator-upload-local-repository-to-remote-repository-git-push",
+        "title": "How to Use git push to Upload Your Local Repository",
+        "reason": "Continue to the next curriculum milestone: How to Use git push to Upload Your Local Repository."
+      }
+    ]
+  },
+  "git-project-initiator-upload-local-repository-to-remote-repository-git-push": {
+    "title": "How to Use git push to Upload Your Local Repository",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add",
+        "title": "How to Link Your Local and Remote Repositories with git remote add",
+        "key_concept": "Foundational concepts from How to Link Your Local and Remote Repositories with git remote add",
+        "bridge_summary": "Mastering How to Link Your Local and Remote Repositories with git remote add provides the prerequisite mental model needed for How to Use git push to Upload Your Local Repository."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Use git push to Upload Your Local Repository without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Use git push to Upload Your Local Repository."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-project-initiator-grant-remote-repository-access-to-project-members",
+        "title": "Granting Remote Repository Access on GitHub",
+        "reason": "Continue to the next curriculum milestone: Granting Remote Repository Access on GitHub."
+      }
+    ]
+  },
+  "git-project-initiator-grant-remote-repository-access-to-project-members": {
+    "title": "Granting Remote Repository Access on GitHub",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-project-initiator-upload-local-repository-to-remote-repository-git-push",
+        "title": "How to Use git push to Upload Your Local Repository",
+        "key_concept": "Foundational concepts from How to Use git push to Upload Your Local Repository",
+        "bridge_summary": "Mastering How to Use git push to Upload Your Local Repository provides the prerequisite mental model needed for Granting Remote Repository Access on GitHub."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Granting Remote Repository Access on GitHub without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Granting Remote Repository Access on GitHub."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-project-member-start-project-as-collaborator",
+        "title": "Starting a Project as a Collaborator with Git & GitHub",
+        "reason": "Continue to the next curriculum milestone: Starting a Project as a Collaborator with Git & GitHub."
+      }
+    ]
+  },
+  "git-project-member-start-project-as-collaborator": {
+    "title": "Starting a Project as a Collaborator with Git & GitHub",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-project-initiator-grant-remote-repository-access-to-project-members",
+        "title": "Granting Remote Repository Access on GitHub",
+        "key_concept": "Foundational concepts from Granting Remote Repository Access on GitHub",
+        "bridge_summary": "Mastering Granting Remote Repository Access on GitHub provides the prerequisite mental model needed for Starting a Project as a Collaborator with Git & GitHub."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Starting a Project as a Collaborator with Git & GitHub without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Starting a Project as a Collaborator with Git & GitHub."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-project-member-create-copy-of-project-code-on-local-computer-git-clone",
+        "title": "Creating a Local Copy of a Project with git clone",
+        "reason": "Continue to the next curriculum milestone: Creating a Local Copy of a Project with git clone."
+      }
+    ]
+  },
+  "git-project-member-create-copy-of-project-code-on-local-computer-git-clone": {
+    "title": "Creating a Local Copy of a Project with git clone",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-project-member-start-project-as-collaborator",
+        "title": "Starting a Project as a Collaborator with Git & GitHub",
+        "key_concept": "Foundational concepts from Starting a Project as a Collaborator with Git & GitHub",
+        "bridge_summary": "Mastering Starting a Project as a Collaborator with Git & GitHub provides the prerequisite mental model needed for Creating a Local Copy of a Project with git clone."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Creating a Local Copy of a Project with git clone without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Creating a Local Copy of a Project with git clone."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-non-member-start-project-with-replica-of-existing-repository-fork",
+        "title": "Forking: How to Start a Project with a Replica of an Existing Git Repository",
+        "reason": "Continue to the next curriculum milestone: Forking: How to Start a Project with a Replica of an Existing Git Repository."
+      }
+    ]
+  },
+  "git-non-member-start-project-with-replica-of-existing-repository-fork": {
+    "title": "Forking: How to Start a Project with a Replica of an Existing Git Repository",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-project-member-create-copy-of-project-code-on-local-computer-git-clone",
+        "title": "Creating a Local Copy of a Project with git clone",
+        "key_concept": "Foundational concepts from Creating a Local Copy of a Project with git clone",
+        "bridge_summary": "Mastering Creating a Local Copy of a Project with git clone provides the prerequisite mental model needed for Forking: How to Start a Project with a Replica of an Existing Git Repository."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Forking: How to Start a Project with a Replica of an Existing Git Repository without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Forking: How to Start a Project with a Replica of an Existing Git Repository."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-fork-vs-clone",
+        "title": "Understanding Fork vs. Clone in Git & GitHub",
+        "reason": "Continue to the next curriculum milestone: Understanding Fork vs. Clone in Git & GitHub."
+      }
+    ]
+  },
+  "git-fork-vs-clone": {
+    "title": "Understanding Fork vs. Clone in Git & GitHub",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-non-member-start-project-with-replica-of-existing-repository-fork",
+        "title": "Forking: How to Start a Project with a Replica of an Existing Git Repository",
+        "key_concept": "Foundational concepts from Forking: How to Start a Project with a Replica of an Existing Git Repository",
+        "bridge_summary": "Mastering Forking: How to Start a Project with a Replica of an Existing Git Repository provides the prerequisite mental model needed for Understanding Fork vs. Clone in Git & GitHub."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Understanding Fork vs. Clone in Git & GitHub without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Understanding Fork vs. Clone in Git & GitHub."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-chapter-4-edit-commit",
+        "title": "How to Edit and Commit using Git Commands",
+        "reason": "Continue to the next curriculum milestone: How to Edit and Commit using Git Commands."
+      }
+    ]
+  },
+  "git-chapter-4-edit-commit": {
+    "title": "How to Edit and Commit using Git Commands",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-fork-vs-clone",
+        "title": "Understanding Fork vs. Clone in Git & GitHub",
+        "key_concept": "Foundational concepts from Understanding Fork vs. Clone in Git & GitHub",
+        "bridge_summary": "Mastering Understanding Fork vs. Clone in Git & GitHub provides the prerequisite mental model needed for How to Edit and Commit using Git Commands."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Edit and Commit using Git Commands without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Edit and Commit using Git Commands."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-regular-workflow-edit-commit",
+        "title": "Using Git's Regular Workflow: Edit & Commit",
+        "reason": "Continue to the next curriculum milestone: Using Git's Regular Workflow: Edit & Commit."
+      }
+    ]
+  },
+  "git-regular-workflow-edit-commit": {
+    "title": "Using Git's Regular Workflow: Edit & Commit",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-chapter-4-edit-commit",
+        "title": "How to Edit and Commit using Git Commands",
+        "key_concept": "Foundational concepts from How to Edit and Commit using Git Commands",
+        "bridge_summary": "Mastering How to Edit and Commit using Git Commands provides the prerequisite mental model needed for Using Git's Regular Workflow: Edit & Commit."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Using Git's Regular Workflow: Edit & Commit without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Using Git's Regular Workflow: Edit & Commit."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-edit-and-commit-overview-1",
+        "title": "Git's Edit and Commit Overview",
+        "reason": "Continue to the next curriculum milestone: Git's Edit and Commit Overview."
+      }
+    ]
+  },
+  "git-edit-and-commit-overview-1": {
+    "title": "Git's Edit and Commit Overview",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-regular-workflow-edit-commit",
+        "title": "Using Git's Regular Workflow: Edit & Commit",
+        "key_concept": "Foundational concepts from Using Git's Regular Workflow: Edit & Commit",
+        "bridge_summary": "Mastering Using Git's Regular Workflow: Edit & Commit provides the prerequisite mental model needed for Git's Edit and Commit Overview."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Git's Edit and Commit Overview without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Git's Edit and Commit Overview."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-add-files-to-staging-area-git-add",
+        "title": "Adding Files to the Staging Area with git add",
+        "reason": "Continue to the next curriculum milestone: Adding Files to the Staging Area with git add."
+      }
+    ]
+  },
+  "git-add-files-to-staging-area-git-add": {
+    "title": "Adding Files to the Staging Area with git add",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-edit-and-commit-overview-1",
+        "title": "Git's Edit and Commit Overview",
+        "key_concept": "Foundational concepts from Git's Edit and Commit Overview",
+        "bridge_summary": "Mastering Git's Edit and Commit Overview provides the prerequisite mental model needed for Adding Files to the Staging Area with git add."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Carelessly executing 'git add .' without a configured .gitignore stages virtualenvs, node_modules, and secret credentials.",
+      "tradeoff_challenge": "Interactive staging ('git add -p') vs bulk staging: How much granular hunk-level staging overhead is justified in fast-paced production cycles?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-commit-files-git-commit",
+        "title": "How to Commit Files with git commit",
+        "reason": "Continue to the next curriculum milestone: How to Commit Files with git commit."
+      }
+    ]
+  },
+  "git-commit-files-git-commit": {
+    "title": "How to Commit Files with git commit",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-add-files-to-staging-area-git-add",
+        "title": "Adding Files to the Staging Area with git add",
+        "key_concept": "Foundational concepts from Adding Files to the Staging Area with git add",
+        "bridge_summary": "Mastering Adding Files to the Staging Area with git add provides the prerequisite mental model needed for How to Commit Files with git commit."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Vague commit messages like 'fixed bug' or 'update' break auditability, making git bisect and automated release changelog generation impossible.",
+      "tradeoff_challenge": "Conventional Commits (feat/fix/chore) enforcement via commitlint vs unrestricted developer autonomy: Does rigid commit formatting hinder delivery speed?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-head-and-index",
+        "title": "Understanding Git's HEAD and INDEX",
+        "reason": "Continue to the next curriculum milestone: Understanding Git's HEAD and INDEX."
+      }
+    ]
+  },
+  "git-head-and-index": {
+    "title": "Understanding Git's HEAD and INDEX",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-commit-files-git-commit",
+        "title": "How to Commit Files with git commit",
+        "key_concept": "Foundational concepts from How to Commit Files with git commit",
+        "bridge_summary": "Mastering How to Commit Files with git commit provides the prerequisite mental model needed for Understanding Git's HEAD and INDEX."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Understanding Git's HEAD and INDEX without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Understanding Git's HEAD and INDEX."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+        "title": "Using git status to Check Your Working Tree",
+        "reason": "Continue to the next curriculum milestone: Using git status to Check Your Working Tree."
+      }
+    ]
+  },
+  "git-check-status-of-working-tree-and-staging-area-git-status": {
+    "title": "Using git status to Check Your Working Tree",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-head-and-index",
+        "title": "Understanding Git's HEAD and INDEX",
+        "key_concept": "Foundational concepts from Understanding Git's HEAD and INDEX",
+        "bridge_summary": "Mastering Understanding Git's HEAD and INDEX provides the prerequisite mental model needed for Using git status to Check Your Working Tree."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Using git status to Check Your Working Tree without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Using git status to Check Your Working Tree."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-check-commit-histories-git-log",
+        "title": "Viewing Commit Histories with git log",
+        "reason": "Continue to the next curriculum milestone: Viewing Commit Histories with git log."
+      }
+    ]
+  },
+  "git-check-commit-histories-git-log": {
+    "title": "Viewing Commit Histories with git log",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+        "title": "Using git status to Check Your Working Tree",
+        "key_concept": "Foundational concepts from Using git status to Check Your Working Tree",
+        "bridge_summary": "Mastering Using git status to Check Your Working Tree provides the prerequisite mental model needed for Viewing Commit Histories with git log."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Viewing Commit Histories with git log without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Viewing Commit Histories with git log."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-check-differences-git-diff",
+        "title": "Identifying Changes with git diff",
+        "reason": "Continue to the next curriculum milestone: Identifying Changes with git diff."
+      }
+    ]
+  },
+  "git-check-differences-git-diff": {
+    "title": "Identifying Changes with git diff",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-check-commit-histories-git-log",
+        "title": "Viewing Commit Histories with git log",
+        "key_concept": "Foundational concepts from Viewing Commit Histories with git log",
+        "bridge_summary": "Mastering Viewing Commit Histories with git log provides the prerequisite mental model needed for Identifying Changes with git diff."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Identifying Changes with git diff without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Identifying Changes with git diff."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-restore-files-to-working-tree-git-restore",
+        "title": "Restoring Files with git restore",
+        "reason": "Continue to the next curriculum milestone: Restoring Files with git restore."
+      }
+    ]
+  },
+  "git-restore-files-to-working-tree-git-restore": {
+    "title": "Restoring Files with git restore",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-check-differences-git-diff",
+        "title": "Identifying Changes with git diff",
+        "key_concept": "Foundational concepts from Identifying Changes with git diff",
+        "bridge_summary": "Mastering Identifying Changes with git diff provides the prerequisite mental model needed for Restoring Files with git restore."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Restoring Files with git restore without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Restoring Files with git restore."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-undo-changes-git-reset",
+        "title": "Resetting Changes with git reset",
+        "reason": "Continue to the next curriculum milestone: Resetting Changes with git reset."
+      }
+    ]
+  },
+  "git-undo-changes-git-reset": {
+    "title": "Resetting Changes with git reset",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-restore-files-to-working-tree-git-restore",
+        "title": "Restoring Files with git restore",
+        "key_concept": "Foundational concepts from Restoring Files with git restore",
+        "bridge_summary": "Mastering Restoring Files with git restore provides the prerequisite mental model needed for Resetting Changes with git reset."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Running 'git reset --hard' destroys uncommitted working tree modifications irrecoverably, as Git never tracked those file blobs in the object database.",
+      "tradeoff_challenge": "git reset vs git revert: In published team branches, why is git revert the only mathematically safe undo strategy for upstream collaboration?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-delete-files-git-rm",
+        "title": "Deleting Files with git rm",
+        "reason": "Continue to the next curriculum milestone: Deleting Files with git rm."
+      }
+    ]
+  },
+  "git-delete-files-git-rm": {
+    "title": "Deleting Files with git rm",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-undo-changes-git-reset",
+        "title": "Resetting Changes with git reset",
+        "key_concept": "Foundational concepts from Resetting Changes with git reset",
+        "bridge_summary": "Mastering Resetting Changes with git reset provides the prerequisite mental model needed for Deleting Files with git rm."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Deleting Files with git rm without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Deleting Files with git rm."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-edit-and-commit-overview-2",
+        "title": "Preparing for Git Branches in Edit and Commit",
+        "reason": "Continue to the next curriculum milestone: Preparing for Git Branches in Edit and Commit."
+      }
+    ]
+  },
+  "git-edit-and-commit-overview-2": {
+    "title": "Preparing for Git Branches in Edit and Commit",
+    "series": "git-github-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "git-check-differences-git-diff",
+        "title": "Identifying Changes with git diff",
+        "key_concept": "Foundational concepts from Identifying Changes with git diff",
+        "bridge_summary": "Understanding Identifying Changes with git diff is essential before tackling Preparing for Git Branches in Edit and Commit."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Preparing for Git Branches in Edit and Commit without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Preparing for Git Branches in Edit and Commit."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-chapter-5-work-with-branches",
+        "title": "How to Work with Branches in Git",
+        "reason": "Continue to the next curriculum milestone: How to Work with Branches in Git."
+      }
+    ]
+  },
+  "git-chapter-5-work-with-branches": {
+    "title": "How to Work with Branches in Git",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-edit-and-commit-overview-2",
+        "title": "Preparing for Git Branches in Edit and Commit",
+        "key_concept": "Foundational concepts from Preparing for Git Branches in Edit and Commit",
+        "bridge_summary": "Mastering Preparing for Git Branches in Edit and Commit provides the prerequisite mental model needed for How to Work with Branches in Git."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Work with Branches in Git without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Work with Branches in Git."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-regular-workflow-work-with-branches",
+        "title": "How to Use Branch Management in Git Workflow",
+        "reason": "Continue to the next curriculum milestone: How to Use Branch Management in Git Workflow."
+      }
+    ]
+  },
+  "git-regular-workflow-work-with-branches": {
+    "title": "How to Use Branch Management in Git Workflow",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-chapter-5-work-with-branches",
+        "title": "How to Work with Branches in Git",
+        "key_concept": "Foundational concepts from How to Work with Branches in Git",
+        "bridge_summary": "Mastering How to Work with Branches in Git provides the prerequisite mental model needed for How to Use Branch Management in Git Workflow."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Use Branch Management in Git Workflow without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Use Branch Management in Git Workflow."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-what-is-branch",
+        "title": "Understanding Branches in Git with Diagrams",
+        "reason": "Continue to the next curriculum milestone: Understanding Branches in Git with Diagrams."
+      }
+    ]
+  },
+  "git-what-is-branch": {
+    "title": "Understanding Branches in Git with Diagrams",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-regular-workflow-work-with-branches",
+        "title": "How to Use Branch Management in Git Workflow",
+        "key_concept": "Foundational concepts from How to Use Branch Management in Git Workflow",
+        "bridge_summary": "Mastering How to Use Branch Management in Git Workflow provides the prerequisite mental model needed for Understanding Branches in Git with Diagrams."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Understanding Branches in Git with Diagrams without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Understanding Branches in Git with Diagrams."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-branch-operation-basic-life-cycle",
+        "title": "Git Branch Operation Lifecycle Steps",
+        "reason": "Continue to the next curriculum milestone: Git Branch Operation Lifecycle Steps."
+      }
+    ]
+  },
+  "git-branch-operation-basic-life-cycle": {
+    "title": "Git Branch Operation Lifecycle Steps",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-what-is-branch",
+        "title": "Understanding Branches in Git with Diagrams",
+        "key_concept": "Foundational concepts from Understanding Branches in Git with Diagrams",
+        "bridge_summary": "Mastering Understanding Branches in Git with Diagrams provides the prerequisite mental model needed for Git Branch Operation Lifecycle Steps."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Git Branch Operation Lifecycle Steps without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Git Branch Operation Lifecycle Steps."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-create-branch-and-check-branch-status-git-branch",
+        "title": "Creating and Managing Branches with git branch",
+        "reason": "Continue to the next curriculum milestone: Creating and Managing Branches with git branch."
+      }
+    ]
+  },
+  "git-create-branch-and-check-branch-status-git-branch": {
+    "title": "Creating and Managing Branches with git branch",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-branch-operation-basic-life-cycle",
+        "title": "Git Branch Operation Lifecycle Steps",
+        "key_concept": "Foundational concepts from Git Branch Operation Lifecycle Steps",
+        "bridge_summary": "Mastering Git Branch Operation Lifecycle Steps provides the prerequisite mental model needed for Creating and Managing Branches with git branch."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Long-lived feature branches drifting weeks behind the main branch accumulate silent integration incompatibilities and painful merge conflict resolution.",
+      "tradeoff_challenge": "Trunk-Based Development (short-lived feature branches < 24h) vs GitFlow (develop/release/hotfix): When does branch isolation become team inertia?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-switch-current-branch-1-git-checkout",
+        "title": "How to Switch Branches Using git checkout",
+        "reason": "Continue to the next curriculum milestone: How to Switch Branches Using git checkout."
+      }
+    ]
+  },
+  "git-switch-current-branch-1-git-checkout": {
+    "title": "How to Switch Branches Using git checkout",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-create-branch-and-check-branch-status-git-branch",
+        "title": "Creating and Managing Branches with git branch",
+        "key_concept": "Foundational concepts from Creating and Managing Branches with git branch",
+        "bridge_summary": "Mastering Creating and Managing Branches with git branch provides the prerequisite mental model needed for How to Switch Branches Using git checkout."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Switch Branches Using git checkout without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Switch Branches Using git checkout."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-switch-current-branch-2-git-switch",
+        "title": "Switching Branches Easily with git switch",
+        "reason": "Continue to the next curriculum milestone: Switching Branches Easily with git switch."
+      }
+    ]
+  },
+  "git-switch-current-branch-2-git-switch": {
+    "title": "Switching Branches Easily with git switch",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-switch-current-branch-1-git-checkout",
+        "title": "How to Switch Branches Using git checkout",
+        "key_concept": "Foundational concepts from How to Switch Branches Using git checkout",
+        "bridge_summary": "Mastering How to Switch Branches Using git checkout provides the prerequisite mental model needed for Switching Branches Easily with git switch."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Switching Branches Easily with git switch without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Switching Branches Easily with git switch."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-merge-branches-git-merge",
+        "title": "Understanding Different Git Merge Types",
+        "reason": "Continue to the next curriculum milestone: Understanding Different Git Merge Types."
+      }
+    ]
+  },
+  "git-merge-branches-git-merge": {
+    "title": "Understanding Different Git Merge Types",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-switch-current-branch-2-git-switch",
+        "title": "Switching Branches Easily with git switch",
+        "key_concept": "Foundational concepts from Switching Branches Easily with git switch",
+        "bridge_summary": "Mastering Switching Branches Easily with git switch provides the prerequisite mental model needed for Understanding Different Git Merge Types."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Understanding Different Git Merge Types without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Understanding Different Git Merge Types."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-fast-forward-merge",
+        "title": "What is Fast-Forward Merge in Git",
+        "reason": "Continue to the next curriculum milestone: What is Fast-Forward Merge in Git."
+      }
+    ]
+  },
+  "git-fast-forward-merge": {
+    "title": "What is Fast-Forward Merge in Git",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-merge-branches-git-merge",
+        "title": "Understanding Different Git Merge Types",
+        "key_concept": "Foundational concepts from Understanding Different Git Merge Types",
+        "bridge_summary": "Mastering Understanding Different Git Merge Types provides the prerequisite mental model needed for What is Fast-Forward Merge in Git."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Fast-forward merges skip creating a merge commit, losing context of when a feature branch began and ended, making full feature rollbacks difficult.",
+      "tradeoff_challenge": "Fast-forward merge vs '--no-ff' merge commit: How do teams preserve visual branch history in commit DAG graphs without cluttering linear git log output?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-non-fast-forward-merge-no-option",
+        "title": "Exploring Non-Fast-Forward Merge in Git",
+        "reason": "Continue to the next curriculum milestone: Exploring Non-Fast-Forward Merge in Git."
+      }
+    ]
+  },
+  "git-non-fast-forward-merge-no-option": {
+    "title": "Exploring Non-Fast-Forward Merge in Git",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-fast-forward-merge",
+        "title": "What is Fast-Forward Merge in Git",
+        "key_concept": "Foundational concepts from What is Fast-Forward Merge in Git",
+        "bridge_summary": "Mastering What is Fast-Forward Merge in Git provides the prerequisite mental model needed for Exploring Non-Fast-Forward Merge in Git."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Exploring Non-Fast-Forward Merge in Git without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Exploring Non-Fast-Forward Merge in Git."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-non-fast-forward-merge-no-ff-option",
+        "title": "Using --no-ff Option for Non-Fast-Forward Merge in Git",
+        "reason": "Continue to the next curriculum milestone: Using --no-ff Option for Non-Fast-Forward Merge in Git."
+      }
+    ]
+  },
+  "git-non-fast-forward-merge-no-ff-option": {
+    "title": "Using --no-ff Option for Non-Fast-Forward Merge in Git",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-non-fast-forward-merge-no-option",
+        "title": "Exploring Non-Fast-Forward Merge in Git",
+        "key_concept": "Foundational concepts from Exploring Non-Fast-Forward Merge in Git",
+        "bridge_summary": "Mastering Exploring Non-Fast-Forward Merge in Git provides the prerequisite mental model needed for Using --no-ff Option for Non-Fast-Forward Merge in Git."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Using --no-ff Option for Non-Fast-Forward Merge in Git without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Using --no-ff Option for Non-Fast-Forward Merge in Git."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-squash-merge",
+        "title": "How to Use Squash Merge in Git",
+        "reason": "Continue to the next curriculum milestone: How to Use Squash Merge in Git."
+      }
+    ]
+  },
+  "git-squash-merge": {
+    "title": "How to Use Squash Merge in Git",
+    "series": "git-github-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "git-non-fast-forward-merge-no-ff-option",
+        "title": "Using --no-ff Option for Non-Fast-Forward Merge in Git",
+        "key_concept": "Foundational concepts from Using --no-ff Option for Non-Fast-Forward Merge in Git",
+        "bridge_summary": "Mastering Using --no-ff Option for Non-Fast-Forward Merge in Git provides the prerequisite mental model needed for How to Use Squash Merge in Git."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Squash-merging collapses all intermediate commit messages, destroying fine-grained bisectability and attributing all changes to a single author timestamp.",
+      "tradeoff_challenge": "Squash merge for clean main history vs rebase merge for full WIP provenance: How to decide repo merge policy across microservices?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-rebase-branch-git-rebase",
+        "title": "Applying Changes with Git Rebase",
+        "reason": "Continue to the next curriculum milestone: Applying Changes with Git Rebase."
+      }
+    ]
+  },
+  "git-rebase-branch-git-rebase": {
+    "title": "Applying Changes with Git Rebase",
+    "series": "git-github-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "git-squash-merge",
+        "title": "How to Use Squash Merge in Git",
+        "key_concept": "Foundational concepts from How to Use Squash Merge in Git",
+        "bridge_summary": "Mastering How to Use Squash Merge in Git provides the prerequisite mental model needed for Applying Changes with Git Rebase."
+      },
+      {
+        "slug": "git-commit-files-git-commit",
+        "title": "How to Commit Files with git commit",
+        "key_concept": "Commit Object Structure and SHA Identifiers",
+        "bridge_summary": "Rebase manipulates commit DAG history; understanding how commit objects are formed is critical."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Rebasing a public shared remote branch changes SHA-1 commit hashes, breaking all teammates' local tracking branches and creating duplicate commit chains.",
+      "tradeoff_challenge": "Interactive rebase ('git rebase -i') for curating feature branches vs leaving messy WIP commits: How much time should engineers spend polishing commit logs?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-managing-conflict",
+        "title": "How to Manage Conflicts in Git",
+        "reason": "Continue to the next curriculum milestone: How to Manage Conflicts in Git."
+      }
+    ]
+  },
+  "git-managing-conflict": {
+    "title": "How to Manage Conflicts in Git",
+    "series": "git-github-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "git-rebase-branch-git-rebase",
+        "title": "Applying Changes with Git Rebase",
+        "key_concept": "Foundational concepts from Applying Changes with Git Rebase",
+        "bridge_summary": "Mastering Applying Changes with Git Rebase provides the prerequisite mental model needed for How to Manage Conflicts in Git."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Blindly accepting 'incoming change' or 'current change' in merge conflicts without validating runtime dependencies can introduce silent logical bugs that pass syntax checks.",
+      "tradeoff_challenge": "Three-way merge (diff3 / zdiff3) vs standard two-way conflict markers: How does showing common ancestor code accelerate conflict diagnosis?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-stash-changes-git-stash",
+        "title": "Stashing Work-in-Progress with Git Stash",
+        "reason": "Continue to the next curriculum milestone: Stashing Work-in-Progress with Git Stash."
+      }
+    ]
+  },
+  "git-stash-changes-git-stash": {
+    "title": "Stashing Work-in-Progress with Git Stash",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-non-fast-forward-merge-no-ff-option",
+        "title": "Using --no-ff Option for Non-Fast-Forward Merge in Git",
+        "key_concept": "Foundational concepts from Using --no-ff Option for Non-Fast-Forward Merge in Git",
+        "bridge_summary": "Understanding Using --no-ff Option for Non-Fast-Forward Merge in Git is essential before tackling Stashing Work-in-Progress with Git Stash."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Stashing Work-in-Progress with Git Stash without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Stashing Work-in-Progress with Git Stash."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-chapter-6-remote-collaboration",
+        "title": "Collaborating Remotely with Git and GitHub",
+        "reason": "Continue to the next curriculum milestone: Collaborating Remotely with Git and GitHub."
+      }
+    ]
+  },
+  "git-chapter-6-remote-collaboration": {
+    "title": "Collaborating Remotely with Git and GitHub",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-stash-changes-git-stash",
+        "title": "Stashing Work-in-Progress with Git Stash",
+        "key_concept": "Foundational concepts from Stashing Work-in-Progress with Git Stash",
+        "bridge_summary": "Mastering Stashing Work-in-Progress with Git Stash provides the prerequisite mental model needed for Collaborating Remotely with Git and GitHub."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Collaborating Remotely with Git and GitHub without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Collaborating Remotely with Git and GitHub."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-regular-workflow-remote-collaboration",
+        "title": "How to Remote Collaboration in Git",
+        "reason": "Continue to the next curriculum milestone: How to Remote Collaboration in Git."
+      }
+    ]
+  },
+  "git-regular-workflow-remote-collaboration": {
+    "title": "How to Remote Collaboration in Git",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-chapter-6-remote-collaboration",
+        "title": "Collaborating Remotely with Git and GitHub",
+        "key_concept": "Foundational concepts from Collaborating Remotely with Git and GitHub",
+        "bridge_summary": "Mastering Collaborating Remotely with Git and GitHub provides the prerequisite mental model needed for How to Remote Collaboration in Git."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Remote Collaboration in Git without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Remote Collaboration in Git."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-remote-collaboration-overview",
+        "title": "Overview of Remote Collaboration with Git and GitHub",
+        "reason": "Continue to the next curriculum milestone: Overview of Remote Collaboration with Git and GitHub."
+      }
+    ]
+  },
+  "git-remote-collaboration-overview": {
+    "title": "Overview of Remote Collaboration with Git and GitHub",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-regular-workflow-remote-collaboration",
+        "title": "How to Remote Collaboration in Git",
+        "key_concept": "Foundational concepts from How to Remote Collaboration in Git",
+        "bridge_summary": "Mastering How to Remote Collaboration in Git provides the prerequisite mental model needed for Overview of Remote Collaboration with Git and GitHub."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Overview of Remote Collaboration with Git and GitHub without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Overview of Remote Collaboration with Git and GitHub."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-link-with-remote-repository-git-remote",
+        "title": "Establishing a Link with git remote",
+        "reason": "Continue to the next curriculum milestone: Establishing a Link with git remote."
+      }
+    ]
+  },
+  "git-link-with-remote-repository-git-remote": {
+    "title": "Establishing a Link with git remote",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-remote-collaboration-overview",
+        "title": "Overview of Remote Collaboration with Git and GitHub",
+        "key_concept": "Foundational concepts from Overview of Remote Collaboration with Git and GitHub",
+        "bridge_summary": "Mastering Overview of Remote Collaboration with Git and GitHub provides the prerequisite mental model needed for Establishing a Link with git remote."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Establishing a Link with git remote without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Establishing a Link with git remote."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-upload-to-remote-repository-git-push",
+        "title": "How to Upload Changes with git push",
+        "reason": "Continue to the next curriculum milestone: How to Upload Changes with git push."
+      }
+    ]
+  },
+  "git-upload-to-remote-repository-git-push": {
+    "title": "How to Upload Changes with git push",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-link-with-remote-repository-git-remote",
+        "title": "Establishing a Link with git remote",
+        "key_concept": "Foundational concepts from Establishing a Link with git remote",
+        "bridge_summary": "Mastering Establishing a Link with git remote provides the prerequisite mental model needed for How to Upload Changes with git push."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Running 'git push --force' overwrites remote upstream commits made by teammates; always use 'git push --force-with-lease' to prevent accidental clobbering.",
+      "tradeoff_challenge": "Direct branch pushing vs pull request peer gating: At what team scale does automated CI branch protection become mandatory?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-download-remote-repository-and-merge-to-local-repository-git-pull",
+        "title": "Merging Remote Changes Locally with git pull",
+        "reason": "Continue to the next curriculum milestone: Merging Remote Changes Locally with git pull."
+      }
+    ]
+  },
+  "git-download-remote-repository-and-merge-to-local-repository-git-pull": {
+    "title": "Merging Remote Changes Locally with git pull",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-upload-to-remote-repository-git-push",
+        "title": "How to Upload Changes with git push",
+        "key_concept": "Foundational concepts from How to Upload Changes with git push",
+        "bridge_summary": "Mastering How to Upload Changes with git push provides the prerequisite mental model needed for Merging Remote Changes Locally with git pull."
+      },
+      {
+        "slug": "git-merge-branches-git-merge",
+        "title": "Understanding Different Git Merge Types",
+        "key_concept": "Branch Merging Mechanics",
+        "bridge_summary": "Git pull is a combination of fetch and merge; understanding local branch merge mechanics is required."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Default 'git pull' creates unexpected recursive merge commits when local and remote branches diverge; configure 'git config pull.rebase true' or 'pull.ff only'.",
+      "tradeoff_challenge": "git pull vs git fetch + git merge: Why do production DevOps pipelines favor explicit fetching and inspected merging over automated pull?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-get-remote-repository-information-to-local-repository-git-fetch",
+        "title": "Updating Local Repository with git fetch",
+        "reason": "Continue to the next curriculum milestone: Updating Local Repository with git fetch."
+      }
+    ]
+  },
+  "git-get-remote-repository-information-to-local-repository-git-fetch": {
+    "title": "Updating Local Repository with git fetch",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-download-remote-repository-and-merge-to-local-repository-git-pull",
+        "title": "Merging Remote Changes Locally with git pull",
+        "key_concept": "Foundational concepts from Merging Remote Changes Locally with git pull",
+        "bridge_summary": "Mastering Merging Remote Changes Locally with git pull provides the prerequisite mental model needed for Updating Local Repository with git fetch."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Updating Local Repository with git fetch without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Updating Local Repository with git fetch."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-pull-vs-fetch",
+        "title": "Understanding the Differences Between Pull and Fetch",
+        "reason": "Continue to the next curriculum milestone: Understanding the Differences Between Pull and Fetch."
+      }
+    ]
+  },
+  "git-pull-vs-fetch": {
+    "title": "Understanding the Differences Between Pull and Fetch",
+    "series": "git-github-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "git-get-remote-repository-information-to-local-repository-git-fetch",
+        "title": "Updating Local Repository with git fetch",
+        "key_concept": "Foundational concepts from Updating Local Repository with git fetch",
+        "bridge_summary": "Mastering Updating Local Repository with git fetch provides the prerequisite mental model needed for Understanding the Differences Between Pull and Fetch."
+      },
+      {
+        "slug": "git-merge-branches-git-merge",
+        "title": "Understanding Different Git Merge Types",
+        "key_concept": "Branch Merging Mechanics",
+        "bridge_summary": "Git pull is a combination of fetch and merge; understanding local branch merge mechanics is required."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Understanding the Differences Between Pull and Fetch without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Understanding the Differences Between Pull and Fetch."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-request-for-review-and-merge-pull-request",
+        "title": "How to Make a Pull Request on GitHub",
+        "reason": "Continue to the next curriculum milestone: How to Make a Pull Request on GitHub."
+      }
+    ]
+  },
+  "git-request-for-review-and-merge-pull-request": {
+    "title": "How to Make a Pull Request on GitHub",
+    "series": "git-github-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "git-pull-vs-fetch",
+        "title": "Understanding the Differences Between Pull and Fetch",
+        "key_concept": "Foundational concepts from Understanding the Differences Between Pull and Fetch",
+        "bridge_summary": "Mastering Understanding the Differences Between Pull and Fetch provides the prerequisite mental model needed for How to Make a Pull Request on GitHub."
+      },
+      {
+        "slug": "git-merge-branches-git-merge",
+        "title": "Understanding Different Git Merge Types",
+        "key_concept": "Branch Merging Mechanics",
+        "bridge_summary": "Git pull is a combination of fetch and merge; understanding local branch merge mechanics is required."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Submitting gigantic PRs with 1,000+ line diffs leads to rubber-stamping ('looks good to me') instead of rigorous architectural and edge-case review.",
+      "tradeoff_challenge": "Stacked PRs (small dependent pull requests) vs monolithic PRs: How to streamline review throughput while managing dependent branch rebases?"
+    },
+    "next_milestones": [
+      {
+        "slug": "git-merge-operation-using-github",
+        "title": "How to Merge Using GitHub",
+        "reason": "Continue to the next curriculum milestone: How to Merge Using GitHub."
+      }
+    ]
+  },
+  "git-merge-operation-using-github": {
+    "title": "How to Merge Using GitHub",
+    "series": "git-github-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "git-request-for-review-and-merge-pull-request",
+        "title": "How to Make a Pull Request on GitHub",
+        "key_concept": "Foundational concepts from How to Make a Pull Request on GitHub",
+        "bridge_summary": "Mastering How to Make a Pull Request on GitHub provides the prerequisite mental model needed for How to Merge Using GitHub."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying How to Merge Using GitHub without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in How to Merge Using GitHub."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-chapter-7-supplemental-topics",
+        "title": "Mastering Git and GitHub: Supplemental Topics",
+        "reason": "Continue to the next curriculum milestone: Mastering Git and GitHub: Supplemental Topics."
+      }
+    ]
+  },
+  "git-chapter-7-supplemental-topics": {
+    "title": "Mastering Git and GitHub: Supplemental Topics",
+    "series": "git-github-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "git-merge-operation-using-github",
+        "title": "How to Merge Using GitHub",
+        "key_concept": "Foundational concepts from How to Merge Using GitHub",
+        "bridge_summary": "Mastering How to Merge Using GitHub provides the prerequisite mental model needed for Mastering Git and GitHub: Supplemental Topics."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Mastering Git and GitHub: Supplemental Topics without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Mastering Git and GitHub: Supplemental Topics."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-key-commands-and-github-key-features",
+        "title": "Key Git Commands and GitHub Features Cheat Sheet",
+        "reason": "Continue to the next curriculum milestone: Key Git Commands and GitHub Features Cheat Sheet."
+      }
+    ]
+  },
+  "git-key-commands-and-github-key-features": {
+    "title": "Key Git Commands and GitHub Features Cheat Sheet",
+    "series": "git-github-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "git-chapter-7-supplemental-topics",
+        "title": "Mastering Git and GitHub: Supplemental Topics",
+        "key_concept": "Foundational concepts from Mastering Git and GitHub: Supplemental Topics",
+        "bridge_summary": "Mastering Mastering Git and GitHub: Supplemental Topics provides the prerequisite mental model needed for Key Git Commands and GitHub Features Cheat Sheet."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Key Git Commands and GitHub Features Cheat Sheet without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Key Git Commands and GitHub Features Cheat Sheet."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-github-glossary",
+        "title": "Git and GitHub Glossary of Terms",
+        "reason": "Continue to the next curriculum milestone: Git and GitHub Glossary of Terms."
+      }
+    ]
+  },
+  "git-github-glossary": {
+    "title": "Git and GitHub Glossary of Terms",
+    "series": "git-github-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "git-key-commands-and-github-key-features",
+        "title": "Key Git Commands and GitHub Features Cheat Sheet",
+        "key_concept": "Foundational concepts from Key Git Commands and GitHub Features Cheat Sheet",
+        "bridge_summary": "Mastering Key Git Commands and GitHub Features Cheat Sheet provides the prerequisite mental model needed for Git and GitHub Glossary of Terms."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Git and GitHub Glossary of Terms without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Git and GitHub Glossary of Terms."
+    },
+    "next_milestones": [
+      {
+        "slug": "git-github-other-features",
+        "title": "Exploring GitHub's Additional Features",
+        "reason": "Continue to the next curriculum milestone: Exploring GitHub's Additional Features."
+      }
+    ]
+  },
+  "git-github-other-features": {
+    "title": "Exploring GitHub's Additional Features",
+    "series": "git-github-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "git-github-glossary",
+        "title": "Git and GitHub Glossary of Terms",
+        "key_concept": "Foundational concepts from Git and GitHub Glossary of Terms",
+        "bridge_summary": "Mastering Git and GitHub Glossary of Terms provides the prerequisite mental model needed for Exploring GitHub's Additional Features."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production workflows, misapplying Exploring GitHub's Additional Features without proper working tree verification can lead to uncommitted change losses or branch drift.",
+      "tradeoff_challenge": "Speed vs safety tradeoff: Balancing fast local developer iteration with rigorous team code verification in Exploring GitHub's Additional Features."
+    },
+    "next_milestones": []
+  },
+  "docker-chapter-1-docker-introduction": {
+    "title": "Chapter 1. Docker Introduction",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 1. Docker Introduction without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 1. Docker Introduction?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-computing-environment-and-dependency-conflict",
+        "title": "Computing Environment and Dependency Conflict",
+        "reason": "Proceed to the next container milestone: Computing Environment and Dependency Conflict."
+      }
+    ]
+  },
+  "docker-computing-environment-and-dependency-conflict": {
+    "title": "Computing Environment and Dependency Conflict",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-1-docker-introduction",
+        "title": "Chapter 1. Docker Introduction",
+        "key_concept": "Foundations from Chapter 1. Docker Introduction",
+        "bridge_summary": "Understanding Chapter 1. Docker Introduction is essential before moving to Computing Environment and Dependency Conflict."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Computing Environment and Dependency Conflict without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Computing Environment and Dependency Conflict?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-containers-vs-virtual-machines",
+        "title": "Containers vs. Virtual Machines",
+        "reason": "Proceed to the next container milestone: Containers vs. Virtual Machines."
+      }
+    ]
+  },
+  "docker-containers-vs-virtual-machines": {
+    "title": "Containers vs. Virtual Machines",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-computing-environment-and-dependency-conflict",
+        "title": "Computing Environment and Dependency Conflict",
+        "key_concept": "Foundations from Computing Environment and Dependency Conflict",
+        "bridge_summary": "Understanding Computing Environment and Dependency Conflict is essential before moving to Containers vs. Virtual Machines."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Assuming Docker containers provide hypervisor-grade kernel isolation; a kernel panic or privilege escalation in a container can compromise the host OS.",
+      "tradeoff_challenge": "Heavyweight VM isolation (Type-2 hypervisor) vs lightweight Linux cgroups/namespaces: How to design multi-tenant security architectures?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-what-is-docker",
+        "title": "What Is Docker?",
+        "reason": "Proceed to the next container milestone: What Is Docker?."
+      }
+    ]
+  },
+  "docker-what-is-docker": {
+    "title": "What Is Docker?",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-containers-vs-virtual-machines",
+        "title": "Containers vs. Virtual Machines",
+        "key_concept": "Foundations from Containers vs. Virtual Machines",
+        "bridge_summary": "Understanding Containers vs. Virtual Machines is essential before moving to What Is Docker?."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Treating containers as persistent stateful virtual machines; writes to container rootfs without volumes cause silent data loss upon container restart.",
+      "tradeoff_challenge": "Bare-metal / Virtual Machines vs Containerization: Balancing kernel isolation security boundaries against container startup speed and resource density."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-chapter-2-getting-started-with-docker",
+        "title": "Chapter 2. Getting Started with Docker",
+        "reason": "Proceed to the next container milestone: Chapter 2. Getting Started with Docker."
+      }
+    ]
+  },
+  "docker-chapter-2-getting-started-with-docker": {
+    "title": "Chapter 2. Getting Started with Docker",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-what-is-docker",
+        "title": "What Is Docker?",
+        "key_concept": "Foundations from What Is Docker?",
+        "bridge_summary": "Understanding What Is Docker? is essential before moving to Chapter 2. Getting Started with Docker."
+      },
+      {
+        "slug": "git-what-is-git",
+        "title": "What Is Git?",
+        "key_concept": "Version Control and Project Environment",
+        "bridge_summary": "Docker standardizes runtime environments while Git version-controls source code; understanding both forms the modern DevOps core."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 2. Getting Started with Docker without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 2. Getting Started with Docker?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-setting-up-docker-environment",
+        "title": "Setting Up Docker Environment",
+        "reason": "Proceed to the next container milestone: Setting Up Docker Environment."
+      }
+    ]
+  },
+  "docker-setting-up-docker-environment": {
+    "title": "Setting Up Docker Environment",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-2-getting-started-with-docker",
+        "title": "Chapter 2. Getting Started with Docker",
+        "key_concept": "Foundations from Chapter 2. Getting Started with Docker",
+        "bridge_summary": "Understanding Chapter 2. Getting Started with Docker is essential before moving to Setting Up Docker Environment."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Setting Up Docker Environment without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Setting Up Docker Environment?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-overview-of-docker-workflow",
+        "title": "Overview of Docker Workflow",
+        "reason": "Proceed to the next container milestone: Overview of Docker Workflow."
+      }
+    ]
+  },
+  "docker-overview-of-docker-workflow": {
+    "title": "Overview of Docker Workflow",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-setting-up-docker-environment",
+        "title": "Setting Up Docker Environment",
+        "key_concept": "Foundations from Setting Up Docker Environment",
+        "bridge_summary": "Understanding Setting Up Docker Environment is essential before moving to Overview of Docker Workflow."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Overview of Docker Workflow without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Overview of Docker Workflow?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-commands",
+        "title": "Docker Commands",
+        "reason": "Proceed to the next container milestone: Docker Commands."
+      }
+    ]
+  },
+  "docker-commands": {
+    "title": "Docker Commands",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-overview-of-docker-workflow",
+        "title": "Overview of Docker Workflow",
+        "key_concept": "Foundations from Overview of Docker Workflow",
+        "bridge_summary": "Understanding Overview of Docker Workflow is essential before moving to Docker Commands."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Docker Commands without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Docker Commands?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-chapter-3-docker-image-and-container",
+        "title": "Chapter 3. Docker Image and Container",
+        "reason": "Proceed to the next container milestone: Chapter 3. Docker Image and Container."
+      }
+    ]
+  },
+  "docker-chapter-3-docker-image-and-container": {
+    "title": "Chapter 3. Docker Image and Container",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-commands",
+        "title": "Docker Commands",
+        "key_concept": "Foundations from Docker Commands",
+        "bridge_summary": "Understanding Docker Commands is essential before moving to Chapter 3. Docker Image and Container."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 3. Docker Image and Container without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 3. Docker Image and Container?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-images-and-registries-docker-hub",
+        "title": "Docker Images and Registries (Docker Hub)",
+        "reason": "Proceed to the next container milestone: Docker Images and Registries (Docker Hub)."
+      }
+    ]
+  },
+  "docker-images-and-registries-docker-hub": {
+    "title": "Docker Images and Registries (Docker Hub)",
+    "series": "docker-mastery",
+    "difficulty": "beginner",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-3-docker-image-and-container",
+        "title": "Chapter 3. Docker Image and Container",
+        "key_concept": "Foundations from Chapter 3. Docker Image and Container",
+        "bridge_summary": "Understanding Chapter 3. Docker Image and Container is essential before moving to Docker Images and Registries (Docker Hub)."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Using the 'latest' image tag in production Dockerfiles; upstream breaking changes automatically pull into production builds, causing unreproducible deploys.",
+      "tradeoff_challenge": "Public Docker Hub registry vs private image registry (ECR/GCR) with automated vulnerability scanning and air-gapped cache."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-container-lifecycle",
+        "title": "Docker Container Lifecycle",
+        "reason": "Proceed to the next container milestone: Docker Container Lifecycle."
+      }
+    ]
+  },
+  "docker-container-lifecycle": {
+    "title": "Docker Container Lifecycle",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-images-and-registries-docker-hub",
+        "title": "Docker Images and Registries (Docker Hub)",
+        "key_concept": "Foundations from Docker Images and Registries (Docker Hub)",
+        "bridge_summary": "Understanding Docker Images and Registries (Docker Hub) is essential before moving to Docker Container Lifecycle."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Ignoring PID 1 init signal forwarding: apps running as PID 1 without tini fail to handle SIGTERM, causing 10-second SIGKILL delays and dirty DB connection disconnects.",
+      "tradeoff_challenge": "Ephemeral container restart policies (unless-stopped vs on-failure) vs Kubernetes pod lifecycle controllers."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-advanced-container-lifecycle-management",
+        "title": "Advanced Container Lifecycle Management",
+        "reason": "Proceed to the next container milestone: Advanced Container Lifecycle Management."
+      }
+    ]
+  },
+  "docker-advanced-container-lifecycle-management": {
+    "title": "Advanced Container Lifecycle Management",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-container-lifecycle",
+        "title": "Docker Container Lifecycle",
+        "key_concept": "Foundations from Docker Container Lifecycle",
+        "bridge_summary": "Understanding Docker Container Lifecycle is essential before moving to Advanced Container Lifecycle Management."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Advanced Container Lifecycle Management without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Advanced Container Lifecycle Management?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-commands-to-interact-with-inside-of-containers",
+        "title": "Docker Commands to Interact with Inside of Containers",
+        "reason": "Proceed to the next container milestone: Docker Commands to Interact with Inside of Containers."
+      }
+    ]
+  },
+  "docker-commands-to-interact-with-inside-of-containers": {
+    "title": "Docker Commands to Interact with Inside of Containers",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-advanced-container-lifecycle-management",
+        "title": "Advanced Container Lifecycle Management",
+        "key_concept": "Foundations from Advanced Container Lifecycle Management",
+        "bridge_summary": "Understanding Advanced Container Lifecycle Management is essential before moving to Docker Commands to Interact with Inside of Containers."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Docker Commands to Interact with Inside of Containers without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Docker Commands to Interact with Inside of Containers?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-chapter-4-docker-networking-and-storage",
+        "title": "Chapter 4. Docker Networking and Storage",
+        "reason": "Proceed to the next container milestone: Chapter 4. Docker Networking and Storage."
+      }
+    ]
+  },
+  "docker-chapter-4-docker-networking-and-storage": {
+    "title": "Chapter 4. Docker Networking and Storage",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-commands-to-interact-with-inside-of-containers",
+        "title": "Docker Commands to Interact with Inside of Containers",
+        "key_concept": "Foundations from Docker Commands to Interact with Inside of Containers",
+        "bridge_summary": "Understanding Docker Commands to Interact with Inside of Containers is essential before moving to Chapter 4. Docker Networking and Storage."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 4. Docker Networking and Storage without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 4. Docker Networking and Storage?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-networking",
+        "title": "Docker Networking",
+        "reason": "Proceed to the next container milestone: Docker Networking."
+      }
+    ]
+  },
+  "docker-networking": {
+    "title": "Docker Networking",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-4-docker-networking-and-storage",
+        "title": "Chapter 4. Docker Networking and Storage",
+        "key_concept": "Foundations from Chapter 4. Docker Networking and Storage",
+        "bridge_summary": "Understanding Chapter 4. Docker Networking and Storage is essential before moving to Docker Networking."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Exposing internal databases to host port 0.0.0.0 instead of relying on Docker internal bridge network DNS discovery, exposing unauthenticated database ports to public internet.",
+      "tradeoff_challenge": "Bridge networking vs Host networking: When does avoiding Linux network namespace overhead outweigh port conflict isolation?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-persistent-storage-with-docker-volumes",
+        "title": "Persistent Storage with Docker Volumes",
+        "reason": "Proceed to the next container milestone: Persistent Storage with Docker Volumes."
+      }
+    ]
+  },
+  "docker-persistent-storage-with-docker-volumes": {
+    "title": "Persistent Storage with Docker Volumes",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-networking",
+        "title": "Docker Networking",
+        "key_concept": "Foundations from Docker Networking",
+        "bridge_summary": "Understanding Docker Networking is essential before moving to Persistent Storage with Docker Volumes."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Mounting host directories into containers with inconsistent UID/GID permissions, causing root-owned files that the container non-root user cannot read or write.",
+      "tradeoff_challenge": "Docker Named Volumes (managed by daemon) vs Host Bind Mounts: How to optimize local development sync speed while ensuring production storage portability."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-chapter-5-building-and-sharing-docker-images",
+        "title": "Chapter 5. Building and Sharing Docker Images",
+        "reason": "Proceed to the next container milestone: Chapter 5. Building and Sharing Docker Images."
+      }
+    ]
+  },
+  "docker-chapter-5-building-and-sharing-docker-images": {
+    "title": "Chapter 5. Building and Sharing Docker Images",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-persistent-storage-with-docker-volumes",
+        "title": "Persistent Storage with Docker Volumes",
+        "key_concept": "Foundations from Persistent Storage with Docker Volumes",
+        "bridge_summary": "Understanding Persistent Storage with Docker Volumes is essential before moving to Chapter 5. Building and Sharing Docker Images."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 5. Building and Sharing Docker Images without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 5. Building and Sharing Docker Images?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-what-is-a-dockerfile",
+        "title": "What Is a Dockerfile?",
+        "reason": "Proceed to the next container milestone: What Is a Dockerfile?."
+      }
+    ]
+  },
+  "docker-what-is-a-dockerfile": {
+    "title": "What Is a Dockerfile?",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-5-building-and-sharing-docker-images",
+        "title": "Chapter 5. Building and Sharing Docker Images",
+        "key_concept": "Foundations from Chapter 5. Building and Sharing Docker Images",
+        "bridge_summary": "Understanding Chapter 5. Building and Sharing Docker Images is essential before moving to What Is a Dockerfile?."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Invalidating Docker build cache early: Placing 'COPY . .' before 'RUN pip install' forces slow dependency re-downloads on every single code change.",
+      "tradeoff_challenge": "Single-stage build vs Multi-stage build (builder + minimal runtime image): Cutting image size from 1.2 GB down to 80 MB."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-build-context-and-dockerignore-file",
+        "title": "Build Context and .dockerignore File",
+        "reason": "Proceed to the next container milestone: Build Context and .dockerignore File."
+      }
+    ]
+  },
+  "docker-build-context-and-dockerignore-file": {
+    "title": "Build Context and .dockerignore File",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-what-is-a-dockerfile",
+        "title": "What Is a Dockerfile?",
+        "key_concept": "Foundations from What Is a Dockerfile?",
+        "bridge_summary": "Understanding What Is a Dockerfile? is essential before moving to Build Context and .dockerignore File."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Omitting .dockerignore, sending gigabytes of .git histories, virtual environments, and local credentials into the Docker daemon build context.",
+      "tradeoff_challenge": "Lean build context vs build-time caching: How to structure CI pipelines to minimize Docker build context transfer latency."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-dockerfile-syntax",
+        "title": "Dockerfile Syntax",
+        "reason": "Proceed to the next container milestone: Dockerfile Syntax."
+      }
+    ]
+  },
+  "docker-dockerfile-syntax": {
+    "title": "Dockerfile Syntax",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-build-context-and-dockerignore-file",
+        "title": "Build Context and .dockerignore File",
+        "key_concept": "Foundations from Build Context and .dockerignore File",
+        "bridge_summary": "Understanding Build Context and .dockerignore File is essential before moving to Dockerfile Syntax."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Dockerfile Syntax without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Dockerfile Syntax?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-sharing-your-docker-images",
+        "title": "Sharing Your Docker Images",
+        "reason": "Proceed to the next container milestone: Sharing Your Docker Images."
+      }
+    ]
+  },
+  "docker-sharing-your-docker-images": {
+    "title": "Sharing Your Docker Images",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-dockerfile-syntax",
+        "title": "Dockerfile Syntax",
+        "key_concept": "Foundations from Dockerfile Syntax",
+        "bridge_summary": "Understanding Dockerfile Syntax is essential before moving to Sharing Your Docker Images."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Sharing Your Docker Images without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Sharing Your Docker Images?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-chapter-6-docker-compose-and-deployment-practice",
+        "title": "Chapter 6. Docker Compose and Deployment Practice",
+        "reason": "Proceed to the next container milestone: Chapter 6. Docker Compose and Deployment Practice."
+      }
+    ]
+  },
+  "docker-chapter-6-docker-compose-and-deployment-practice": {
+    "title": "Chapter 6. Docker Compose and Deployment Practice",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-sharing-your-docker-images",
+        "title": "Sharing Your Docker Images",
+        "key_concept": "Foundations from Sharing Your Docker Images",
+        "bridge_summary": "Understanding Sharing Your Docker Images is essential before moving to Chapter 6. Docker Compose and Deployment Practice."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Chapter 6. Docker Compose and Deployment Practice without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Chapter 6. Docker Compose and Deployment Practice?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-writing-a-docker-compose-file",
+        "title": "Writing a Docker Compose File",
+        "reason": "Proceed to the next container milestone: Writing a Docker Compose File."
+      }
+    ]
+  },
+  "docker-writing-a-docker-compose-file": {
+    "title": "Writing a Docker Compose File",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-chapter-6-docker-compose-and-deployment-practice",
+        "title": "Chapter 6. Docker Compose and Deployment Practice",
+        "key_concept": "Foundations from Chapter 6. Docker Compose and Deployment Practice",
+        "bridge_summary": "Understanding Chapter 6. Docker Compose and Deployment Practice is essential before moving to Writing a Docker Compose File."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Relying on 'depends_on' without healthchecks: 'depends_on' only waits for container start, not socket readiness, causing web apps to crash before Postgres finishes initialization.",
+      "tradeoff_challenge": "Docker Compose for local development & single-node deployments vs Kubernetes / Nomad for distributed multi-node orchestrations."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-compose-commands",
+        "title": "Docker Compose Commands",
+        "reason": "Proceed to the next container milestone: Docker Compose Commands."
+      }
+    ]
+  },
+  "docker-compose-commands": {
+    "title": "Docker Compose Commands",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-writing-a-docker-compose-file",
+        "title": "Writing a Docker Compose File",
+        "key_concept": "Foundations from Writing a Docker Compose File",
+        "bridge_summary": "Understanding Writing a Docker Compose File is essential before moving to Docker Compose Commands."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Docker Compose Commands without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Docker Compose Commands?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-web-app-development-with-docker-compose",
+        "title": "Web App Development with Docker Compose",
+        "reason": "Proceed to the next container milestone: Web App Development with Docker Compose."
+      }
+    ]
+  },
+  "docker-web-app-development-with-docker-compose": {
+    "title": "Web App Development with Docker Compose",
+    "series": "docker-mastery",
+    "difficulty": "intermediate",
+    "prerequisites": [
+      {
+        "slug": "docker-compose-commands",
+        "title": "Docker Compose Commands",
+        "key_concept": "Foundations from Docker Compose Commands",
+        "bridge_summary": "Understanding Docker Compose Commands is essential before moving to Web App Development with Docker Compose."
+      },
+      {
+        "slug": "web-http-rest",
+        "title": "Web Development Basics: HTTP and REST",
+        "key_concept": "HTTP Communication Across Services",
+        "bridge_summary": "Docker Compose networks communicate via HTTP and TCP ports; understanding REST architecture is key to multi-service configuration."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Web App Development with Docker Compose without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Web App Development with Docker Compose?"
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-production-deployment-with-docker-compose",
+        "title": "Production Deployment with Docker Compose",
+        "reason": "Proceed to the next container milestone: Production Deployment with Docker Compose."
+      }
+    ]
+  },
+  "docker-production-deployment-with-docker-compose": {
+    "title": "Production Deployment with Docker Compose",
+    "series": "docker-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "docker-web-app-development-with-docker-compose",
+        "title": "Web App Development with Docker Compose",
+        "key_concept": "Foundations from Web App Development with Docker Compose",
+        "bridge_summary": "Understanding Web App Development with Docker Compose is essential before moving to Production Deployment with Docker Compose."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "Hardcoding sensitive database passwords and JWT secrets in docker-compose.yml files instead of Docker secrets or environment variable files excluded from Git.",
+      "tradeoff_challenge": "Blue-Green Compose zero-downtime deployment vs rolling deployment overhead in production environments."
+    },
+    "next_milestones": [
+      {
+        "slug": "docker-advancing-your-docker-skills",
+        "title": "Advancing Your Docker Skills",
+        "reason": "Proceed to the next container milestone: Advancing Your Docker Skills."
+      }
+    ]
+  },
+  "docker-advancing-your-docker-skills": {
+    "title": "Advancing Your Docker Skills",
+    "series": "docker-mastery",
+    "difficulty": "advanced",
+    "prerequisites": [
+      {
+        "slug": "docker-production-deployment-with-docker-compose",
+        "title": "Production Deployment with Docker Compose",
+        "key_concept": "Foundations from Production Deployment with Docker Compose",
+        "bridge_summary": "Understanding Production Deployment with Docker Compose is essential before moving to Advancing Your Docker Skills."
+      }
+    ],
+    "intermediate_insights": {
+      "production_pitfall": "In production Docker workflows, misconfiguring Advancing Your Docker Skills without proper resource limits or non-root user isolation can lead to host resource starvation.",
+      "tradeoff_challenge": "Developer velocity vs production security: How do engineering teams balance rapid local Docker workflows with strict container hardening in Advancing Your Docker Skills?"
+    },
+    "next_milestones": []
   }
 }

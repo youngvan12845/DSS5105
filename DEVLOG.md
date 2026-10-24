@@ -6,6 +6,30 @@ why, how it was verified, and what is still open. Branched from `main` at
 
 ---
 
+## 2026-09-25 — Per-person database access, and .gitignore hardening
+
+**Why.** Handing teammates the master Supabase connection string gives every
+one of them the ability to drop tables and read every account row, with no way
+to revoke one person without changing everyone's credentials.
+
+**Changed.** Four login roles (`dss_frank`, `dss_yuqian`, `dss_ruihan`,
+`dss_shiyu`) with read/write on all tables and sequences, plus default
+privileges so future tables are covered. No schema rights, so migrations stay
+with the owner account — which is the rule the team agreed anyway.
+`.gitignore` now covers `.env.*` (backups, renamed copies) while keeping
+`.env.example` tracked; the public repo previously only ignored exactly `.env`.
+
+**Verified.** Connected through the Session pooler as `dss_frank`: reads 22
+articles and 2 users, writes succeed, and `CREATE TABLE`, `DROP TABLE`,
+`ALTER TABLE` and `CREATE ROLE` are all refused. Created `.env.backup` and
+`.env.txt` in the repo and confirmed git ignores both.
+
+**Also found.** Row-level security is enabled on the Django tables, so any role
+without `BYPASSRLS` reads zero rows — that is why the new roles carry it.
+Access control lives in Django, not in the database.
+
+---
+
 ## 2026-09-18 — Connected to Supabase
 
 **Result.** The site now runs on a real Supabase project (region
