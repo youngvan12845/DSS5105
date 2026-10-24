@@ -568,7 +568,7 @@
         </div>
         <div class="mt-4 pt-3 border-t border-slate-200/60 text-center">
             <a href="/blog/series/?track={{ page.series_slug }}" class="text-xs font-semibold text-pink-600 hover:text-pink-700 transition">
-                📑 View Full Course Syllabus (查看完整課綱) →
+                📑 View Full Course Syllabus →
             </a>
         </div>
     </div>
@@ -917,7 +917,7 @@
                     const textSpan = document.getElementById('like-text');
                     if (countSpan) countSpan.textContent = data.likes;
                     if (headerCountSpan) headerCountSpan.textContent = data.likes;
-                    if (textSpan) textSpan.textContent = '已點讚！';
+                    if (textSpan) textSpan.textContent = 'Liked!';
                     likeBtn.classList.add('bg-rose-50', 'border-rose-300', 'text-rose-600');
                 }
             })

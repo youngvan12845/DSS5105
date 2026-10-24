@@ -134,16 +134,16 @@ class Comment(models.Model):
     """评论模型"""
     article = models.ForeignKey('ArticlePage', on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField(verbose_name="评论内容")
+    content = models.TextField(verbose_name="Comment content")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField(default=True, verbose_name="是否显示")
+    is_active = models.BooleanField(default=True, verbose_name="Is visible")
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
     
     class Meta:
         ordering = ['-created_at']
-        verbose_name = "评论"
-        verbose_name_plural = "评论"
+        verbose_name = "Comment"
+        verbose_name_plural = "Comments"
     
     def __str__(self):
         return f'{self.author.username} - {self.content[:50]}'
@@ -164,18 +164,18 @@ class ArticlePage(Page):
     
     tags = ClusterTaggableManager(through='ArticleTag', blank=True)
     
-    # 專屬系列學習與章節欄位（取代以 tag 表示 chapter）
-    series_slug = models.CharField(max_length=50, blank=True, default='', db_index=True, verbose_name="系列代稱")
-    series_title = models.CharField(max_length=120, blank=True, default='', verbose_name="系列名稱")
-    chapter_number = models.PositiveIntegerField(default=0, db_index=True, verbose_name="章節編號")
-    chapter_title = models.CharField(max_length=150, blank=True, default='', verbose_name="章節名稱")
-    lesson_number = models.PositiveIntegerField(default=0, verbose_name="課時編號")
+    # Series curriculum & chapter fields
+    series_slug = models.CharField(max_length=50, blank=True, default='', db_index=True, verbose_name="Series Slug")
+    series_title = models.CharField(max_length=120, blank=True, default='', verbose_name="Series Title")
+    chapter_number = models.PositiveIntegerField(default=0, db_index=True, verbose_name="Chapter Number")
+    chapter_title = models.CharField(max_length=150, blank=True, default='', verbose_name="Chapter Title")
+    lesson_number = models.PositiveIntegerField(default=0, verbose_name="Lesson Number")
 
     views = models.PositiveIntegerField(default=0, editable=False)
-    likes = models.PositiveIntegerField(default=0, verbose_name="点赞数")
+    likes = models.PositiveIntegerField(default=0, verbose_name="Likes count")
 
-    is_free = models.BooleanField(default=True, verbose_name="是否为免费页面")
-    required_points = models.PositiveIntegerField(default=0, verbose_name="所需积分")
+    is_free = models.BooleanField(default=True, verbose_name="Is free page")
+    required_points = models.PositiveIntegerField(default=0, verbose_name="Required points")
     
     @property
     def is_series_article(self):

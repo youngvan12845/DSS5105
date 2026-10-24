@@ -19,7 +19,7 @@ class Profile(models.Model):
     is_subscribed = models.BooleanField(default=False)  # 是否订阅
     subscription_date = models.DateField(null=True, blank=True)  # 订阅日期 
     subscription_end_date = models.DateField(null=True, blank=True)  # 订阅结束日期
-    points = models.PositiveIntegerField(default=0, verbose_name="积分")  # 用户积分
+    points = models.PositiveIntegerField(default=0, verbose_name="Points")
     
     def __str__(self):
         return str(self.user)
@@ -124,8 +124,8 @@ class BrowsingHistory(models.Model):
     class Meta:
         unique_together = ('user', 'article_id')
         ordering = ['-viewed_at']
-        verbose_name = '浏览历史'
-        verbose_name_plural = '浏览历史'
+        verbose_name = 'Browsing History'
+        verbose_name_plural = 'Browsing History'
 
     def __str__(self):
         return f"{self.user.username} - {self.article_title}"

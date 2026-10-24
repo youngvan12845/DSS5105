@@ -29,7 +29,7 @@
 {% block content %}
 <div class="max-w-[1400px] mx-auto px-4 md:px-6 pt-28 pb-20">
 
-    <!-- 頂部切換提示 -->
+    <!-- Top Navigation Prompt -->
     <div class="mb-6 flex items-center justify-between bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm">
         <div class="flex items-center gap-3">
             <span class="flex h-3 w-3 relative">
@@ -37,15 +37,15 @@
                 <span class="relative inline-flex rounded-full h-3 w-3 bg-pink-500"></span>
             </span>
             <span class="text-sm font-medium text-slate-700">
-                You are viewing the <strong class="text-pink-600 font-semibold">Series Learning Tracks (系列學習專區)</strong>.
+                You are viewing the <strong class="text-pink-600 font-semibold">Series Learning Tracks</strong>.
             </span>
         </div>
         <a href="/blog/articles/" class="text-xs md:text-sm font-medium text-slate-500 hover:text-pink-600 transition flex items-center gap-1.5">
-            Switch to Engineering Blog (部落格) →
+            Switch to Engineering Blog →
         </a>
     </div>
 
-    <!-- 英雄區 (Hero Section) -->
+    <!-- Hero Section -->
     <div class="text-center mb-12 mt-6">
         <p class="text-pink-500 font-semibold mb-3 tracking-wide uppercase text-sm">
             Curated Engineering Tracks · Step-by-Step Curriculum · 102 Lessons
@@ -57,19 +57,19 @@
             Systematic engineering tracks covering Git & GitHub version control workflows and Docker container architecture. Follow the chapter progression to master core developer tools.
         </p>
 
-        <!-- 系列專案快速切換按鈕 -->
+        <!-- Track Switcher -->
         <div class="flex flex-wrap justify-center gap-3 mb-8">
             <a href="?{% if query %}query={{ query }}&{% endif %}" 
                class="track-pill px-5 py-2.5 rounded-full text-sm font-semibold transition {% if not active_track %}bg-pink-500 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
-                🚀 All Tracks (全部 102 篇)
+                🚀 All Tracks (102 Lessons)
             </a>
             <a href="?track=git{% if query %}&query={{ query }}{% endif %}" 
                class="track-pill px-5 py-2.5 rounded-full text-sm font-semibold transition {% if active_track == 'git' %}bg-pink-500 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
-                🐙 Git & GitHub Master Course (75 篇 · 7 章)
+                🐙 Git & GitHub Master Course (75 Lessons · 7 Chapters)
             </a>
             <a href="?track=docker{% if query %}&query={{ query }}{% endif %}" 
                class="track-pill px-5 py-2.5 rounded-full text-sm font-semibold transition {% if active_track == 'docker' %}bg-sky-600 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
-                🐳 Docker Basics Course (27 篇 · 6 章)
+                🐳 Docker Basics Course (27 Lessons · 6 Chapters)
             </a>
         </div>
 
@@ -131,7 +131,7 @@
                         {% if course.first_lesson %}
                         <a href="{{ course.first_lesson.url }}" 
                            class="px-6 py-3 rounded-full text-sm font-semibold text-white shadow-md transition flex items-center gap-2 {% if course.slug == 'git' %}bg-pink-500 hover:bg-pink-600{% else %}bg-sky-600 hover:bg-sky-700{% endif %}">
-                            <span>▶</span> Start Course (從第 1 課開始)
+                            <span>▶</span> Start Course (Lesson 1)
                         </a>
                         {% endif %}
                     </div>
