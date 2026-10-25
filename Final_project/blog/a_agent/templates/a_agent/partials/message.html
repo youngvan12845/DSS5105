@@ -14,6 +14,11 @@
     <div class="flex items-start gap-3">
         <div class="agent-avatar agent-avatar-bot shrink-0">AI</div>
         <div class="max-w-[78%] space-y-2">
+            {% for trace in message.tool_trace %}
+            {% if trace.tool == 'response_mode' and trace.mode == 'fallback' %}
+            <p class="text-xs text-amber-800" role="note">Search-based reply · AI did not generate this response.</p>
+            {% endif %}
+            {% endfor %}
             <div class="agent-bubble-assistant text-sm">{{ message.content|agent_markdown }}</div>
             {% if message.citations %}
             <div class="agent-sources">
@@ -22,7 +27,7 @@
                     {% for cite in message.citations %}
                     <li class="text-sm">
                         {% if cite.url %}
-                        <a href="{{ cite.url }}" class="text-pink-600 hover:text-pink-700 hover:underline" target="_blank" rel="noopener">{{ cite.title }}</a>
+                        <a href="{{ cite.url|same_site_url }}" class="text-pink-600 hover:text-pink-700 hover:underline">{{ cite.title }}</a>
                         {% else %}
                         <span class="text-slate-600">{{ cite.title }}</span>
                         {% endif %}
@@ -34,7 +39,7 @@
             {% for trace in message.tool_trace %}
             {% if trace.tool == 'proactive_continue_reading' %}
             <div class="agent-continue-cta mt-3 flex flex-wrap gap-2">
-                <a href="{{ trace.article_url }}" class="agent-continue-btn">Continue reading</a>
+                <a href="{{ trace.article_url|same_site_url }}" class="agent-continue-btn">Continue reading</a>
                 <button type="button" class="agent-suggestion-chip" data-prompt="What should I read next?">Recommend next</button>
             </div>
             {% endif %}

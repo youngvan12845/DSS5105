@@ -255,6 +255,8 @@ class ArticlePage(Page):
     def _record_browsing_history(self, request):
         if request.user.is_authenticated:
             from a_users.models import BrowsingHistory
+            if request.get_host().startswith('testserver'):
+                return
             page_url = self.get_url(request) or self.url
             if page_url:
                 article_url = request.build_absolute_uri(page_url)

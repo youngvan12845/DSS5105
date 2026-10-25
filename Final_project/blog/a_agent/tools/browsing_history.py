@@ -1,10 +1,25 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from urllib.parse import urlparse
 
 from django.contrib.auth.models import AnonymousUser, User
 
 from a_users.models import BrowsingHistory
+
+
+def article_link(url: str) -> str:
+    """Keep article links on the site the user is browsing.
+
+    Django's test client records absolute URLs on the host ``testserver``.
+    Those links do not resolve in a browser, so only the path is used.
+    """
+    if not url:
+        return ''
+    parsed = urlparse(url)
+    if parsed.hostname == 'testserver':
+        return parsed.path or '/'
+    return url
 
 
 @dataclass
@@ -28,7 +43,7 @@ def get_browsing_history(
         HistoryItem(
             article_id=row.article_id,
             article_title=row.article_title,
-            article_url=row.article_url,
+            article_url=article_link(row.article_url),
             viewed_at=row.viewed_at.isoformat(),
         )
         for row in rows

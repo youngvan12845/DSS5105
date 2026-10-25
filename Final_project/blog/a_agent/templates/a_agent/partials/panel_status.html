@@ -1,0 +1,7 @@
+<div id="article-assistant-status" class="article-assistant-status" {% if status_oob %}hx-swap-oob="outerHTML"{% endif %}>
+    <span class="assistant-access-badge {% if panel_status.can_read_full %}has-access{% endif %}">{{ panel_status.access_label }}</span>
+    <p class="assistant-membership-status">{{ panel_status.membership_label }}{% if panel_status.expires %} · End date: {{ panel_status.expires|date:"Y-m-d" }}{% endif %}</p>
+    {% if panel_status.access_known and not panel_status.can_read_full %}<p>Preview only. Paid article text is not included in answers.</p>{% endif %}
+    {% if panel_status.show_subscription %}<a href="{% url 'a_order:create_subscription_order' %}" class="assistant-membership-link">{{ panel_status.subscription_cta }}</a>{% endif %}
+    <p class="assistant-service-label" title="{{ panel_status.service_detail }}">{{ panel_status.service_label }} · Uses content you can access</p>
+</div>

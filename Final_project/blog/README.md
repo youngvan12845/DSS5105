@@ -9,8 +9,31 @@ Django/Wagtail blog with an HTMX-based **Reading Assistant** (`/agent/`) for gro
 ## Requirements
 
 - Python 3.10+
-- PostgreSQL (local)
 - **[Ollama](https://ollama.com/download) (recommended)** — local LLM + embeddings for full AI Q&A
+- **Database**: team **Supabase** (recommended — see below) **or** local PostgreSQL
+
+## Team shared Supabase (recommended)
+
+Everyone uses the same articles and images. **Credentials are shared in the team group chat only — never commit `.env`.**
+
+1. `git pull origin main`
+2. `cp .env.example .env`
+3. Paste from group chat into `.env`:
+
+```env
+DATABASE_URL=...
+SUPABASE_S3_ENDPOINT=...
+SUPABASE_S3_REGION=...
+SUPABASE_S3_ACCESS_KEY_ID=...
+SUPABASE_S3_SECRET_ACCESS_KEY=...
+SUPABASE_STORAGE_BUCKET=media
+```
+
+4. Keep `EMAIL_*`, `AGENT_LLM_PROVIDER=ollama`, etc. as before
+5. `pip install -r requirements.txt` → `./scripts/run_local.sh`
+6. Register at `/accounts/signup/` or use a shared test account from chat
+
+Full guide: [SUPABASE.md](./SUPABASE.md). To go back to local-only, comment out the Supabase lines and use `POSTGRES_*`.
 
 ## Ollama setup — required for full AI Q&A
 
@@ -85,11 +108,14 @@ See [`.env.example`](.env.example). Important keys:
 
 | Variable | Purpose |
 |----------|---------|
-| `POSTGRES_*` | Database connection |
-| `AGENT_LLM_PROVIDER` | `ollama` (default) or `openai` |
-| `OLLAMA_MODEL` | Chat/vision model, e.g. `qwen2.5vl:7b` |
+| `DATABASE_URL` | **Team Supabase** (overrides `POSTGRES_*` when set) — get from group chat |
+| `SUPABASE_S3_*` | Shared image storage — get from group chat |
+| `POSTGRES_*` | Local database only (when `DATABASE_URL` is unset) |
+| `AGENT_LLM_PROVIDER` | `ollama` (default), `openai`, or `cloudflare` |
+| `OLLAMA_MODEL` | Chat/vision model, e.g. `qwen2.5:7b` |
 | `OLLAMA_EMBED_MODEL` | Embeddings, e.g. `nomic-embed-text` |
-| `OPENAI_API_KEY` | Only if using OpenAI instead of Ollama |
+| `OPENAI_API_KEY` | Only if using OpenAI |
+| `CLOUDFLARE_API_TOKEN` | Only if using Cloudflare Workers AI |
 
 After publishing new articles, the search index rebuilds automatically. For a full corpus refresh:
 
@@ -101,10 +127,12 @@ python manage.py build_article_index --embed
 
 - Keyword / chunk / vector retrieval with citations
 - Article-scoped Q&A panel on article pages
+- **Learning Path Navigator** — readiness panel, prerequisite graph, concept bridges
 - Browsing-history recommendations + session continue-reading nudge
 - Reading paths from `a_agent/data/reading_paths.json`
 - Confirm-before-action: reading list add/remove, comment draft
 - Paywall-aware retrieval (respects subscription + point-unlocked articles)
+- Article **likes** on blog listing and article pages
 
 ## Evaluation
 

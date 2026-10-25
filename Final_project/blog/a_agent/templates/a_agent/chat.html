@@ -79,14 +79,14 @@
                 {% if continue_reading %}
                 <div class="pt-4 border-t border-slate-100">
                     <h3 class="!text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2">Continue reading</h3>
-                    <a href="{{ continue_reading.article_url }}" class="block text-sm text-slate-800 hover:text-pink-600 leading-snug font-medium">
+                    <a href="{{ continue_reading.article_url|same_site_url }}" class="block text-sm text-slate-800 hover:text-pink-600 leading-snug font-medium">
                         {{ continue_reading.article_title }}
                     </a>
                     {% if recent_history|length > 1 %}
                     <ul class="mt-2 space-y-1">
                         {% for item in recent_history|slice:"1:3" %}
                         <li>
-                            <a href="{{ item.article_url }}" class="text-xs text-slate-500 hover:text-pink-600 truncate block">{{ item.article_title|truncatechars:32 }}</a>
+                            <a href="{{ item.article_url|same_site_url }}" class="text-xs text-slate-500 hover:text-pink-600 truncate block">{{ item.article_title|truncatechars:32 }}</a>
                         </li>
                         {% endfor %}
                     </ul>
