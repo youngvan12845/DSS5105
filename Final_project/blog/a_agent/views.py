@@ -14,9 +14,21 @@ from .tools.reading_list import (
     get_reading_list,
 )
 from .services.proactive import ensure_session_continue_nudge
-from .services.llm import get_llm_info
+from .services.learning_analysis import (
+    BRIDGE_UNAVAILABLE,
+    allowed_source,
+    article_version,
+    bridge_cache_key,
+    cached_bridge_summary,
+    display_analysis,
+    explain_concept,
+    save_bridge_summary,
+)
+from .services.article_text import html_to_text
+from .services.llm import generate_answer, get_llm_info
 from .services.panel_status import build_panel_status, describe_readiness
 from .services.orchestrator import handle_user_message
+from .tools.access import can_user_read_full
 from .tools.article_scope import get_article_scope
 from .tools.browsing_history import get_browsing_history
 from .services.navigator import (
@@ -25,6 +37,45 @@ from .services.navigator import (
     get_prerequisites_graph,
     mark_prerequisite_mastered,
 )
+
+
+def _described_readiness(request, article):
+    session_mastered = request.session.get('mastered_prereqs', [])
+    readiness = calculate_article_readiness(
+        request.user,
+        article.slug,
+        session_mastered=session_mastered,
+    )
+    live_titles = dict(ArticlePage.objects.live().values_list('slug', 'title'))
+    analysis, matches = display_analysis(article, live_titles=live_titles)
+    described = describe_readiness(readiness, article.slug, analysis=analysis)
+    described['concept_matches'] = matches
+    return described, analysis, matches
+
+
+def _ai_concept_bridge(request, prereq_slug: str, concept: str) -> dict:
+    article = ArticlePage.objects.live().filter(slug=prereq_slug).first()
+    if article is None:
+        return {'slug': '', 'bridge_summary': BRIDGE_UNAVAILABLE, 'show_link': False}
+    can_read, _reason = can_user_read_full(request.user, article, request=request)
+    source, tier = allowed_source(
+        article.title or '',
+        article.intro or '',
+        html_to_text(str(article.body or '')),
+        can_read_full=can_read,
+    )
+    key = bridge_cache_key(article.slug, article_version(article), concept, tier)
+    summary = cached_bridge_summary(key)
+    if not summary:
+        summary = explain_concept(concept, source, generate=generate_answer)
+        if summary:
+            save_bridge_summary(key, summary, tier)
+    return {
+        'slug': article.slug,
+        'title': article.title,
+        'bridge_summary': summary or BRIDGE_UNAVAILABLE,
+        'show_link': True,
+    }
 
 
 def _parse_article_id(value) -> int | None:
@@ -264,12 +315,7 @@ def article_panel_view(request: HttpRequest, article_id: int) -> HttpResponse:
     selected_model = _session_model(session)
     chat_messages = session.messages.all()[:20]
     article_scope = get_article_scope(article_id, request.user, request=request)
-    session_mastered = request.session.get('mastered_prereqs', [])
-    readiness = calculate_article_readiness(
-        request.user,
-        article.slug,
-        session_mastered=session_mastered
-    )
+    readiness, _analysis, _matches = _described_readiness(request, article)
     llm_info = get_llm_info(selected_model)
     panel_status = build_panel_status(request.user, article_scope, llm_info)
     return render(
@@ -284,13 +330,20 @@ def article_panel_view(request: HttpRequest, article_id: int) -> HttpResponse:
             'panel_status': panel_status,
             'model_options': OLLAMA_MODEL_OPTIONS,
             'selected_model': selected_model,
-            'readiness': describe_readiness(readiness, article.slug),
+            'readiness': readiness,
         },
     )
 
 
 def concept_bridge_view(request: HttpRequest, prereq_slug: str) -> HttpResponse:
-    bridge = get_concept_bridge(prereq_slug)
+    concept = request.GET.get('concept', '').strip()
+    if concept:
+        bridge = _ai_concept_bridge(request, prereq_slug, concept)
+    else:
+        bridge = get_concept_bridge(prereq_slug)
+        if bridge:
+            bridge = dict(bridge)
+            bridge['show_link'] = True
     if not bridge:
         return HttpResponse(
             f"<div class='mt-2 p-2 rounded bg-rose-50 border border-rose-200 text-rose-700 text-[11px]'>No concept bridge found for '{prereq_slug}'.</div>"
@@ -305,26 +358,26 @@ def master_prerequisite_view(request: HttpRequest) -> HttpResponse:
     mark_all = request.POST.get('mark_all') == 'true'
 
     article = get_object_or_404(ArticlePage.objects.live(), slug=article_slug)
+    _readiness, analysis, matches = _described_readiness(request, article)
 
     if mark_all:
-        graph = get_prerequisites_graph()
-        meta = graph.get(article_slug, {})
-        for p in meta.get('prerequisites', []):
-            mark_prerequisite_mastered(request.session, p['slug'])
+        if analysis and analysis.get('status') == 'ready':
+            for item in matches:
+                mark_prerequisite_mastered(request.session, item['slug'])
+        else:
+            graph = get_prerequisites_graph()
+            meta = graph.get(article_slug, {})
+            for p in meta.get('prerequisites', []):
+                mark_prerequisite_mastered(request.session, p['slug'])
     elif prereq_slug:
         mark_prerequisite_mastered(request.session, prereq_slug)
 
-    session_mastered = request.session.get('mastered_prereqs', [])
-    readiness = calculate_article_readiness(
-        request.user,
-        article.slug,
-        session_mastered=session_mastered
-    )
+    readiness, _analysis, _matches = _described_readiness(request, article)
     return render(
         request,
         'a_agent/partials/readiness_panel.html',
         {
-            'readiness': describe_readiness(readiness, article.slug),
+            'readiness': readiness,
             'article': article,
         }
     )

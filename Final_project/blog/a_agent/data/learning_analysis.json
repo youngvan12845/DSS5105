@@ -1,0 +1,3747 @@
+{
+  "articles": {
+    "rag": {
+      "version": "feda03a81c9d0feb",
+      "status": "unavailable"
+    },
+    "what-is-rag": {
+      "version": "5a8f48f426fa77b3",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Retrieval-Augmented Generation",
+        "Large Language Models",
+        "Vector Embeddings",
+        "Cosine Similarity",
+        "BM25 Keyword Matching",
+        "Hybrid Reranking",
+        "Context Relevance",
+        "Groundedness / Faithfulness"
+      ],
+      "prerequisite_concepts": [
+        "Large Language Models",
+        "Vector Embeddings",
+        "Retrieval Methods"
+      ],
+      "matches": []
+    },
+    "gradient-descent-intuition": {
+      "version": "fe01a51cb16fcb27",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "gradient descent updates parameters",
+        "parameter update rule"
+      ],
+      "prerequisite_concepts": [
+        "linear regression in practice",
+        "machine learning overview: supervised vs unsupervised"
+      ],
+      "matches": [
+        {
+          "concept": "linear regression in practice",
+          "slug": "linear-regression-practice",
+          "title": "Linear Regression in Practice"
+        },
+        {
+          "concept": "machine learning overview: supervised vs unsupervised",
+          "slug": "ml-supervised-unsupervised",
+          "title": "Machine Learning Overview: Supervised vs Unsupervised"
+        }
+      ]
+    },
+    "linear-regression-practice": {
+      "version": "9533144b70907acf",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Linear relationship between features and targets",
+        "Mean Squared Error (MSE)",
+        "R² Score (Coefficient of Determination)"
+      ],
+      "prerequisite_concepts": [
+        "Python Basics: Variables and Data Types",
+        "Python Functions and Modules",
+        "Machine Learning Overview: Supervised vs Unsupervised"
+      ],
+      "matches": [
+        {
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
+        },
+        {
+          "concept": "Machine Learning Overview: Supervised vs Unsupervised",
+          "slug": "ml-supervised-unsupervised",
+          "title": "Machine Learning Overview: Supervised vs Unsupervised"
+        }
+      ]
+    },
+    "python-basics-variables": {
+      "version": "ce24495063f5edd6",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "data types",
+        "dynamic typing",
+        "memory model"
+      ],
+      "prerequisite_concepts": [
+        "integers",
+        "floating-point numbers",
+        "strings",
+        "lists",
+        "tuples",
+        "dictionaries"
+      ],
+      "matches": []
+    },
+    "python-functions-modules": {
+      "version": "f9211bc9c24c7626",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Defining Reusable Functions",
+        "Function Parameters and Return Values",
+        "Scope Rules (LEGB)",
+        "Modules and Packages"
+      ],
+      "prerequisite_concepts": [
+        "Python Basics: Variables and Data Types",
+        "What Is Git?"
+      ],
+      "matches": [
+        {
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        }
+      ]
+    },
+    "ml-supervised-unsupervised": {
+      "version": "ca357c8c1fee3bae",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Supervised learning",
+        "Unsupervised learning",
+        "labeled data",
+        "unlabeled data",
+        "classification",
+        "regression",
+        "clustering",
+        "dimensionality reduction"
+      ],
+      "prerequisite_concepts": [
+        "Python Basics: Variables and Data Types",
+        "Linear Regression in Practice",
+        "Gradient Descent Intuition"
+      ],
+      "matches": [
+        {
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "Linear Regression in Practice",
+          "slug": "linear-regression-practice",
+          "title": "Linear Regression in Practice"
+        },
+        {
+          "concept": "Gradient Descent Intuition",
+          "slug": "gradient-descent-intuition",
+          "title": "Gradient Descent Intuition"
+        }
+      ]
+    },
+    "web-http-rest": {
+      "version": "539cb3f5ed9dc72d",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "RESTful API design"
+      ],
+      "prerequisite_concepts": [
+        "Variables and data types",
+        "Git & GitHub overview"
+      ],
+      "matches": [
+        {
+          "concept": "Variables and data types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "Git & GitHub overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        }
+      ]
+    },
+    "django-project-structure": {
+      "version": "2754df8aae2ddc2d",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "MVT (Model-View-Template) Pattern"
+      ],
+      "prerequisite_concepts": [
+        "Python Web Development",
+        "HTTP and REST"
+      ],
+      "matches": [
+        {
+          "concept": "Python Web Development",
+          "slug": "path-python-web",
+          "title": "Reading Path: Python Web Development"
+        },
+        {
+          "concept": "HTTP and REST",
+          "slug": "web-http-rest",
+          "title": "Web Development Basics: HTTP and REST"
+        }
+      ]
+    },
+    "wagtail-quickstart": {
+      "version": "890923839f6ed4e1",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Wagtail builds on Django",
+        "Hierarchical Page Tree",
+        "Custom Page Models and Panels"
+      ],
+      "prerequisite_concepts": [
+        "Python Basics: Variables and Data Types",
+        "Python Functions and Modules",
+        "Django Project Structure Explained"
+      ],
+      "matches": [
+        {
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
+        },
+        {
+          "concept": "Django Project Structure Explained",
+          "slug": "django-project-structure",
+          "title": "Django Project Structure Explained"
+        }
+      ]
+    },
+    "agent-tool-design": {
+      "version": "d1a3f3f77db94ca9",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Single Responsibility Principle (SRP)",
+        "Explicit Schema and Types",
+        "Idempotency and Side-Effect Safety",
+        "Auditing and Tracing"
+      ],
+      "prerequisite_concepts": [
+        "Python Functions and Modules",
+        "Machine Learning Overview: Supervised vs Unsupervised"
+      ],
+      "matches": [
+        {
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
+        },
+        {
+          "concept": "Machine Learning Overview: Supervised vs Unsupervised",
+          "slug": "ml-supervised-unsupervised",
+          "title": "Machine Learning Overview: Supervised vs Unsupervised"
+        }
+      ]
+    },
+    "path-ml-getting-started": {
+      "version": "1880cbc9907ebcf2",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "ML overview",
+        "gradient descent intuition",
+        "linear regression in practice"
+      ],
+      "prerequisite_concepts": [
+        "Machine Learning Overview: Supervised vs Unsupervised",
+        "Gradient Descent Intuition",
+        "Linear Regression in Practice"
+      ],
+      "matches": [
+        {
+          "concept": "Machine Learning Overview: Supervised vs Unsupervised",
+          "slug": "ml-supervised-unsupervised",
+          "title": "Machine Learning Overview: Supervised vs Unsupervised"
+        },
+        {
+          "concept": "Gradient Descent Intuition",
+          "slug": "gradient-descent-intuition",
+          "title": "Gradient Descent Intuition"
+        },
+        {
+          "concept": "Linear Regression in Practice",
+          "slug": "linear-regression-practice",
+          "title": "Linear Regression in Practice"
+        }
+      ]
+    },
+    "path-python-web": {
+      "version": "a3c7bd591f44ed0a",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Core Python Syntax",
+        "Django Project Structure"
+      ],
+      "prerequisite_concepts": [
+        "Python Basics: Variables and Data Types",
+        "Python Functions and Modules",
+        "Web Development Basics: HTTP and REST"
+      ],
+      "matches": [
+        {
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
+        },
+        {
+          "concept": "Web Development Basics: HTTP and REST",
+          "slug": "web-http-rest",
+          "title": "Web Development Basics: HTTP and REST"
+        }
+      ]
+    },
+    "blog1": {
+      "version": "5864fac91b5b2b7f",
+      "status": "unavailable"
+    },
+    "i-built-a-version-bump-tool-in-rust-that-is-1": {
+      "version": "dfb5dd45dfec0290",
+      "status": "ready",
+      "difficulty": "advanced",
+      "article_concepts": [
+        "version bumping",
+        "Rust",
+        "bump2version"
+      ],
+      "prerequisite_concepts": [
+        "version control",
+        "regex",
+        "git",
+        "CLI tools"
+      ],
+      "matches": [
+        {
+          "concept": "version control",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        },
+        {
+          "concept": "git",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        }
+      ]
+    },
+    "i-tried-to-beat-peter-norvig-and-accidentally": {
+      "version": "90beb5d3bf2138c9",
+      "status": "ready",
+      "difficulty": "advanced",
+      "article_concepts": [
+        "coding challenge",
+        "Peter Norvig",
+        "Advent of Code 2022, Day 5 - Supply Stacks"
+      ],
+      "prerequisite_concepts": [
+        "Python Basics: Variables and Data Types",
+        "Python Functions and Modules",
+        "Machine Learning Overview: Supervised vs Unsupervised"
+      ],
+      "matches": [
+        {
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
+        },
+        {
+          "concept": "Machine Learning Overview: Supervised vs Unsupervised",
+          "slug": "ml-supervised-unsupervised",
+          "title": "Machine Learning Overview: Supervised vs Unsupervised"
+        }
+      ]
+    },
+    "vibe-coding-isnt-the-problem-calling-it-engin": {
+      "version": "a25a1403f7169894",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "vibe coding",
+        "engineering"
+      ],
+      "prerequisite_concepts": [
+        "AI-assisted coding",
+        "software engineering"
+      ],
+      "matches": []
+    },
+    "a-4-gb-laptop-gpu-beats-a-12-core-cpu-by-43x-": {
+      "version": "1c244593e32ad684",
+      "status": "ready",
+      "difficulty": "advanced",
+      "article_concepts": [
+        "llama.cpp"
+      ],
+      "prerequisite_concepts": [
+        "laptops and their components",
+        "CPU and GPU architecture",
+        "llama.cpp",
+        "model serving"
+      ],
+      "matches": []
+    },
+    "ai-is-already-better-at-coding-than-most-soft": {
+      "version": "e8ff2de4e862bedb",
+      "status": "unavailable"
+    },
+    "20-agentic-ai-terms-every-developer-should-kn": {
+      "version": "a5acc62c831bd828",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "AI Agent",
+        "Agentic Workflow",
+        "Agent Loop",
+        "Tool Calling"
+      ],
+      "prerequisite_concepts": [
+        "Machine Learning Overview: Supervised vs Unsupervised",
+        "LLM (Language Model)",
+        "CI/CD Pipeline",
+        "Git & GitHub Project Setup"
+      ],
+      "matches": [
+        {
+          "concept": "Machine Learning Overview: Supervised vs Unsupervised",
+          "slug": "ml-supervised-unsupervised",
+          "title": "Machine Learning Overview: Supervised vs Unsupervised"
+        },
+        {
+          "concept": "CI/CD Pipeline",
+          "slug": "the-cicd-pipeline-that-was-lying-to-us-a-depl",
+          "title": "The CI/CD Pipeline That Was Lying to Us: A Deploy Debugging Story"
+        },
+        {
+          "concept": "Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
+        }
+      ]
+    },
+    "the-cicd-pipeline-that-was-lying-to-us-a-depl": {
+      "version": "63a4ea89f8214b8c",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "GitHub Actions",
+        "CI/CD Pipeline"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "GitHub SSH Setup"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "GitHub SSH Setup",
+          "slug": "git-github-ssh-setup",
+          "title": "GitHub SSH Setup"
+        }
+      ]
+    },
+    "nginx-silently-rejects-the-new-http-query-met": {
+      "version": "b7636b7764071b83",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "HTTP QUERY method"
+      ],
+      "prerequisite_concepts": [
+        "HTTP methods",
+        "reverse proxies",
+        "web development frameworks"
+      ],
+      "matches": []
+    },
+    "5-devto-features-i-wish-existed-3-im-genuinel": {
+      "version": "515970ed5b8656c0",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "in-thread translate toggle",
+        "public edit history",
+        "series discovery",
+        "opt-in push notifications",
+        "true co-authored posts"
+      ],
+      "prerequisite_concepts": [
+        "DEV Trusted Member",
+        "multilingual conversations",
+        "revision history",
+        "series in content writing",
+        "push notifications"
+      ],
+      "matches": []
+    },
+    "fixing-delicate-cache-mismatches-in-a-brownfi": {
+      "version": "51952146720e8f56",
+      "status": "ready",
+      "difficulty": "advanced",
+      "article_concepts": [
+        "cache partitioning problem",
+        "combined style fingerprinting",
+        "internal navigation parameters"
+      ],
+      "prerequisite_concepts": [
+        "brownfield problem solving",
+        "Rails server rendering",
+        "Fastly edge caching",
+        "client-side navigation"
+      ],
+      "matches": []
+    },
+    "git-chapter-1-git-github-overview": {
+      "version": "4a7b50539d4b2011",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Git as a distributed version control system",
+        "Version control and its importance in software development",
+        "Collaborating on Git & GitHub – Remote Repository"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "What Is Version Control?"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-what-is-git": {
+      "version": "c33d543b5470d56b",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "free and open-source distributed version control system",
+        "remote repository services",
+        "version control system",
+        "share your code",
+        "work as a team",
+        "manage tasks",
+        "automate workflow"
+      ],
+      "prerequisite_concepts": [
+        "version control",
+        "remote repository services"
+      ],
+      "matches": [
+        {
+          "concept": "version control",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-what-is-version-control": {
+      "version": "b72b25587bea8644",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Repository",
+        "Commit",
+        "Local Repository",
+        "Remote Repository"
+      ],
+      "prerequisite_concepts": [
+        "Version Control",
+        "Git"
+      ],
+      "matches": [
+        {
+          "concept": "Git",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        }
+      ]
+    },
+    "git-how-to-save-versions-in-git": {
+      "version": "775170e7b3bf3f2a",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "committed files",
+        "staging area",
+        "local repository",
+        "remote repository"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "What Is Version Control?"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-collaborating-on-git-github-remote-repository": {
+      "version": "d6e2ce1bbf107803",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Remote Repository",
+        "Commit",
+        "Push",
+        "Clone",
+        "Pull"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "What Is Git?",
+        "What Is Version Control?"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-collaborating-on-git-git-hub-branch": {
+      "version": "c61cd8143987333f",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "independent line of development",
+        "commit history",
+        "topic branch",
+        "merge"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "What Is Git?",
+        "What Is Version Control?"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-github-basic-life-cycle": {
+      "version": "af1cfaf65b1c202b",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Project Setup",
+        "Regular Workflow"
+      ],
+      "prerequisite_concepts": [
+        "Git and GitHub Overview",
+        "What Is Git?",
+        "What Is Version Control?"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-chapter-2-git-github-initial-settings": {
+      "version": "b857d2001bcf3f6f",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Git & GitHub Initial Settings Overview",
+        "Key Tool Preparation (1) – Mac",
+        "Key Tool Preparation (2) – Windows",
+        "Key Tool Preparation (3) – Linux Remote Server",
+        "Git User Settings – git config",
+        "Create GitHub Account",
+        "GitHub Access Authentication Settings",
+        "Generating PAT (Personal Access Token)"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "What Is Version Control?"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-github-initial-settings-overview": {
+      "version": "d4c0acb0c7e61555",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Git software",
+        "command line",
+        "text editor",
+        "web browser"
+      ],
+      "prerequisite_concepts": [
+        "Python Basics: Variables and Data Types",
+        "Python Functions and Modules"
+      ],
+      "matches": [
+        {
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
+        }
+      ]
+    },
+    "git-key-tool-preparation-1-mac": {
+      "version": "b3b54feba8e7673a",
+      "status": "unavailable"
+    },
+    "git-key-tool-preparation-2-windows": {
+      "version": "57c7591c1704ed2f",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Git Bash",
+        "VS code as a text editor"
+      ],
+      "prerequisite_concepts": [
+        "install Git on Mac",
+        "Git & GitHub Initial Settings Overview",
+        "Key Tool Preparation (1) – Mac"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Initial Settings Overview",
+          "slug": "git-github-initial-settings-overview",
+          "title": "Git & GitHub Initial Settings Overview"
+        },
+        {
+          "concept": "Key Tool Preparation (1) – Mac",
+          "slug": "git-key-tool-preparation-1-mac",
+          "title": "Key Tool Preparation (1) – Mac"
+        }
+      ]
+    },
+    "git-key-tool-preparation-3-linux-remote-server": {
+      "version": "1762732f28530bc8",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Git on Linux servers",
+        "GitHub account",
+        "SSH remote login",
+        "AWS Lightsail instance"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Key Tool Preparation (1) – Mac",
+        "Key Tool Preparation (2) – Windows"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Key Tool Preparation (1) – Mac",
+          "slug": "git-key-tool-preparation-1-mac",
+          "title": "Key Tool Preparation (1) – Mac"
+        },
+        {
+          "concept": "Key Tool Preparation (2) – Windows",
+          "slug": "git-key-tool-preparation-2-windows",
+          "title": "Key Tool Preparation (2) – Windows"
+        }
+      ]
+    },
+    "git-user-settings-git-config": {
+      "version": "b948244c042e6e93",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "user.name",
+        "user.email",
+        "text editor",
+        "git config"
+      ],
+      "prerequisite_concepts": [
+        "Git setup",
+        "Version control"
+      ],
+      "matches": [
+        {
+          "concept": "Version control",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-create-github-account": {
+      "version": "23bf9f8be76335f6",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Sign up for GitHub",
+        "Create an account",
+        "Free plan"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "What Is Git?"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        }
+      ]
+    },
+    "git-github-access-authentication-settings": {
+      "version": "cc390cb7c937f0e2",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "HTTPS",
+        "PAT (Personal Access Token)",
+        "a pair of secret key and public key",
+        "SSH"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Generating PAT (Personal Access Token)",
+        "GitHub SSH Setup"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Generating PAT (Personal Access Token)",
+          "slug": "git-generating-pat-personal-access-token",
+          "title": "Generating PAT (Personal Access Token)"
+        },
+        {
+          "concept": "GitHub SSH Setup",
+          "slug": "git-github-ssh-setup",
+          "title": "GitHub SSH Setup"
+        }
+      ]
+    },
+    "git-generating-pat-personal-access-token": {
+      "version": "0f0276caa0fcf61b",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Personal Access Token",
+        "Tokens (classic)",
+        "Fine-grained tokens"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "GitHub Access Authentication Settings"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "GitHub Access Authentication Settings",
+          "slug": "git-github-access-authentication-settings",
+          "title": "GitHub Access Authentication Settings"
+        }
+      ]
+    },
+    "git-github-ssh-setup": {
+      "version": "ee3b521e654edbdb",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "SSH key pair",
+        "public key",
+        "private key",
+        "passphrase"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "What Is Git?",
+        "What Is Version Control?"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-chapter-3-git-github-project-setup": {
+      "version": "c87395ed9be69c2c",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Project Setup Approaches",
+        "Remote Repository",
+        "Local Repository",
+        "Git & GitHub Project Setup"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Key Tool Preparation (1) – Mac",
+        "Key Tool Preparation (2) – Windows",
+        "Key Tool Preparation (3) – Linux Remote Server",
+        "Git User Settings – git config",
+        "Create GitHub Account",
+        "GitHub Access Authentication Settings",
+        "Generating PAT (Personal Access Token)"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Key Tool Preparation (1) – Mac",
+          "slug": "git-key-tool-preparation-1-mac",
+          "title": "Key Tool Preparation (1) – Mac"
+        },
+        {
+          "concept": "Key Tool Preparation (2) – Windows",
+          "slug": "git-key-tool-preparation-2-windows",
+          "title": "Key Tool Preparation (2) – Windows"
+        },
+        {
+          "concept": "Key Tool Preparation (3) – Linux Remote Server",
+          "slug": "git-key-tool-preparation-3-linux-remote-server",
+          "title": "Key Tool Preparation (3) – Linux Remote Server"
+        },
+        {
+          "concept": "Git User Settings – git config",
+          "slug": "git-user-settings-git-config",
+          "title": "Git User Settings – git config"
+        },
+        {
+          "concept": "Create GitHub Account",
+          "slug": "git-create-github-account",
+          "title": "Create GitHub Account"
+        },
+        {
+          "concept": "GitHub Access Authentication Settings",
+          "slug": "git-github-access-authentication-settings",
+          "title": "GitHub Access Authentication Settings"
+        },
+        {
+          "concept": "Generating PAT (Personal Access Token)",
+          "slug": "git-generating-pat-personal-access-token",
+          "title": "Generating PAT (Personal Access Token)"
+        }
+      ]
+    },
+    "git-three-cases-in-git-github-project-setup": {
+      "version": "c50b25bd56550d1e",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Project initiator (owner)",
+        "Project member (collaborator)",
+        "Non-project member"
+      ],
+      "prerequisite_concepts": [
+        "Git Local Repository",
+        "Remote Repository",
+        "git init",
+        "git clone",
+        "Fork"
+      ],
+      "matches": [
+        {
+          "concept": "Remote Repository",
+          "slug": "git-upload-to-remote-repository-git-push",
+          "title": "Upload to Remote Repository – Git Push"
+        },
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "git clone",
+          "slug": "git-project-member-create-copy-of-project-code-on-local-computer-git-clone",
+          "title": "Project Member – Create Copy of Project Code on Local Computer (git clone)"
+        },
+        {
+          "concept": "Fork",
+          "slug": "git-fork-vs-clone",
+          "title": "Fork vs. Clone"
+        }
+      ]
+    },
+    "git-github-project-setup-overview-in-different-cases": {
+      "version": "ab526ab7bd63f37e",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Git Local Repository",
+        "Remote Repository",
+        "GitHub",
+        "Project Setup"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Create GitHub Account",
+        "GitHub Access Authentication Settings",
+        "Generating PAT (Personal Access Token)"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Create GitHub Account",
+          "slug": "git-create-github-account",
+          "title": "Create GitHub Account"
+        },
+        {
+          "concept": "GitHub Access Authentication Settings",
+          "slug": "git-github-access-authentication-settings",
+          "title": "GitHub Access Authentication Settings"
+        },
+        {
+          "concept": "Generating PAT (Personal Access Token)",
+          "slug": "git-generating-pat-personal-access-token",
+          "title": "Generating PAT (Personal Access Token)"
+        }
+      ]
+    },
+    "git-building-remote-collaboration-practice-environment": {
+      "version": "b51f3f4ad5ad5165",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Remote Repository",
+        "Project Owner Role",
+        "Project Member Role",
+        "OS User Account"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Git User Settings – git config",
+        "Create GitHub Account",
+        "GitHub Access Authentication Settings"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Git User Settings – git config",
+          "slug": "git-user-settings-git-config",
+          "title": "Git User Settings – git config"
+        },
+        {
+          "concept": "Create GitHub Account",
+          "slug": "git-create-github-account",
+          "title": "Create GitHub Account"
+        },
+        {
+          "concept": "GitHub Access Authentication Settings",
+          "slug": "git-github-access-authentication-settings",
+          "title": "GitHub Access Authentication Settings"
+        }
+      ]
+    },
+    "git-project-initiator-key-steps-to-launch-git-project": {
+      "version": "bd7f8fefbeddcef0",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Create a Git Local Repository",
+        "Develop code and commit it to the Git Local Repository",
+        "Set up a GitHub Remote Repository",
+        "Share project documents in the GitHub Remote Repository"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Key Tool Preparation (1) – Mac",
+        "Key Tool Preparation (2) – Windows",
+        "Key Tool Preparation (3) – Linux Remote Server",
+        "Git User Settings – git config",
+        "Create GitHub Account",
+        "GitHub Access Authentication Settings",
+        "Generating PAT (Personal Access Token)"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Key Tool Preparation (1) – Mac",
+          "slug": "git-key-tool-preparation-1-mac",
+          "title": "Key Tool Preparation (1) – Mac"
+        },
+        {
+          "concept": "Key Tool Preparation (2) – Windows",
+          "slug": "git-key-tool-preparation-2-windows",
+          "title": "Key Tool Preparation (2) – Windows"
+        },
+        {
+          "concept": "Key Tool Preparation (3) – Linux Remote Server",
+          "slug": "git-key-tool-preparation-3-linux-remote-server",
+          "title": "Key Tool Preparation (3) – Linux Remote Server"
+        },
+        {
+          "concept": "Git User Settings – git config",
+          "slug": "git-user-settings-git-config",
+          "title": "Git User Settings – git config"
+        },
+        {
+          "concept": "Create GitHub Account",
+          "slug": "git-create-github-account",
+          "title": "Create GitHub Account"
+        },
+        {
+          "concept": "GitHub Access Authentication Settings",
+          "slug": "git-github-access-authentication-settings",
+          "title": "GitHub Access Authentication Settings"
+        },
+        {
+          "concept": "Generating PAT (Personal Access Token)",
+          "slug": "git-generating-pat-personal-access-token",
+          "title": "Generating PAT (Personal Access Token)"
+        }
+      ]
+    },
+    "git-project-initiator-create-local-repository-git-init": {
+      "version": "5b25670fc5da3b2a",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "git init",
+        "Local Repository"
+      ],
+      "prerequisite_concepts": [
+        "directory and file creation",
+        "command line interface"
+      ],
+      "matches": []
+    },
+    "git-project-initiator-make-the-first-commit": {
+      "version": "767c04e113c12a63",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "git add",
+        "git commit",
+        "git status",
+        "git log"
+      ],
+      "prerequisite_concepts": [
+        "git init",
+        "Local Repository",
+        "Staging Area",
+        "Working Tree"
+      ],
+      "matches": [
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "Local Repository",
+          "slug": "git-get-remote-repository-information-to-local-repository-git-fetch",
+          "title": "Get Remote Repository Information to Local Repository – Git Fetch"
+        },
+        {
+          "concept": "Staging Area",
+          "slug": "git-add-files-to-staging-area-git-add",
+          "title": "Add Files to Staging Area – git add"
+        },
+        {
+          "concept": "Working Tree",
+          "slug": "git-restore-files-to-working-tree-git-restore",
+          "title": "Restore Files to Working Tree – git restore"
+        }
+      ]
+    },
+    "git-project-initiator-gitignore-file": {
+      "version": "fecf97f6363ba70c",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Files that you don't want Git to track",
+        "The .gitignore file"
+      ],
+      "prerequisite_concepts": [
+        "Git version control system",
+        "Staging Area",
+        "git status",
+        "git add",
+        "git commit"
+      ],
+      "matches": [
+        {
+          "concept": "Staging Area",
+          "slug": "git-add-files-to-staging-area-git-add",
+          "title": "Add Files to Staging Area – git add"
+        },
+        {
+          "concept": "git status",
+          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+          "title": "Check Status of Working Tree and Staging Area – git status"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        }
+      ]
+    },
+    "git-project-initiator-create-remote-repository": {
+      "version": "fd668a4bccf102e5",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Create a new Remote Repository on GitHub",
+        "New repository",
+        "Change the type of repository from public to private"
+      ],
+      "prerequisite_concepts": [
+        "Create GitHub Account",
+        "GitHub Access Authentication Settings",
+        "Generating PAT (Personal Access Token)",
+        "GitHub SSH Setup"
+      ],
+      "matches": [
+        {
+          "concept": "Create GitHub Account",
+          "slug": "git-create-github-account",
+          "title": "Create GitHub Account"
+        },
+        {
+          "concept": "GitHub Access Authentication Settings",
+          "slug": "git-github-access-authentication-settings",
+          "title": "GitHub Access Authentication Settings"
+        },
+        {
+          "concept": "Generating PAT (Personal Access Token)",
+          "slug": "git-generating-pat-personal-access-token",
+          "title": "Generating PAT (Personal Access Token)"
+        },
+        {
+          "concept": "GitHub SSH Setup",
+          "slug": "git-github-ssh-setup",
+          "title": "GitHub SSH Setup"
+        }
+      ]
+    },
+    "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add": {
+      "version": "a87f0dcb2b744103",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git remote add",
+        "Remote Repository URL",
+        "HTTPS",
+        "SSH"
+      ],
+      "prerequisite_concepts": [
+        "git init",
+        "git push"
+      ],
+      "matches": [
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "git push",
+          "slug": "git-upload-to-remote-repository-git-push",
+          "title": "Upload to Remote Repository – Git Push"
+        }
+      ]
+    },
+    "git-project-initiator-upload-local-repository-to-remote-repository-git-push": {
+      "version": "2e29c218279b971f",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "git push",
+        "remote repository"
+      ],
+      "prerequisite_concepts": [
+        "git init",
+        "create local repository",
+        "link between remote and local repositories (git remote add)"
+      ],
+      "matches": [
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "link between remote and local repositories (git remote add)",
+          "slug": "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add",
+          "title": "Project Initiator – Link Between Remote and Local Repositories (git remote add)"
+        }
+      ]
+    },
+    "git-project-initiator-grant-remote-repository-access-to-project-members": {
+      "version": "9e20d14728c85ffa",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Remote Repository",
+        "GitHub Web Platform",
+        "Manage Access",
+        "Add People"
+      ],
+      "prerequisite_concepts": [
+        "GitHub",
+        "Remote Repository",
+        "Local Repository",
+        "git remote add",
+        "git push"
+      ],
+      "matches": [
+        {
+          "concept": "GitHub",
+          "slug": "git-github-ssh-setup",
+          "title": "GitHub SSH Setup"
+        },
+        {
+          "concept": "Remote Repository",
+          "slug": "git-upload-to-remote-repository-git-push",
+          "title": "Upload to Remote Repository – Git Push"
+        },
+        {
+          "concept": "Local Repository",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "git remote add",
+          "slug": "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add",
+          "title": "Project Initiator – Link Between Remote and Local Repositories (git remote add)"
+        },
+        {
+          "concept": "git push",
+          "slug": "git-project-initiator-upload-local-repository-to-remote-repository-git-push",
+          "title": "Project Initiator – Upload Local Repository to Remote Repository (git push)"
+        }
+      ]
+    },
+    "git-project-member-start-project-as-collaborator": {
+      "version": "d9bad1bb177bf72a",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Remote Repository access",
+        "git clone",
+        "project member"
+      ],
+      "prerequisite_concepts": [
+        "git init",
+        "git remote add",
+        "git push"
+      ],
+      "matches": [
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "git remote add",
+          "slug": "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add",
+          "title": "Project Initiator – Link Between Remote and Local Repositories (git remote add)"
+        },
+        {
+          "concept": "git push",
+          "slug": "git-upload-to-remote-repository-git-push",
+          "title": "Upload to Remote Repository – Git Push"
+        }
+      ]
+    },
+    "git-project-member-create-copy-of-project-code-on-local-computer-git-clone": {
+      "version": "26c5b81e18a0fe72",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git clone command",
+        "remote repository",
+        "local computer"
+      ],
+      "prerequisite_concepts": [
+        "GitHub",
+        "Remote Repository",
+        "Personal Access Token (PAT)",
+        "SSH key pairs"
+      ],
+      "matches": [
+        {
+          "concept": "GitHub",
+          "slug": "git-github-ssh-setup",
+          "title": "GitHub SSH Setup"
+        },
+        {
+          "concept": "Remote Repository",
+          "slug": "git-upload-to-remote-repository-git-push",
+          "title": "Upload to Remote Repository – Git Push"
+        }
+      ]
+    },
+    "git-non-member-start-project-with-replica-of-existing-repository-fork": {
+      "version": "372ee0e52b43ad5e",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "GitHub platform"
+      ],
+      "prerequisite_concepts": [
+        "git clone",
+        "GitHub",
+        "fork",
+        "remote repository",
+        "local repository",
+        "PAT (Personal Access Token)",
+        "SSH key pairs"
+      ],
+      "matches": [
+        {
+          "concept": "git clone",
+          "slug": "git-project-member-create-copy-of-project-code-on-local-computer-git-clone",
+          "title": "Project Member – Create Copy of Project Code on Local Computer (git clone)"
+        },
+        {
+          "concept": "GitHub",
+          "slug": "git-github-ssh-setup",
+          "title": "GitHub SSH Setup"
+        },
+        {
+          "concept": "fork",
+          "slug": "git-fork-vs-clone",
+          "title": "Fork vs. Clone"
+        },
+        {
+          "concept": "remote repository",
+          "slug": "git-upload-to-remote-repository-git-push",
+          "title": "Upload to Remote Repository – Git Push"
+        },
+        {
+          "concept": "local repository",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "PAT (Personal Access Token)",
+          "slug": "git-generating-pat-personal-access-token",
+          "title": "Generating PAT (Personal Access Token)"
+        }
+      ]
+    },
+    "git-fork-vs-clone": {
+      "version": "05c7363e094ef539",
+      "status": "unavailable"
+    },
+    "git-chapter-4-edit-commit": {
+      "version": "97e7bd9f75ac9e1d",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Git Regular Workflow – Edit & Commit",
+        "Add Files to Staging Area – git add",
+        "Commit Files – git commit"
+      ],
+      "prerequisite_concepts": [
+        "Git Regular Workflow – Work With Branches",
+        "What Is Branch?",
+        "Branch Operation Basic Life Cycle"
+      ],
+      "matches": [
+        {
+          "concept": "Git Regular Workflow – Work With Branches",
+          "slug": "git-regular-workflow-work-with-branches",
+          "title": "Git Regular Workflow – Work With Branches"
+        },
+        {
+          "concept": "What Is Branch?",
+          "slug": "git-what-is-branch",
+          "title": "What Is Branch?"
+        },
+        {
+          "concept": "Branch Operation Basic Life Cycle",
+          "slug": "git-branch-operation-basic-life-cycle",
+          "title": "Branch Operation Basic Life Cycle"
+        }
+      ]
+    },
+    "git-regular-workflow-edit-commit": {
+      "version": "494620491888f684",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "git add",
+        "git status",
+        "git commit",
+        "git log"
+      ],
+      "prerequisite_concepts": [
+        "Working Tree",
+        "Staging Area (INDEX)"
+      ],
+      "matches": [
+        {
+          "concept": "Working Tree",
+          "slug": "git-restore-files-to-working-tree-git-restore",
+          "title": "Restore Files to Working Tree – git restore"
+        }
+      ]
+    },
+    "git-edit-and-commit-overview-1": {
+      "version": "561e669a53cf69ce",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "three-stage architecture",
+        "working tree",
+        "staging area",
+        "local repository"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "What Is Git?",
+        "What Is Version Control?"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-add-files-to-staging-area-git-add": {
+      "version": "5a718ab5ab7cd30e",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Staging Area",
+        "git add",
+        "Local Repository",
+        "HEAD"
+      ],
+      "prerequisite_concepts": [
+        "git init",
+        "git commit",
+        "git status"
+      ],
+      "matches": [
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "git status",
+          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+          "title": "Check Status of Working Tree and Staging Area – git status"
+        }
+      ]
+    },
+    "git-commit-files-git-commit": {
+      "version": "1f1b5e08d11f2fc2",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "git commit command",
+        "commit message",
+        "staging area"
+      ],
+      "prerequisite_concepts": [
+        "git add",
+        "git status",
+        "git log"
+      ],
+      "matches": [
+        {
+          "concept": "git add",
+          "slug": "git-add-files-to-staging-area-git-add",
+          "title": "Add Files to Staging Area – git add"
+        },
+        {
+          "concept": "git status",
+          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+          "title": "Check Status of Working Tree and Staging Area – git status"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        }
+      ]
+    },
+    "git-head-and-index": {
+      "version": "c3f440515a684723",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "latest commit",
+        "staging area",
+        "branch workflow"
+      ],
+      "prerequisite_concepts": [
+        "Git",
+        "Version Control",
+        "Commit"
+      ],
+      "matches": [
+        {
+          "concept": "Git",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "Version Control",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        },
+        {
+          "concept": "Commit",
+          "slug": "git-chapter-4-edit-commit",
+          "title": "Chapter 4. Edit & Commit"
+        }
+      ]
+    },
+    "git-check-status-of-working-tree-and-staging-area-git-status": {
+      "version": "6638ac380c500a82",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Working Tree",
+        "INDEX",
+        "untracked files",
+        "not staged files",
+        "staged files"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "Check Commit Histories – git log"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "Check Commit Histories – git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        }
+      ]
+    },
+    "git-check-commit-histories-git-log": {
+      "version": "71f7d254a67f8a46",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "commit history",
+        "commit hash",
+        "commit message"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "Check Status of Working Tree and Staging Area – git status"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "Check Status of Working Tree and Staging Area – git status",
+          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+          "title": "Check Status of Working Tree and Staging Area – git status"
+        }
+      ]
+    },
+    "git-check-differences-git-diff": {
+      "version": "f8426cbf61f76557",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Working Tree",
+        "commit histories"
+      ],
+      "prerequisite_concepts": [
+        "git commit",
+        "git add",
+        "git status",
+        "git log"
+      ],
+      "matches": [
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "git add",
+          "slug": "git-add-files-to-staging-area-git-add",
+          "title": "Add Files to Staging Area – git add"
+        },
+        {
+          "concept": "git status",
+          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+          "title": "Check Status of Working Tree and Staging Area – git status"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        }
+      ]
+    },
+    "git-restore-files-to-working-tree-git-restore": {
+      "version": "ef6fce1ff7998569",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git restore",
+        "Working Tree",
+        "commit hash"
+      ],
+      "prerequisite_concepts": [
+        "git diff",
+        "git checkout",
+        "git add",
+        "git commit",
+        "HEAD and INDEX"
+      ],
+      "matches": [
+        {
+          "concept": "git diff",
+          "slug": "git-check-differences-git-diff",
+          "title": "Check Differences – git diff"
+        },
+        {
+          "concept": "git checkout",
+          "slug": "git-switch-current-branch-1-git-checkout",
+          "title": "Switch Current Branch (1) – Git Checkout"
+        },
+        {
+          "concept": "git add",
+          "slug": "git-add-files-to-staging-area-git-add",
+          "title": "Add Files to Staging Area – git add"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "HEAD and INDEX",
+          "slug": "git-head-and-index",
+          "title": "HEAD and INDEX"
+        }
+      ]
+    },
+    "git-undo-changes-git-reset": {
+      "version": "a02218d82039815b",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git reset",
+        "INDEX",
+        "Working Tree",
+        "commit hash"
+      ],
+      "prerequisite_concepts": [
+        "git diff",
+        "HEAD",
+        "git add",
+        "git commit",
+        "git log",
+        "git status",
+        "git branch",
+        "git checkout"
+      ],
+      "matches": [
+        {
+          "concept": "git diff",
+          "slug": "git-check-differences-git-diff",
+          "title": "Check Differences – git diff"
+        },
+        {
+          "concept": "HEAD",
+          "slug": "git-head-and-index",
+          "title": "HEAD and INDEX"
+        },
+        {
+          "concept": "git add",
+          "slug": "git-add-files-to-staging-area-git-add",
+          "title": "Add Files to Staging Area – git add"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        },
+        {
+          "concept": "git status",
+          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+          "title": "Check Status of Working Tree and Staging Area – git status"
+        },
+        {
+          "concept": "git branch",
+          "slug": "git-create-branch-and-check-branch-status-git-branch",
+          "title": "Create Branch and Check Branch Status – Git Branch"
+        },
+        {
+          "concept": "git checkout",
+          "slug": "git-switch-current-branch-1-git-checkout",
+          "title": "Switch Current Branch (1) – Git Checkout"
+        }
+      ]
+    },
+    "git-delete-files-git-rm": {
+      "version": "138ab6d9e2a4df45",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "git rm command",
+        "Working Tree",
+        "Staging Area",
+        "git commit"
+      ],
+      "prerequisite_concepts": [
+        "git add",
+        "git status",
+        "git log",
+        "git commit"
+      ],
+      "matches": [
+        {
+          "concept": "git add",
+          "slug": "git-add-files-to-staging-area-git-add",
+          "title": "Add Files to Staging Area – git add"
+        },
+        {
+          "concept": "git status",
+          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+          "title": "Check Status of Working Tree and Staging Area – git status"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        }
+      ]
+    },
+    "git-edit-and-commit-overview-2": {
+      "version": "f75c804933c04e56",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Commit",
+        "git add",
+        "git commit",
+        "git restore",
+        "git reset --hard"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "What Is Version Control?",
+        "Git & GitHub Project Setup Overview in Different Cases"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        },
+        {
+          "concept": "Git & GitHub Project Setup Overview in Different Cases",
+          "slug": "git-github-project-setup-overview-in-different-cases",
+          "title": "Git & GitHub Project Setup Overview in Different Cases"
+        }
+      ]
+    },
+    "git-chapter-5-work-with-branches": {
+      "version": "ac6e7f7adf1f9d63",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Git Regular Workflow – Work With Branches",
+        "Git Branch",
+        "Branch Operation Basic Life Cycle"
+      ],
+      "prerequisite_concepts": [
+        "Git Regular Workflow – Edit & Commit",
+        "What Is Branch?",
+        "Branch Operation Basic Life Cycle"
+      ],
+      "matches": [
+        {
+          "concept": "Git Regular Workflow – Edit & Commit",
+          "slug": "git-regular-workflow-edit-commit",
+          "title": "Git Regular Workflow – Edit & Commit"
+        },
+        {
+          "concept": "What Is Branch?",
+          "slug": "git-what-is-branch",
+          "title": "What Is Branch?"
+        },
+        {
+          "concept": "Branch Operation Basic Life Cycle",
+          "slug": "git-branch-operation-basic-life-cycle",
+          "title": "Branch Operation Basic Life Cycle"
+        }
+      ]
+    },
+    "git-regular-workflow-work-with-branches": {
+      "version": "a6dd6039409dc16e",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git branch",
+        "git checkout",
+        "git switch",
+        "git merge",
+        "git rebase",
+        "git stash"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "What Is Version Control?",
+        "Git & GitHub Overview"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        },
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        }
+      ]
+    },
+    "git-what-is-branch": {
+      "version": "ce6cc973cc7c8be7",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "commit history",
+        "topic branch"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "What Is Git?",
+        "What Is Version Control?"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "git-branch-operation-basic-life-cycle": {
+      "version": "47e26e62e11d6b9b",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "branch operation",
+        "life cycle",
+        "create a new branch"
+      ],
+      "prerequisite_concepts": [
+        "Git",
+        "master branch",
+        "commit"
+      ],
+      "matches": [
+        {
+          "concept": "Git",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "commit",
+          "slug": "git-chapter-4-edit-commit",
+          "title": "Chapter 4. Edit & Commit"
+        }
+      ]
+    },
+    "git-create-branch-and-check-branch-status-git-branch": {
+      "version": "834ae5a6fe9b2733",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "check branch status",
+        "delete unused branch"
+      ],
+      "prerequisite_concepts": [
+        "git checkout",
+        "git switch",
+        "git merge",
+        "git rebase"
+      ],
+      "matches": [
+        {
+          "concept": "git checkout",
+          "slug": "git-switch-current-branch-1-git-checkout",
+          "title": "Switch Current Branch (1) – Git Checkout"
+        },
+        {
+          "concept": "git switch",
+          "slug": "git-switch-current-branch-2-git-switch",
+          "title": "Switch Current Branch (2) – Git Switch"
+        },
+        {
+          "concept": "git merge",
+          "slug": "git-merge-branches-git-merge",
+          "title": "Merge Branches – Git Merge"
+        },
+        {
+          "concept": "git rebase",
+          "slug": "git-rebase-branch-git-rebase",
+          "title": "Rebase Branch – Git Rebase"
+        }
+      ]
+    },
+    "git-switch-current-branch-1-git-checkout": {
+      "version": "87f7434cf3e1c39b",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git checkout"
+      ],
+      "prerequisite_concepts": [
+        "git branch",
+        "git init",
+        "git add",
+        "git commit",
+        "git log",
+        "HEAD and INDEX"
+      ],
+      "matches": [
+        {
+          "concept": "git branch",
+          "slug": "git-create-branch-and-check-branch-status-git-branch",
+          "title": "Create Branch and Check Branch Status – Git Branch"
+        },
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "git add",
+          "slug": "git-add-files-to-staging-area-git-add",
+          "title": "Add Files to Staging Area – git add"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        },
+        {
+          "concept": "HEAD and INDEX",
+          "slug": "git-head-and-index",
+          "title": "HEAD and INDEX"
+        }
+      ]
+    },
+    "git-switch-current-branch-2-git-switch": {
+      "version": "027232e840450b82",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git switch",
+        "git checkout"
+      ],
+      "prerequisite_concepts": [
+        "git checkout",
+        "branch"
+      ],
+      "matches": [
+        {
+          "concept": "git checkout",
+          "slug": "git-switch-current-branch-1-git-checkout",
+          "title": "Switch Current Branch (1) – Git Checkout"
+        },
+        {
+          "concept": "branch",
+          "slug": "git-what-is-branch",
+          "title": "What Is Branch?"
+        }
+      ]
+    },
+    "git-merge-branches-git-merge": {
+      "version": "3737de6779ce4628",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Fast-Forward Merge",
+        "Non-Fast-Forward Merge",
+        "Squash Merge"
+      ],
+      "prerequisite_concepts": [
+        "Git Branch",
+        "Git Checkout",
+        "Git Switch"
+      ],
+      "matches": [
+        {
+          "concept": "Git Branch",
+          "slug": "git-create-branch-and-check-branch-status-git-branch",
+          "title": "Create Branch and Check Branch Status – Git Branch"
+        },
+        {
+          "concept": "Git Checkout",
+          "slug": "git-switch-current-branch-1-git-checkout",
+          "title": "Switch Current Branch (1) – Git Checkout"
+        },
+        {
+          "concept": "Git Switch",
+          "slug": "git-switch-current-branch-2-git-switch",
+          "title": "Switch Current Branch (2) – Git Switch"
+        }
+      ]
+    },
+    "git-fast-forward-merge": {
+      "version": "186cfbfa658f0df7",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "fast-forward merge",
+        "git merge",
+        "HEAD"
+      ],
+      "prerequisite_concepts": [
+        "git merge",
+        "commit",
+        "branch",
+        "git log",
+        "git checkout"
+      ],
+      "matches": [
+        {
+          "concept": "git merge",
+          "slug": "git-merge-branches-git-merge",
+          "title": "Merge Branches – Git Merge"
+        },
+        {
+          "concept": "commit",
+          "slug": "git-chapter-4-edit-commit",
+          "title": "Chapter 4. Edit & Commit"
+        },
+        {
+          "concept": "branch",
+          "slug": "git-what-is-branch",
+          "title": "What Is Branch?"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        },
+        {
+          "concept": "git checkout",
+          "slug": "git-switch-current-branch-1-git-checkout",
+          "title": "Switch Current Branch (1) – Git Checkout"
+        }
+      ]
+    },
+    "git-non-fast-forward-merge-no-option": {
+      "version": "3f5980a3f9647c6e",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "non-fast-forward merge"
+      ],
+      "prerequisite_concepts": [
+        "fast-forward merge",
+        "commit histories",
+        "branch status",
+        "git merge",
+        "git log"
+      ],
+      "matches": [
+        {
+          "concept": "fast-forward merge",
+          "slug": "git-fast-forward-merge",
+          "title": "Fast-Forward Merge"
+        },
+        {
+          "concept": "commit histories",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        },
+        {
+          "concept": "branch status",
+          "slug": "git-create-branch-and-check-branch-status-git-branch",
+          "title": "Create Branch and Check Branch Status – Git Branch"
+        },
+        {
+          "concept": "git merge",
+          "slug": "git-merge-branches-git-merge",
+          "title": "Merge Branches – Git Merge"
+        }
+      ]
+    },
+    "git-non-fast-forward-merge-no-ff-option": {
+      "version": "c491c73e42185b96",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "non-fast-forward merge",
+        "commit message"
+      ],
+      "prerequisite_concepts": [
+        "fast-forward merge",
+        "git merge",
+        "commit history",
+        "branch"
+      ],
+      "matches": [
+        {
+          "concept": "fast-forward merge",
+          "slug": "git-fast-forward-merge",
+          "title": "Fast-Forward Merge"
+        },
+        {
+          "concept": "git merge",
+          "slug": "git-merge-branches-git-merge",
+          "title": "Merge Branches – Git Merge"
+        },
+        {
+          "concept": "branch",
+          "slug": "git-what-is-branch",
+          "title": "What Is Branch?"
+        }
+      ]
+    },
+    "git-squash-merge": {
+      "version": "4667353f5abb1e42",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Squash Merge in Git",
+        "Working Tree",
+        "INDEX",
+        "git merge --squash"
+      ],
+      "prerequisite_concepts": [
+        "git merge",
+        "git commit",
+        "git log",
+        "git status"
+      ],
+      "matches": [
+        {
+          "concept": "git merge",
+          "slug": "git-merge-branches-git-merge",
+          "title": "Merge Branches – Git Merge"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        },
+        {
+          "concept": "git status",
+          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+          "title": "Check Status of Working Tree and Staging Area – git status"
+        }
+      ]
+    },
+    "git-rebase-branch-git-rebase": {
+      "version": "eb1cd4625340147c",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git rebase",
+        "base branch",
+        "HEAD",
+        "merge",
+        "Fast-Forward"
+      ],
+      "prerequisite_concepts": [
+        "git branch",
+        "git checkout",
+        "git commit",
+        "git log",
+        "git merge"
+      ],
+      "matches": [
+        {
+          "concept": "git branch",
+          "slug": "git-create-branch-and-check-branch-status-git-branch",
+          "title": "Create Branch and Check Branch Status – Git Branch"
+        },
+        {
+          "concept": "git checkout",
+          "slug": "git-switch-current-branch-1-git-checkout",
+          "title": "Switch Current Branch (1) – Git Checkout"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        },
+        {
+          "concept": "git merge",
+          "slug": "git-merge-branches-git-merge",
+          "title": "Merge Branches – Git Merge"
+        }
+      ]
+    },
+    "git-managing-conflict": {
+      "version": "09526f8fe7f5e208",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "conflict in Git",
+        "git merge",
+        "conflict resolution"
+      ],
+      "prerequisite_concepts": [
+        "git merge",
+        "git commit",
+        "git status",
+        "git log"
+      ],
+      "matches": [
+        {
+          "concept": "git merge",
+          "slug": "git-merge-branches-git-merge",
+          "title": "Merge Branches – Git Merge"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "git status",
+          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+          "title": "Check Status of Working Tree and Staging Area – git status"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        }
+      ]
+    },
+    "git-stash-changes-git-stash": {
+      "version": "407a4c1d649fcf9b",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git stash",
+        "Working Tree",
+        "INDEX",
+        "HEAD"
+      ],
+      "prerequisite_concepts": [
+        "git checkout",
+        "git init",
+        "git add",
+        "git commit",
+        "git status",
+        "git log"
+      ],
+      "matches": [
+        {
+          "concept": "git checkout",
+          "slug": "git-switch-current-branch-1-git-checkout",
+          "title": "Switch Current Branch (1) – Git Checkout"
+        },
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "git add",
+          "slug": "git-add-files-to-staging-area-git-add",
+          "title": "Add Files to Staging Area – git add"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "git status",
+          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
+          "title": "Check Status of Working Tree and Staging Area – git status"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        }
+      ]
+    },
+    "git-chapter-6-remote-collaboration": {
+      "version": "d5fbaf6e57fa5fba",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "remote repositories",
+        "Git push",
+        "pull requests"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Git Regular Workflow – Edit & Commit",
+        "Project Initiator – Create Remote Repository"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Git Regular Workflow – Edit & Commit",
+          "slug": "git-regular-workflow-edit-commit",
+          "title": "Git Regular Workflow – Edit & Commit"
+        },
+        {
+          "concept": "Project Initiator – Create Remote Repository",
+          "slug": "git-project-initiator-create-remote-repository",
+          "title": "Project Initiator – Create Remote Repository"
+        }
+      ]
+    },
+    "git-regular-workflow-remote-collaboration": {
+      "version": "c7bdbec2a61284b6",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Remote Repository",
+        "Git remote",
+        "git push",
+        "git pull",
+        "git fetch",
+        "Pull request",
+        "Merge"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Create GitHub Account",
+        "GitHub Access Authentication Settings",
+        "Generating PAT (Personal Access Token)",
+        "GitHub SSH Setup"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Create GitHub Account",
+          "slug": "git-create-github-account",
+          "title": "Create GitHub Account"
+        },
+        {
+          "concept": "GitHub Access Authentication Settings",
+          "slug": "git-github-access-authentication-settings",
+          "title": "GitHub Access Authentication Settings"
+        },
+        {
+          "concept": "Generating PAT (Personal Access Token)",
+          "slug": "git-generating-pat-personal-access-token",
+          "title": "Generating PAT (Personal Access Token)"
+        },
+        {
+          "concept": "GitHub SSH Setup",
+          "slug": "git-github-ssh-setup",
+          "title": "GitHub SSH Setup"
+        }
+      ]
+    },
+    "git-remote-collaboration-overview": {
+      "version": "a49fd4060b9c429e",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git remote",
+        "git push",
+        "git clone",
+        "git pull",
+        "git fetch",
+        "git merge",
+        "pull request"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Basic Life Cycle",
+        "Project Initiator – Create Remote Repository",
+        "Project Initiator – Link Between Remote and Local Repositories (git remote add)",
+        "Project Initiator – Upload Local Repository to Remote Repository (git push)"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Basic Life Cycle",
+          "slug": "git-github-basic-life-cycle",
+          "title": "Git & GitHub Basic Life Cycle"
+        },
+        {
+          "concept": "Project Initiator – Create Remote Repository",
+          "slug": "git-project-initiator-create-remote-repository",
+          "title": "Project Initiator – Create Remote Repository"
+        },
+        {
+          "concept": "Project Initiator – Link Between Remote and Local Repositories (git remote add)",
+          "slug": "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add",
+          "title": "Project Initiator – Link Between Remote and Local Repositories (git remote add)"
+        },
+        {
+          "concept": "Project Initiator – Upload Local Repository to Remote Repository (git push)",
+          "slug": "git-project-initiator-upload-local-repository-to-remote-repository-git-push",
+          "title": "Project Initiator – Upload Local Repository to Remote Repository (git push)"
+        }
+      ]
+    },
+    "git-link-with-remote-repository-git-remote": {
+      "version": "d1f4174c44dd07bc",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git remote add",
+        "git remote -v",
+        "git remote rm",
+        "git remote set-url",
+        "git remote rename"
+      ],
+      "prerequisite_concepts": [
+        "git init",
+        "git add",
+        "git commit",
+        "git log",
+        "git push",
+        "git clone",
+        "git branch",
+        "git checkout"
+      ],
+      "matches": [
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "git add",
+          "slug": "git-add-files-to-staging-area-git-add",
+          "title": "Add Files to Staging Area – git add"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        },
+        {
+          "concept": "git push",
+          "slug": "git-upload-to-remote-repository-git-push",
+          "title": "Upload to Remote Repository – Git Push"
+        },
+        {
+          "concept": "git clone",
+          "slug": "git-project-member-create-copy-of-project-code-on-local-computer-git-clone",
+          "title": "Project Member – Create Copy of Project Code on Local Computer (git clone)"
+        },
+        {
+          "concept": "git branch",
+          "slug": "git-create-branch-and-check-branch-status-git-branch",
+          "title": "Create Branch and Check Branch Status – Git Branch"
+        },
+        {
+          "concept": "git checkout",
+          "slug": "git-switch-current-branch-1-git-checkout",
+          "title": "Switch Current Branch (1) – Git Checkout"
+        }
+      ]
+    },
+    "git-upload-to-remote-repository-git-push": {
+      "version": "063fd43455e6a7d5",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git push command",
+        "Remote Repository",
+        "branch",
+        "Fast-Forward merge"
+      ],
+      "prerequisite_concepts": [
+        "git remote add",
+        "git clone",
+        "git commit",
+        "git log",
+        "git push",
+        "Remote Repository",
+        "branch",
+        "Fast-Forward merge"
+      ],
+      "matches": [
+        {
+          "concept": "git remote add",
+          "slug": "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add",
+          "title": "Project Initiator – Link Between Remote and Local Repositories (git remote add)"
+        },
+        {
+          "concept": "git clone",
+          "slug": "git-project-member-create-copy-of-project-code-on-local-computer-git-clone",
+          "title": "Project Member – Create Copy of Project Code on Local Computer (git clone)"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "git log",
+          "slug": "git-check-commit-histories-git-log",
+          "title": "Check Commit Histories – git log"
+        },
+        {
+          "concept": "git push",
+          "slug": "git-project-initiator-upload-local-repository-to-remote-repository-git-push",
+          "title": "Project Initiator – Upload Local Repository to Remote Repository (git push)"
+        },
+        {
+          "concept": "Remote Repository",
+          "slug": "git-link-with-remote-repository-git-remote",
+          "title": "Link With Remote Repository – Git Remote"
+        },
+        {
+          "concept": "branch",
+          "slug": "git-what-is-branch",
+          "title": "What Is Branch?"
+        },
+        {
+          "concept": "Fast-Forward merge",
+          "slug": "git-fast-forward-merge",
+          "title": "Fast-Forward Merge"
+        }
+      ]
+    },
+    "git-download-remote-repository-and-merge-to-local-repository-git-pull": {
+      "version": "530929db92996b20",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git pull",
+        "remote repository",
+        "local repository",
+        "merge"
+      ],
+      "prerequisite_concepts": [
+        "git clone",
+        "git push",
+        "git branch",
+        "git checkout",
+        "git merge"
+      ],
+      "matches": [
+        {
+          "concept": "git clone",
+          "slug": "git-project-member-create-copy-of-project-code-on-local-computer-git-clone",
+          "title": "Project Member – Create Copy of Project Code on Local Computer (git clone)"
+        },
+        {
+          "concept": "git push",
+          "slug": "git-upload-to-remote-repository-git-push",
+          "title": "Upload to Remote Repository – Git Push"
+        },
+        {
+          "concept": "git branch",
+          "slug": "git-create-branch-and-check-branch-status-git-branch",
+          "title": "Create Branch and Check Branch Status – Git Branch"
+        },
+        {
+          "concept": "git checkout",
+          "slug": "git-switch-current-branch-1-git-checkout",
+          "title": "Switch Current Branch (1) – Git Checkout"
+        },
+        {
+          "concept": "git merge",
+          "slug": "git-merge-branches-git-merge",
+          "title": "Merge Branches – Git Merge"
+        }
+      ]
+    },
+    "git-get-remote-repository-information-to-local-repository-git-fetch": {
+      "version": "dceacc090f3effbe",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git fetch",
+        "git branch -a",
+        "git checkout",
+        "git merge"
+      ],
+      "prerequisite_concepts": [
+        "git pull",
+        "git branch",
+        "remote-tracking branch",
+        "upstream branch"
+      ],
+      "matches": [
+        {
+          "concept": "git pull",
+          "slug": "git-download-remote-repository-and-merge-to-local-repository-git-pull",
+          "title": "Download Remote Repository and Merge to Local Repository – Git Pull"
+        },
+        {
+          "concept": "git branch",
+          "slug": "git-create-branch-and-check-branch-status-git-branch",
+          "title": "Create Branch and Check Branch Status – Git Branch"
+        }
+      ]
+    },
+    "git-pull-vs-fetch": {
+      "version": "00ef97661ac50ff4",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "git pull",
+        "git fetch",
+        "merge action"
+      ],
+      "prerequisite_concepts": [
+        "git init",
+        "git remote add",
+        "git push"
+      ],
+      "matches": [
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "git remote add",
+          "slug": "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add",
+          "title": "Project Initiator – Link Between Remote and Local Repositories (git remote add)"
+        },
+        {
+          "concept": "git push",
+          "slug": "git-upload-to-remote-repository-git-push",
+          "title": "Upload to Remote Repository – Git Push"
+        }
+      ]
+    },
+    "git-request-for-review-and-merge-pull-request": {
+      "version": "7b0317ac57df9560",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Pull Request",
+        "Remote Repository",
+        "Branch C"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Project Setup",
+        "Edit and Commit",
+        "Work With Branches"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
+        },
+        {
+          "concept": "Edit and Commit",
+          "slug": "git-edit-and-commit-overview-1",
+          "title": "Edit and Commit Overview (1)"
+        },
+        {
+          "concept": "Work With Branches",
+          "slug": "git-chapter-5-work-with-branches",
+          "title": "Chapter 5. Work With Branches"
+        }
+      ]
+    },
+    "git-merge-operation-using-github": {
+      "version": "9ab73ae202ed974d",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "git merge",
+        "git rebase",
+        "git commit"
+      ],
+      "prerequisite_concepts": [
+        "git merge",
+        "git rebase",
+        "git commit",
+        "branch",
+        "pull request",
+        "commit history"
+      ],
+      "matches": [
+        {
+          "concept": "git merge",
+          "slug": "git-merge-branches-git-merge",
+          "title": "Merge Branches – Git Merge"
+        },
+        {
+          "concept": "git rebase",
+          "slug": "git-rebase-branch-git-rebase",
+          "title": "Rebase Branch – Git Rebase"
+        },
+        {
+          "concept": "git commit",
+          "slug": "git-commit-files-git-commit",
+          "title": "Commit Files – git commit"
+        },
+        {
+          "concept": "branch",
+          "slug": "git-what-is-branch",
+          "title": "What Is Branch?"
+        },
+        {
+          "concept": "pull request",
+          "slug": "git-request-for-review-and-merge-pull-request",
+          "title": "Request for Review and Merge – Pull Request"
+        }
+      ]
+    },
+    "git-chapter-7-supplemental-topics": {
+      "version": "fb57701b131ce35e",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Git Key Commands",
+        "GitHub Key Features",
+        "Git & GitHub Glossary",
+        "GitHub Other Features"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Key Tool Preparation",
+        "Git & GitHub Project Setup"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Key Tool Preparation",
+          "slug": "git-key-tool-preparation-1-mac",
+          "title": "Key Tool Preparation (1) – Mac"
+        },
+        {
+          "concept": "Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
+        }
+      ]
+    },
+    "git-key-commands-and-github-key-features": {
+      "version": "039d728762e320a9",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "git config",
+        "git init",
+        "git clone",
+        "fork"
+      ],
+      "prerequisite_concepts": [
+        "git config",
+        "git init",
+        "git clone",
+        "fork"
+      ],
+      "matches": [
+        {
+          "concept": "git config",
+          "slug": "git-user-settings-git-config",
+          "title": "Git User Settings – git config"
+        },
+        {
+          "concept": "git init",
+          "slug": "git-project-initiator-create-local-repository-git-init",
+          "title": "Project Initiator – Create Local Repository (git init)"
+        },
+        {
+          "concept": "git clone",
+          "slug": "git-project-member-create-copy-of-project-code-on-local-computer-git-clone",
+          "title": "Project Member – Create Copy of Project Code on Local Computer (git clone)"
+        },
+        {
+          "concept": "fork",
+          "slug": "git-fork-vs-clone",
+          "title": "Fork vs. Clone"
+        }
+      ]
+    },
+    "git-github-glossary": {
+      "version": "f212dedbb5f33476",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "branch",
+        "clone",
+        "commit",
+        "commit hash"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "What Is Version Control?",
+        "How To Save Versions in Git?"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        },
+        {
+          "concept": "How To Save Versions in Git?",
+          "slug": "git-how-to-save-versions-in-git",
+          "title": "How To Save Versions in Git?"
+        }
+      ]
+    },
+    "git-github-other-features": {
+      "version": "8d434265f9bd0a9a",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "GitHub Issues",
+        "GitHub Actions",
+        "GitHub Pages",
+        "Dependabot",
+        "GitHub Copilot"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Git & GitHub Project Setup"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
+        }
+      ]
+    },
+    "docker-chapter-1-docker-introduction": {
+      "version": "393f7dc06b5a019e",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "containers and virtual machines",
+        "CI/CD pipelines"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "Version Control"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "Version Control",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "docker-computing-environment-and-dependency-conflict": {
+      "version": "e172af8feda44449",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "computing environment",
+        "dependency conflicts",
+        "version updates"
+      ],
+      "prerequisite_concepts": [
+        "Python Basics: Variables and Data Types",
+        "Python Functions and Modules"
+      ],
+      "matches": [
+        {
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
+        }
+      ]
+    },
+    "docker-containers-vs-virtual-machines": {
+      "version": "a1743edaff43de2a",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "containers vs. virtual machines",
+        "isolation and portability",
+        "virtualization technologies",
+        "virtual machines (VMs)",
+        "containers"
+      ],
+      "prerequisite_concepts": [
+        "virtualization",
+        "hypervisor",
+        "microservices",
+        "CI/CD pipelines"
+      ],
+      "matches": []
+    },
+    "docker-what-is-docker": {
+      "version": "ad7c69e14b478875",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "containerization",
+        "microservices architectures",
+        "cloud environments",
+        "DevOps workflows"
+      ],
+      "prerequisite_concepts": [
+        "virtual machines",
+        "microservices",
+        "cloud computing",
+        "DevOps"
+      ],
+      "matches": [
+        {
+          "concept": "virtual machines",
+          "slug": "docker-containers-vs-virtual-machines",
+          "title": "Containers vs. Virtual Machines"
+        }
+      ]
+    },
+    "docker-chapter-2-getting-started-with-docker": {
+      "version": "b8889cf85ee0fdad",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Docker commands"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "What Is Git?"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        }
+      ]
+    },
+    "docker-setting-up-docker-environment": {
+      "version": "019527d41284712d",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker Desktop",
+        "WSL (Windows Subsystem for Linux)",
+        "Docker Engine",
+        "VS Code Docker Extension"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "HTTP and REST"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "HTTP and REST",
+          "slug": "web-http-rest",
+          "title": "Web Development Basics: HTTP and REST"
+        }
+      ]
+    },
+    "docker-overview-of-docker-workflow": {
+      "version": "48324a020b22f89c",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Docker Workflow Lifecycle",
+        "Docker Image Lifecycle",
+        "Docker Container Lifecycle",
+        "Docker Network and Storage"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Project Setup",
+        "Python Basics: Variables and Data Types",
+        "Web Development Basics: HTTP and REST"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
+        },
+        {
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "Web Development Basics: HTTP and REST",
+          "slug": "web-http-rest",
+          "title": "Web Development Basics: HTTP and REST"
+        }
+      ]
+    },
+    "docker-commands": {
+      "version": "baa4bdb98248eb7b",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker CLI",
+        "Docker image lifecycle",
+        "Docker container lifecycle"
+      ],
+      "prerequisite_concepts": [
+        "Linux Introduction Guide",
+        "Command line basics"
+      ],
+      "matches": []
+    },
+    "docker-chapter-3-docker-image-and-container": {
+      "version": "20deae08178a982b",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Container lifecycle management"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Python Basics: Variables and Data Types",
+        "Web Development Basics: HTTP and REST"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
+        },
+        {
+          "concept": "Web Development Basics: HTTP and REST",
+          "slug": "web-http-rest",
+          "title": "Web Development Basics: HTTP and REST"
+        }
+      ]
+    },
+    "docker-images-and-registries-docker-hub": {
+      "version": "7e417ae36b5308c6",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker images and registries",
+        "Docker Hub",
+        "Docker image life cycle"
+      ],
+      "prerequisite_concepts": [
+        "Docker basics",
+        "Containerization",
+        "Version control systems (VCS)"
+      ],
+      "matches": []
+    },
+    "docker-container-lifecycle": {
+      "version": "c11da717f3b7bd77",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker container lifecycle"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Project Setup",
+        "Docker basics"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
+        }
+      ]
+    },
+    "docker-advanced-container-lifecycle-management": {
+      "version": "3cf16ddcb0c5f45c",
+      "status": "ready",
+      "difficulty": "advanced",
+      "article_concepts": [
+        "docker kill",
+        "docker restart",
+        "docker pause",
+        "docker unpause",
+        "docker inspect"
+      ],
+      "prerequisite_concepts": [
+        "docker stop",
+        "container lifecycle management",
+        "CLI commands"
+      ],
+      "matches": []
+    },
+    "docker-commands-to-interact-with-inside-of-containers": {
+      "version": "eb92c5488e99ce80",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "docker exec",
+        "docker attach",
+        "docker logs",
+        "docker top",
+        "docker cp",
+        "docker diff"
+      ],
+      "prerequisite_concepts": [
+        "containerized environments",
+        "lifecycle commands (starting, stopping, restarting containers)"
+      ],
+      "matches": []
+    },
+    "docker-chapter-4-docker-networking-and-storage": {
+      "version": "8a15c05d6f5bf54c",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker Networking",
+        "Docker Storage",
+        "Persistent Storage",
+        "Microservices"
+      ],
+      "prerequisite_concepts": [
+        "Docker Basics",
+        "Containerization",
+        "Microservices"
+      ],
+      "matches": []
+    },
+    "docker-networking": {
+      "version": "e14076a6e9fa5a27",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Docker networks",
+        "Docker ports",
+        "bridge network",
+        "host network",
+        "overlay network",
+        "port mapping",
+        "Docker CLI"
+      ],
+      "prerequisite_concepts": [
+        "containers",
+        "Docker",
+        "networking"
+      ],
+      "matches": [
+        {
+          "concept": "containers",
+          "slug": "docker-containers-vs-virtual-machines",
+          "title": "Containers vs. Virtual Machines"
+        },
+        {
+          "concept": "Docker",
+          "slug": "docker-what-is-docker",
+          "title": "What Is Docker?"
+        },
+        {
+          "concept": "networking",
+          "slug": "docker-chapter-4-docker-networking-and-storage",
+          "title": "Chapter 4. Docker Networking and Storage"
+        }
+      ]
+    },
+    "docker-persistent-storage-with-docker-volumes": {
+      "version": "cf2ba4fc50ac03fd",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker volumes",
+        "data persistence in Docker"
+      ],
+      "prerequisite_concepts": [
+        "Docker containers",
+        "ephemeral computing environments",
+        "disposable nature of containers"
+      ],
+      "matches": []
+    },
+    "docker-chapter-5-building-and-sharing-docker-images": {
+      "version": "e120d4ae0c43b541",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker images",
+        "Dockerfiles",
+        "dockerignore file"
+      ],
+      "prerequisite_concepts": [
+        "containerized applications",
+        "Docker Official Images",
+        "Git & GitHub Project Setup"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
+        }
+      ]
+    },
+    "docker-what-is-a-dockerfile": {
+      "version": "dbb956d5f0d5ec89",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Docker image",
+        "containerization"
+      ],
+      "prerequisite_concepts": [
+        "What Is a Docker Container?",
+        "Introduction to Docker"
+      ],
+      "matches": []
+    },
+    "docker-build-context-and-dockerignore-file": {
+      "version": "2a62cc4d29792653",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "build context",
+        ".dockerignore file"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Project Setup",
+        "Project Initiator – .gitignore File"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
+        },
+        {
+          "concept": "Project Initiator – .gitignore File",
+          "slug": "git-project-initiator-gitignore-file",
+          "title": "Project Initiator – .gitignore File"
+        }
+      ]
+    },
+    "docker-dockerfile-syntax": {
+      "version": "1bd95fd9152baac8",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Dockerfile syntax"
+      ],
+      "prerequisite_concepts": [
+        "Docker basics"
+      ],
+      "matches": []
+    },
+    "docker-sharing-your-docker-images": {
+      "version": "7ea666fd69b3d9d9",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker Hub",
+        "Docker image sharing",
+        "Docker CLI"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Overview",
+        "Version Control"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        },
+        {
+          "concept": "Version Control",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        }
+      ]
+    },
+    "docker-chapter-6-docker-compose-and-deployment-practice": {
+      "version": "1009099e31fea3a7",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker Compose",
+        "container orchestration",
+        "multi-container applications",
+        "YAML file"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Project Setup",
+        "Django Project Structure Explained"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
+        },
+        {
+          "concept": "Django Project Structure Explained",
+          "slug": "django-project-structure",
+          "title": "Django Project Structure Explained"
+        }
+      ]
+    },
+    "docker-writing-a-docker-compose-file": {
+      "version": "05ed0b11d2eb4a52",
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Docker Compose",
+        "Dockerfile",
+        "YAML format"
+      ],
+      "prerequisite_concepts": [
+        "Docker basics"
+      ],
+      "matches": []
+    },
+    "docker-compose-commands": {
+      "version": "3d1ea597f3909537",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker Compose file",
+        "CLI commands",
+        "docker-compose build",
+        "docker-compose up"
+      ],
+      "prerequisite_concepts": [
+        "Docker Compose file",
+        "docker-compose.yml"
+      ],
+      "matches": [
+        {
+          "concept": "Docker Compose file",
+          "slug": "docker-writing-a-docker-compose-file",
+          "title": "Writing a Docker Compose File"
+        }
+      ]
+    },
+    "docker-web-app-development-with-docker-compose": {
+      "version": "a715ba5798c22567",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker Compose",
+        "Django application",
+        "PostgreSQL database"
+      ],
+      "prerequisite_concepts": [
+        "Web Development Basics: HTTP and REST",
+        "Django Project Structure Explained"
+      ],
+      "matches": [
+        {
+          "concept": "Web Development Basics: HTTP and REST",
+          "slug": "web-http-rest",
+          "title": "Web Development Basics: HTTP and REST"
+        },
+        {
+          "concept": "Django Project Structure Explained",
+          "slug": "django-project-structure",
+          "title": "Django Project Structure Explained"
+        }
+      ]
+    },
+    "docker-production-deployment-with-docker-compose": {
+      "version": "c2751712a66e7c64",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "Docker Compose",
+        "Django web application",
+        "AWS Lightsail",
+        "production deployment"
+      ],
+      "prerequisite_concepts": [
+        "Git and GitHub Introduction Guide",
+        "Django Project Structure Explained"
+      ],
+      "matches": [
+        {
+          "concept": "Django Project Structure Explained",
+          "slug": "django-project-structure",
+          "title": "Django Project Structure Explained"
+        }
+      ]
+    },
+    "docker-advancing-your-docker-skills": {
+      "version": "9effe1782f113d9f",
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "container security",
+        "Docker Swarm",
+        "Kubernetes",
+        "WebAssembly"
+      ],
+      "prerequisite_concepts": [
+        "Git & GitHub Project Setup",
+        "Docker Basics"
+      ],
+      "matches": [
+        {
+          "concept": "Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
+        }
+      ]
+    }
+  },
+  "bridges": {}
+}

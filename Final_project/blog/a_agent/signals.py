@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from wagtail.signals import page_published, page_unpublished
 
 from a_agent.services.article_index import index_article, remove_article_index
+from a_agent.services.learning_analysis import invalidate_if_changed
 from a_blog.models import ArticlePage
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,12 @@ def rebuild_article_index_on_publish(sender, instance, **kwargs):
         logger.info('Indexed article %s (%s chunks) after publish.', instance.pk, chunk_count)
     except Exception:
         logger.exception('Failed to index article %s after publish.', instance.pk)
+
+    try:
+        if invalidate_if_changed(instance):
+            logger.info('Marked learning analysis stale for article %s.', instance.pk)
+    except Exception:
+        logger.exception('Failed to invalidate learning analysis for article %s.', instance.pk)
 
 
 @receiver(page_unpublished)

@@ -17,7 +17,7 @@ class BrowsingHistoryMiddleware:
             return response
 
         page = getattr(request, 'wagtail_page', None)
-        if isinstance(page, ArticlePage):
+        if isinstance(page, ArticlePage) and not request.get_host().startswith('testserver'):
             page_url = page.get_url(request) or page.url
             if page_url:
                 BrowsingHistory.add_or_update_history(
