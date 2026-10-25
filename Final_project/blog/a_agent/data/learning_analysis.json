@@ -430,7 +430,36 @@
     },
     "ai-is-already-better-at-coding-than-most-soft": {
       "version": "e8ff2de4e862bedb",
-      "status": "unavailable"
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "AI is already better at shipping code than most software developers",
+        "coding was never the most valuable part of software engineering",
+        "level the playing field",
+        "five minutes of coding. four days of engineering"
+      ],
+      "prerequisite_concepts": [
+        "Agent Tool Design Principles",
+        "Vibe Coding Isn't the Problem. Calling It Engineering Is",
+        "20 Agentic AI Terms Every Developer Should Know (Explained Simply)"
+      ],
+      "matches": [
+        {
+          "concept": "Agent Tool Design Principles",
+          "slug": "agent-tool-design",
+          "title": "Agent Tool Design Principles"
+        },
+        {
+          "concept": "Vibe Coding Isn't the Problem. Calling It Engineering Is",
+          "slug": "vibe-coding-isnt-the-problem-calling-it-engin",
+          "title": "Vibe Coding Isn't the Problem. Calling It Engineering Is"
+        },
+        {
+          "concept": "20 Agentic AI Terms Every Developer Should Know (Explained Simply)",
+          "slug": "20-agentic-ai-terms-every-developer-should-kn",
+          "title": "20 Agentic AI Terms Every Developer Should Know (Explained Simply)"
+        }
+      ]
     },
     "20-agentic-ai-terms-every-developer-should-kn": {
       "version": "a5acc62c831bd828",
@@ -795,7 +824,30 @@
     },
     "git-key-tool-preparation-1-mac": {
       "version": "b3b54feba8e7673a",
-      "status": "unavailable"
+      "status": "ready",
+      "difficulty": "intermediate",
+      "article_concepts": [
+        "preinstalled Git",
+        "VS Code",
+        "Terminal",
+        "Home Brew"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "Chapter 1. Git & GitHub Overview"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "Chapter 1. Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        }
+      ]
     },
     "git-key-tool-preparation-2-windows": {
       "version": "57c7591c1704ed2f",
@@ -1572,7 +1624,36 @@
     },
     "git-fork-vs-clone": {
       "version": "05c7363e094ef539",
-      "status": "unavailable"
+      "status": "ready",
+      "difficulty": "beginner",
+      "article_concepts": [
+        "Fork",
+        "Clone",
+        "Remote Repository",
+        "Local Repository"
+      ],
+      "prerequisite_concepts": [
+        "What Is Git?",
+        "What Is Version Control?",
+        "Git & GitHub Overview"
+      ],
+      "matches": [
+        {
+          "concept": "What Is Git?",
+          "slug": "git-what-is-git",
+          "title": "What Is Git?"
+        },
+        {
+          "concept": "What Is Version Control?",
+          "slug": "git-what-is-version-control",
+          "title": "What Is Version Control?"
+        },
+        {
+          "concept": "Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
+        }
+      ]
     },
     "git-chapter-4-edit-commit": {
       "version": "97e7bd9f75ac9e1d",
