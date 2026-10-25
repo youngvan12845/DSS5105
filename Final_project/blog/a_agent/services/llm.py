@@ -26,7 +26,13 @@ class LLMInfo:
 
 
 def _provider() -> str:
-    return getattr(settings, 'AGENT_LLM_PROVIDER', 'ollama').lower()
+    provider = getattr(settings, 'AGENT_LLM_PROVIDER', 'ollama').lower()
+    if provider == 'ollama' and not ollama_reachable():
+        if getattr(settings, 'CLOUDFLARE_API_TOKEN', ''):
+            return 'cloudflare'
+        if getattr(settings, 'AGENT_OPENAI_API_KEY', ''):
+            return 'openai'
+    return provider
 
 
 def _ollama_base_host() -> str:
