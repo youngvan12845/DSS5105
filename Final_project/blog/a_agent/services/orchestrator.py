@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 
 from django.contrib.auth.models import AnonymousUser, User
@@ -619,6 +620,16 @@ def handle_user_message(
     citations = _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=reading_path)
 
     if llm_configured():
+        is_chinese = bool(re.search(r'[\u4e00-\u9fff]', query))
+        if is_chinese:
+            lang_directive = (
+                'CRITICAL LANGUAGE RULE: The user asked in Chinese. '
+                'You MUST write your entire response in Traditional Chinese (繁體中文). '
+                'Do NOT reply in English.'
+            )
+        else:
+            lang_directive = 'Respond in English unless the user writes in another language.'
+
         if article_scope:
             system_prompt = (
                 'You are an active blog reading co-pilot and learning path navigator focused on ONE article. '
@@ -626,7 +637,7 @@ def handle_user_message(
                 'If the user asks whether they can understand this article or asks about prerequisites, reference the provided prerequisite diagnosis. '
                 'If the user is an experienced or senior reader, provide architectural insights and production pitfalls instead of basic definitions. '
                 'Do not mention or cite other articles unless discussing prerequisites. '
-                'Respond in English unless the user writes in another language. '
+                f'{lang_directive} '
                 'If the user asks for a summary, synthesize the provided passages. '
                 'If content is paywalled and passages are preview-only, say so clearly. '
                 'If passages are empty, say the article is not indexed yet.'
@@ -637,7 +648,7 @@ def handle_user_message(
                 'For factual and conceptual questions, state the technical definitions, core mechanisms, and key facts clearly before suggesting reading paths. '
                 'When finding or recommending articles on a specific topic, prioritize the Search results (Keyword hits, Chunk passages, Vector hits), and summarize how each article addresses the topic (noting YAML configuration, multi-container architecture, branching workflow, volumes/storage, or production practice). '
                 'When reading path or recommendations are provided, present the structured steps and their notes clearly. '
-                'Respond in English unless the user writes in another language. '
+                f'{lang_directive} '
                 'Cite article titles and include markdown links when URLs are available. '
                 'If content is paywalled and the user cannot read the full text, do not leak paid body text. '
                 'If the user asks about an article or topic not found in the blog corpus (or tool results are empty), refuse clearly by stating: "I cannot find any article about that in the blog corpus." '
@@ -647,6 +658,8 @@ def handle_user_message(
             f'User question: {query}\n\n'
             f'Intents: {sorted(intents)}\n\n'
         )
+        if is_chinese:
+            user_prompt = f'[Language Instruction: The user query is in Chinese. You MUST answer entirely in Traditional Chinese (繁體中文).]\n\n' + user_prompt
         if article_scope:
             user_prompt += f'Focused article:\n{article_scope_to_dict(article_scope)}\n\n'
             if article_scope.slug:
@@ -665,6 +678,8 @@ def handle_user_message(
             f'Reading list:\n{reading_list_to_dicts(reading_list)}\n\n'
             f'Pending action:\n{pending_action or None}'
         )
+        if is_chinese:
+            user_prompt += '\n\n[Final Reminder: You MUST write your entire response in Traditional Chinese (繁體中文).]'
         try:
             content = generate_answer(
                 system_prompt,
