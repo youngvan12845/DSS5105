@@ -131,7 +131,7 @@ More detail: [DOCUMENTATION_EN.md](./Final_project/blog/DOCUMENTATION_EN.md) · 
 
 ## Ollama setup (teammates — full AI Q&A)
 
-Default is **local Ollama**, not a cloud API. See [blog/README.md](./Final_project/blog/README.md#ollama-setup--required-for-full-ai-qa) for the checklist, or [DOCUMENTATION.md](./Final_project/blog/DOCUMENTATION.md) §3.2 (中文).
+This version uses **Cloudflare Workers AI**. Chat and batch analysis call `@cf/qwen/qwen2.5-coder-32b-instruct`. Embeddings use `@cf/baai/bge-m3`. Put `CLOUDFLARE_API_TOKEN` in `.env`. Local Ollama is the first version; the checklist below is only for that fallback. See [blog/README.md](./Final_project/blog/README.md#ollama-setup--required-for-full-ai-qa).
 
 Quick version:
 

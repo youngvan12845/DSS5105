@@ -29,7 +29,7 @@ SUPABASE_S3_SECRET_ACCESS_KEY=...
 SUPABASE_STORAGE_BUCKET=media
 ```
 
-4. Keep `EMAIL_*`, `AGENT_LLM_PROVIDER=ollama`, etc. as before
+4. Keep `EMAIL_*`, `AGENT_LLM_PROVIDER=cloudflare`, etc. as before
 5. `pip install -r requirements.txt` → `./scripts/run_local.sh`
 6. Register at `/accounts/signup/` or use a shared test account from chat
 
@@ -37,7 +37,7 @@ Full guide: [SUPABASE.md](./SUPABASE.md). To go back to local-only, comment out 
 
 ## Ollama setup — required for full AI Q&A
 
-**Default config uses local models, not a cloud API.** Every teammate who wants natural-language answers (not rule-based fallback) should complete this checklist.
+**This version calls Cloudflare Workers AI** (`@cf/qwen/qwen2.5-coder-32b-instruct` for chat and batch analysis, `@cf/baai/bge-m3` for embeddings). Set `CLOUDFLARE_API_TOKEN` in `.env`. Local Ollama is the first version, kept below as a fallback.
 
 ### Checklist
 
@@ -111,7 +111,7 @@ See [`.env.example`](.env.example). Important keys:
 | `DATABASE_URL` | **Team Supabase** (overrides `POSTGRES_*` when set) — get from group chat |
 | `SUPABASE_S3_*` | Shared image storage — get from group chat |
 | `POSTGRES_*` | Local database only (when `DATABASE_URL` is unset) |
-| `AGENT_LLM_PROVIDER` | `ollama` (default), `openai`, or `cloudflare` |
+| `AGENT_LLM_PROVIDER` | `cloudflare` (default), `openai`, or `ollama` |
 | `OLLAMA_MODEL` | Chat/vision model, e.g. `qwen2.5:7b` |
 | `OLLAMA_EMBED_MODEL` | Embeddings, e.g. `nomic-embed-text` |
 | `OPENAI_API_KEY` | Only if using OpenAI |
