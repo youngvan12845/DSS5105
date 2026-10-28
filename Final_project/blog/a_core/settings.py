@@ -185,9 +185,9 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 WAGTAIL_SITE_NAME = 'Blog'
 WAGTAILADMIN_BASE_URL = os.environ.get('WAGTAILADMIN_BASE_URL', 'http://127.0.0.1:8000')
 
-# Reading Co-Pilot Agent — default: Cloudflare Workers AI.
-# Provider: cloudflare (default) | openai | ollama
-AGENT_LLM_PROVIDER = os.environ.get('AGENT_LLM_PROVIDER', 'cloudflare')
+# Reading Co-Pilot Agent — default: local Ollama (no article text sent to cloud APIs)
+# Provider: ollama (default) | openai | cloudflare
+AGENT_LLM_PROVIDER = os.environ.get('AGENT_LLM_PROVIDER', 'ollama')
 AGENT_OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 AGENT_OPENAI_MODEL = os.environ.get('OPENAI_MODEL', 'gpt-4o-mini')
 AGENT_OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', '')
