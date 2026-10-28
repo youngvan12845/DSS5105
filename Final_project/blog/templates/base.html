@@ -9,6 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Django Template">
     <title>CheeseO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vend+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="{% static 'win.ico' %}">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script src="https://unpkg.com/htmx.org@2.0.2"></script>
@@ -152,17 +155,21 @@
 </head>
 
 
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="{% block class %}{% endblock %} pt-16"></body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="{% block class %}{% endblock %} pt-16 {% block theme_class %}prototype-theme{% endblock %}">
 
     {% include 'includes/messages.html' %}
 
-    {% include 'includes/header.html' %}
+    {% block site_header %}{% include 'includes/header.html' %}{% endblock %}
 
     {% block layout %}
     {% endblock %}
 
+    <script src="{% static 'js/site-navigation.js' %}" defer></script>
     {% block javascript %}{% endblock %}
     {% block head %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/site-theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/assistant-colors.css' %}">
+    <link rel="stylesheet" href="{% static 'css/checkin-colors.css' %}">
 
 </body>
 

@@ -1,76 +1,30 @@
 {% load static %}
-
-<header class="fixed top-0 left-0 w-full bg-white shadow-sm z-50 px-4 sm:px-6 lg:px-8 py-3">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <a class="flex items-center gap-2 shrink-0" href="{% url 'a_home:homes' %}">
-            <img class="h-7" src="{% static 'images/cheese.png' %}" alt="Logo" />
-            <span class="text-xl font-bold text-pink-500">CheeseO</span>
-        </a>
-
-        <nav class="hidden md:block mx-4">
-            <ul class="flex items-center gap-6">
-                <li><a href="{% url 'a_home:homes' %}" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Home</a></li>
-                <li><a href="/blog/series/" class="text-gray-700 hover:text-pink-500 font-semibold transition-colors flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-pink-500 inline-block"></span>Series</a></li>
-                <li><a href="/blog/articles/" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Blog</a></li>
-                <li><a href="{% url 'a_agent:chat' %}" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Reading Assistant</a></li>
-                <li><a href="{% url 'a_order:create_subscription_order' %}" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Membership</a></li>
-                <li><a href="{% url 'a_home:help' %}" class="text-gray-600 hover:text-pink-500 font-medium transition-colors">Help</a></li>
-            </ul>
-        </nav>
-
-        <div class="flex items-center gap-3 sm:gap-4">
-            {% if request.user.is_authenticated %}
-            <button id="check-in-trigger" class="bg-pink-500 text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-pink-600 transition-colors whitespace-nowrap">
-                Daily Check-in
-            </button>
-
-            <div x-data="{ dropdownOpen: false }" class="relative">
-                <button @click="dropdownOpen = !dropdownOpen" @click.away="dropdownOpen = false"
-                        class="flex items-center gap-2 cursor-pointer bg-pink-500 text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-pink-600 transition-colors whitespace-nowrap">
-                    <img class="h-5 w-5 rounded-full object-cover" src="{{ request.user.profile.avatar }}" alt="Avatar" />
-                    <span class="hidden sm:inline">{{ request.user.profile.name }}</span>
-                </button>
-                <div x-show="dropdownOpen" x-cloak class="absolute right-0 bg-white text-gray-900 shadow-lg rounded-xl w-48 p-2 mt-2 z-20"
-                     x-transition:enter="transition ease-out duration-100"
-                     x-transition:enter-start="opacity-0 scale-95"
-                     x-transition:enter-end="opacity-100 scale-100">
-                    <ul>
-                        <li><a href="{% url 'profile' %}" class="block py-2 px-3 rounded text-sm hover:bg-gray-50 hover:text-pink-500">Profile</a></li>
-                        <li><a href="{% url 'a_agent:reading_list' %}" class="block py-2 px-3 rounded text-sm hover:bg-gray-50 hover:text-pink-500">Reading List</a></li>
-                        <li><a href="{% url 'browsing-history' %}" class="block py-2 px-3 rounded text-sm hover:bg-gray-50 hover:text-pink-500">Browsing History</a></li>
-                        <li><a href="{% url 'a_points:points_records' %}" class="block py-2 px-3 rounded text-sm hover:bg-gray-50 hover:text-pink-500">Points History</a></li>
-                        <li class="border-t border-gray-100 mt-1 pt-1"><a href="{% url 'account_logout' %}" class="block py-2 px-3 rounded text-sm text-gray-500 hover:bg-gray-50 hover:text-pink-500">Log Out</a></li>
-                    </ul>
-                </div>
-            </div>
-            {% else %}
-            <a href="{% url 'account_login' %}" class="bg-pink-500 text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-pink-600 transition-colors whitespace-nowrap">Log In</a>
-            <a href="{% url 'account_signup' %}?next={% url 'profile-onboarding' %}" class="text-gray-700 hover:text-pink-500 font-medium text-sm transition-colors">Sign Up</a>
-            {% endif %}
-
-            <div class="md:hidden relative">
-                <button class="flex items-center bg-transparent text-gray-600 hover:text-gray-800" id="mobile-menu-button">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-                <div id="mobile-menu" class="hidden absolute right-0 bg-white text-gray-900 shadow-lg rounded-xl w-48 p-2 mt-2 z-20">
-                    <ul class="space-y-2">
-                        <li><a href="{% url 'a_home:homes' %}" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Home</a></li>
-                        <li><a href="/blog/series/" class="block py-2 px-3 text-sm font-semibold text-pink-600 hover:bg-pink-50 rounded">Series</a></li>
-                        <li><a href="/blog/articles/" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Blog</a></li>
-                        <li><a href="{% url 'a_agent:chat' %}" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Reading Assistant</a></li>
-                        <li><a href="{% url 'a_order:create_subscription_order' %}" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Membership</a></li>
-                        <li><a href="{% url 'a_home:help' %}" class="block py-2 px-3 text-sm hover:bg-gray-50 hover:text-pink-500 rounded">Help</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+<header class="site-nav" id="site-nav">
+ <a href="{% url 'a_home:homes' %}" class="brand" aria-label="CheeseO home"><img src="{% static 'images/cheese.png' %}" alt="CheeseO logo"><span>CheeseO</span></a>
+ <nav class="nav-pill" aria-label="Main navigation">
+  <a href="{% url 'a_home:homes' %}">Home</a><a href="/blog/series/">Series</a><a href="/blog/articles/">Blog</a><a href="{% url 'a_agent:chat' %}">Reading Assistant</a><a href="{% url 'a_order:create_subscription_order' %}">Membership</a><a href="{% url 'a_home:help' %}">Help</a>
+ </nav>
+ <div class="nav-actions">
+ {% if request.user.is_authenticated %}
+  <div class="member-actions"><button type="button" class="checkin" id="check-in-trigger">Daily Check-in</button>
+   <button type="button" class="avatar-button" id="account-button" aria-label="Open account menu" aria-controls="account-menu" aria-expanded="false" title="{{ request.user.username }}"><img src="{{ request.user.profile.avatar }}" alt="{{ request.user.username }}" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></button>
+   <div class="account-menu" id="account-menu" hidden><a href="{% url 'profile' %}">Profile</a><a href="{% url 'a_agent:reading_list' %}">Reading List</a><a href="{% url 'browsing-history' %}">Browsing History</a><a href="{% url 'a_points:points_records' %}">Points History</a><a href="{% url 'account_logout' %}">Log Out</a></div>
+  </div>
+ {% else %}
+  <a class="nav-login" href="{% url 'account_login' %}">Log In</a><a class="white-btn" href="{% url 'account_signup' %}?next={% url 'profile-onboarding' %}">Get Started <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+ {% endif %}
+ <button type="button" class="menu-btn" id="mobile-menu-button" aria-label="Open navigation" aria-controls="mobile-menu" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg></button>
+ </div>
 </header>
+<nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
+ <a href="{% url 'a_home:homes' %}">Home</a><a href="/blog/series/">Series</a><a href="/blog/articles/">Blog</a><a href="{% url 'a_agent:chat' %}">Reading Assistant</a><a href="{% url 'a_order:create_subscription_order' %}">Membership</a><a href="{% url 'a_home:help' %}">Help</a>
+ {% if request.user.is_authenticated %}<button type="button" class="checkin" data-open-checkin>Daily Check-in</button>{% else %}<a href="{% url 'account_login' %}">Log In</a>{% endif %}
+</nav>
 
-<div id="check-in-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+<div id="check-in-modal" role="dialog" aria-modal="true" aria-labelledby="check-in-title" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold text-gray-900">Daily Check-in</h2>
+            <h2 id="check-in-title" class="text-2xl font-bold text-gray-900">Daily Check-in</h2>
             <button id="close-modal" class="text-gray-900 text-2xl bg-transparent hover:text-pink-500">×</button>
         </div>
         <form id="daily-check-in-form" method="post" action="{% url 'a_points:daily_check_in' %}">
@@ -84,44 +38,3 @@
         </form>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('check-in-modal');
-    const trigger = document.getElementById('check-in-trigger');
-    const closeBtn = document.getElementById('close-modal');
-    const cancelBtn = document.getElementById('cancel-modal');
-    const form = document.getElementById('daily-check-in-form');
-    const messageDiv = document.getElementById('check-in-message');
-
-    const toggleModal = (show) => modal.classList.toggle('hidden', !show);
-
-    trigger?.addEventListener('click', () => toggleModal(true));
-    closeBtn?.addEventListener('click', () => toggleModal(false));
-    cancelBtn?.addEventListener('click', () => toggleModal(false));
-
-    form?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        messageDiv.classList.add('hidden');
-        const response = await fetch(form.action, {
-            method: 'POST',
-            body: new FormData(form),
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        const data = await response.json();
-        messageDiv.classList.remove('hidden');
-        if (response.ok) {
-            messageDiv.className = 'mb-4 text-sm font-medium text-green-600';
-            messageDiv.textContent = 'Check-in successful! You earned 10 points';
-            setTimeout(() => toggleModal(false), 2000);
-        } else {
-            messageDiv.className = 'mb-4 text-sm font-medium text-red-600';
-            messageDiv.textContent = data.error;
-        }
-    });
-
-    document.getElementById('mobile-menu-button')?.addEventListener('click', () => {
-        document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
-});
-</script>

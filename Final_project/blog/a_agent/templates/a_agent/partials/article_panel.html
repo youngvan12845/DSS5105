@@ -24,7 +24,7 @@
 
             {% if not chat_messages %}
             <div class="article-agent-empty max-w-sm mx-auto text-center py-6">
-                <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-pink-100 to-rose-50 flex items-center justify-center text-xl">✦</div>
+                <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-purple-100 to-purple-50 flex items-center justify-center text-xl">✦</div>
                 <h3 class="article-agent-subheading">Ask about this article</h3>
                 <p class="article-agent-muted">Explain a concept, summarize the article, or choose your next read.</p>
                 <div class="flex flex-wrap justify-center gap-2 mt-4">
@@ -122,18 +122,18 @@
     width: 3.75rem !important;
     min-height: 6.5rem;
     padding: 1rem 0.625rem !important;
-    border: 1px solid #fbcfe8;
+    border: 1px solid #e9d5ff;
     border-right: none;
     border-radius: 0.875rem 0 0 0.875rem;
     background: #fff !important;
     color: #64748b !important;
-    box-shadow: -2px 0 12px rgba(236, 72, 153, 0.12);
+    box-shadow: -2px 0 12px rgba(147, 51, 234, 0.12);
     cursor: pointer;
 }
 .article-agent-restore:hover {
-    color: #db2777 !important;
-    background: #fdf2f8 !important;
-    border-color: #f9a8d4;
+    color: #7e22ce !important;
+    background: #faf5ff !important;
+    border-color: #d8b4fe;
 }
 .article-agent-restore svg {
     width: 1.25rem;
@@ -144,7 +144,7 @@
 .article-agent-restore-label {
     font-size: 0.8125rem;
     font-weight: 700;
-    color: #db2777;
+    color: #7e22ce;
     writing-mode: vertical-rl;
     letter-spacing: 0.12em;
 }
@@ -160,7 +160,7 @@
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #ec4899;
+    color: #9333ea;
     margin: 0 0 0.125rem;
 }
 .article-agent-heading {
@@ -214,9 +214,9 @@
     height: 2.8rem !important;
 }
 .article-agent-chat .agent-sidebar-toggle:hover {
-    background: #fce7f3 !important;
-    color: #db2777 !important;
-    border-color: #fbcfe8 !important;
+    background: #f3e8ff !important;
+    color: #7e22ce !important;
+    border-color: #e9d5ff !important;
 }
 .article-agent-chat button,
 .article-agent-chat [type='button'],
@@ -244,7 +244,7 @@
     border-radius: 0.625rem !important;
 }
 .article-agent-chat .agent-bubble-user {
-    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+    background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);
     color: #fff;
     padding: 0.625rem 0.875rem;
     border-radius: 1rem 1rem 0.25rem 1rem;
@@ -266,7 +266,7 @@
     font-size: 0.5625rem;
     font-weight: 700;
 }
-.article-agent-chat .agent-avatar-user { background: #fce7f3; color: #db2777; }
+.article-agent-chat .agent-avatar-user { background: #f3e8ff; color: #7e22ce; }
 .article-agent-chat .agent-avatar-bot { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; }
 .article-agent-chat .agent-icon-btn {
     display: inline-flex !important;
@@ -279,7 +279,7 @@
     border-radius: 0.75rem !important;
     border: none;
 }
-.article-agent-chat .agent-icon-btn:hover { background: #fce7f3 !important; color: #db2777 !important; }
+.article-agent-chat .agent-icon-btn:hover { background: #f3e8ff !important; color: #7e22ce !important; }
 .article-agent-chat #article-image-upload-btn.agent-upload-hidden { display: none !important; }
 .article-agent-chat .article-agent-send-btn {
     display: inline-flex !important;
@@ -294,10 +294,10 @@
     line-height: 1 !important;
     white-space: nowrap;
     color: #fff !important;
-    background: linear-gradient(135deg, #ec4899, #db2777) !important;
+    background: linear-gradient(135deg, #9333ea, #7e22ce) !important;
     border: none;
     border-radius: 0.75rem !important;
-    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(147, 51, 234, 0.3) !important;
     cursor: pointer;
 }
 .article-agent-chat .article-agent-send-btn:hover {
@@ -334,10 +334,10 @@
     line-height: 1.2 !important;
     white-space: nowrap;
     color: #fff !important;
-    background: linear-gradient(135deg, #ec4899, #db2777) !important;
+    background: linear-gradient(135deg, #9333ea, #7e22ce) !important;
     border: none;
     border-radius: 0.75rem !important;
-    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.25) !important;
+    box-shadow: 0 2px 8px rgba(147, 51, 234, 0.25) !important;
     cursor: pointer;
 }
 .article-agent-chat .agent-confirm-btn:hover {
@@ -361,9 +361,9 @@
     cursor: pointer;
 }
 .article-agent-chat .agent-cancel-btn:hover {
-    color: #db2777 !important;
-    border-color: #fbcfe8 !important;
-    background: #fdf2f8 !important;
+    color: #7e22ce !important;
+    border-color: #e9d5ff !important;
+    background: #faf5ff !important;
 }
 .article-agent-chat .agent-confirm-actions {
     display: flex;
@@ -385,9 +385,9 @@
     cursor: pointer;
 }
 .article-agent-chat .agent-suggestion-chip:hover {
-    border-color: #f9a8d4 !important;
-    color: #db2777 !important;
-    background: #fdf2f8 !important;
+    border-color: #d8b4fe !important;
+    color: #7e22ce !important;
+    background: #faf5ff !important;
 }
 .article-agent-chat .agent-message-group { margin-bottom: 1rem; }
 </style>

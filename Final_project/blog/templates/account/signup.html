@@ -1,4 +1,5 @@
 {% extends "account/base_entrance.html" %}
+{% block theme_class %}prototype-theme auth-signup{% endblock %}
 {% load allauth i18n %}
 
 {% block head_title %}
@@ -48,7 +49,7 @@ hr {
 }
 </style>
 
-<div class="container">
+<div class="container" data-auth-card>
     <h1>Sign Up</h1>
     <p style="text-align: center;">
         Already have an account? 
