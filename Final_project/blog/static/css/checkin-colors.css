@@ -1,0 +1,17 @@
+/* Original check-in geometry retained; color-only palette override. */
+#check-in-modal{background:rgba(0,0,0,.6)!important;color:#374151;color-scheme:light;font-family:ui-sans-serif,system-ui,sans-serif!important;line-height:1.5!important}
+#check-in-modal.hidden{display:none!important}
+#check-in-modal>.bg-white{background:#fff!important;border:0!important;border-radius:12px!important;backdrop-filter:none!important;box-shadow:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a!important}
+#check-in-modal h2{font-family:inherit!important;letter-spacing:normal!important;font-size:24px!important;font-weight:700!important;line-height:32px!important;color:#111827!important}
+#check-in-modal p{color:#4b5563!important}
+#check-in-modal button{font-family:inherit!important;font-weight:700!important;line-height:24px!important;box-shadow:none!important}
+#check-in-modal #close-modal{background:transparent!important;color:#374151!important;font-size:24px!important}
+#check-in-modal #cancel-modal{background:#f3f4f6!important;color:#374151!important}
+#check-in-modal button[type=submit]{background:#7e22ce!important;color:white!important}
+#check-in-modal button[type=submit]:hover{background:#6b21a8!important}
+#check-in-modal #check-in-message{color:#7e22ce!important}
+
+body.prototype-theme #check-in-modal h2{color:#111827!important;font-family:ui-sans-serif,system-ui,sans-serif!important;letter-spacing:normal!important;font-weight:700!important;line-height:32px!important}
+body.prototype-theme #check-in-modal p{color:#4b5563!important;font-family:ui-sans-serif,system-ui,sans-serif!important;line-height:24px!important}
+body.prototype-theme #check-in-modal button{font-family:ui-sans-serif,system-ui,sans-serif!important}
+body.prototype-theme #check-in-modal #check-in-message{color:#7e22ce!important}

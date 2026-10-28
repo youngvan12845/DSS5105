@@ -61,15 +61,15 @@
         <div class="flex flex-wrap justify-center gap-3 mb-8">
             <a href="?{% if query %}query={{ query }}&{% endif %}" 
                class="track-pill px-5 py-2.5 rounded-full text-sm font-semibold transition {% if not active_track %}bg-pink-500 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
-                🚀 All Tracks (102 Lessons)
+                 All Tracks (102 Lessons)
             </a>
             <a href="?track=git{% if query %}&query={{ query }}{% endif %}" 
                class="track-pill px-5 py-2.5 rounded-full text-sm font-semibold transition {% if active_track == 'git' %}bg-pink-500 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
-                🐙 Git & GitHub Master Course (75 Lessons · 7 Chapters)
+                 Git & GitHub Master Course (75 Lessons · 7 Chapters)
             </a>
             <a href="?track=docker{% if query %}&query={{ query }}{% endif %}" 
                class="track-pill px-5 py-2.5 rounded-full text-sm font-semibold transition {% if active_track == 'docker' %}bg-sky-600 text-white shadow-md{% else %}bg-white text-slate-700 border border-slate-200 hover:bg-slate-50{% endif %}">
-                🐳 Docker Basics Course (27 Lessons · 6 Chapters)
+                 Docker Basics Course (27 Lessons · 6 Chapters)
             </a>
         </div>
 
@@ -110,7 +110,7 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
                         <div class="flex items-center gap-3 mb-3">
-                            <span class="text-3xl">{{ course.icon }}</span>
+                            <svg class="w-7 h-7 text-purple-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 5c-3-2-7-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-2-1-6-1-9 1v15"/></svg>
                             <span class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider {% if course.slug == 'git' %}bg-pink-100 text-pink-700{% else %}bg-sky-100 text-sky-700{% endif %}">
                                 {{ course.badge }}
                             </span>

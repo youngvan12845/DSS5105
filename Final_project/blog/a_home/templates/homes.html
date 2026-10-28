@@ -1,111 +1,29 @@
 {% extends 'layouts/blank.html' %}
 {% load static %}
-
-{% block head %}
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-<style>
-    body { font-family: 'Inter', sans-serif; color: #334155; }
-    .merriweather { font-family: 'Merriweather', serif; }
-    .article-card { transition: all 0.25s ease; }
-    .article-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
-</style>
-{% endblock %}
-
-{% block class %}bg-slate-50 text-slate-700{% endblock %}
-
+{% block theme_class %}home-theme{% endblock %}
+{% block head %}<link href="{% static 'css/home-theme.css' %}" rel="stylesheet">{% endblock %}
 {% block content %}
-<div class="max-w-5xl mx-auto px-4 md:px-6 pt-28 pb-16">
-
-    <!-- Hero -->
-    <section class="text-center mb-16">
-        <p class="text-pink-500 font-medium mb-3 tracking-wide">Structured Curriculum · Deep-Dive Engineering</p>
-        <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-5 merriweather">CheeseO Knowledge Hub</h1>
-        <p class="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
-            Systematic engineering series (Git & GitHub Master Course), deep-dive technical blog posts, visual architectural diagrams, and an AI reading assistant.
-        </p>
-        <div class="flex flex-wrap justify-center gap-4">
-            <a href="/blog/series/" class="px-6 py-3 bg-pink-500 text-white rounded-full font-medium hover:bg-pink-600 transition-colors shadow-md flex items-center gap-2">
-                <span>🚀</span> Series Tracks
-            </a>
-            <a href="/blog/articles/" class="px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-full font-medium hover:bg-slate-50 transition-colors shadow-sm">
-                Engineering Blog
-            </a>
-            <a href="{% url 'a_agent:chat' %}" class="px-6 py-3 bg-white text-pink-600 border border-pink-200 rounded-full font-medium hover:bg-pink-50 transition-colors">
-                Reading Assistant
-            </a>
-        </div>
-    </section>
-
-    <!-- Platform features -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-            <div class="text-2xl mb-3">📚</div>
-            <h2 class="text-lg font-semibold text-slate-800 mb-2">In-Depth Articles</h2>
-            <p class="text-slate-600 text-sm">Articles on Python, machine learning, web development, and more — free previews plus premium content.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-            <div class="text-2xl mb-3">🤖</div>
-            <h2 class="text-lg font-semibold text-slate-800 mb-2">AI Reading Assistant</h2>
-            <p class="text-slate-600 text-sm">Ask questions about site articles, get reading recommendations, with citations that respect paywall boundaries.</p>
-        </div>
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-            <div class="text-2xl mb-3">⭐</div>
-            <h2 class="text-lg font-semibold text-slate-800 mb-2">Membership & Points</h2>
-            <p class="text-slate-600 text-sm">Subscribe for unlimited access, or unlock articles with points. Earn rewards through daily check-ins.</p>
-        </div>
-    </section>
-
-    <!-- Latest articles -->
-    <section class="mb-12">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-slate-800 merriweather">Latest Articles</h2>
-            <a href="/blog/" class="text-pink-500 hover:text-pink-600 text-sm font-medium">View All →</a>
-        </div>
-
-        {% if articles %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {% for article in articles %}
-            <a href="{{ article.url }}" class="article-card block bg-white rounded-xl p-5 border border-slate-100 shadow-sm">
-                <div class="flex items-start justify-between gap-3 mb-2">
-                    <h3 class="font-semibold text-slate-800 leading-snug">{{ article.title }}</h3>
-                    {% if article.is_free %}
-                    <span class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-green-50 text-green-700">Free</span>
-                    {% else %}
-                    <span class="shrink-0 text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">Premium</span>
-                    {% endif %}
-                </div>
-                <p class="text-sm text-slate-500 line-clamp-2">{{ article.intro }}</p>
-            </a>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="bg-white rounded-xl p-8 text-center text-slate-500 border border-dashed border-slate-200">
-            No articles yet. Publish content in the Wagtail admin (/blog/cms/).
-        </div>
-        {% endif %}
-    </section>
-
-    <!-- Membership CTA -->
-    <section class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-8 md:p-10 text-center border border-pink-100">
-        <h2 class="text-2xl font-bold text-slate-800 mb-3 merriweather">Upgrade Your Reading Experience</h2>
-        <p class="text-slate-600 mb-6 max-w-xl mx-auto">Get membership for unlimited access to premium articles, or unlock articles one at a time with points. After logging in, view your browsing history and points in your profile.</p>
-        <div class="flex flex-wrap justify-center gap-3">
-            {% if request.user.is_authenticated %}
-            <a href="{% url 'a_order:create_subscription_order' %}" class="px-5 py-2.5 bg-pink-500 text-white rounded-full text-sm font-medium hover:bg-pink-600">Subscribe / Renew</a>
-            <a href="{% url 'profile' %}" class="px-5 py-2.5 bg-white text-slate-700 rounded-full text-sm font-medium border border-slate-200 hover:bg-slate-50">Profile</a>
-            {% else %}
-            <a href="{% url 'account_login' %}?next=/home/" class="px-5 py-2.5 bg-pink-500 text-white rounded-full text-sm font-medium hover:bg-pink-600">Log In</a>
-            <a href="{% url 'account_signup' %}" class="px-5 py-2.5 bg-white text-slate-700 rounded-full text-sm font-medium border border-slate-200 hover:bg-slate-50">Sign Up</a>
-            {% endif %}
-        </div>
-    </section>
-
-</div>
-
-<footer class="bg-slate-900 text-slate-400 py-8 mt-8">
-    <div class="max-w-5xl mx-auto px-4 text-center text-sm">
-        <p class="text-white font-medium mb-1">CheeseO · Articles</p>
-        <p>© 2025 CheeseO. All rights reserved.</p>
-    </div>
-</footer>
+<main>
+<section aria-label="Knowledge Hub introduction" class="screen hero" id="home">
+<div class="hero-fallback"></div>
+<video aria-hidden="true" autoplay="" class="hero-video" loop="" muted="" playsinline="" preload="auto" src="https://media.base44.com/videos/public/6a16a89298dfc806fc54dd52/6ef478b34_AI_LandingPage_Veo31ImagetoVideo_2026-05-31_10-16-32.mp4"></video>
+<div class="hero-shade"></div>
+<div class="wrap"><div class="hero-badge">Structured Curriculum · Deep-Dive Engineering</div><h1>CheeseO<br/>Knowledge Hub</h1><p class="hero-description">Your next learning step, made simple.</p><div class="hero-buttons hero-entry-buttons">
+<a class="white-btn" href="/blog/series/">Series Tracks <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+<a class="white-btn" href="/blog/articles/">Engineering Blog <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+<a class="white-btn" href="{% url 'a_agent:chat' %}">Reading Assistant <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+</div></div>
+<a aria-label="Scroll to platform features" class="scroll-cue" href="#features"><span class="mouse"><i></i></span>Scroll to explore</a>
+</section>
+<section aria-label="Platform features" class="screen features" id="features"><div class="wrap"><div class="section-head"><span class="eyebrow">Platform Features</span><h2>Built for your<br/>next learning step.</h2><p>Articles, a reading co-pilot, and flexible access.<br/>Everything in your existing CheeseO workspace.</p></div><div class="feature-grid">
+<article class="feature-card"><span class="card-num">01 / READ</span><div class="feature-icon"><svg viewbox="0 0 24 24"><path d="M12 5c-3-2-7-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-2-1-6-1-9 1v15"></path></svg></div><h3>In-Depth Articles</h3><p>Articles on Python, machine learning, web development, and more — free previews plus premium content.</p><a href="/blog/articles/">Browse articles <span>↗</span></a></article>
+<article class="feature-card"><span class="card-num">02 / UNDERSTAND</span><div class="feature-icon"><svg viewbox="0 0 24 24"><path d="m12 3 2.7 6.3L21 12l-6.3 2.7L12 21l-2.7-6.3L3 12l6.3-2.7L12 3Z"></path></svg></div><h3>AI Reading Assistant</h3><p>Ask questions about site articles, get reading recommendations, with citations that respect paywall boundaries.</p><a href="{% url 'a_agent:chat' %}">Open reading assistant <span>↗</span></a></article>
+<article class="feature-card"><span class="card-num">03 / EXPLORE</span><div class="feature-icon"><svg viewbox="0 0 24 24"><path d="m12 3 3 6 6.6 1-4.8 4.7 1.1 6.6-5.9-3.1-5.9 3.1 1.1-6.6L2.4 10 9 9Z"></path></svg></div><h3>Membership &amp; Points</h3><p>Subscribe for unlimited access, or unlock articles with points. Earn rewards through daily check-ins.</p><a href="{% url 'a_order:create_subscription_order' %}">Explore membership <span>↗</span></a></article>
+</div></div></section>
+<section aria-label="Latest articles" class="screen articles" id="articles"><div class="wrap"><div class="section-head"><span class="eyebrow">Latest Articles</span><h2>Your next idea<br/>starts with a read.</h2><p>Engineering knowledge, one article at a time.</p></div><div class="articles-top"><span>From the knowledge hub</span><a data-route="/blog/" href="/blog/articles/">View All <span>↗</span></a></div><div class="article-grid">{% for article in articles %}
+<a class="article-card" href="{{ article.url }}"><div class="article-meta"><span class="article-category">{% firstof article.series_title 'Engineering Blog' %}</span>{% if article.is_free %}<span class="badge">Free</span>{% else %}<span class="badge premium">Premium</span>{% endif %}</div><h3>{{ article.title }}</h3><p>{{ article.intro }}</p><div class="article-bottom"><span>Read article</span><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></div></a>
+{% empty %}<div class="empty-articles">No articles yet. Publish content in the Wagtail admin (/blog/cms/).</div>{% endfor %}</div></div></section>
+<section aria-label="Membership invitation" class="screen membership" id="membership"><div class="wrap"><span class="eyebrow">Membership &amp; Points</span><h2>Upgrade Your<br/><span>Reading Experience</span></h2><p class="membership-description">Get membership for unlimited access to premium articles, or unlock articles one at a time with points. After logging in, view your browsing history and points in your profile.</p>{% if request.user.is_authenticated %}<div class="membership-buttons"><a class="white-btn" href="{% url 'a_order:create_subscription_order' %}">Subscribe / Renew <svg viewbox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a><a class="outline-btn" href="{% url 'profile' %}">Profile</a></div>{% else %}<div class="membership-buttons"><a class="white-btn" href="{% url 'account_login' %}">Log In <svg viewbox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a><a class="outline-btn" href="{% url 'account_signup' %}">Sign Up</a></div>{% endif %}</div></section>
+</main><footer class="site-footer"><div><strong>CheeseO · Articles</strong><span>© 2025 CheeseO. All rights reserved.</span></div><a href="#home">Back to top ↑</a></footer><nav aria-label="Homepage sections" class="section-dots"><a aria-label="Introduction" class="active" href="#home"></a><a aria-label="Platform features" href="#features"></a><a aria-label="Latest articles" href="#articles"></a><a aria-label="Membership" href="#membership"></a></nav>
 {% endblock %}
+{% block javascript %}<script src="{% static 'js/home-theme.js' %}" defer></script>{% endblock %}

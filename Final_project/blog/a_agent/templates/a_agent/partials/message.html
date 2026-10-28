@@ -27,7 +27,7 @@
                     {% for cite in message.citations %}
                     <li class="text-sm">
                         {% if cite.url %}
-                        <a href="{{ cite.url|same_site_url }}" class="text-pink-600 hover:text-pink-700 hover:underline">{{ cite.title }}</a>
+                        <a href="{{ cite.url|same_site_url }}" class="text-purple-600 hover:text-purple-700 hover:underline">{{ cite.title }}</a>
                         {% else %}
                         <span class="text-slate-600">{{ cite.title }}</span>
                         {% endif %}

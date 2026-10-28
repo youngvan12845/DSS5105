@@ -1,0 +1,27 @@
+
+#article-agent-shell .assistant-kicker{color:#7e22ce!important}
+#article-agent-shell .assistant-membership-link{color:#7e22ce!important}
+#article-agent-shell #article-chat-form .article-agent-send-btn{background:#7e22ce!important;border-color:#7e22ce!important;color:white!important}
+#article-agent-shell .article-agent-empty>div:first-child{background:#f3e8ff!important;color:#7e22ce!important}
+#article-agent-shell .assistant-concept-bridge{background:#faf5ff!important;color:#6b21a8!important}
+#article-agent-shell .assistant-concept-bridge a,#article-agent-shell .concept-bridge-close{color:#7e22ce!important}
+#article-agent-shell .assistant-prerequisite{border-color:#e9d5ff!important}
+#article-agent-shell .readiness-action:hover{border-color:#c084fc!important;color:#7e22ce!important}
+body.assistant-color-only{background:#fff!important}
+.assistant-color-only .text-pink-500,.assistant-color-only .text-pink-600,.assistant-color-only .text-pink-400{color:#7e22ce!important}
+.assistant-color-only [class*="bg-pink-50"],.assistant-color-only [class*="from-pink-100"]{background:#faf5ff!important}
+.assistant-color-only .border-pink-100,.assistant-color-only .border-pink-200{border-color:#e9d5ff!important}
+.assistant-color-only .bg-pink-400,.assistant-color-only .bg-pink-500,.assistant-color-only .bg-pink-600,.assistant-color-only .agent-send-btn{background:#7e22ce!important;color:white!important;border-color:#7e22ce!important}
+.assistant-color-only .agent-btn-secondary:hover,.assistant-color-only .agent-suggestion-chip:hover{color:#7e22ce!important;border-color:#e9d5ff!important;background:#faf5ff!important}
+
+body.assistant-color-only{color-scheme:light;color:#000}
+
+/* Runtime and HTMX content use the same palette as initial messages. */
+.assistant-color-only .text-purple-700{color:#7e22ce!important}
+.assistant-color-only .agent-composer:focus-within{border-color:#c084fc!important;--tw-ring-color:#f3e8ff!important}
+.assistant-color-only .agent-text-input:focus{outline-color:#c084fc!important}
+.assistant-color-only .agent-btn-primary,.article-agent-chat .agent-btn-primary{background:linear-gradient(135deg,#9333ea,#7e22ce)!important;box-shadow:0 2px 8px rgba(147,51,234,.25)!important}
+.assistant-color-only .agent-bubble-user,.article-agent-chat .agent-bubble-user{background:linear-gradient(135deg,#9333ea,#7e22ce);box-shadow:0 2px 8px rgba(147,51,234,.25)}
+.article-agent-chat .agent-avatar-user{background:#f3e8ff;color:#7e22ce}
+
+.article-agent-chat textarea:focus{outline-color:#c084fc!important;border-color:#c084fc!important}

@@ -24,7 +24,7 @@ def agent_markdown(value: str) -> str:
     text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
     text = re.sub(
         r'\[([^\]]+)\]\(([^)]+)\)',
-        r'<a href="\2" class="text-pink-600 hover:underline" target="_blank" rel="noopener">\1</a>',
+        r'<a href="\2" class="text-purple-600 hover:underline" target="_blank" rel="noopener">\1</a>',
         text,
     )
     return mark_safe(text.replace('\n', '<br>'))
@@ -40,7 +40,7 @@ def article_link_in_text(value: str) -> str:
 
 @register.filter(name='session_title')
 def session_title(value: str) -> str:
-    """Strip legacy article-id prefix from article-scoped session titles."""
+    """Hide the decorative document prefix and legacy id in displayed titles only."""
     if not value:
         return ''
-    return re.sub(r'^📄\s*\[\d+\]\s*', '📄 ', value)
+    return re.sub(r'^\s*📄\s*(?:\[\d+\]\s*)?', '', value)
