@@ -489,7 +489,6 @@ def handle_user_message(
 
     pending_action: dict = {}
     if 'action_add' in intents and user.is_authenticated and not article_scope:
-        import re
         id_match = re.search(r'\b(?:article\s+)?(\d{3,})\b', query, flags=re.IGNORECASE)
         if id_match:
             explicit_id = int(id_match.group(1))
@@ -533,7 +532,6 @@ def handle_user_message(
         current_list = get_reading_list(user)
         article_ids = _article_ids_for_action(keyword_hits, chunk_hits, vector_hits)
         if not article_ids:
-            import re
             target_q = re.sub(r'\b(remove|delete|from|my|the|article|reading list|list)\b', ' ', query, flags=re.IGNORECASE).strip()
             if target_q:
                 extra_hits = search_article_vectors(target_q, user, limit=3, request=request) or keyword_search_articles(target_q, user, limit=3, request=request)
