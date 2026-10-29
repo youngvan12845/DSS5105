@@ -21,7 +21,7 @@
         {% if readiness.no_prerequisites %}
         <p>No prerequisites identified.</p>
         {% else %}
-        <div class="assistant-concept-group"><strong>Prerequisite concepts</strong><ul>{% for concept in readiness.prerequisite_concepts %}<li>{{ concept }}{% for match in readiness.concept_matches %}{% if match.concept == concept %}<div class="assistant-prerequisite-actions"><button type="button" class="readiness-action" hx-get="{% url 'a_agent:concept_bridge' match.slug %}?concept={{ match.concept|urlencode }}" hx-target="#bridge-slot-ai-{{ forloop.parentloop.counter }}" hx-swap="innerHTML">1-Min Concept Bridge</button><a href="/blog/articles/{{ match.slug }}/" target="_blank" rel="noopener" class="readiness-action">Read prerequisite ↗</a></div><div id="bridge-slot-ai-{{ forloop.parentloop.counter }}"></div>{% endif %}{% endfor %}</li>{% endfor %}</ul></div>{% if readiness.concept_matches %}<form hx-post="{% url 'a_agent:master_prerequisite' %}" hx-target="#article-readiness-panel" hx-swap="outerHTML" class="assistant-familiarity-form">{% csrf_token %}<input type="hidden" name="article_slug" value="{{ article.slug }}"><input type="hidden" name="mark_all" value="true"><button type="submit" class="readiness-action readiness-skip">I already know these concepts</button></form>{% endif %}
+        <div class="assistant-concept-group"><strong>Prerequisite concepts</strong><ul>{% for concept in readiness.prerequisite_concepts %}<li>{{ concept }}{% for match in readiness.concept_matches %}{% if match.concept == concept %}<div class="assistant-prerequisite-actions"><button type="button" class="readiness-action" hx-get="{% url 'a_agent:concept_bridge' match.slug %}?concept={{ match.concept|urlencode }}" hx-target="#bridge-slot-ai-{{ forloop.parentloop.counter }}" hx-swap="innerHTML">1-Min Concept Bridge</button>{% if match.url %}<a href="{{ match.url }}" target="_blank" rel="noopener" class="readiness-action">Read prerequisite ↗</a>{% endif %}</div><div id="bridge-slot-ai-{{ forloop.parentloop.counter }}"></div>{% endif %}{% endfor %}</li>{% endfor %}</ul></div>{% if readiness.concept_matches %}<form hx-post="{% url 'a_agent:master_prerequisite' %}" hx-target="#article-readiness-panel" hx-swap="outerHTML" class="assistant-familiarity-form">{% csrf_token %}<input type="hidden" name="article_slug" value="{{ article.slug }}"><input type="hidden" name="mark_all" value="true"><button type="submit" class="readiness-action readiness-skip">I already know these concepts</button></form>{% endif %}
         {% endif %}
     {% elif readiness.gaps %}
         {% for gap in readiness.gaps %}
@@ -30,7 +30,7 @@
             {% if gap.prerequisite_concepts %}<div class="assistant-concept-group"><strong>Prerequisite concepts</strong><ul>{% for concept in gap.prerequisite_concepts %}<li>{{ concept }}</li>{% endfor %}</ul></div>{% endif %}
             <div class="assistant-prerequisite-actions">
                 <button type="button" class="readiness-action" hx-get="{% url 'a_agent:concept_bridge' gap.slug %}" hx-target="#bridge-slot-{{ gap.slug }}" hx-swap="innerHTML">1-Min Concept Bridge</button>
-                <a href="/blog/articles/{{ gap.slug }}/" target="_blank" rel="noopener" class="readiness-action">Read prerequisite ↗</a>
+                {% if gap.url %}<a href="{{ gap.url }}" target="_blank" rel="noopener" class="readiness-action">Read prerequisite ↗</a>{% endif %}
             </div>
             <div id="bridge-slot-{{ gap.slug }}"></div>
         </div>

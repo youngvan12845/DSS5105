@@ -39,6 +39,24 @@ from .services.navigator import (
 )
 
 
+def _article_urls(request) -> dict[str, str]:
+    urls = {}
+    for page in ArticlePage.objects.live():
+        url = page.get_url(request=request) or ''
+        if url:
+            urls[page.slug] = url
+    return urls
+
+
+def _with_article_urls(items, urls: dict[str, str]) -> list[dict]:
+    attached = []
+    for item in items or []:
+        row = dict(item)
+        row['url'] = urls.get(row.get('slug') or '', '')
+        attached.append(row)
+    return attached
+
+
 def _described_readiness(request, article):
     session_mastered = request.session.get('mastered_prereqs', [])
     readiness = calculate_article_readiness(
@@ -49,7 +67,9 @@ def _described_readiness(request, article):
     live_titles = dict(ArticlePage.objects.live().values_list('slug', 'title'))
     analysis, matches = display_analysis(article, live_titles=live_titles)
     described = describe_readiness(readiness, article.slug, analysis=analysis)
-    described['concept_matches'] = matches
+    urls = _article_urls(request)
+    described['concept_matches'] = _with_article_urls(matches, urls)
+    described['gaps'] = _with_article_urls(described.get('gaps'), urls)
     return described, analysis, matches
 
 
@@ -73,6 +93,7 @@ def _ai_concept_bridge(request, prereq_slug: str, concept: str) -> dict:
     return {
         'slug': article.slug,
         'title': article.title,
+        'url': article.get_url(request=request) or '',
         'bridge_summary': summary or BRIDGE_UNAVAILABLE,
         'show_link': True,
     }
@@ -343,7 +364,8 @@ def concept_bridge_view(request: HttpRequest, prereq_slug: str) -> HttpResponse:
         bridge = get_concept_bridge(prereq_slug)
         if bridge:
             bridge = dict(bridge)
-            bridge['show_link'] = True
+            bridge['url'] = _article_urls(request).get(prereq_slug, '')
+            bridge['show_link'] = bool(bridge['url'])
     if not bridge:
         return HttpResponse(
             f"<div class='mt-2 p-2 rounded bg-rose-50 border border-rose-200 text-rose-700 text-[11px]'>No concept bridge found for '{prereq_slug}'.</div>"

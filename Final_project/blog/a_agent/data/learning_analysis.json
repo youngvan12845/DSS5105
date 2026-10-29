@@ -3743,5 +3743,14 @@
       ]
     }
   },
-  "bridges": {}
+  "bridges": {
+    "511f4f6a2dc9cdbb1dc86c03": {
+      "summary": "Git is a free and open-source distributed version control system used for managing revisions and tracking changes in software development projects. It allows developers to record, track, and retrieve their coding histories, making it essential for collaborative coding and task management.",
+      "tier": "full"
+    },
+    "d20a4ffc162401e73009b5cc": {
+      "summary": "A repository is a location where different versions of codes are stored, with two types: local, installed on your computer, and remote, typically created on web platforms like GitHub.",
+      "tier": "full"
+    }
+  }
 }

@@ -1,5 +1,5 @@
 <div data-concept-bridge class="assistant-concept-bridge">
     <div class="assistant-bridge-heading"><strong>Concept explanation</strong><button type="button" class="concept-bridge-close" aria-label="Close concept bridge" onclick="this.closest('[data-concept-bridge]').remove()">×</button></div>
     <p>{{ bridge.bridge_summary }}</p>
-    {% if bridge.show_link and bridge.slug %}<a href="/blog/articles/{{ bridge.slug }}/" target="_blank" rel="noopener">Read full article ↗</a>{% endif %}
+    {% if bridge.show_link and bridge.url %}<a href="{{ bridge.url }}" target="_blank" rel="noopener">Read full article ↗</a>{% endif %}
 </div>
