@@ -59,10 +59,10 @@ def agent_markdown(value: str) -> str:
     # 4. Bold
     text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
 
-    # 5. Markdown Links [text](url)
+    # 5. Markdown Links [text](url) -> open in same tab
     text = re.sub(
         r'\[([^\]]+)\]\(([^)]+)\)',
-        r'<a href="\2" class="text-purple-600 font-medium hover:underline" target="_blank" rel="noopener">\1</a>',
+        r'<a href="\2" class="text-purple-600 font-medium hover:underline">\1</a>',
         text,
     )
 
