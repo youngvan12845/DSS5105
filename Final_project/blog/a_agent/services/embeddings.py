@@ -15,7 +15,13 @@ logger = logging.getLogger(__name__)
 
 
 def embed_provider() -> str:
-    return getattr(settings, 'AGENT_LLM_PROVIDER', 'ollama').lower()
+    provider = getattr(settings, 'AGENT_LLM_PROVIDER', 'ollama').lower()
+    if provider == 'ollama' and not ollama_reachable():
+        if getattr(settings, 'CLOUDFLARE_API_TOKEN', ''):
+            return 'cloudflare'
+        if getattr(settings, 'AGENT_OPENAI_API_KEY', ''):
+            return 'openai'
+    return provider
 
 
 def embed_model() -> str:

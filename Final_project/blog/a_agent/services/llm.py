@@ -26,7 +26,13 @@ class LLMInfo:
 
 
 def _provider() -> str:
-    return getattr(settings, 'AGENT_LLM_PROVIDER', 'ollama').lower()
+    provider = getattr(settings, 'AGENT_LLM_PROVIDER', 'ollama').lower()
+    if provider == 'ollama' and not ollama_reachable():
+        if getattr(settings, 'CLOUDFLARE_API_TOKEN', ''):
+            return 'cloudflare'
+        if getattr(settings, 'AGENT_OPENAI_API_KEY', ''):
+            return 'openai'
+    return provider
 
 
 def _ollama_base_host() -> str:
@@ -166,14 +172,20 @@ def generate_answer(
         if not token:
             raise RuntimeError('CLOUDFLARE_API_TOKEN is not configured')
         base_url = f'https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1'
-        selected_model = model or getattr(settings, 'CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
+        if model and model.startswith('@cf/'):
+            selected_model = model
+        else:
+            selected_model = getattr(settings, 'CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
         client = OpenAI(base_url=base_url, api_key=token)
     else:
         api_key = getattr(settings, 'AGENT_OPENAI_API_KEY', '')
         if not api_key:
             raise RuntimeError('OPENAI_API_KEY is not configured')
         base_url = getattr(settings, 'AGENT_OPENAI_BASE_URL', None) or None
-        selected_model = getattr(settings, 'AGENT_OPENAI_MODEL', 'gpt-4o-mini')
+        if model and (model.startswith('gpt-') or model.startswith('o1') or model.startswith('o3')):
+            selected_model = model
+        else:
+            selected_model = getattr(settings, 'AGENT_OPENAI_MODEL', 'gpt-4o-mini')
         client = OpenAI(base_url=base_url, api_key=api_key)
 
     user_content = _build_user_message(user_prompt, image_file)

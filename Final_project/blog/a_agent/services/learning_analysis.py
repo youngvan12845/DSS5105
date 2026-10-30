@@ -64,8 +64,12 @@ def article_version(article) -> str:
     return content_version(article.title or '', article.intro or '', html_to_text(str(article.body or '')))
 
 
-def extract_json_object(text: str) -> dict | None:
+def extract_json_object(text: str | dict) -> dict | None:
     if not text:
+        return None
+    if isinstance(text, dict):
+        return text
+    if not isinstance(text, str):
         return None
     cleaned = re.sub(r'^```(?:json)?\s*', '', text.strip(), flags=re.IGNORECASE)
     cleaned = re.sub(r'\s*```$', '', cleaned)

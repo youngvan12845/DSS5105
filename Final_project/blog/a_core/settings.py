@@ -166,7 +166,7 @@ STORAGES = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
-ACCOUNT_SIGNUP_REDIRECT_URL = '/profile/onboarding/'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.qq.com'
