@@ -628,6 +628,19 @@ def handle_user_message(
         else:
             lang_directive = 'Respond in English unless the user writes in another language.'
 
+        format_directive = (
+            '\n\n[RESPONSE FORMAT & PRESENTATION RULES]:'
+            '\n1. Never output dense, unstructured blocks of text.'
+            '\n2. Use structured sections:'
+            '\n   - 🎯 **Core Answer / Summary**: 1-2 direct sentences stating the definition or direct answer.'
+            '\n   - 📌 **Key Highlights / Principles**: Bullet points using "• **Term**: Explanation".'
+            '\n   - 💡 **Recommendations / Next Steps**: Structured numbered list with clickable markdown links.'
+            '\n3. Code & CLI Commands MUST use dedicated markdown formatting:'
+            '\n   - Use inline code `backticks` for flags, variables, and short commands (e.g. `git add -A`, `-p 8080:80`).'
+            '\n   - Use fenced code blocks ```bash or ```python for multiple commands, configuration snippets, or code examples.'
+            '\n4. Separate sections with blank lines for high readability.'
+        )
+
         if article_scope:
             system_prompt = (
                 'You are an active blog reading co-pilot and learning path navigator focused on ONE article. '
@@ -639,6 +652,7 @@ def handle_user_message(
                 'If the user asks for a summary, synthesize the provided passages. '
                 'If content is paywalled and passages are preview-only, say so clearly. '
                 'If passages are empty, say the article is not indexed yet.'
+                f'{format_directive}'
             )
         else:
             system_prompt = (
@@ -651,6 +665,7 @@ def handle_user_message(
                 'If content is paywalled and the user cannot read the full text, do not leak paid body text. '
                 'If the user asks about an article or topic not found in the blog corpus (or tool results are empty), refuse clearly by stating: "I cannot find any article about that in the blog corpus." '
                 'If a pending reading-list or comment action is present, tell the user to confirm before anything is saved.'
+                f'{format_directive}'
             )
         user_prompt = (
             f'User question: {query}\n\n'
