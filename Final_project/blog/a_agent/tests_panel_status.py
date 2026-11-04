@@ -155,3 +155,48 @@ class PanelStatusTests(SimpleTestCase):
         self.assertTrue({'keyword', 'chunk', 'vector'}.issubset(quiz_intents))
         pitfall_intents = _classify_intents('What are the pitfalls?')
         self.assertTrue({'keyword', 'chunk', 'vector'}.issubset(pitfall_intents))
+
+    def test_build_article_graph_data(self):
+        from unittest.mock import patch
+        from a_agent.services.concept_graph import build_article_graph_data
+
+        fake_graph = {
+            'demo-article': {
+                'title': 'Demo Article',
+                'difficulty': 'intermediate',
+                'prerequisites': [
+                    {'slug': 'prereq-1', 'title': 'Prerequisite 1', 'key_concept': 'Foundations', 'bridge_summary': 'Summary'}
+                ],
+                'intermediate_insights': {
+                    'production_pitfall': 'Watch for race conditions',
+                    'tradeoff_challenge': 'Speed vs memory'
+                },
+                'next_milestones': [
+                    {'slug': 'milestone-1', 'title': 'Milestone 1', 'reason': 'Advanced step'}
+                ]
+            }
+        }
+        with patch('a_agent.services.concept_graph.get_prerequisites_graph', return_value=fake_graph):
+            article = SimpleNamespace(
+                slug='demo-article',
+                title='Demo Article',
+                intro='Intro text',
+                url='/articles/demo-article/',
+                series_slug='',
+            )
+            data = build_article_graph_data(article)
+            self.assertTrue(data['has_data'])
+            self.assertEqual(data['difficulty'], 'intermediate')
+            node_ids = [n['id'] for n in data['nodes']]
+            self.assertIn('current', node_ids)
+            self.assertIn('prereq_0', node_ids)
+            self.assertIn('pitfall', node_ids)
+            self.assertIn('tradeoff', node_ids)
+            self.assertIn('milestone_0', node_ids)
+
+            # Verify link connectivity
+            link_pairs = [(l['source'], l['target']) for l in data['links']]
+            self.assertIn(('prereq_0', 'current'), link_pairs)
+            self.assertIn(('current', 'pitfall'), link_pairs)
+            self.assertIn(('current', 'tradeoff'), link_pairs)
+            self.assertIn(('current', 'milestone_0'), link_pairs)

@@ -240,7 +240,18 @@ class ArticlePage(Page):
         if self.series_slug:
             context['prev_lesson'] = self.get_prev_lesson()
             context['next_lesson'] = self.get_next_lesson()
-            
+
+        # 概念知識拓撲圖 (Concept Topology & Knowledge Graph)
+        try:
+            from a_agent.services.concept_graph import build_article_graph_data
+            import json
+            graph_data = build_article_graph_data(self)
+            context['concept_graph'] = graph_data
+            context['concept_graph_json'] = json.dumps(graph_data)
+        except Exception:
+            context['concept_graph'] = {'has_data': False, 'nodes': [], 'links': []}
+            context['concept_graph_json'] = '{}'
+
         return context
     
     def get_tags(self):
