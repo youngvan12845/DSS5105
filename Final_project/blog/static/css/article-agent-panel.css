@@ -119,3 +119,33 @@
     border-color: #9333ea !important;
     color: #ffffff !important;
 }
+
+/* Agent Avatars & Mascot */
+.agent-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.agent-avatar-user {
+    background: #f3e8ff;
+    color: #7e22ce;
+    border: 1px solid #e9d5ff;
+}
+.agent-avatar-bot {
+    background: #fef3c7 !important;
+    border: 1.5px solid #fde68a !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    padding: 2px;
+}
+.agent-avatar-bot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}

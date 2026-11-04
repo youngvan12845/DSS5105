@@ -284,7 +284,18 @@
     font-weight: 700;
 }
 .article-agent-chat .agent-avatar-user { background: #f3e8ff; color: #7e22ce; }
-.article-agent-chat .agent-avatar-bot { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; }
+.article-agent-chat .agent-avatar-bot {
+    background: #fef3c7 !important;
+    border: 1.5px solid #fde68a !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    padding: 2px;
+}
+.article-agent-chat .agent-avatar-bot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
 .article-agent-chat .agent-icon-btn {
     display: inline-flex !important;
     align-items: center;
@@ -554,7 +565,9 @@
             </div>
             <div id="article-chat-thinking" class="agent-message-group mb-4">
                 <div class="flex items-start gap-2">
-                    <div class="agent-avatar agent-avatar-bot shrink-0">AI</div>
+                    <div class="agent-avatar agent-avatar-bot shrink-0 shadow-sm" title="CheeseO Mascot">
+                        <img src="{% static 'images/cheese.png' %}" alt="CheeseO Mascot" class="w-full h-full object-contain p-0.5" />
+                    </div>
                     <div class="agent-bubble-assistant text-sm text-slate-500">Thinking…</div>
                 </div>
             </div>`);

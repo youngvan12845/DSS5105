@@ -221,3 +221,18 @@ class PanelStatusTests(SimpleTestCase):
         self.assertIn('data-letter="A"', rendered)
         self.assertIn('A programming language', rendered)
         self.assertIn('data-letter="B"', rendered)
+
+    def test_message_template_renders_mascot_avatar(self):
+        from django.template.loader import render_to_string
+        context = {
+            'message': {
+                'role': 'assistant',
+                'content': 'Hello from CheeseO!',
+                'tool_trace': [],
+                'citations': [],
+            }
+        }
+        rendered = render_to_string('a_agent/partials/message.html', context)
+        self.assertIn('cheese.png', rendered)
+        self.assertIn('CheeseO Mascot', rendered)
+        self.assertNotIn('>AI<', rendered)

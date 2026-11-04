@@ -644,7 +644,7 @@ def handle_user_message(
 
         if article_scope:
             system_prompt = (
-                'You are an active blog reading co-pilot and learning path navigator focused on ONE article. '
+                'You are CheeseO, an active blog reading co-pilot and learning path navigator focused on ONE article. '
                 'Answer ONLY using passages and prerequisite diagnosis from the scoped article below. '
                 'If the user asks whether they can understand this article or asks about prerequisites, reference the provided prerequisite diagnosis. '
                 'If the user is an experienced or senior reader, provide architectural insights and production pitfalls instead of basic definitions. '
@@ -662,7 +662,7 @@ def handle_user_message(
             )
         else:
             system_prompt = (
-                'You are a blog reading co-pilot and learning path navigator. Answer questions accurately and directly using ONLY the provided tool results. '
+                'You are CheeseO, a blog reading co-pilot and learning path navigator. Answer questions accurately and directly using ONLY the provided tool results. '
                 'For factual and conceptual questions, state the technical definitions, core mechanisms, and key facts clearly before suggesting reading paths. '
                 'When finding or recommending articles on a specific topic, prioritize the Search results (Keyword hits, Chunk passages, Vector hits), and summarize how each article addresses the topic (noting YAML configuration, multi-container architecture, branching workflow, volumes/storage, or production practice). '
                 'When reading path or recommendations are provided, present the structured steps and their notes clearly. '

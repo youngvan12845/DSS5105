@@ -1,4 +1,4 @@
-{% load agent_extras %}
+{% load static agent_extras %}
 <div class="agent-message-group space-y-2 mb-6">
     {% if message.role == 'user' %}
     <div class="flex items-end gap-3 justify-end">
@@ -12,7 +12,9 @@
     </div>
     {% else %}
     <div class="flex items-start gap-3">
-        <div class="agent-avatar agent-avatar-bot shrink-0">AI</div>
+        <div class="agent-avatar agent-avatar-bot shrink-0 overflow-hidden" title="CheeseO Mascot">
+            <img src="{% static 'images/cheese.png' %}" alt="CheeseO" class="w-full h-full object-contain p-0.5" />
+        </div>
         <div class="max-w-[78%] space-y-2">
             {% for trace in message.tool_trace %}
             {% if trace.tool == 'response_mode' and trace.mode == 'fallback' %}

@@ -1,11 +1,64 @@
 {% extends 'base.html' %}
 {% block theme_class %}assistant-color-only{% endblock %}
-{% load agent_extras %}
+{% load static agent_extras %}
 
 {% block class %}bg-slate-50 min-h-screen text-slate-700{% endblock %}
 
 {% block head %}
+<link rel="stylesheet" href="{% static 'css/article-agent-panel.css' %}">
 <style>
+/* Chat bubbles & message styling */
+.agent-bubble-assistant {
+    background: #ffffff;
+    color: #1e293b;
+    padding: 1rem 1.25rem;
+    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    line-height: 1.6;
+}
+.agent-bubble-user {
+    background: linear-gradient(135deg, #7e22ce, #9333ea);
+    color: #ffffff;
+    padding: 0.875rem 1.125rem;
+    border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+    box-shadow: 0 2px 4px rgba(126, 34, 206, 0.15);
+}
+.agent-avatar {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.agent-avatar-user {
+    background: #f3e8ff;
+    color: #7e22ce;
+    border: 1px solid #e9d5ff;
+}
+.agent-avatar-bot {
+    background: #fef3c7 !important;
+    border: 1.5px solid #fde68a !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    padding: 2px;
+}
+.agent-avatar-bot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.agent-sources {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+}
 .quiz-option-btn {
     transition: all 0.15s ease-in-out;
 }
@@ -55,21 +108,21 @@
     <div class="p-6 md:p-8 rounded-2xl bg-white border border-slate-200/80 shadow-md mb-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center text-3xl shadow-lg shrink-0">
-                    🎯
+                <div class="w-14 h-14 rounded-2xl bg-amber-100 border border-amber-200/90 flex items-center justify-center shadow-sm shrink-0 p-2.5 relative" title="CheeseO Mascot">
+                    <img src="{% static 'images/cheese.png' %}" alt="CheeseO Mascot" class="w-full h-full object-contain">
                 </div>
                 <div>
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-xs font-bold uppercase tracking-wider text-purple-600">Socratic Micro-Quiz</span>
                         <span class="text-slate-300">·</span>
-                        <span class="text-xs text-slate-500 font-medium">Chapter Self-Assessment</span>
+                        <span class="text-xs text-slate-500 font-medium">with CheeseO</span>
                     </div>
                     <h1 class="text-2xl md:text-3xl font-bold text-slate-900 jakarta">{{ article.title }}</h1>
                 </div>
             </div>
         </div>
         <p class="mt-4 text-sm text-slate-600 leading-relaxed">
-            Test your understanding with active recall. Answer the questions below, and your AI tutor will evaluate your reasoning, provide detailed explanations, and link to article passages.
+            Test your understanding with active recall. Answer the questions below, and CheeseO will evaluate your reasoning, provide detailed explanations, and link to article passages.
         </p>
     </div>
 
@@ -182,17 +235,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         messages.insertAdjacentHTML('beforeend', `
             <div class="agent-message-group quiz-optimistic-user mb-4">
-                <div class="flex items-end gap-2 justify-end">
+                <div class="flex items-end gap-3 justify-end">
                     <div class="max-w-[85%]">
-                        <div class="agent-bubble-user text-sm whitespace-pre-wrap p-3 rounded-2xl bg-purple-600 text-white">${escaped}</div>
+                        <div class="agent-bubble-user text-sm whitespace-pre-wrap">${escaped}</div>
                     </div>
-                    <div class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">You</div>
+                    <div class="agent-avatar agent-avatar-user shrink-0">You</div>
                 </div>
             </div>
             <div id="quiz-thinking" class="agent-message-group mb-4">
-                <div class="flex items-start gap-2">
-                    <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shrink-0">AI</div>
-                    <div class="agent-bubble-assistant text-sm text-slate-500 p-3 rounded-2xl bg-slate-100 border border-slate-200">
+                <div class="flex items-start gap-3">
+                    <div class="agent-avatar agent-avatar-bot shrink-0 shadow-sm" title="CheeseO Mascot">
+                        <img src="{% static 'images/cheese.png' %}" alt="CheeseO Mascot" class="w-full h-full object-contain p-0.5" />
+                    </div>
+                    <div class="agent-bubble-assistant text-sm text-slate-500 bg-white border border-slate-200">
                         Analyzing your answer…
                     </div>
                 </div>
