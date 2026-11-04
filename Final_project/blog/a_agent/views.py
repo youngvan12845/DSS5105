@@ -142,7 +142,16 @@ def chat_view(
         article = get_object_or_404(ArticlePage.objects.live(), pk=scoped_article_id)
         session = _get_or_create_article_session(request.user, article)
     else:
-        session = ChatSession.objects.create(user=request.user, title='New chat')
+        existing_empty = (
+            ChatSession.objects.filter(user=request.user, title='New chat')
+            .exclude(messages__role=ChatMessage.ROLE_USER)
+            .first()
+        )
+        if existing_empty:
+            session = existing_empty
+        else:
+            session = ChatSession.objects.create(user=request.user, title='New chat')
+        sessions = ChatSession.objects.filter(user=request.user)[:20]
 
     if not scoped_article_id:
         ensure_session_continue_nudge(session, request.user, request=request)
@@ -175,7 +184,34 @@ def chat_view(
 
 @login_required
 def new_session_view(request: HttpRequest) -> HttpResponse:
+    existing_empty = (
+        ChatSession.objects.filter(user=request.user, title='New chat')
+        .exclude(messages__role=ChatMessage.ROLE_USER)
+        .first()
+    )
+    if existing_empty:
+        existing_empty.messages.all().delete()
+        return redirect('a_agent:chat_session', session_id=existing_empty.pk)
+    session = ChatSession.objects.create(user=request.user, title='New chat')
+    return redirect('a_agent:chat_session', session_id=session.pk)
+
+
+@login_required
+@require_POST
+def clear_all_sessions_view(request: HttpRequest) -> HttpResponse:
+    ChatSession.objects.filter(user=request.user).delete()
     return redirect('a_agent:chat')
+
+
+@login_required
+@require_POST
+def reset_article_session_view(request: HttpRequest, article_id: int) -> HttpResponse:
+    article = get_object_or_404(ArticlePage.objects.live(), pk=article_id)
+    session = _get_or_create_article_session(request.user, article)
+    session.messages.all().delete()
+    if request.htmx:
+        return article_panel_view(request, article_id)
+    return redirect(article.get_url(request=request) or 'a_agent:chat_article', article_id=article_id)
 
 
 @login_required
@@ -267,6 +303,8 @@ def send_message_view(request: HttpRequest, session_id: int) -> HttpResponse:
     if not content and image_file:
         content = '[Image attached]'
 
+    prior_messages = list(session.messages.order_by('-created_at')[:6])[::-1]
+
     user_message = ChatMessage.objects.create(
         session=session,
         role=ChatMessage.ROLE_USER,
@@ -282,6 +320,7 @@ def send_message_view(request: HttpRequest, session_id: int) -> HttpResponse:
         model=selected_model,
         image_file=user_message.image or None,
         article_id=article_id,
+        chat_history=prior_messages,
     )
     assistant_message = ChatMessage.objects.create(
         session=session,
@@ -333,6 +372,12 @@ def confirm_action_view(request: HttpRequest, action_id: int) -> HttpResponse:
     elif action.action_type == 'remove_from_reading_list':
         context['removed_count'] = execute_remove_from_reading_list(action)
     elif action.action_type == 'post_comment':
+        edited_draft = request.POST.get('draft_content', '').strip()
+        if edited_draft:
+            payload = dict(action.payload or {})
+            payload['draft_content'] = edited_draft[:2000]
+            action.payload = payload
+            action.save(update_fields=['payload'])
         comment = execute_post_comment(action)
         context['comment'] = comment
     else:
@@ -513,6 +558,8 @@ def article_send_message_view(request: HttpRequest, article_id: int) -> HttpResp
     if not content and image_file:
         content = '[Image attached]'
 
+    prior_messages = list(session.messages.order_by('-created_at')[:6])[::-1]
+
     user_message = ChatMessage.objects.create(
         session=session,
         role=ChatMessage.ROLE_USER,
@@ -526,6 +573,7 @@ def article_send_message_view(request: HttpRequest, article_id: int) -> HttpResp
         model=selected_model,
         image_file=user_message.image or None,
         article_id=article_id,
+        chat_history=prior_messages,
     )
     assistant_message = ChatMessage.objects.create(
         session=session,

@@ -31,6 +31,8 @@
         font-weight: 400;
         line-height: 1.8;
         letter-spacing: 0.011em;
+        user-select: text;
+        -webkit-user-select: text;
     }
     .article-body p {
         margin-bottom: 1.5rem;
@@ -308,31 +310,57 @@
         height: 100%;
     }
 
-    /* Floating Selection "Ask AI" Tooltip */
+    /* Floating Selection "Ask CheeseO / Quote / Copy" Toolbar */
     .article-selection-tooltip {
         position: absolute;
         z-index: 9999;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 6px 14px;
+        gap: 4px;
+        padding: 4px 6px;
         font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 600;
         color: #ffffff;
-        background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
-        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: #0f172a;
+        border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: 9999px;
-        box-shadow: 0 4px 14px rgba(147, 51, 234, 0.35), 0 2px 6px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.28), 0 2px 6px rgba(0, 0, 0, 0.15);
         user-select: none;
         -webkit-user-select: none;
         animation: tooltip-pop 0.15s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .article-selection-tooltip:hover {
-        transform: translateY(-2px) scale(1.04);
-        box-shadow: 0 6px 20px rgba(147, 51, 234, 0.45);
+    .article-selection-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 10px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #f8fafc;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+        white-space: nowrap;
+    }
+    .article-selection-btn:hover {
+        background: rgba(255, 255, 255, 0.14);
+        color: #ffffff;
+    }
+    .article-selection-btn--primary {
+        background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
+        color: #ffffff;
+    }
+    .article-selection-btn--primary:hover {
+        background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+        transform: translateY(-1px);
+    }
+    .article-selection-divider {
+        width: 1px;
+        height: 14px;
+        background: rgba(255, 255, 255, 0.18);
     }
     .article-selection-tooltip.hidden {
         display: none !important;
@@ -977,18 +1005,35 @@
         });
     }
 
-    {% if user.is_authenticated %}
-    // Floating Selection "Ask AI" Tooltip
+    // Floating Selection "Quote to Input / Ask CheeseO / Copy" Toolbar
     (function() {
-        const articleContainer = document.getElementById('article-content');
+        const articleContainer = document.getElementById('article-page-main') || document.getElementById('article-content');
         if (!articleContainer) return;
 
-        const badge = document.createElement('button');
+        const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+        const badge = document.createElement('div');
         badge.id = 'article-selection-ask-btn';
-        badge.type = 'button';
         badge.className = 'article-selection-tooltip hidden';
-        badge.setAttribute('aria-label', 'Ask AI about selected text');
-        badge.innerHTML = '<span class="tooltip-icon">✨</span><span class="tooltip-text">Ask AI</span>';
+        badge.setAttribute('role', 'toolbar');
+        badge.setAttribute('aria-label', 'Selected text actions');
+        badge.innerHTML = isAuthenticated
+            ? `
+                <button type="button" class="article-selection-btn article-selection-btn--primary" data-action="quote" title="Insert selected text into the assistant input box">
+                    <span>💬</span><span>Quote to Input</span>
+                </button>
+                <button type="button" class="article-selection-btn" data-action="explain" title="Ask CheeseO to explain this selection">
+                    <span>✨</span><span>Explain</span>
+                </button>
+                <span class="article-selection-divider"></span>
+                <button type="button" class="article-selection-btn" data-action="copy" title="Copy selected text">
+                    <span>📋</span><span class="copy-label">Copy</span>
+                </button>
+            `
+            : `
+                <button type="button" class="article-selection-btn article-selection-btn--primary" data-action="copy" title="Copy selected text">
+                    <span>📋</span><span class="copy-label">Copy</span>
+                </button>
+            `;
         document.body.appendChild(badge);
 
         let activeSelectionText = '';
@@ -1001,7 +1046,7 @@
             }
 
             const text = selection.toString().trim();
-            if (text.length < 3) {
+            if (text.length < 2) {
                 hideBadge();
                 return;
             }
@@ -1013,17 +1058,19 @@
             }
 
             const rect = range.getBoundingClientRect();
-            if (rect.width === 0 || rect.height === 0) {
+            if (rect.width === 0 && rect.height === 0) {
                 hideBadge();
                 return;
             }
 
             activeSelectionText = text;
+            const copyLabel = badge.querySelector('.copy-label');
+            if (copyLabel) copyLabel.textContent = 'Copy';
             badge.classList.remove('hidden');
 
-            const badgeWidth = badge.offsetWidth || 96;
-            const badgeHeight = badge.offsetHeight || 36;
-            let top = window.scrollY + rect.top - badgeHeight - 8;
+            const badgeWidth = badge.offsetWidth || 260;
+            const badgeHeight = badge.offsetHeight || 40;
+            let top = window.scrollY + rect.top - badgeHeight - 10;
             let left = window.scrollX + rect.left + (rect.width / 2) - (badgeWidth / 2);
 
             if (left < 10) left = 10;
@@ -1031,8 +1078,8 @@
                 left = window.innerWidth - badgeWidth - 10;
             }
 
-            if (rect.top - badgeHeight - 8 < 10) {
-                top = window.scrollY + rect.bottom + 8;
+            if (rect.top - badgeHeight - 10 < 10) {
+                top = window.scrollY + rect.bottom + 10;
             }
 
             badge.style.top = `${top}px`;
@@ -1049,25 +1096,52 @@
         });
 
         badge.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn || !activeSelectionText) return;
             e.preventDefault();
             e.stopPropagation();
-            if (activeSelectionText && window.ArticleAssistantLayout) {
-                const textToAsk = activeSelectionText;
-                hideBadge();
-                window.getSelection()?.removeAllRanges();
-                window.ArticleAssistantLayout.askExcerpt(textToAsk, true);
+
+            const action = btn.dataset.action;
+            const textToUse = activeSelectionText;
+
+            if (action === 'copy') {
+                navigator.clipboard?.writeText(textToUse).then(() => {
+                    const copyLabel = badge.querySelector('.copy-label');
+                    if (copyLabel) copyLabel.textContent = '✓ Copied';
+                    setTimeout(hideBadge, 650);
+                }).catch(() => {
+                    document.execCommand('copy');
+                    hideBadge();
+                });
+                return;
+            }
+
+            hideBadge();
+            window.getSelection()?.removeAllRanges();
+            if (window.ArticleAssistantLayout) {
+                if (action === 'quote' && window.ArticleAssistantLayout.quoteExcerpt) {
+                    window.ArticleAssistantLayout.quoteExcerpt(textToUse);
+                } else {
+                    window.ArticleAssistantLayout.askExcerpt(textToUse, true);
+                }
             }
         });
 
         let selTimer = null;
         const handleSelection = () => {
             clearTimeout(selTimer);
-            selTimer = setTimeout(updateBadgePosition, 120);
+            selTimer = setTimeout(updateBadgePosition, 100);
         };
 
         document.addEventListener('selectionchange', handleSelection);
         document.addEventListener('mouseup', handleSelection);
         document.addEventListener('touchend', handleSelection);
+        articleContainer.addEventListener('contextmenu', () => {
+            const sel = window.getSelection();
+            if (sel && !sel.isCollapsed && sel.toString().trim().length >= 2) {
+                setTimeout(updateBadgePosition, 20);
+            }
+        });
 
         document.addEventListener('mousedown', (e) => {
             if (!badge.contains(e.target) && !badge.classList.contains('hidden')) {
@@ -1078,6 +1152,5 @@
             }
         });
     })();
-    {% endif %}
 </script>
 {% endblock %}

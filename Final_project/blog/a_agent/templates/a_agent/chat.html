@@ -41,9 +41,23 @@
             <div class="agent-panel p-5 space-y-5 h-full">
                 <div class="flex items-center justify-between gap-2 mb-1">
                     <h2 class="!text-sm font-semibold text-slate-800">Sessions</h2>
-                    <button type="button" id="sidebar-collapse-btn" class="agent-sidebar-toggle" title="Collapse sidebar">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
-                    </button>
+                    <div class="flex items-center gap-1.5">
+                        {% if sessions|length > 1 %}
+                        <form
+                            method="post"
+                            action="{% url 'a_agent:clear_all_sessions' %}"
+                            onsubmit="return confirm('Clear all chat sessions?');"
+                        >
+                            {% csrf_token %}
+                            <button type="submit" class="text-[11px] font-medium text-slate-400 hover:text-red-600 px-1.5 py-0.5 rounded transition-colors cursor-pointer bg-transparent border-0 shadow-none" title="Clear all chat sessions">
+                                Clear all
+                            </button>
+                        </form>
+                        {% endif %}
+                        <button type="button" id="sidebar-collapse-btn" class="agent-sidebar-toggle" title="Collapse sidebar">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <a href="{% url 'a_agent:reading_list' %}" class="mb-3 flex items-center gap-2 rounded-xl border border-slate-100 bg-white px-3 py-2.5 text-sm text-slate-600 hover:border-purple-200 hover:text-purple-600 transition-colors">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
@@ -532,7 +546,7 @@
 }
 
 .agent-session-item .agent-session-delete-form {
-    opacity: 0;
+    opacity: 0.7;
     transition: opacity 0.15s ease;
 }
 
@@ -693,10 +707,15 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages.querySelector('.agent-optimistic-user')?.remove();
     };
 
-    chatForm.addEventListener('htmx:beforeRequest', () => {
+    chatForm.addEventListener('htmx:beforeRequest', (event) => {
         const text = chatInput.value.trim();
         const hasImage = imageInput.files.length > 0;
         const content = text || (hasImage ? '[Image attached]' : '');
+        if (!content) {
+            event.preventDefault();
+            chatInput.value = '';
+            return;
+        }
         const imageSrc = hasImage && !imagePreviewWrap.classList.contains('hidden')
             ? imagePreviewImg.src
             : null;

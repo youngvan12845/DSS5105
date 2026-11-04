@@ -12,16 +12,23 @@ from .access import can_user_read_full
 from a_blog.models import ArticlePage
 
 STOPWORDS = {
-    'a', 'about', 'according', 'an', 'and', 'are', 'article', 'articles', 'as', 'at', 'be',
-    'bullet', 'by', 'can', 'chapter', 'cover', 'covers', 'define', 'defined', 'definition',
-    'discuss', 'discussing', 'do', 'does', 'exact', 'exactly', 'expansion', 'explain',
-    'explains', 'find', 'five', 'for', 'from', 'give', 'help', 'how', 'i', 'in', 'is', 'it',
-    'know', 'learn', 'master', 'me', 'mean', 'meaning', 'means', 'my', 'need', 'of', 'on',
-    'or', 'our', 'please', 'point', 'points', 'quote', 'recommend', 'related', 'section',
-    'show', 'site', 'stand', 'stands', 'suggest', 'summarize', 'summary', 'tell', 'that',
-    'the', 'their', 'there', 'these', 'this', 'three', 'to', 'topics', 'use', 'used',
-    'using', 'want', 'was', 'what', 'when', 'where', 'which', 'who', 'why', 'will', 'with',
-    'you',
+    'a', 'about', 'according', 'add', 'all', 'an', 'and', 'any', 'are', 'article', 'articles',
+    'as', 'ask', 'at', 'be', 'blog', 'both', 'bullet', 'by', 'can', 'chapter', 'cite',
+    'citation', 'citations', 'citing', 'comment', 'concepts', 'cover', 'covers', 'define',
+    'defined', 'definition', 'delete', 'discuss', 'discussing', 'do', 'does', 'exact',
+    'exactly', 'expansion', 'explain', 'explains', 'find', 'finding', 'first', 'five', 'for',
+    'from', 'give', 'have', 'help', 'how', 'i', 'in', 'into', 'is', 'it', 'its', 'just',
+    'key', 'know', 'learn', 'leave', 'library', 'link', 'links', 'list', 'main', 'master',
+    'me', 'mean', 'meaning', 'means', 'mention', 'mentioned', 'mentioning', 'mentions', 'more',
+    'most', 'my', 'need', 'next', 'of', 'on', 'one', 'only', 'or', 'other', 'our', 'page',
+    'part', 'please', 'point', 'points', 'post', 'posts', 'question', 'questions', 'quote',
+    'read', 'reading', 'recommend', 'recommended', 'related', 'remove', 'save', 'search',
+    'second', 'section', 'sections', 'should', 'show', 'site', 'some', 'source', 'sources',
+    'stand', 'stands', 'step', 'steps', 'suggest', 'summarize', 'summary', 'takeaway',
+    'takeaways', 'talk', 'talks', 'tell', 'that', 'the', 'their', 'them', 'there', 'these',
+    'third', 'this', 'those', 'three', 'to', 'topic', 'topics', 'two', 'understand', 'use',
+    'used', 'using', 'want', 'was', 'what', 'when', 'where', 'which', 'who', 'why', 'will',
+    'with', 'write', 'you', 'your',
 }
 
 

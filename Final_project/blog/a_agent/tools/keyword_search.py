@@ -7,6 +7,7 @@ from django.contrib.auth.models import AnonymousUser, User
 from a_blog.models import ArticlePage
 
 from .access import get_article_access
+from .chunk_search import STOPWORDS, _extract_terms_and_phrases
 
 
 @dataclass
@@ -22,18 +23,6 @@ class SearchHit:
     access_reason: str
 
 
-import re
-
-STOPWORDS = {
-    'a', 'about', 'an', 'and', 'are', 'article', 'articles', 'as', 'at', 'be',
-    'by', 'can', 'cover', 'covers', 'discuss', 'discussing', 'do', 'does', 'for',
-    'from', 'how', 'i', 'in', 'is', 'it', 'me', 'my', 'of', 'on', 'or', 'our',
-    'please', 'recommend', 'related', 'site', 'suggest', 'tell', 'that', 'the',
-    'their', 'there', 'these', 'this', 'to', 'topics', 'was', 'what', 'when',
-    'where', 'which', 'who', 'why', 'will', 'with', 'you',
-}
-
-
 def keyword_search_articles(
     query: str,
     user: User | AnonymousUser,
@@ -47,26 +36,25 @@ def keyword_search_articles(
         return []
 
     hits: list[SearchHit] = []
-    articles = list(ArticlePage.objects.live().autocomplete(query)[:limit])
-    if not articles:
-        articles = list(ArticlePage.objects.live().search(query)[:limit])
+    terms, _phrases = _extract_terms_and_phrases(query)
+    cleaned_query = ' '.join(terms)
+    search_target = cleaned_query if cleaned_query else query.strip()
 
-    if len(articles) < limit:
-        cleaned_words = [
-            w for w in re.findall(r'[a-zA-Z0-9_\-]+', query) if w.lower() not in STOPWORDS
-        ]
-        cleaned_query = ' '.join(cleaned_words)
-        if cleaned_query and cleaned_query.lower() != query.lower().strip():
-            fallback_articles = list(
-                ArticlePage.objects.live().search(cleaned_query, operator='or')[:limit]
-            )
-            existing_ids = {a.pk for a in articles}
-            for a in fallback_articles:
-                if a.pk not in existing_ids:
-                    articles.append(a)
-                    existing_ids.add(a.pk)
-                if len(articles) >= limit:
-                    break
+    articles = list(ArticlePage.objects.live().autocomplete(search_target)[:limit])
+    if not articles:
+        articles = list(ArticlePage.objects.live().search(search_target)[:limit])
+
+    if len(articles) < limit and cleaned_query and len(terms) > 1:
+        fallback_articles = list(
+            ArticlePage.objects.live().search(cleaned_query, operator='or')[:limit]
+        )
+        existing_ids = {a.pk for a in articles}
+        for a in fallback_articles:
+            if a.pk not in existing_ids:
+                articles.append(a)
+                existing_ids.add(a.pk)
+            if len(articles) >= limit:
+                break
 
     for article in articles:
         access = get_article_access(user, article, request=request)

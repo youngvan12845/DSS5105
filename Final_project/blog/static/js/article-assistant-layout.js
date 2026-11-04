@@ -120,6 +120,19 @@
             if (!clean) return;
             const prompt = `Please explain this excerpt from the article and how it works in detail:\n\n> "${clean}"`;
             this.askQuestion(prompt, autoSubmit);
+        },
+        quoteExcerpt(excerpt) {
+            const clean = (excerpt || '').trim();
+            if (!clean) return;
+            const quoteText = `> "${clean}"\n\n`;
+            this.askQuestion(quoteText, false);
+            setTimeout(() => {
+                const input = document.getElementById('article-chat-input');
+                if (input) {
+                    input.focus();
+                    input.setSelectionRange(input.value.length, input.value.length);
+                }
+            }, 60);
         }
     };
     opener?.addEventListener('click', open);

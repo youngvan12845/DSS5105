@@ -291,6 +291,11 @@ class ArticlePage(Page):
             self._record_browsing_history(request)
             return super().serve(request)
 
+        # 管理员 / Staff 拥有完整阅读权限（与 AI Reading Assistant 权限一致）
+        if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+            self._record_browsing_history(request)
+            return super().serve(request)
+
         # 会员用户可以免费访问
         if profile and profile.has_valid_subscription():
             self._record_browsing_history(request)
@@ -322,6 +327,7 @@ class ArticlePage(Page):
         return TemplateResponse(request, self.get_template(request), context)
     
     search_fields = Page.search_fields + [
+        index.FilterField('series_slug'),
         index.SearchField('title', partial_match=True, boost=10),
         index.SearchField('intro', partial_match=True, boost=5),
         index.SearchField('body', partial_match=True, boost=3),

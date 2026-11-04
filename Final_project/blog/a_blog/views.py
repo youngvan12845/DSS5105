@@ -5,6 +5,7 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger  # 新增导入
+from django.db.models import Q
 from taggit.models import Tag  # 新增导入
 
 from .models import ArticlePage, Comment
@@ -18,18 +19,19 @@ def article_search(request):
     
     # 部落格專區：只展示純部落格文章 (series_slug 為空)，不與系列課程文章混雜
     base_articles = ArticlePage.objects.live().filter(series_slug='')
-    
-    if search_query:
-        # 使用 Wagtail 的 autocomplete 進行搜索
-        articles = base_articles.autocomplete(search_query)
-        if not articles:
-            articles = base_articles.search(search_query)
-    else:
-        articles = base_articles
-    
-    # 标签过滤
+    articles = base_articles
+
+    # 标签过滤（在搜索前过滤，避免 Wagtail SearchResults 无法二次 filter tags__name）
     if tag:
         articles = articles.filter(tags__name=tag)
+    
+    if search_query:
+        articles = articles.filter(
+            Q(title__icontains=search_query)
+            | Q(intro__icontains=search_query)
+            | Q(body__icontains=search_query)
+            | Q(tags__name__icontains=search_query)
+        ).distinct()
     
     # 排序处理（转换为列表后安全排序，兼容 first_published_at 为 None）
     import datetime

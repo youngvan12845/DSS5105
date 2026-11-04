@@ -22,6 +22,7 @@ def search_article_vectors(
     user: User | AnonymousUser,
     *,
     limit: int = 5,
+    min_score: float = 0.48,
     request=None,
 ) -> list[VectorHit]:
     if not query.strip():
@@ -36,7 +37,7 @@ def search_article_vectors(
         if not chunk.embedding:
             continue
         score = cosine_similarity(query_embedding, chunk.embedding)
-        if score <= 0:
+        if score < min_score:
             continue
         scored.append((score, chunk))
 

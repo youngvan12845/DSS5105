@@ -10,7 +10,23 @@
         <header class="assistant-prototype-header">
             <div class="assistant-headrow">
                 <div><p class="assistant-kicker">CO-PILOT</p><h2>Article Q&amp;A</h2></div>
-                <button type="button" id="article-agent-collapse" class="assistant-close" title="Close or collapse assistant" aria-label="Close or collapse assistant">×</button>
+                <div class="flex items-center gap-1.5">
+                    <button
+                        type="button"
+                        id="article-agent-reset"
+                        hx-post="{% url 'a_agent:article_reset_session' article.id %}"
+                        hx-target="#article-agent-shell"
+                        hx-swap="outerHTML"
+                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                        class="assistant-reset-btn"
+                        title="Start a new chat / Clear history for this article"
+                        aria-label="New chat"
+                    >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <span>New Chat</span>
+                    </button>
+                    <button type="button" id="article-agent-collapse" class="assistant-close" title="Close or collapse assistant" aria-label="Close or collapse assistant">×</button>
+                </div>
             </div>
             <details class="article-agent-title"><summary title="{{ article.title }}">{{ article.title }}</summary></details>
         </header>
@@ -460,6 +476,30 @@
 .article-agent-chat .assistant-quick-chip:active {
     transform: translateY(0);
 }
+.article-agent-chat .assistant-reset-btn {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px;
+    height: 2rem !important;
+    padding: 0 0.625rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0.5rem !important;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.article-agent-chat .assistant-reset-btn:hover {
+    color: #7e22ce !important;
+    background: #faf5ff !important;
+    border-color: #d8b4fe !important;
+}
+.article-agent-chat .assistant-reset-btn svg {
+    width: 0.875rem;
+    height: 0.875rem;
+}
 .article-agent-chat .agent-message-group { margin-bottom: 1rem; }
 </style>
 
@@ -486,6 +526,17 @@
 
     collapseBtn?.addEventListener('click', () => window.ArticleAssistantLayout?.collapse());
     restoreBtn?.addEventListener('click', () => window.ArticleAssistantLayout?.expand());
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (!input.value.trim() && !(imageInput?.files?.length > 0)) {
+                input.value = '';
+                return;
+            }
+            form.requestSubmit();
+        }
+    });
 
     const clearImage = () => {
         if (imageInput) imageInput.value = '';
@@ -545,7 +596,7 @@
         const text = input.value.trim();
         const hasImage = imageInput?.files?.length > 0;
         const content = text || (hasImage ? '[Image attached]' : '');
-        if (!content) { event.preventDefault(); return; }
+        if (!content) { event.preventDefault(); input.value = ''; return; }
         setSending(true);
         requestStatus.textContent = '';
 

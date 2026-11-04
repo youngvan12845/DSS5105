@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from django.contrib.auth.models import User
 
 from a_agent.models import AgentActionLog
@@ -69,6 +71,31 @@ def _excerpt_from_hits(chunk_hits, vector_hits, keyword_hits, limit: int = 400) 
     return ''
 
 
+_META_REFUSAL_PATTERNS = (
+    'mix-up',
+    'could you clarify',
+    'you meant to ask',
+    'as an ai',
+    'i am an ai',
+    'this article focuses on',
+    'does not mention',
+    'not covered in this article',
+)
+
+
+def _extract_comment_intent(query: str) -> str:
+    """Extract the specific question or topic the user wants to express in their comment."""
+    cleaned = re.sub(
+        r'^(?:please\s+|can you\s+|could you\s+|help me(?:\s+to)?\s+)*'
+        r'(?:draft|write|post|leave)\s+a\s+comment\s*'
+        r'(?:on\s+this\s+article\s*)?(?:to\s+ask|asking|about|saying|that)?\s*',
+        '',
+        query.strip(),
+        flags=re.IGNORECASE,
+    ).strip()
+    return cleaned or query.strip()
+
+
 def build_comment_draft(
     query: str,
     article_id: int,
@@ -84,27 +111,46 @@ def build_comment_draft(
 
     excerpt = _excerpt_from_hits(chunk_hits, vector_hits, keyword_hits)
     context_block = excerpt or (article.intro or article.title)
+    user_intent = _extract_comment_intent(query)
 
     if llm_configured():
+        is_chinese = bool(re.search(r'[\u4e00-\u9fff]', query))
+        lang_rule = (
+            '4. Write the comment in Traditional Chinese (繁體中文).'
+            if is_chinese
+            else '4. Write the comment in English (unless the user explicitly requested another language).'
+        )
         system_prompt = (
-            'You write short, thoughtful blog comments (2-4 sentences). '
-            'Sound natural and specific to the article. '
-            'No markdown, no hashtags, no greeting like "Dear author". '
-            'Match the language the user used in their request.'
+            'You are ghostwriting a public reader comment (2-3 sentences) to be posted in the comment section of a blog article. '
+            'Write strictly from the reader\'s first-person perspective ("I"). '
+            'CRITICAL RULES:\n'
+            '1. Output ONLY the ready-to-post comment text itself. No quotes around it, no markdown, no hashtags, no "Dear author".\n'
+            '2. NEVER talk back to the user, NEVER ask the user for clarification, and NEVER say "It seems there might be a mix-up" or "This article focuses on X instead of Y".\n'
+            '3. If the user wants to ask a question in the comment (even about a tangential or beginner concept like "what is API" on a Git article), '
+            'briefly thank the author for the article and naturally ask that exact question to the author/community in first person.\n'
+            f'{lang_rule}'
         )
         user_prompt = (
-            f'User request: {query}\n\n'
-            f'Article title: {article.title}\n'
-            f'Article intro: {article.intro or ""}\n'
+            f'Article being commented on: "{article.title}"\n'
+            f'Article summary: {article.intro or ""}\n'
             f'Relevant excerpt:\n{context_block}\n\n'
-            'Write the comment text only.'
+            f'What the reader wants to say or ask in their comment: {user_intent}\n'
+            f'Original command: {query}\n\n'
+            'Write the reader\'s comment text now (first-person reader voice, ready to post):'
         )
         try:
-            draft = generate_answer(system_prompt, user_prompt, model=model).strip()
-            if draft:
+            draft = generate_answer(system_prompt, user_prompt, model=model).strip().strip('"').strip("'")
+            if draft and not any(pat in draft.lower() for pat in _META_REFUSAL_PATTERNS):
                 return draft[:2000]
         except Exception:
             pass
+
+    if user_intent and user_intent.lower() != query.lower():
+        return (
+            f'Thanks for sharing "{article.title}"! '
+            f'I found this really helpful, and I was also wondering: {user_intent.rstrip("?")}? '
+            'Would love to hear your thoughts!'
+        )
 
     if excerpt:
         return (

@@ -251,3 +251,107 @@ class PanelStatusTests(SimpleTestCase):
 
         headings = _extract_article_headings('<h2>1. AI Agent</h2><h2>8. MCP: Model Context Protocol</h2>')
         self.assertEqual(headings, ['1. AI Agent', '8. MCP: Model Context Protocol'])
+
+    def test_reading_list_action_scope_and_ordinal_resolution(self):
+        from a_agent.services.orchestrator import (
+            _article_ids_for_action,
+            _extract_ordinal_index,
+            _is_multi_article_request,
+        )
+
+        self.assertEqual(_extract_ordinal_index('Add the second article you recommended'), 1)
+        self.assertEqual(_extract_ordinal_index('把你剛才推薦的第一篇加入清單'), 0)
+        self.assertEqual(_extract_ordinal_index('Remove the 3rd article'), 2)
+        self.assertIsNone(_extract_ordinal_index('Add this article to my reading list'))
+
+        self.assertFalse(_is_multi_article_request('Add "20 Agentic AI Terms" to my reading list'))
+        self.assertFalse(_is_multi_article_request('Remove only "20 Agentic AI Terms" from my reading list'))
+        self.assertTrue(_is_multi_article_request('Add all 3 articles to my reading list'))
+
+        hits = [
+            SimpleNamespace(article_id=21),
+            SimpleNamespace(article_id=18),
+            SimpleNamespace(article_id=19),
+        ]
+        self.assertEqual(_article_ids_for_action(hits, [], []), [21])
+        self.assertEqual(_article_ids_for_action(hits, [], [], limit=3), [21, 18, 19])
+
+    def test_markdown_sanitization_and_traditional_chinese_conversion(self):
+        from a_agent.services.orchestrator import (
+            _ensure_traditional_chinese,
+            _is_no_match_response,
+            _sanitize_markdown_output,
+        )
+
+        dirty = 'Here is [Key Concepts](#concepts) and a truncated link [Read More](https://example.com/unfin'
+        cleaned = _sanitize_markdown_output(dirty)
+        self.assertIn('**Key Concepts**', cleaned)
+        self.assertIn('**Read More**', cleaned)
+        self.assertNotIn('](#', cleaned)
+        self.assertNotIn('https://example.com/unfin', cleaned)
+
+        unclosed_fence = '```bash\ndocker compose up -d'
+        self.assertTrue(_sanitize_markdown_output(unclosed_fence).endswith('```'))
+
+        simp = '通过配置默认服务器和网络代码，理解人工智能术语与协议。'
+        trad = _ensure_traditional_chinese(simp)
+        for expected in ('透過', '設定', '預設', '伺服器', '網路', '程式碼', '人工智慧', '術語', '協定'):
+            self.assertIn(expected, trad)
+
+        self.assertTrue(_is_no_match_response('I cannot find any article about that topic in the blog corpus.'))
+        self.assertTrue(_is_no_match_response('抱歉，找不到相關文章。'))
+        self.assertFalse(_is_no_match_response('MCP stands for Model Context Protocol.'))
+
+    def test_editable_comment_draft_and_target_articles_in_message_template(self):
+        comment_ctx = {
+            'message': {
+                'role': 'assistant',
+                'content': 'I drafted a comment for you:',
+                'tool_trace': [],
+                'citations': [],
+                'pending_action': {
+                    'action_id': 99,
+                    'action_type': 'post_comment',
+                    'article_title': 'What Is Git?',
+                    'draft_content': 'Thanks for this Git guide! Could you explain what an API is?',
+                },
+            }
+        }
+        rendered_comment = render_to_string('a_agent/partials/message.html', comment_ctx)
+        self.assertIn('<textarea', rendered_comment)
+        self.assertIn('name="draft_content"', rendered_comment)
+        self.assertIn('Could you explain what an API is?', rendered_comment)
+
+        list_ctx = {
+            'message': {
+                'role': 'assistant',
+                'content': 'Ready to save:',
+                'tool_trace': [],
+                'citations': [],
+                'pending_action': {
+                    'action_id': 100,
+                    'action_type': 'add_to_reading_list',
+                    'articles': [
+                        {'article_id': 21, 'title': '20 Agentic AI Terms Every Developer Should Know', 'url': '/blog/20-terms/'},
+                    ],
+                },
+            }
+        }
+        rendered_list = render_to_string('a_agent/partials/message.html', list_ctx)
+        self.assertIn('Target article(s) to save (1)', rendered_list)
+        self.assertIn('20 Agentic AI Terms Every Developer Should Know', rendered_list)
+
+    def test_comment_intent_extraction_and_session_urls(self):
+        from django.urls import reverse
+        from a_agent.tools.comment_draft import _extract_comment_intent
+
+        intent = _extract_comment_intent('help me to write a comment to ask what is API')
+        self.assertEqual(intent, 'what is API')
+        self.assertEqual(
+            reverse('a_agent:article_reset_session', kwargs={'article_id': 21}),
+            '/agent/article/21/reset/',
+        )
+        self.assertEqual(
+            reverse('a_agent:clear_all_sessions'),
+            '/agent/session/clear-all/',
+        )
