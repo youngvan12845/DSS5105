@@ -165,7 +165,7 @@ def generate_answer(
             raise RuntimeError('Ollama is not running')
         base_url = getattr(settings, 'AGENT_OLLAMA_BASE_URL', 'http://127.0.0.1:11434/v1')
         selected_model = normalize_model(model)
-        client = OpenAI(base_url=base_url, api_key='ollama')
+        client = OpenAI(base_url=base_url, api_key='ollama', timeout=25.0)
     elif provider == 'cloudflare':
         account_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
         token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
@@ -176,7 +176,7 @@ def generate_answer(
             selected_model = model
         else:
             selected_model = getattr(settings, 'CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
-        client = OpenAI(base_url=base_url, api_key=token)
+        client = OpenAI(base_url=base_url, api_key=token, timeout=25.0)
     else:
         api_key = getattr(settings, 'AGENT_OPENAI_API_KEY', '')
         if not api_key:
@@ -186,7 +186,7 @@ def generate_answer(
             selected_model = model
         else:
             selected_model = getattr(settings, 'AGENT_OPENAI_MODEL', 'gpt-4o-mini')
-        client = OpenAI(base_url=base_url, api_key=api_key)
+        client = OpenAI(base_url=base_url, api_key=api_key, timeout=25.0)
 
     user_content = _build_user_message(user_prompt, image_file)
     response = client.chat.completions.create(

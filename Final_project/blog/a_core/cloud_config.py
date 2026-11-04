@@ -25,7 +25,14 @@ def database_from_url(url):
 
     if (config.get('HOST') or '').lower() not in LOCAL_HOSTS:
         # An explicit ?sslmode=... in the URL still wins.
-        config.setdefault('OPTIONS', {}).setdefault('sslmode', 'require')
+        options = config.setdefault('OPTIONS', {})
+        options.setdefault('sslmode', 'require')
+        # Fail fast on connection drops and keep idle pooled connections alive
+        options.setdefault('connect_timeout', 10)
+        options.setdefault('keepalives', 1)
+        options.setdefault('keepalives_idle', 30)
+        options.setdefault('keepalives_interval', 10)
+        options.setdefault('keepalives_count', 5)
 
     if str(config.get('PORT')) == str(SUPABASE_TRANSACTION_POOLER_PORT):
         # Transaction pooling hands each transaction to a different server
