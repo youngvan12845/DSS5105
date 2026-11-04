@@ -12,18 +12,22 @@ from .access import can_user_read_full
 from a_blog.models import ArticlePage
 
 STOPWORDS = {
-    'a', 'about', 'an', 'and', 'are', 'article', 'articles', 'as', 'at', 'be',
-    'by', 'can', 'cover', 'covers', 'discuss', 'discussing', 'do', 'does', 'explain',
-    'explains', 'find', 'for', 'from', 'give', 'help', 'how', 'i', 'in', 'is', 'it',
-    'know', 'learn', 'master', 'me', 'my', 'need', 'of', 'on', 'or', 'our', 'please',
-    'recommend', 'related', 'show', 'site', 'suggest', 'tell', 'that', 'the', 'their',
-    'there', 'these', 'this', 'to', 'topics', 'use', 'used', 'using', 'want', 'was',
-    'what', 'when', 'where', 'which', 'who', 'why', 'will', 'with', 'you',
+    'a', 'about', 'according', 'an', 'and', 'are', 'article', 'articles', 'as', 'at', 'be',
+    'bullet', 'by', 'can', 'chapter', 'cover', 'covers', 'define', 'defined', 'definition',
+    'discuss', 'discussing', 'do', 'does', 'exact', 'exactly', 'expansion', 'explain',
+    'explains', 'find', 'five', 'for', 'from', 'give', 'help', 'how', 'i', 'in', 'is', 'it',
+    'know', 'learn', 'master', 'me', 'mean', 'meaning', 'means', 'my', 'need', 'of', 'on',
+    'or', 'our', 'please', 'point', 'points', 'quote', 'recommend', 'related', 'section',
+    'show', 'site', 'stand', 'stands', 'suggest', 'summarize', 'summary', 'tell', 'that',
+    'the', 'their', 'there', 'these', 'this', 'three', 'to', 'topics', 'use', 'used',
+    'using', 'want', 'was', 'what', 'when', 'where', 'which', 'who', 'why', 'will', 'with',
+    'you',
 }
 
 
 def _extract_terms_and_phrases(query: str) -> tuple[list[str], list[str]]:
-    raw_words = re.findall(r'[a-zA-Z0-9_\-\.]+', query.lower())
+    raw_words = [w.strip('.-_') for w in re.findall(r'[a-zA-Z0-9_\-\.]+', query.lower())]
+    raw_words = [w for w in raw_words if w]
     terms = [w for w in raw_words if len(w) > 1 and w not in STOPWORDS]
     phrases = []
     for i in range(len(raw_words) - 1):
@@ -132,7 +136,7 @@ def search_article_chunks(
                 article_title=chunk.article_title,
                 article_url=url or chunk.article_url,
                 chunk_index=chunk.chunk_index,
-                content=content[:500],
+                content=content[:950],
                 tags=chunk.tags,
                 is_free=chunk.is_free,
                 can_read_full=can_read,

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def embed_provider() -> str:
-    provider = getattr(settings, 'AGENT_LLM_PROVIDER', 'ollama').lower()
+    provider = getattr(settings, 'AGENT_LLM_PROVIDER', 'cloudflare').lower()
     if provider == 'ollama' and not ollama_reachable():
         if getattr(settings, 'CLOUDFLARE_API_TOKEN', ''):
             return 'cloudflare'

@@ -236,3 +236,18 @@ class PanelStatusTests(SimpleTestCase):
         self.assertIn('cheese.png', rendered)
         self.assertIn('CheeseO Mascot', rendered)
         self.assertNotIn('>AI<', rendered)
+
+    def test_scoped_retrieval_helpers_and_term_extraction(self):
+        from a_agent.tools.article_scope import _extract_article_headings, is_summary_query
+        from a_agent.tools.chunk_search import _extract_terms_and_phrases
+
+        self.assertTrue(is_summary_query('Summarize this article in five bullet points.'))
+        self.assertFalse(is_summary_query('According to this article, what does MCP stand for?'))
+
+        terms, _ = _extract_terms_and_phrases(
+            'According to this article, what does MCP stand for? Quote the expansion exactly.'
+        )
+        self.assertEqual(terms, ['mcp'])
+
+        headings = _extract_article_headings('<h2>1. AI Agent</h2><h2>8. MCP: Model Context Protocol</h2>')
+        self.assertEqual(headings, ['1. AI Agent', '8. MCP: Model Context Protocol'])

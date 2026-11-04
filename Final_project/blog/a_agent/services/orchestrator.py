@@ -454,10 +454,10 @@ def handle_user_message(
     if article_scope:
         keyword_hits = scoped_keyword_hit(article_scope.article_id, query, user, request=request)
         chunk_hits = search_scoped_article_chunks(
-            article_scope.article_id, query, user, limit=6, request=request
+            article_scope.article_id, query, user, limit=8, request=request
         )
         vector_hits = search_scoped_article_vectors(
-            article_scope.article_id, query, user, limit=6, request=request
+            article_scope.article_id, query, user, limit=8, request=request
         )
         tool_trace.append({'tool': 'scoped_keyword_hit', 'result_count': len(keyword_hits)})
         tool_trace.append({'tool': 'search_scoped_article_chunks', 'result_count': len(chunk_hits)})
@@ -513,6 +513,10 @@ def handle_user_message(
                     article_ids = [a.pk]
                     break
         if article_ids:
+            if not keyword_hits:
+                keyword_hits = scoped_keyword_hit(article_ids[0], query, user, request=request)
+            if not chunk_hits:
+                chunk_hits = search_scoped_article_chunks(article_ids[0], query, user, limit=4, request=request)
             action = propose_add_to_reading_list(user, article_ids, request=request)
             if action:
                 pending_action = {
@@ -629,13 +633,25 @@ def handle_user_message(
         else:
             lang_directive = 'Respond in English unless the user writes in another language.'
 
+        next_steps_rule = (
+            '\n   - 💡 **Key Takeaways**: 2-3 concise practical takeaways from this article (do NOT invent `#` links or cite external articles unless discussing prerequisites).'
+            if article_scope
+            else '\n   - 💡 **Recommendations / Next Steps**: Structured numbered list with clickable markdown links from the provided search results.'
+        )
         format_directive = (
+            '\n\n[CRITICAL FACTUAL INTEGRITY & ACRONYM RULES]:'
+            '\n1. NEVER guess, invent, or fabricate the expansion of any acronym (e.g., in this corpus, MCP ALWAYS stands for "Model Context Protocol", A2A stands for "Agent2Agent Protocol", HITL stands for "Human-in-the-Loop").'
+            '\n   - NEVER expand MCP as "Multi-Component Platform", "Multi-Cloud Platforms", or "Multi-Capability Platform".'
+            '\n   - When asked what an acronym stands for, quote the exact expansion from the provided passages or [Article Section Outline]. If an unknown acronym is not defined in the provided text, state clearly that the provided passages do not define it, and NEVER guess.'
+            '\n2. Strictly preserve technical cause-and-effect from the text:'
+            '\n   - Distinguish default behavior from optional hardening/configuration rules (e.g., plain nginx `proxy_pass` forwards HTTP `QUERY` fine by default; it is only blocked when an explicit `limit_except` block is added).'
+            '\n3. When introducing an article for a reading-list action, rely strictly on its verified title, intro, and section outline without inventing unverified acronym expansions.'
             '\n\n[RESPONSE FORMAT & PRESENTATION RULES]:'
             '\n1. Never output dense, unstructured blocks of text.'
             '\n2. Use structured sections:'
             '\n   - 🎯 **Core Answer / Summary**: 1-2 direct sentences stating the definition or direct answer.'
             '\n   - 📌 **Key Highlights / Principles**: Bullet points using "• **Term**: Explanation".'
-            '\n   - 💡 **Recommendations / Next Steps**: Structured numbered list with clickable markdown links.'
+            f'{next_steps_rule}'
             '\n3. Code & CLI Commands MUST use dedicated markdown formatting:'
             '\n   - Use inline code `backticks` for flags, variables, and short commands (e.g. `git add -A`, `-p 8080:80`).'
             '\n   - Use fenced code blocks ```bash or ```python for multiple commands, configuration snippets, or code examples.'

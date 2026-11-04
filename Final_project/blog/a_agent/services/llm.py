@@ -26,7 +26,7 @@ class LLMInfo:
 
 
 def _provider() -> str:
-    provider = getattr(settings, 'AGENT_LLM_PROVIDER', 'ollama').lower()
+    provider = getattr(settings, 'AGENT_LLM_PROVIDER', 'cloudflare').lower()
     if provider == 'ollama' and not ollama_reachable():
         if getattr(settings, 'CLOUDFLARE_API_TOKEN', ''):
             return 'cloudflare'
@@ -195,7 +195,8 @@ def generate_answer(
             {'role': 'system', 'content': system_prompt},
             {'role': 'user', 'content': user_content},
         ],
-        temperature=0.2,
+        temperature=0.1,
+        max_tokens=900,
     )
     return response.choices[0].message.content or ''
 
