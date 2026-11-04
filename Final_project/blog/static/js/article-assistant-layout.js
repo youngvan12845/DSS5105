@@ -58,6 +58,25 @@
         if (wide.matches && drawer.contains(document.activeElement)) shell?.querySelector('button')?.focus();
         if (wide.matches || mobileOpen) load();
     }
+    let pendingTask = null;
+    function executePendingTask() {
+        if (!pendingTask) return;
+        const task = pendingTask;
+        pendingTask = null;
+        const input = document.getElementById('article-chat-input');
+        const form = document.getElementById('article-chat-form');
+        if (input && form) {
+            input.value = task.text;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.focus();
+            if (task.autoSubmit && window.htmx) {
+                setTimeout(() => {
+                    form.requestSubmit();
+                }, 80);
+            }
+        }
+    }
+
     function open() {
         returnFocus = document.activeElement;
         mobileOpen = true; sync();
@@ -69,7 +88,39 @@
     }
     window.ArticleAssistantLayout = {
         collapse() { if (wide.matches) { collapsed = true; sync(); } else close(); },
-        expand() { collapsed = false; sync(); }
+        expand() { collapsed = false; sync(); },
+        open() {
+            if (wide.matches) {
+                collapsed = false;
+                sync();
+            } else {
+                open();
+            }
+        },
+        askQuestion(text, autoSubmit = true) {
+            this.open();
+            const input = document.getElementById('article-chat-input');
+            const form = document.getElementById('article-chat-form');
+            if (input && form) {
+                input.value = text;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.focus();
+                if (autoSubmit && window.htmx) {
+                    setTimeout(() => {
+                        form.requestSubmit();
+                    }, 80);
+                }
+            } else {
+                pendingTask = { text, autoSubmit };
+                load();
+            }
+        },
+        askExcerpt(excerpt, autoSubmit = true) {
+            const clean = (excerpt || '').trim();
+            if (!clean) return;
+            const prompt = `Please explain this excerpt from the article and how it works in detail:\n\n> "${clean}"`;
+            this.askQuestion(prompt, autoSubmit);
+        }
     };
     opener?.addEventListener('click', open);
     closer?.addEventListener('click', close);
@@ -98,6 +149,7 @@
         if (event.detail.target !== slot) return;
         loaded = !!slot.querySelector('#article-agent-shell');
         loading = false; sync();
+        executePendingTask();
     });
     for (const name of ['htmx:sendError', 'htmx:timeout', 'htmx:responseError']) {
         slot.addEventListener(name, event => {

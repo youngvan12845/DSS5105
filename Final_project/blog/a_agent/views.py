@@ -329,6 +329,31 @@ def cancel_action_view(request: HttpRequest, action_id: int) -> HttpResponse:
     )
 
 
+def _get_suggested_prompts(article) -> list[dict]:
+    return [
+        {
+            'label': '🎯 Quiz Me',
+            'prompt': '🎯 Quiz Me: Generate 2-3 conceptual check questions with options (A, B, C, D) based on this article to test my understanding.',
+        },
+        {
+            'label': '💡 Key Takeaways',
+            'prompt': 'What are the core technical principles and key takeaways from this article?',
+        },
+        {
+            'label': '⚠️ Pitfalls',
+            'prompt': 'What are common mistakes, pitfalls, or production edge cases related to the concepts in this article?',
+        },
+        {
+            'label': '🔍 Deep Dive',
+            'prompt': 'Could you break down the code implementation or architecture explained in this article step by step?',
+        },
+        {
+            'label': '📝 Summary',
+            'prompt': 'Please summarize this article in 3 clear, actionable bullet points.',
+        },
+    ]
+
+
 @login_required
 def article_panel_view(request: HttpRequest, article_id: int) -> HttpResponse:
     article = get_object_or_404(ArticlePage.objects.live(), pk=article_id)
@@ -352,6 +377,7 @@ def article_panel_view(request: HttpRequest, article_id: int) -> HttpResponse:
             'model_options': OLLAMA_MODEL_OPTIONS,
             'selected_model': selected_model,
             'readiness': readiness,
+            'suggested_prompts': _get_suggested_prompts(article),
         },
     )
 

@@ -137,3 +137,21 @@ class PanelStatusTests(SimpleTestCase):
             self.assertEqual(data['article_concepts'], [])
             self.assertEqual(data['gaps'][0]['prerequisite_concepts'], ['Containers'])
             self.assertEqual(data['source_label'], 'Curated article data')
+
+    def test_suggested_prompts_structure(self):
+        from a_agent.views import _get_suggested_prompts
+        mock_article = SimpleNamespace(id=1, title='Test Article', slug='test-article')
+        prompts = _get_suggested_prompts(mock_article)
+        self.assertIsInstance(prompts, list)
+        self.assertGreaterEqual(len(prompts), 4)
+        labels = [p['label'] for p in prompts]
+        self.assertIn('🎯 Quiz Me', labels)
+        self.assertIn('💡 Key Takeaways', labels)
+        self.assertIn('⚠️ Pitfalls', labels)
+
+    def test_quiz_and_excerpt_intent_triggers(self):
+        from a_agent.services.orchestrator import _classify_intents
+        quiz_intents = _classify_intents('Can you quiz me on this article?')
+        self.assertTrue({'keyword', 'chunk', 'vector'}.issubset(quiz_intents))
+        pitfall_intents = _classify_intents('What are the pitfalls?')
+        self.assertTrue({'keyword', 'chunk', 'vector'}.issubset(pitfall_intents))

@@ -132,6 +132,7 @@ def _classify_intents(query: str) -> set[str]:
         'what', 'which', 'summarize', 'explain', 'cover', 'mention',
         'recommend', 'suggest', 'about', 'related', 'find', 'how', 'why',
         'give', 'progression', 'path', 'docker', 'git', 'rag', 'agent',
+        'quiz', 'test', 'question', 'exam', 'pitfall', 'pitfalls', 'excerpt',
     )
     if not intents or any(word in q for word in search_triggers):
         intents.update({'keyword', 'chunk', 'vector'})
@@ -649,6 +650,11 @@ def handle_user_message(
                 'If the user is an experienced or senior reader, provide architectural insights and production pitfalls instead of basic definitions. '
                 'Do not mention or cite other articles unless discussing prerequisites. '
                 f'{lang_directive} '
+                'If the user requests a quiz, comprehension test, or "Quiz Me" / "考考我": '
+                'generate 2 to 3 interactive multiple-choice or scenario questions based directly on the core technical concepts and tradeoffs in this article. '
+                'Format each question cleanly with options A), B), C), D), and invite the user to reply with their chosen answers before revealing the solutions. '
+                'When the user replies with their answers, evaluate them warmly with constructive explanations. '
+                'If the user quotes or highlights an excerpt from the article, explain that specific excerpt directly with deep technical context. '
                 'If the user asks for a summary, synthesize the provided passages. '
                 'If content is paywalled and passages are preview-only, say so clearly. '
                 'If passages are empty, say the article is not indexed yet.'
