@@ -179,6 +179,64 @@ def new_session_view(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+def article_quiz_view(request: HttpRequest, article_id: int) -> HttpResponse:
+    article = get_object_or_404(ArticlePage.objects.live(), pk=article_id)
+    title = f'🎯 Quiz: {article.title[:65]}'
+
+    if request.GET.get('reset') == '1':
+        ChatSession.objects.filter(user=request.user, title=title).delete()
+        return redirect('a_agent:article_quiz', article_id=article_id)
+
+    session = ChatSession.objects.filter(user=request.user, title=title).first()
+    if not session:
+        session = ChatSession.objects.create(user=request.user, title=title)
+        quiz_prompt = (
+            "🎯 Quiz Me: Please generate 2 to 3 conceptual check questions with options (A, B, C, D) "
+            "based on the core technical concepts and trade-offs in this article to test my understanding."
+        )
+        ChatMessage.objects.create(
+            session=session,
+            role=ChatMessage.ROLE_USER,
+            content=quiz_prompt,
+        )
+        selected_model = _session_model(session)
+        reply = handle_user_message(
+            quiz_prompt,
+            request.user,
+            request=request,
+            model=selected_model,
+            article_id=article.id,
+        )
+        ChatMessage.objects.create(
+            session=session,
+            role=ChatMessage.ROLE_ASSISTANT,
+            content=reply.content,
+            citations=reply.citations,
+            tool_trace=reply.tool_trace,
+            pending_action=reply.pending_action or {},
+        )
+
+    selected_model = _session_model(session)
+    chat_messages = session.messages.all()
+    article_scope = get_article_scope(article_id, request.user, request=request)
+    llm_info = get_llm_info(selected_model)
+
+    return render(
+        request,
+        'a_agent/quiz.html',
+        {
+            'article': article,
+            'session': session,
+            'chat_messages': chat_messages,
+            'selected_model': selected_model,
+            'model_options': OLLAMA_MODEL_OPTIONS,
+            'llm_info': llm_info,
+            'article_scope': article_scope,
+        },
+    )
+
+
+@login_required
 @require_POST
 def delete_session_view(request: HttpRequest, session_id: int) -> HttpResponse:
     session = get_object_or_404(ChatSession, pk=session_id, user=request.user)

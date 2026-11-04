@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% block theme_class %}assistant-color-only{% endblock %}
+{% load agent_extras %}
+
+{% block class %}bg-slate-50 min-h-screen text-slate-700{% endblock %}
+
+{% block layout %}
+<div class="quiz-page max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+    <!-- Top Navigation & Breadcrumb -->
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <a href="{{ article.url }}" class="inline-flex items-center gap-2 text-sm font-semibold text-purple-700 hover:text-purple-900 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span>Back to Article: {{ article.title|truncatechars:45 }}</span>
+        </a>
+        <div class="flex items-center gap-2">
+            <a href="?reset=1" onclick="return confirm('Do you want to restart this quiz session with new questions?');" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-rose-600 shadow-sm transition">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span>Restart Quiz</span>
+            </a>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border {% if llm_info.configured %}bg-emerald-50 text-emerald-700 border-emerald-200{% else %}bg-amber-50 text-amber-700 border-amber-200{% endif %}">
+                <span class="w-1.5 h-1.5 rounded-full {% if llm_info.configured %}bg-emerald-500{% else %}bg-amber-500{% endif %}"></span>
+                {{ llm_info.label }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Header Card -->
+    <div class="p-6 md:p-8 rounded-2xl bg-white border border-slate-200/80 shadow-md mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center text-3xl shadow-lg shrink-0">
+                    🎯
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-600">Socratic Micro-Quiz</span>
+                        <span class="text-slate-300">·</span>
+                        <span class="text-xs text-slate-500 font-medium">Chapter Self-Assessment</span>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-900 jakarta">{{ article.title }}</h1>
+                </div>
+            </div>
+        </div>
+        <p class="mt-4 text-sm text-slate-600 leading-relaxed">
+            Test your understanding with active recall. Answer the questions below, and your AI tutor will evaluate your reasoning, provide detailed explanations, and link to article passages.
+        </p>
+    </div>
+
+    <!-- Quiz Messages Card -->
+    <div class="rounded-2xl bg-white border border-slate-200/80 shadow-md overflow-hidden flex flex-col min-h-[500px]">
+        <!-- Messages Area -->
+        <div id="quiz-messages" class="flex-1 overflow-y-auto px-5 py-6 md:px-8 md:py-8 space-y-6" role="log" aria-label="Quiz Conversation">
+            {% for message in chat_messages %}
+                {% include 'a_agent/partials/message.html' with message=message %}
+            {% endfor %}
+        </div>
+
+        <!-- Quiz Composer Area -->
+        <div class="border-t border-slate-200/80 bg-slate-50/90 p-4 md:p-6">
+            <!-- Suggested Answer Chips -->
+            <div class="flex items-center gap-2 mb-3 overflow-x-auto pb-1 text-xs">
+                <span class="text-slate-400 font-medium shrink-0">Quick prompts:</span>
+                <button type="button" class="quiz-chip px-3 py-1.5 rounded-full bg-white text-slate-700 border border-slate-200 hover:border-purple-300 hover:bg-purple-50 hover:text-purple-700 transition shrink-0" data-prompt="Can you give me a hint for Question 1 without revealing the answer?">
+                    💡 Hint for Q1
+                </button>
+                <button type="button" class="quiz-chip px-3 py-1.5 rounded-full bg-white text-slate-700 border border-slate-200 hover:border-purple-300 hover:bg-purple-50 hover:text-purple-700 transition shrink-0" data-prompt="Can you give me a hint for Question 2 without revealing the answer?">
+                    💡 Hint for Q2
+                </button>
+                <button type="button" class="quiz-chip px-3 py-1.5 rounded-full bg-white text-slate-700 border border-slate-200 hover:border-purple-300 hover:bg-purple-50 hover:text-purple-700 transition shrink-0" data-prompt="Could you explain the architectural difference between options A and B?">
+                    🔍 Compare A vs B
+                </button>
+                <button type="button" class="quiz-chip px-3 py-1.5 rounded-full bg-white text-slate-700 border border-slate-200 hover:border-purple-300 hover:bg-purple-50 hover:text-purple-700 transition shrink-0" data-prompt="I'm ready for another challenge! Please generate 2 new scenario questions.">
+                    🔄 2 New Questions
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form
+                id="quiz-form"
+                hx-post="{% url 'a_agent:send_message' session.id %}"
+                hx-target="#quiz-messages"
+                hx-swap="beforeend"
+                class="flex flex-col sm:flex-row items-stretch sm:items-end gap-3"
+            >
+                {% csrf_token %}
+                <input type="hidden" name="article_id" value="{{ article.id }}" />
+
+                <div class="flex-1 bg-white rounded-xl border border-slate-300 shadow-sm focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-100 transition-all p-2">
+                    <textarea
+                        id="quiz-input"
+                        name="content"
+                        rows="2"
+                        placeholder="Type your answers (e.g. 1: A, 2: B) or ask a question…"
+                        class="w-full bg-transparent border-0 focus:ring-0 p-1 text-sm text-slate-800 placeholder-slate-400 resize-none outline-none"
+                    ></textarea>
+                </div>
+
+                <button
+                    type="submit"
+                    id="quiz-send-btn"
+                    class="h-12 px-6 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md transition-all duration-200 shrink-0 inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                    <span>Submit</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const messages = document.getElementById('quiz-messages');
+    const form = document.getElementById('quiz-form');
+    const input = document.getElementById('quiz-input');
+    const sendBtn = document.getElementById('quiz-send-btn');
+
+    const scrollToBottom = () => {
+        if (messages) messages.scrollTop = messages.scrollHeight;
+    };
+    scrollToBottom();
+
+    // Quick chips
+    document.querySelectorAll('.quiz-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            if (!input) return;
+            input.value = chip.dataset.prompt;
+            input.focus();
+            form.requestSubmit();
+        });
+    });
+
+    // Enter to submit (Shift+Enter for newline)
+    input?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            form.requestSubmit();
+        }
+    });
+
+    // Optimistic UI on submit
+    form?.addEventListener('htmx:beforeRequest', (e) => {
+        const val = (input.value || '').trim();
+        if (!val) {
+            e.preventDefault();
+            return;
+        }
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = 'Evaluating…';
+
+        // Append optimistic user bubble + thinking bubble
+        const div = document.createElement('div');
+        div.textContent = val;
+        const escaped = div.innerHTML;
+
+        messages.insertAdjacentHTML('beforeend', `
+            <div class="agent-message-group quiz-optimistic-user mb-4">
+                <div class="flex items-end gap-2 justify-end">
+                    <div class="max-w-[85%]">
+                        <div class="agent-bubble-user text-sm whitespace-pre-wrap p-3 rounded-2xl bg-purple-600 text-white">${escaped}</div>
+                    </div>
+                    <div class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">You</div>
+                </div>
+            </div>
+            <div id="quiz-thinking" class="agent-message-group mb-4">
+                <div class="flex items-start gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shrink-0">AI</div>
+                    <div class="agent-bubble-assistant text-sm text-slate-500 p-3 rounded-2xl bg-slate-100 border border-slate-200">
+                        Analyzing your answer…
+                    </div>
+                </div>
+            </div>
+        `);
+        scrollToBottom();
+    });
+
+    form?.addEventListener('htmx:afterRequest', (e) => {
+        document.getElementById('quiz-thinking')?.remove();
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<span>Submit</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>';
+
+        if (e.detail.successful) {
+            messages.querySelector('.quiz-optimistic-user')?.remove();
+            form.reset();
+            scrollToBottom();
+        }
+    });
+});
+</script>
+{% endblock %}

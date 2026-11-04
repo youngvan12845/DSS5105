@@ -200,3 +200,8 @@ class PanelStatusTests(SimpleTestCase):
             self.assertIn(('current', 'pitfall'), link_pairs)
             self.assertIn(('current', 'tradeoff'), link_pairs)
             self.assertIn(('current', 'milestone_0'), link_pairs)
+
+    def test_quiz_url_reverses(self):
+        from django.urls import reverse
+        url = reverse('a_agent:article_quiz', kwargs={'article_id': 42})
+        self.assertEqual(url, '/agent/article/42/quiz/')

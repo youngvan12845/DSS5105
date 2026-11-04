@@ -14,6 +14,7 @@ urlpatterns = [
     ),
     path('session/<int:session_id>/', views.chat_view, name='chat_session'),
     path('article/<int:article_id>/', views.chat_view, name='chat_article'),
+    path('article/<int:article_id>/quiz/', views.article_quiz_view, name='article_quiz'),
     path('article/<int:article_id>/panel/', views.article_panel_view, name='article_panel'),
     path('article/<int:article_id>/send/', views.article_send_message_view, name='article_send_message'),
     path('session/new/', views.new_session_view, name='new_session'),
