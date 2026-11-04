@@ -95,3 +95,27 @@
 .article-agent-chat .assistant-quick-chip:active {
     transform: translateY(0);
 }
+
+/* Interactive Quiz Option Buttons */
+.quiz-option-btn {
+    transition: all 0.15s ease-in-out;
+}
+.quiz-option-btn:hover {
+    border-color: #c084fc !important;
+    background-color: #faf5ff !important;
+    transform: translateY(-1px);
+}
+.quiz-option-btn.is-selected {
+    border-color: #9333ea !important;
+    background-color: #f5f3ff !important;
+    box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.25), 0 2px 6px rgba(147, 51, 234, 0.1) !important;
+}
+.quiz-option-btn.is-selected .quiz-option-badge {
+    background-color: #9333ea !important;
+    color: #ffffff !important;
+}
+.quiz-option-btn.is-selected .quiz-option-check {
+    background-color: #9333ea !important;
+    border-color: #9333ea !important;
+    color: #ffffff !important;
+}

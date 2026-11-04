@@ -66,18 +66,48 @@ def agent_markdown(value: str) -> str:
         text,
     )
 
-    # 6. Bullet lists: lines starting with •, -, *
+    # 6. Bullet lists and Interactive Quiz Options
     lines = text.split('\n')
     processed_lines = []
+    current_q_num = '1'
+
     for line in lines:
         stripped = line.strip()
-        if stripped.startswith(('• ', '- ', '* ')):
+        q_match = re.match(r'^(?:###\s*)?(?:Question\s*)?(\d+)[\.\:]\s*(.+)$', stripped, re.IGNORECASE)
+        opt_match = re.match(r'^\s*([A-D])[\)\.\:]\s+(.+)$', stripped, re.IGNORECASE)
+
+        if q_match and not opt_match and ('?' in stripped or any(kw in stripped.lower() for kw in ('question', 'which', 'what', 'how', 'why', 'who', 'where', 'when'))):
+            current_q_num = q_match.group(1)
+            q_text = q_match.group(2).strip()
+            processed_lines.append(
+                f'<div class="quiz-question-header mt-4 mb-2 font-bold text-slate-900 flex items-start gap-2">'
+                f'<span class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-700 text-xs font-mono shrink-0">Q{current_q_num}</span>'
+                f'<span>{q_text}</span>'
+                f'</div>'
+            )
+        elif opt_match:
+            letter = opt_match.group(1).upper()
+            opt_content = opt_match.group(2).strip()
+            btn_html = (
+                f'<button type="button" class="quiz-option-btn group w-full text-left my-1.5 p-3 rounded-xl border border-slate-200 bg-white hover:border-purple-400 hover:bg-purple-50/50 shadow-sm transition-all duration-150 flex items-center justify-between gap-3 cursor-pointer" data-question="{current_q_num}" data-letter="{letter}">'
+                f'<div class="flex items-center gap-3 min-w-0">'
+                f'<span class="quiz-option-badge w-6 h-6 rounded-md bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-colors">{letter}</span>'
+                f'<span class="quiz-option-text text-sm text-slate-800 font-medium leading-snug">{opt_content}</span>'
+                f'</div>'
+                f'<span class="quiz-option-check w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center text-[10px] text-transparent shrink-0 transition-colors">✓</span>'
+                f'</button>'
+            )
+            processed_lines.append(btn_html)
+        elif stripped.startswith(('• ', '- ', '* ')):
             bullet_content = stripped[2:].strip()
             processed_lines.append(f'<div class="flex items-start gap-2 my-1"><span class="text-purple-500 font-bold shrink-0">•</span><span>{bullet_content}</span></div>')
         else:
             processed_lines.append(line)
 
     text = '<br>'.join(processed_lines)
+    # Clean up excess br tags around quiz elements
+    text = re.sub(r'<br>(<div class="quiz-question-header|<button type="button" class="quiz-option-btn)', r'\1', text)
+    text = re.sub(r'(</button>|</div>)<br>(<button type="button" class="quiz-option-btn)', r'\1\2', text)
     # Collapse multiple consecutive <br>
     text = re.sub(r'(<br>\s*){3,}', '<br><br>', text)
 

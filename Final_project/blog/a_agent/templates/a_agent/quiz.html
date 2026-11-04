@@ -4,6 +4,33 @@
 
 {% block class %}bg-slate-50 min-h-screen text-slate-700{% endblock %}
 
+{% block head %}
+<style>
+.quiz-option-btn {
+    transition: all 0.15s ease-in-out;
+}
+.quiz-option-btn:hover {
+    border-color: #c084fc !important;
+    background-color: #faf5ff !important;
+    transform: translateY(-1px);
+}
+.quiz-option-btn.is-selected {
+    border-color: #9333ea !important;
+    background-color: #f5f3ff !important;
+    box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.25), 0 2px 6px rgba(147, 51, 234, 0.1) !important;
+}
+.quiz-option-btn.is-selected .quiz-option-badge {
+    background-color: #9333ea !important;
+    color: #ffffff !important;
+}
+.quiz-option-btn.is-selected .quiz-option-check {
+    background-color: #9333ea !important;
+    border-color: #9333ea !important;
+    color: #ffffff !important;
+}
+</style>
+{% endblock %}
+
 {% block layout %}
 <div class="quiz-page max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-12">
     <!-- Top Navigation & Breadcrumb -->
@@ -183,6 +210,69 @@ document.addEventListener('DOMContentLoaded', () => {
             messages.querySelector('.quiz-optimistic-user')?.remove();
             form.reset();
             scrollToBottom();
+        }
+    });
+
+    // Interactive Option Buttons Click Handler
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.quiz-option-btn');
+        if (!btn) return;
+
+        e.preventDefault();
+        const qNum = btn.dataset.question;
+        const letter = btn.dataset.letter;
+        const parentBubble = btn.closest('.agent-bubble-assistant') || messages;
+
+        // Deselect other options in this question
+        parentBubble.querySelectorAll(`.quiz-option-btn[data-question="${qNum}"]`).forEach(other => {
+            other.classList.remove('is-selected');
+        });
+
+        // Select this option
+        btn.classList.add('is-selected');
+
+        // Gather all selected answers in this bubble
+        const selected = parentBubble.querySelectorAll('.quiz-option-btn.is-selected');
+        const answersMap = {};
+        selected.forEach(opt => {
+            answersMap[opt.dataset.question] = opt.dataset.letter;
+        });
+
+        const answerStr = Object.keys(answersMap)
+            .sort((a, b) => Number(a) - Number(b))
+            .map(q => `${q}: ${answersMap[q]}`)
+            .join(', ');
+
+        if (input) {
+            input.value = answerStr;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        // Inline submit bar
+        let submitBar = parentBubble.querySelector('.quiz-submit-action-bar');
+        if (!submitBar) {
+            submitBar = document.createElement('div');
+            submitBar.className = 'quiz-submit-action-bar mt-4 p-3 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-between gap-3 shadow-sm';
+            submitBar.innerHTML = `
+                <div class="flex items-center gap-2 text-xs text-purple-900 font-medium">
+                    <span>Selected:</span>
+                    <span class="quiz-selected-summary font-bold font-mono text-purple-700 bg-white px-2 py-0.5 rounded border border-purple-200"></span>
+                </div>
+                <button type="button" class="quiz-submit-now-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md transition cursor-pointer">
+                    <span>Submit Answer</span>
+                    <span>🚀</span>
+                </button>
+            `;
+            parentBubble.appendChild(submitBar);
+
+            submitBar.querySelector('.quiz-submit-now-btn').addEventListener('click', () => {
+                form?.requestSubmit();
+            });
+        }
+
+        const summarySpan = submitBar.querySelector('.quiz-selected-summary');
+        if (summarySpan) {
+            summarySpan.textContent = answerStr;
         }
     });
 });

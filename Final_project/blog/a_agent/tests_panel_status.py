@@ -205,3 +205,19 @@ class PanelStatusTests(SimpleTestCase):
         from django.urls import reverse
         url = reverse('a_agent:article_quiz', kwargs={'article_id': 42})
         self.assertEqual(url, '/agent/article/42/quiz/')
+
+    def test_quiz_options_markdown_rendering(self):
+        from a_agent.templatetags.agent_extras import agent_markdown
+        text = (
+            "1. What is Python?\n"
+            "A) A programming language\n"
+            "B) A snake species only\n"
+            "C) A database engine\n"
+            "D) A cloud provider\n"
+        )
+        rendered = agent_markdown(text)
+        self.assertIn('quiz-option-btn', rendered)
+        self.assertIn('data-question="1"', rendered)
+        self.assertIn('data-letter="A"', rendered)
+        self.assertIn('A programming language', rendered)
+        self.assertIn('data-letter="B"', rendered)
