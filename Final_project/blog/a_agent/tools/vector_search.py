@@ -17,6 +17,17 @@ class VectorHit(ChunkHit):
     score: float = 0.0
 
 
+_CHUNK_CACHE: dict = {'count': -1, 'chunks': []}
+
+
+def _get_cached_chunks() -> list[ArticleChunk]:
+    total = ArticleChunk.objects.count()
+    if _CHUNK_CACHE['count'] != total or not _CHUNK_CACHE['chunks']:
+        _CHUNK_CACHE['chunks'] = list(ArticleChunk.objects.exclude(embedding=[]))
+        _CHUNK_CACHE['count'] = total
+    return _CHUNK_CACHE['chunks']
+
+
 def search_article_vectors(
     query: str,
     user: User | AnonymousUser,
@@ -33,7 +44,7 @@ def search_article_vectors(
         return []
 
     scored: list[tuple[float, ArticleChunk]] = []
-    for chunk in ArticleChunk.objects.exclude(embedding=[]).iterator():
+    for chunk in _get_cached_chunks():
         if not chunk.embedding:
             continue
         score = cosine_similarity(query_embedding, chunk.embedding)

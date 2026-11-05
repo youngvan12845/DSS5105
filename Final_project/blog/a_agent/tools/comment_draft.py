@@ -80,19 +80,25 @@ _META_REFUSAL_PATTERNS = (
     'this article focuses on',
     'does not mention',
     'not covered in this article',
+    "wasn't mentioned",
+    'was not mentioned',
+    'not mentioned in',
+    'since this article is about',
+    'confusion in the article',
 )
 
 
 def _extract_comment_intent(query: str) -> str:
     """Extract the specific question or topic the user wants to express in their comment."""
     cleaned = re.sub(
-        r'^(?:please\s+|can you\s+|could you\s+|help me(?:\s+to)?\s+)*'
-        r'(?:draft|write|post|leave)\s+a\s+comment\s*'
-        r'(?:on\s+this\s+article\s*)?(?:to\s+ask|asking|about|saying|that)?\s*',
+        r'^(?:no\s+|please\s+|can you\s+|could you\s+|help me(?:\s+to)?\s+)*'
+        r'(?:draft|write|post|leave)\s+(?:a\s+)?(?:comment|commant|commet|command)\s*'
+        r'(?:on\s+this\s+article\s*)?(?:to\s+ask|asking|about|saying|that|to)?\s*',
         '',
         query.strip(),
         flags=re.IGNORECASE,
     ).strip()
+    cleaned = re.sub(r'\s+and\s+post\s+it\b.*$', '', cleaned, flags=re.IGNORECASE).strip()
     return cleaned or query.strip()
 
 

@@ -13,23 +13,50 @@ from a_blog.models import ArticlePage
 
 STOPWORDS = {
     'a', 'about', 'according', 'add', 'all', 'an', 'and', 'any', 'are', 'article', 'articles',
-    'as', 'ask', 'at', 'be', 'blog', 'both', 'bullet', 'by', 'can', 'chapter', 'cite',
-    'citation', 'citations', 'citing', 'comment', 'concepts', 'cover', 'covers', 'define',
-    'defined', 'definition', 'delete', 'discuss', 'discussing', 'do', 'does', 'exact',
-    'exactly', 'expansion', 'explain', 'explains', 'find', 'finding', 'first', 'five', 'for',
-    'from', 'give', 'have', 'help', 'how', 'i', 'in', 'into', 'is', 'it', 'its', 'just',
-    'key', 'know', 'learn', 'leave', 'library', 'link', 'links', 'list', 'main', 'master',
-    'me', 'mean', 'meaning', 'means', 'mention', 'mentioned', 'mentioning', 'mentions', 'more',
-    'most', 'my', 'need', 'next', 'of', 'on', 'one', 'only', 'or', 'other', 'our', 'page',
-    'part', 'please', 'point', 'points', 'post', 'posts', 'question', 'questions', 'quote',
-    'read', 'reading', 'recommend', 'recommended', 'related', 'remove', 'save', 'search',
-    'second', 'section', 'sections', 'should', 'show', 'site', 'some', 'source', 'sources',
-    'stand', 'stands', 'step', 'steps', 'suggest', 'summarize', 'summary', 'takeaway',
-    'takeaways', 'talk', 'talks', 'tell', 'that', 'the', 'their', 'them', 'there', 'these',
-    'third', 'this', 'those', 'three', 'to', 'topic', 'topics', 'two', 'understand', 'use',
+    'as', 'ask', 'at', 'be', 'beginner', 'beginners', 'blog', 'both', 'bullet', 'by', 'can',
+    'chapter', 'chart', 'charts', 'cite', 'citation', 'citations', 'citing', 'comment',
+    'concepts', 'cook', 'cooking', 'course', 'cover', 'covers', 'define', 'defined',
+    'definition', 'delete', 'deployment', 'deployments', 'discuss', 'discussing', 'do', 'does',
+    'exact', 'exactly', 'expansion', 'explain', 'explains', 'find', 'finding', 'first', 'five',
+    'for', 'from', 'getting', 'give', 'guide', 'have', 'help', 'how', 'i', 'in', 'into',
+    'introduction', 'is', 'it', 'its', 'just', 'key', 'know', 'learn', 'leave', 'library',
+    'link', 'links', 'list', 'main', 'master', 'me', 'mean', 'meaning', 'means', 'mention',
+    'mentioned', 'mentioning', 'mentions', 'more', 'most', 'my', 'need', 'next', 'of', 'on',
+    'one', 'only', 'or', 'ordered', 'other', 'our', 'overview', 'page', 'part', 'path', 'paths',
+    'please', 'point', 'points', 'post', 'posts', 'question', 'questions', 'quote', 'read',
+    'reading', 'recommend', 'recommended', 'related', 'remove', 'save', 'scratch', 'search',
+    'second', 'section', 'sections', 'series', 'should', 'show', 'site', 'some', 'source',
+    'sources', 'stand', 'stands', 'start', 'started', 'step', 'steps', 'structured', 'suggest',
+    'summarize', 'summary', 'takeaway', 'takeaways', 'talk', 'talks', 'teach', 'teaching',
+    'tell', 'that', 'the', 'their', 'them', 'there', 'these', 'third', 'this', 'those',
+    'three', 'to', 'topic', 'topics', 'tutorial', 'tutorials', 'two', 'understand', 'use',
     'used', 'using', 'want', 'was', 'what', 'when', 'where', 'which', 'who', 'why', 'will',
     'with', 'write', 'you', 'your',
 }
+
+CJK_TOPIC_MAP = {
+    '机器学习': ['machine', 'learning'],
+    '機械學習': ['machine', 'learning'],
+    '线性回归': ['linear', 'regression'],
+    '線性回歸': ['linear', 'regression'],
+    '梯度下降': ['gradient', 'descent'],
+    '版本控制': ['version', 'control', 'git'],
+    '分支冲突': ['branch', 'conflict', 'merge'],
+    '分支衝突': ['branch', 'conflict', 'merge'],
+    '容器': ['docker', 'container'],
+    '智能体': ['agent', 'agentic'],
+    '智能體': ['agent', 'agentic'],
+    '检索增强': ['rag', 'retrieval'],
+    '檢索增強': ['rag', 'retrieval'],
+    '网页开发': ['web', 'http', 'rest'],
+    '網頁開發': ['web', 'http', 'rest'],
+    '缓存': ['cache', 'caching'],
+    '快取': ['cache', 'caching'],
+}
+
+
+def _word_match(term: str, text: str) -> bool:
+    return bool(re.search(rf'\b{re.escape(term)}\b', text))
 
 
 def _extract_terms_and_phrases(query: str) -> tuple[list[str], list[str]]:
@@ -41,6 +68,15 @@ def _extract_terms_and_phrases(query: str) -> tuple[list[str], list[str]]:
         w1, w2 = raw_words[i], raw_words[i + 1]
         if len(w1) > 1 and len(w2) > 1 and w1 not in STOPWORDS and w2 not in STOPWORDS:
             phrases.append(f'{w1} {w2}')
+    for cjk_key, eng_tokens in CJK_TOPIC_MAP.items():
+        if cjk_key in query:
+            for tok in eng_tokens:
+                if tok not in terms:
+                    terms.append(tok)
+            if len(eng_tokens) >= 2:
+                phrase = f'{eng_tokens[0]} {eng_tokens[1]}'
+                if phrase not in phrases:
+                    phrases.append(phrase)
     return terms, phrases
 
 
@@ -67,7 +103,7 @@ def search_article_chunks(
         return []
 
     exact_chunks = list(
-        ArticleChunk.objects.filter(
+        ArticleChunk.objects.defer('embedding').filter(
             Q(content__icontains=query)
             | Q(article_title__icontains=query)
             | Q(tags__icontains=query)
@@ -84,14 +120,14 @@ def search_article_chunks(
             for t in terms:
                 high_q |= Q(article_title__icontains=t) | Q(tags__icontains=t)
 
-            high_candidates = list(ArticleChunk.objects.filter(high_q)[:limit * 10])
+            high_candidates = list(ArticleChunk.objects.defer('embedding').filter(high_q)[:limit * 10])
 
             broad_candidates = []
             if len(high_candidates) < limit * 3:
                 term_q = Q()
                 for t in terms:
                     term_q |= Q(content__icontains=t)
-                broad_candidates = list(ArticleChunk.objects.filter(term_q)[:limit * 10])
+                broad_candidates = list(ArticleChunk.objects.defer('embedding').filter(term_q)[:limit * 10])
 
             candidates = high_candidates + broad_candidates
 
@@ -99,19 +135,28 @@ def search_article_chunks(
                 score = 0
                 t_low = c.article_title.lower()
                 c_low = c.content.lower()
-                tags_low = c.tags.lower()
+                tags_low = (c.tags or '').lower()
+                title_or_tag_hits = 0
+                body_hits = 0
                 for p in phrases:
                     if p in t_low:
                         score += 30
+                        title_or_tag_hits += 1
                     if p in c_low:
                         score += 15
+                        body_hits += 1
                 for t in terms:
-                    if t in t_low:
+                    if _word_match(t, t_low):
                         score += 10
-                    if t in tags_low:
+                        title_or_tag_hits += 1
+                    if _word_match(t, tags_low):
                         score += 6
-                    if t in c_low:
+                        title_or_tag_hits += 1
+                    if _word_match(t, c_low):
                         score += 1
+                        body_hits += 1
+                if len(terms) >= 2 and title_or_tag_hits == 0 and body_hits < 2:
+                    return 0
                 return score
 
             candidates.sort(key=score_chunk, reverse=True)

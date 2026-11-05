@@ -44,7 +44,16 @@ def embeddings_available() -> bool:
     return ollama_reachable()
 
 
+_CF_EMBED_QUOTA_EXHAUSTED_UNTIL: float = 0.0
+
+
 def _embed_texts_cloudflare(texts: Sequence[str]) -> list[list[float]]:
+    global _CF_EMBED_QUOTA_EXHAUSTED_UNTIL
+    import time
+
+    if time.time() < _CF_EMBED_QUOTA_EXHAUSTED_UNTIL:
+        return []
+
     account_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
     token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
     model = embed_model()
@@ -63,15 +72,22 @@ def _embed_texts_cloudflare(texts: Sequence[str]) -> list[list[float]]:
         method='POST',
     )
     data = None
-    for attempt in range(4):
+    for attempt in range(2):
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=10) as resp:
                 data = json.loads(resp.read().decode('utf-8'))
                 break
         except urllib.error.HTTPError as exc:
-            if exc.code == 429 and attempt < 3:
-                import time
-                time.sleep(1.0 * (attempt + 1))
+            body_text = ''
+            try:
+                body_text = exc.read().decode('utf-8', errors='ignore')
+            except Exception:
+                pass
+            if exc.code == 429 and ('4006' in body_text or 'daily free allocation' in body_text):
+                _CF_EMBED_QUOTA_EXHAUSTED_UNTIL = time.time() + 120.0
+                return []
+            if exc.code in (429, 500, 502, 503, 504) and attempt == 0:
+                time.sleep(0.8)
                 continue
             logger.warning('Cloudflare embedding failed: %s', exc)
             return []

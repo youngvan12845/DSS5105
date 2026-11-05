@@ -2,32 +2,38 @@
   "version control": {
     "title": "Git & Version Control Starter Path",
     "steps": [
-      {"slug": "git-what-is-git", "note": "Understand distributed version control system basics"},
-      {"slug": "git-chapter-1-git-github-overview", "note": "Connect with remote repository services like GitHub"},
-      {"slug": "git-add-files-to-staging-area-git-add", "note": "Stage files and prepare snapshots for local repository"}
+      {"slug": "git-chapter-1-git-github-overview", "note": "Start with the Git & GitHub overview and distributed version control system basics"},
+      {"slug": "git-what-is-git", "note": "Understand what Git is and how local and remote repository services work"},
+      {"slug": "git-what-is-version-control", "note": "Learn core version control concepts and snapshot tracking"},
+      {"slug": "git-add-files-to-staging-area-git-add", "note": "Stage files and prepare snapshots for local repository"},
+      {"slug": "git-what-is-branch", "note": "Advance to branching and parallel development workflows"}
     ]
   },
   "git": {
     "title": "Git & Version Control Starter Path",
     "steps": [
-      {"slug": "git-what-is-git", "note": "Understand distributed version control system basics"},
-      {"slug": "git-chapter-1-git-github-overview", "note": "Connect with remote repository services like GitHub"},
-      {"slug": "git-add-files-to-staging-area-git-add", "note": "Stage files and prepare snapshots for local repository"}
+      {"slug": "git-chapter-1-git-github-overview", "note": "Start with the Git & GitHub overview and distributed version control system basics"},
+      {"slug": "git-what-is-git", "note": "Understand what Git is and how local and remote repository services work"},
+      {"slug": "git-what-is-version-control", "note": "Learn core version control concepts and snapshot tracking"},
+      {"slug": "git-add-files-to-staging-area-git-add", "note": "Stage files and prepare snapshots for local repository"},
+      {"slug": "git-what-is-branch", "note": "Advance to branching and parallel development workflows"}
     ]
   },
   "containerization": {
     "title": "Docker Containerization Fundamentals Path",
     "steps": [
-      {"slug": "docker-what-is-docker", "note": "Understand lightweight container basics and virtualization"},
-      {"slug": "docker-chapter-1-docker-introduction", "note": "Explore core Docker features and environment isolation"},
+      {"slug": "docker-chapter-1-docker-introduction", "note": "Start with the Docker introduction and environment isolation"},
+      {"slug": "docker-containers-vs-virtual-machines", "note": "Compare lightweight container virtualization vs virtual machines"},
+      {"slug": "docker-what-is-docker", "note": "Understand core Docker architecture and container basics"},
       {"slug": "docker-what-is-a-dockerfile", "note": "Build container images for application deployment and scaling"}
     ]
   },
   "docker": {
     "title": "Docker Containerization Fundamentals Path",
     "steps": [
-      {"slug": "docker-what-is-docker", "note": "Understand lightweight container basics and virtualization"},
-      {"slug": "docker-chapter-1-docker-introduction", "note": "Explore core Docker features and environment isolation"},
+      {"slug": "docker-chapter-1-docker-introduction", "note": "Start with the Docker introduction and environment isolation"},
+      {"slug": "docker-containers-vs-virtual-machines", "note": "Compare lightweight container virtualization vs virtual machines"},
+      {"slug": "docker-what-is-docker", "note": "Understand core Docker architecture and container basics"},
       {"slug": "docker-what-is-a-dockerfile", "note": "Build container images for application deployment and scaling"}
     ]
   },

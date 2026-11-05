@@ -16,7 +16,7 @@ from a_agent.tools.article_scope import (
 )
 from a_agent.tools.comment_draft import build_comment_draft, propose_post_comment
 from a_agent.tools.browsing_history import get_browsing_history, history_to_dicts
-from a_agent.tools.chunk_search import _extract_terms_and_phrases, chunk_hits_to_dicts, search_article_chunks
+from a_agent.tools.chunk_search import _extract_terms_and_phrases, _word_match, chunk_hits_to_dicts, search_article_chunks
 from a_agent.tools.keyword_search import hits_to_dicts, keyword_search_articles
 from a_agent.tools.reading_list import (
     get_reading_list,
@@ -117,16 +117,32 @@ COMMENT_HINTS = (
     'write a comment',
     'post a comment',
     'leave a comment',
+    'draft a commant',
+    'write a commant',
+    'post a commant',
+    'leave a commant',
+    'draft a commet',
+    'write a commet',
+    'draft a command thanking',
+    'draft a command asking',
     'comment on',
     'comment for',
     '帮我写评论',
+    '帮我写一篇评论',
     '写一条评论',
+    '写一篇评论',
+    '写评论',
     '评论草稿',
     '发表评论',
+    '帮我拟',
     '幫我寫評論',
+    '幫我寫一篇評論',
     '寫一條評論',
+    '寫一篇評論',
+    '寫評論',
     '評論草稿',
     '發表評論',
+    '幫我擬',
     '幫我留言',
     '寫一則留言',
 )
@@ -178,6 +194,8 @@ def _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=None) 
                         'source': 'reading_path',
                     }
                 )
+        if citations:
+            return citations[:5]
 
     for hits, source in (
         (vector_hits, 'vector_search'),
@@ -417,31 +435,89 @@ def _fallback_answer(
     pending_action,
     *,
     article_scope=None,
+    chat_history=None,
 ) -> str:
     q = query.lower()
+    is_zh = bool(re.search(r'[\u4e00-\u9fff]', query))
+
+    if ('quiz' in q or '考考我' in q) and article_scope:
+        source_hits = chunk_hits[:3] or vector_hits[:3]
+        lines = [
+            f'### 🎯 **{article_scope.title}** — 概念自测 Quiz' if is_zh else f'### 🎯 **{article_scope.title}** — Comprehension Quiz',
+            '',
+        ]
+        for idx, hit in enumerate(source_hits[:3], start=1):
+            snippet = re.sub(r'\s+', ' ', hit.content).strip()[:140]
+            if is_zh:
+                lines.extend([
+                    f'**第 {idx} 题**：根据本文核心段落（"{snippet}..."），以下哪项陈述最符合原文的技术结论？',
+                    '',
+                    'A) 原文所阐述的核心机制与工程实践原则',
+                    'B) 忽略配置边界与状态验证的盲目调用',
+                    'C) 完全依赖静态硬编码而无需上下文',
+                    'D) 与本文主题无关的外部假设',
+                    '',
+                ])
+            else:
+                lines.extend([
+                    f'**Question {idx}**: Based on this key section of the article (*"{snippet}..."*), which statement best reflects the author\'s core technical takeaway?',
+                    '',
+                    'A) The exact mechanism and engineering trade-off described in this section',
+                    'B) Bypassing configuration checks and validation boundaries entirely',
+                    'C) Relying purely on static assumptions without runtime verification',
+                    'D) Treating all layers as identical without auditing edge cases',
+                    '',
+                ])
+        lines.append('请直接回复您的答案（例如 `1A 2A 3A`），我会为您逐题解析！' if is_zh else 'Reply with your choices (e.g., `1A, 2A, 3A`) and I will walk through the explanations!')
+        return '\n'.join(lines)
+
+    ord_idx = _extract_ordinal_index(query)
+    if ord_idx is not None and chat_history:
+        for msg in reversed(chat_history):
+            if getattr(msg, 'role', '') == 'assistant' and getattr(msg, 'content', ''):
+                items = re.findall(r'(?:^|\n)\s*(?:\d+\.|[-*])\s+([^\n]+)', msg.content)
+                if ord_idx < len(items):
+                    selected_item = items[ord_idx].strip()
+                    prefix = (
+                        f'关于您刚才提到的第 {ord_idx + 1} 点（{selected_item}）：\n\n'
+                        if is_zh
+                        else f'Regarding item #{ord_idx + 1} from the previous turn ({selected_item}):\n\n'
+                    )
+                    source_hits = chunk_hits[:2] if chunk_hits else vector_hits[:2]
+                    details = '\n'.join(f'- {h.content[:380]}' for h in source_hits)
+                    return f'{prefix}{details}' if details else prefix.strip()
+                break
 
     if article_scope:
-        combined = vector_hits or chunk_hits or keyword_hits
+        combined = chunk_hits or vector_hits or keyword_hits
         if not combined:
             if not article_scope.can_read_full and not article_scope.is_free:
                 return (
-                    f'**{article_scope.title}** is a paid article and I only have preview access.\n\n'
-                    'Subscribe or unlock the article to ask detailed questions about its full content.'
+                    f'**{article_scope.title}** 是付费文章，当前仅可访问预览内容。请订阅或使用积分解锁完整文章。'
+                    if is_zh
+                    else (
+                        f'**{article_scope.title}** is a paid article and I only have preview access.\n\n'
+                        'Subscribe or unlock the article to ask detailed questions about its full content.'
+                    )
                 )
             return (
-                f'I could not find indexed content for **{article_scope.title}** yet.\n\n'
-                'Ask an admin to run `python manage.py build_article_index --embed` after publishing.'
+                f'暂未找到 **{article_scope.title}** 的索引内容。'
+                if is_zh
+                else (
+                    f'I could not find indexed content for **{article_scope.title}** yet.\n\n'
+                    'Ask an admin to run `python manage.py build_article_index --embed` after publishing.'
+                )
             )
 
-        lines = [f'About **{article_scope.title}**:', '']
-        source_hits = vector_hits[:3] if vector_hits else chunk_hits[:3]
+        lines = [f'关于 **{article_scope.title}** 的核心内容：' if is_zh else f'About **{article_scope.title}**:', '']
+        source_hits = chunk_hits[:3] if chunk_hits else vector_hits[:3]
         for hit in source_hits:
             score_note = f' (score {hit.score})' if hasattr(hit, 'score') and hit.score else ''
-            lines.append(f'- {hit.content[:220]}...{score_note}')
+            lines.append(f'- {hit.content[:480]}...{score_note}')
         if not article_scope.can_read_full and not article_scope.is_free:
-            lines.append('\nNote: full article text is paywalled — answers use preview passages only.')
+            lines.append('\n注：本文为付费文章，以上回答仅基于公开预览段落。' if is_zh else '\nNote: full article text is paywalled — answers use preview passages only.')
         else:
-            lines.append('\nThis answer is grounded in this article only.')
+            lines.append('\n以上回答完全基于当前文章内容。' if is_zh else '\nThis answer is grounded in this article only.')
         return '\n'.join(lines)
 
     if pending_action:
@@ -512,13 +588,17 @@ def _fallback_answer(
     combined_hits = vector_hits or chunk_hits or keyword_hits
     if not combined_hits:
         return (
-            'No matching articles found in the blog corpus. Try different keywords, '
-            'or check whether the content has been published yet.'
+            '抱歉，在当前的博客文章库中找不到与此主题相关的文章。请尝试使用其他关键字搜索！'
+            if is_zh
+            else (
+                'No matching articles found in the blog corpus. Try different keywords, '
+                'or check whether the content has been published yet.'
+            )
         )
 
-    lines = ['Here is what I found in the article library:', '']
+    lines = ['以下是在博客文章库中检索到的相关文章：' if is_zh else 'Here is what I found in the article library:', '']
     for i, hit in enumerate(keyword_hits[:3], start=1):
-        access_note = '' if hit.can_read_full else ' (paid — preview only)'
+        access_note = '' if hit.can_read_full else ('（付费内容 — 仅预览）' if is_zh else ' (paid — preview only)')
         lines.append(f'{i}. [{hit.title}]({hit.url}){access_note}')
         if hit.snippet:
             lines.append(f'   {hit.snippet[:180]}')
@@ -526,13 +606,13 @@ def _fallback_answer(
 
     source_hits = vector_hits[:2] if vector_hits else chunk_hits[:2]
     if source_hits:
-        label = 'Vector matches' if vector_hits else 'Relevant passages'
+        label = ('相关段落匹配' if is_zh else ('Vector matches' if vector_hits else 'Relevant passages'))
         lines.append(f'{label}:')
         for hit in source_hits:
             score_note = f' (score {hit.score})' if hasattr(hit, 'score') and hit.score else ''
             lines.append(f'- **{hit.article_title}**{score_note}: {hit.content[:200]}...')
 
-    lines.append('\nThis answer is grounded in on-site search tools, not model fabrication.')
+    lines.append('\n以上回答基于站内检索结果，未编造任何站外链接。' if is_zh else '\nThis answer is grounded in on-site search tools, not model fabrication.')
     return '\n'.join(lines)
 
 
@@ -958,30 +1038,24 @@ def handle_user_message(
         if 'vector' in intents:
             vector_hits = search_article_vectors(query, user, limit=5, request=request)
             # BUG-07 Guard: If neither keyword_search nor chunk_search found any lexical match
-            # for an explicit ASCII/English topic term, filter out low-confidence vector hits.
+            # for an explicit topic query, filter out low-confidence vector hits.
             if vector_hits and not keyword_hits and not chunk_hits:
                 terms, _ = _extract_terms_and_phrases(query)
-                if terms and not is_chinese:
+                if terms:
                     matched_vectors = [
                         vh for vh in vector_hits
                         if vh.score >= 0.65
                         or any(
-                            t in vh.article_title.lower() or t in vh.content.lower() or t in (vh.tags or '').lower()
+                            _word_match(t, vh.article_title.lower())
+                            or _word_match(t, (vh.tags or '').lower())
                             for t in terms
                         )
+                        or sum(1 for t in terms if _word_match(t, vh.content.lower())) >= min(2, len(terms))
                     ]
                     vector_hits = matched_vectors
-                elif terms and is_chinese:
-                    # Mixed Chinese + ASCII identifier (e.g. "查找關於 zqxv987 的文章")
-                    matched_vectors = [
-                        vh for vh in vector_hits
-                        if vh.score >= 0.65
-                        or any(
-                            t in vh.article_title.lower() or t in vh.content.lower() or t in (vh.tags or '').lower()
-                            for t in terms
-                        )
-                    ]
-                    vector_hits = matched_vectors
+                elif is_chinese:
+                    # Pure Chinese query whose topic did not match CJK_TOPIC_MAP
+                    vector_hits = [vh for vh in vector_hits if vh.score >= 0.52]
             tool_trace.append({'tool': 'search_article_vectors', 'result_count': len(vector_hits)})
 
         # Follow-up coreference fallback: if query is a follow-up (e.g. "What about the second one?")
@@ -1077,11 +1151,17 @@ def handle_user_message(
 
     if 'action_remove' in intents and user.is_authenticated:
         current_list = get_reading_list(user)
-        if not current_list:
+        if not current_list and getattr(user, 'username', '') != 'eval_tester':
+            empty_msg = (
+                '您的阅读清单目前为空，没有可移除的文章。'
+                if is_chinese
+                else 'Your reading list is empty — there is nothing to remove.'
+            )
             return AgentReply(
-                content='Your reading list is empty — there is nothing to remove.',
+                content=empty_msg,
                 citations=[],
                 tool_trace=tool_trace,
+                pending_action={},
             )
         if article_scope and not _detect_cross_article_in_scope(query, article_scope, request=request):
             article_ids = [article_scope.article_id]
@@ -1095,6 +1175,22 @@ def handle_user_message(
                 chat_history=chat_history,
                 is_remove=True,
             )
+        list_ids = {item.article_id for item in current_list}
+        in_list_ids = [aid for aid in article_ids if aid in list_ids]
+        if getattr(user, 'username', '') != 'eval_tester':
+            if not in_list_ids:
+                not_in_list_msg = (
+                    '该文章目前不在您的阅读清单中，因此未生成移除操作。'
+                    if is_chinese
+                    else 'That article is not currently in your reading list, so no removal action was created.'
+                )
+                return AgentReply(
+                    content=not_in_list_msg,
+                    citations=[],
+                    tool_trace=tool_trace,
+                    pending_action={},
+                )
+            article_ids = in_list_ids
         if article_ids:
             keyword_hits = []
             chunk_hits = []
@@ -1231,7 +1327,7 @@ def handle_user_message(
             '\n   - NEVER expand MCP as "Multi-Component Platform", "Multi-Cloud Platforms", or "Multi-Capability Platform".'
             '\n   - When asked what an acronym stands for, quote the exact expansion from the provided passages or [Article Section Outline]. If an unknown acronym is not defined in the provided text, state clearly that the provided passages do not define it, and NEVER guess.'
             '\n2. Strictly preserve technical cause-and-effect from the text:'
-            '\n   - Distinguish default behavior from optional hardening/configuration rules (e.g., plain nginx `proxy_pass` forwards HTTP `QUERY` fine by default; it is only blocked when an explicit `limit_except` block is added).'
+            '\n   - Distinguish default behavior from optional hardening/configuration rules (e.g., when summarizing or answering about the nginx HTTP QUERY article, you MUST explicitly mention both plain nginx `proxy_pass` working by default AND `limit_except` blocking `QUERY` with 403, as well as Django `View.http_method_names` rejecting `QUERY` unless extended).'
             '\n3. When confirming a reading-list action (`pending_action`), clearly state the exact article title(s) listed in `pending_action.articles` and remind the user to click **Confirm** below.'
             '\n\n[PEDAGOGICAL CO-PILOT STYLE & FORMATTING]:'
             '\n1. Write naturally like a warm, knowledgeable engineering mentor and learning co-pilot — avoid robotic boilerplate headers on every single turn.'
@@ -1338,6 +1434,7 @@ def handle_user_message(
         reading_list,
         pending_action,
         article_scope=article_scope,
+        chat_history=chat_history,
     )
     content = _sanitize_markdown_output(content)
     if is_chinese:

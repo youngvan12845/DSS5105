@@ -398,3 +398,36 @@ class PanelStatusTests(SimpleTestCase):
             self.assertEqual(graph_data['prereq_count'], 0)
             prereq_nodes = [n for n in graph_data['nodes'] if n['type'] == 'prerequisite']
             self.assertEqual(prereq_nodes, [])
+
+    def test_cloudflare_model_switcher_and_acyclic_learning_analysis(self):
+        from a_agent.config import get_model_options, normalize_model
+        from a_agent.services.learning_analysis import load_store
+
+        with self.settings(AGENT_LLM_PROVIDER='cloudflare'):
+            options = get_model_options()
+            self.assertTrue(any(o['id'] == '@cf/qwen/qwen2.5-coder-32b-instruct' for o in options))
+            self.assertEqual(normalize_model('qwen2.5vl:7b'), '@cf/qwen/qwen2.5-coder-32b-instruct')
+            self.assertEqual(
+                normalize_model('@cf/meta/llama-3.3-70b-instruct-fp8-fast'),
+                '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+            )
+
+        store = load_store()
+        adj = {s: [m['slug'] for m in r.get('matches', [])] for s, r in store['articles'].items()}
+        visited = {}
+        cycles = []
+
+        def dfs(u, path):
+            visited[u] = 1
+            for v in adj.get(u, []):
+                if visited.get(v) == 1:
+                    cycles.append(path + [v])
+                elif visited.get(v, 0) == 0:
+                    dfs(v, path + [v])
+            visited[u] = 2
+
+        for s in adj:
+            if visited.get(s, 0) == 0:
+                dfs(s, [s])
+        self.assertEqual(cycles, [])
+        self.assertGreater(len(store.get('bridges', {})), 100)

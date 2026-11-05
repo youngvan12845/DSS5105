@@ -5,7 +5,7 @@ from django.views.decorators.http import require_POST
 
 from a_blog.models import ArticlePage
 
-from .config import OLLAMA_MODEL_OPTIONS, normalize_model
+from .config import OLLAMA_MODEL_OPTIONS, get_model_options, normalize_model
 from .models import AgentActionLog, ChatMessage, ChatSession, ReadingListItem
 from .tools.comment_draft import execute_post_comment
 from .tools.reading_list import (
@@ -172,7 +172,7 @@ def chat_view(
             'sessions': sessions,
             'chat_messages': chat_messages,
             'llm_info': get_llm_info(selected_model),
-            'model_options': OLLAMA_MODEL_OPTIONS,
+            'model_options': get_model_options(),
             'selected_model': selected_model,
             'continue_reading': history_items[0] if history_items else None,
             'recent_history': history_items,
@@ -265,7 +265,7 @@ def article_quiz_view(request: HttpRequest, article_id: int) -> HttpResponse:
             'session': session,
             'chat_messages': chat_messages,
             'selected_model': selected_model,
-            'model_options': OLLAMA_MODEL_OPTIONS,
+            'model_options': get_model_options(),
             'llm_info': llm_info,
             'article_scope': article_scope,
         },
@@ -477,7 +477,7 @@ def article_panel_view(request: HttpRequest, article_id: int) -> HttpResponse:
             'chat_messages': chat_messages,
             'llm_info': llm_info,
             'panel_status': panel_status,
-            'model_options': OLLAMA_MODEL_OPTIONS,
+            'model_options': get_model_options(),
             'selected_model': selected_model,
             'readiness': readiness,
             'suggested_prompts': _get_suggested_prompts(article),

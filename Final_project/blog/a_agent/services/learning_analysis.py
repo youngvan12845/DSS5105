@@ -374,6 +374,33 @@ def display_analysis(article, *, path: str | None = None, live_titles: dict[str,
     if is_series_first_article(article) and isinstance(payload, dict) and payload.get('status') == READY:
         payload = dict(payload, prerequisite_concepts=[])
         matches = []
+    elif getattr(article, 'series_slug', '') and matches and isinstance(payload, dict) and payload.get('status') == READY:
+        try:
+            from a_blog.models import ArticlePage
+
+            curr_key = (getattr(article, 'chapter_number', 0) or 0, getattr(article, 'lesson_number', 0) or 0, getattr(article, 'pk', 0) or 0)
+            matched_pages = {
+                p.slug: p
+                for p in ArticlePage.objects.live().filter(slug__in=[m['slug'] for m in matches if m.get('slug')])
+            }
+            valid_matches = []
+            invalid_concepts = set()
+            for m in matches:
+                mp = matched_pages.get(m.get('slug'))
+                if mp and mp.series_slug == article.series_slug:
+                    mp_key = (mp.chapter_number or 0, mp.lesson_number or 0, mp.pk)
+                    if mp_key >= curr_key:
+                        invalid_concepts.add(m.get('concept'))
+                        continue
+                valid_matches.append(m)
+            if invalid_concepts:
+                matches = valid_matches
+                payload = dict(
+                    payload,
+                    prerequisite_concepts=[c for c in payload.get('prerequisite_concepts', []) if c not in invalid_concepts],
+                )
+        except Exception:
+            pass
     return payload, matches
 
 
@@ -397,8 +424,13 @@ def explain_concept(concept: str, source: str, *, generate: Callable[[str, str],
     try:
         raw = generate(_BRIDGE_SYSTEM, f'Concept: {concept}\n\nSource:\n{source[:4000]}')
     except Exception:
-        logger.exception('Concept bridge request failed for %s', concept)
-        return None
+        logger.warning('Concept bridge LLM call failed for %s; using source excerpt fallback.', concept)
+        lines = [ln.strip() for ln in source.splitlines() if ln.strip()]
+        if len(lines) >= 2:
+            title_line = lines[0]
+            body_preview = ' '.join(lines[1:])[:360].strip()
+            return f'In "{title_line}", {concept} is a foundational prerequisite concept: {body_preview}'
+        return f'{concept}: {source.strip()[:360]}'
     summary = re.sub(r'\s+', ' ', raw or '').strip()
     if not summary:
         return None

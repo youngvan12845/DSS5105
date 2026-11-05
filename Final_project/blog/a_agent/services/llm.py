@@ -84,7 +84,7 @@ def get_llm_info(model: str | None = None) -> LLMInfo:
 
     if provider == 'cloudflare':
         token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
-        cf_model = model or getattr(settings, 'CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
+        cf_model = selected if selected.startswith('@cf/') else getattr(settings, 'CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
         if token:
             display_name = cf_model.split('/')[-1]
             return LLMInfo(
@@ -92,7 +92,7 @@ def get_llm_info(model: str | None = None) -> LLMInfo:
                 provider='cloudflare',
                 model=cf_model,
                 label=f'Cloudflare AI · {display_name}',
-                vision=False,
+                vision=is_vision_model(cf_model),
             )
         return LLMInfo(
             configured=False,
@@ -147,6 +147,9 @@ def _build_user_message(user_prompt: str, image_file) -> str | list[dict]:
     ]
 
 
+_CF_LLM_QUOTA_EXHAUSTED_UNTIL: float = 0.0
+
+
 def generate_answer(
     system_prompt: str,
     user_prompt: str,
@@ -154,12 +157,17 @@ def generate_answer(
     model: str | None = None,
     image_file=None,
 ) -> str:
+    global _CF_LLM_QUOTA_EXHAUSTED_UNTIL
+    import time
+
     try:
         from openai import OpenAI
     except ImportError as exc:
         raise RuntimeError('openai package is not installed') from exc
 
     provider = _provider()
+    if provider == 'cloudflare' and time.time() < _CF_LLM_QUOTA_EXHAUSTED_UNTIL:
+        raise RuntimeError('Cloudflare daily free neuron quota temporarily exhausted')
     if provider == 'ollama':
         if not ollama_reachable():
             raise RuntimeError('Ollama is not running')
@@ -176,6 +184,8 @@ def generate_answer(
             selected_model = model
         else:
             selected_model = getattr(settings, 'CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
+        if image_file and 'scout' not in selected_model and 'vision' not in selected_model:
+            selected_model = getattr(settings, 'CLOUDFLARE_VISION_MODEL', '@cf/meta/llama-4-scout-17b-16e-instruct')
         client = OpenAI(base_url=base_url, api_key=token, timeout=25.0)
     else:
         api_key = getattr(settings, 'AGENT_OPENAI_API_KEY', '')
@@ -189,16 +199,52 @@ def generate_answer(
         client = OpenAI(base_url=base_url, api_key=api_key, timeout=25.0)
 
     user_content = _build_user_message(user_prompt, image_file)
-    response = client.chat.completions.create(
-        model=selected_model,
-        messages=[
-            {'role': 'system', 'content': system_prompt},
-            {'role': 'user', 'content': user_content},
-        ],
-        temperature=0.1,
-        max_tokens=900,
-    )
-    return response.choices[0].message.content or ''
+    messages = [
+        {'role': 'system', 'content': system_prompt},
+        {'role': 'user', 'content': user_content},
+    ]
+
+    candidate_models = [selected_model]
+    if provider == 'cloudflare':
+        fallback_cf = (
+            ['@cf/meta/llama-4-scout-17b-16e-instruct']
+            if image_file
+            else [
+                '@cf/qwen/qwen2.5-coder-32b-instruct',
+                '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+                '@cf/meta/llama-4-scout-17b-16e-instruct',
+            ]
+        )
+        for m in fallback_cf:
+            if m not in candidate_models:
+                candidate_models.append(m)
+
+    last_exc = None
+    for cand_model in candidate_models:
+        for attempt in range(2):
+            try:
+                response = client.chat.completions.create(
+                    model=cand_model,
+                    messages=messages,
+                    temperature=0.1,
+                    max_tokens=900,
+                )
+                text = response.choices[0].message.content or ''
+                if text.strip():
+                    return text
+            except Exception as exc:
+                last_exc = exc
+                err_str = str(exc)
+                if '4006' in err_str or 'daily free allocation' in err_str:
+                    _CF_LLM_QUOTA_EXHAUSTED_UNTIL = time.time() + 120.0
+                    raise exc
+                if ('429' in err_str or '502' in err_str or '503' in err_str) and attempt == 0:
+                    time.sleep(0.8)
+                    continue
+                break
+    if last_exc:
+        raise last_exc
+    return ''
 
 
 def dumps_context(data: Any) -> str:

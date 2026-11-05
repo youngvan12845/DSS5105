@@ -1136,10 +1136,24 @@
         document.addEventListener('selectionchange', handleSelection);
         document.addEventListener('mouseup', handleSelection);
         document.addEventListener('touchend', handleSelection);
-        articleContainer.addEventListener('contextmenu', () => {
+        articleContainer.addEventListener('contextmenu', (e) => {
             const sel = window.getSelection();
-            if (sel && !sel.isCollapsed && sel.toString().trim().length >= 2) {
-                setTimeout(updateBadgePosition, 20);
+            const text = sel ? sel.toString().trim() : '';
+            if (sel && !sel.isCollapsed && text.length >= 2 && text.length <= 1200) {
+                e.preventDefault();
+                activeSelectionText = text;
+                const copyLabel = badge.querySelector('.copy-label');
+                if (copyLabel) copyLabel.textContent = 'Copy';
+                badge.classList.remove('hidden');
+                const badgeWidth = badge.offsetWidth || 260;
+                const badgeHeight = badge.offsetHeight || 40;
+                let left = e.pageX - (badgeWidth / 2);
+                let top = e.pageY - badgeHeight - 10;
+                if (left < 10) left = 10;
+                if (left + badgeWidth > window.innerWidth - 10) left = window.innerWidth - badgeWidth - 10;
+                if (top < window.scrollY + 10) top = e.pageY + 12;
+                badge.style.left = `${left}px`;
+                badge.style.top = `${top}px`;
             }
         });
 

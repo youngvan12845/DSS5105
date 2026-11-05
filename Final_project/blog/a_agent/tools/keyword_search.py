@@ -7,7 +7,7 @@ from django.contrib.auth.models import AnonymousUser, User
 from a_blog.models import ArticlePage
 
 from .access import get_article_access
-from .chunk_search import STOPWORDS, _extract_terms_and_phrases
+from .chunk_search import STOPWORDS, _extract_terms_and_phrases, _word_match
 
 
 @dataclass
@@ -57,6 +57,16 @@ def keyword_search_articles(
                 break
 
     for article in articles:
+        tag_names = [t.name for t in article.tags.all()]
+        if terms:
+            t_low = (article.title or '').lower()
+            tags_low = ' '.join(tag_names).lower()
+            body_low = f'{article.intro or ""} {article.body or ""}'.lower()
+            title_tag_match = any(_word_match(t, t_low) or _word_match(t, tags_low) for t in terms)
+            body_match_count = sum(1 for t in terms if _word_match(t, body_low))
+            if not title_tag_match and body_match_count < min(2, len(terms)):
+                continue
+
         access = get_article_access(user, article, request=request)
         body_text = article.body or ''
         snippet_source = article.intro or body_text
@@ -71,7 +81,7 @@ def keyword_search_articles(
                 url=access.url,
                 intro=article.intro,
                 snippet=snippet,
-                tags=[t.name for t in article.tags.all()],
+                tags=tag_names,
                 is_free=article.is_free,
                 can_read_full=access.can_read_full,
                 access_reason=access.reason,

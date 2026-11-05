@@ -190,7 +190,7 @@ def get_baseline_article_chunks(
     limit: int = 8,
     request=None,
 ) -> list[ChunkHit]:
-    all_chunks = list(ArticleChunk.objects.filter(article_id=article_id).order_by('chunk_index'))
+    all_chunks = list(ArticleChunk.objects.defer('embedding').filter(article_id=article_id).order_by('chunk_index'))
     if not all_chunks:
         return []
 
@@ -248,7 +248,7 @@ def search_scoped_article_chunks(
             article_id, user, limit=max(limit, 12) if is_summary_query(query) else limit, request=request
         )
 
-    all_chunks = list(ArticleChunk.objects.filter(article_id=article_id).order_by('chunk_index'))
+    all_chunks = list(ArticleChunk.objects.defer('embedding').filter(article_id=article_id).order_by('chunk_index'))
     if not all_chunks:
         return []
 
@@ -336,6 +336,9 @@ def search_scoped_article_vectors(
                 hits.append(hit)
         if hits:
             return hits
+
+    if query.strip() and not is_summary_query(query):
+        return []
 
     baseline = get_baseline_article_chunks(article_id, user, limit=limit, request=request)
     return [

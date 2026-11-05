@@ -153,21 +153,24 @@
 
             <!-- Composer -->
             <div class="border-t border-slate-100 bg-slate-50/80 px-4 py-4 md:px-6 md:py-5">
-                <!-- Model selector (hidden from users) -->
-                <div class="hidden">
-                    <select
-                        id="llm-model"
-                        name="llm_model"
-                        form="chat-form"
-                        class="agent-select text-sm"
-                    >
-                        {% for option in model_options %}
-                        <option value="{{ option.id }}" data-vision="{{ option.vision|yesno:'true,false' }}" {% if option.id == selected_model %}selected{% endif %}>
-                            {{ option.label }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                    <span id="vision-hint"></span>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Model</span>
+                        <select
+                            id="llm-model"
+                            name="llm_model"
+                            form="chat-form"
+                            aria-label="Select AI Model"
+                            class="agent-select text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg px-2.5 py-1 shadow-xs focus:border-purple-300 focus:ring-1 focus:ring-purple-200 cursor-pointer"
+                        >
+                            {% for option in model_options %}
+                            <option value="{{ option.id }}" data-vision="{{ option.vision|yesno:'true,false' }}" {% if option.id == selected_model %}selected{% endif %}>
+                                {{ option.label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span id="vision-hint" class="text-[11px] text-slate-400">Image upload supported</span>
                 </div>
 
                 <form
@@ -631,6 +634,13 @@ document.addEventListener('DOMContentLoaded', () => {
         visionHint.classList.toggle('hidden', !isVision);
         visionTip.classList.toggle('hidden', !isVision);
         if (!isVision) clearImage();
+        const badge = document.getElementById('llm-status-badge');
+        if (badge && option.value) {
+            const shortModel = option.value.split('/').pop();
+            const dot = badge.querySelector('span');
+            badge.textContent = ` Cloudflare AI · ${shortModel}`;
+            if (dot) badge.prepend(dot);
+        }
     };
 
     const clearImage = () => {
@@ -735,8 +745,11 @@ document.addEventListener('DOMContentLoaded', () => {
     chatForm.addEventListener('htmx:afterRequest', (e) => {
         removeThinking();
         if (e.detail.successful) {
+            const currentModel = modelSelect.value;
             chatForm.reset();
+            modelSelect.value = currentModel;
             clearImage();
+            syncVisionUi();
             scrollToBottom();
         }
     });

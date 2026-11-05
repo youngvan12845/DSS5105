@@ -19,11 +19,17 @@
         "Groundedness / Faithfulness"
       ],
       "prerequisite_concepts": [
+        "Machine Learning Overview: Supervised vs Unsupervised",
         "Large Language Models",
-        "Vector Embeddings",
-        "Retrieval Methods"
+        "Vector Embeddings"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Machine Learning Overview: Supervised vs Unsupervised",
+          "slug": "ml-supervised-unsupervised",
+          "title": "Machine Learning Overview: Supervised vs Unsupervised"
+        }
+      ]
     },
     "gradient-descent-intuition": {
       "version": "fe01a51cb16fcb27",
@@ -34,19 +40,19 @@
         "parameter update rule"
       ],
       "prerequisite_concepts": [
-        "linear regression in practice",
-        "machine learning overview: supervised vs unsupervised"
+        "Machine Learning Overview: Supervised vs Unsupervised",
+        "Python Functions and Modules"
       ],
       "matches": [
         {
-          "concept": "linear regression in practice",
-          "slug": "linear-regression-practice",
-          "title": "Linear Regression in Practice"
-        },
-        {
-          "concept": "machine learning overview: supervised vs unsupervised",
+          "concept": "Machine Learning Overview: Supervised vs Unsupervised",
           "slug": "ml-supervised-unsupervised",
           "title": "Machine Learning Overview: Supervised vs Unsupervised"
+        },
+        {
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
         }
       ]
     },
@@ -60,25 +66,25 @@
         "R² Score (Coefficient of Determination)"
       ],
       "prerequisite_concepts": [
-        "Python Basics: Variables and Data Types",
-        "Python Functions and Modules",
-        "Machine Learning Overview: Supervised vs Unsupervised"
+        "Machine Learning Overview: Supervised vs Unsupervised",
+        "Gradient Descent Intuition",
+        "Python Functions and Modules"
       ],
       "matches": [
         {
-          "concept": "Python Basics: Variables and Data Types",
-          "slug": "python-basics-variables",
-          "title": "Python Basics: Variables and Data Types"
+          "concept": "Machine Learning Overview: Supervised vs Unsupervised",
+          "slug": "ml-supervised-unsupervised",
+          "title": "Machine Learning Overview: Supervised vs Unsupervised"
+        },
+        {
+          "concept": "Gradient Descent Intuition",
+          "slug": "gradient-descent-intuition",
+          "title": "Gradient Descent Intuition"
         },
         {
           "concept": "Python Functions and Modules",
           "slug": "python-functions-modules",
           "title": "Python Functions and Modules"
-        },
-        {
-          "concept": "Machine Learning Overview: Supervised vs Unsupervised",
-          "slug": "ml-supervised-unsupervised",
-          "title": "Machine Learning Overview: Supervised vs Unsupervised"
         }
       ]
     },
@@ -112,19 +118,13 @@
         "Modules and Packages"
       ],
       "prerequisite_concepts": [
-        "Python Basics: Variables and Data Types",
-        "What Is Git?"
+        "Python Basics: Variables and Data Types"
       ],
       "matches": [
         {
           "concept": "Python Basics: Variables and Data Types",
           "slug": "python-basics-variables",
           "title": "Python Basics: Variables and Data Types"
-        },
-        {
-          "concept": "What Is Git?",
-          "slug": "git-what-is-git",
-          "title": "What Is Git?"
         }
       ]
     },
@@ -144,8 +144,7 @@
       ],
       "prerequisite_concepts": [
         "Python Basics: Variables and Data Types",
-        "Linear Regression in Practice",
-        "Gradient Descent Intuition"
+        "Python Functions and Modules"
       ],
       "matches": [
         {
@@ -154,14 +153,9 @@
           "title": "Python Basics: Variables and Data Types"
         },
         {
-          "concept": "Linear Regression in Practice",
-          "slug": "linear-regression-practice",
-          "title": "Linear Regression in Practice"
-        },
-        {
-          "concept": "Gradient Descent Intuition",
-          "slug": "gradient-descent-intuition",
-          "title": "Gradient Descent Intuition"
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
         }
       ]
     },
@@ -173,19 +167,14 @@
         "RESTful API design"
       ],
       "prerequisite_concepts": [
-        "Variables and data types",
-        "Git & GitHub overview"
+        "Python Basics: Variables and Data Types",
+        "TCP/IP Networking"
       ],
       "matches": [
         {
-          "concept": "Variables and data types",
+          "concept": "Python Basics: Variables and Data Types",
           "slug": "python-basics-variables",
           "title": "Python Basics: Variables and Data Types"
-        },
-        {
-          "concept": "Git & GitHub overview",
-          "slug": "git-chapter-1-git-github-overview",
-          "title": "Chapter 1. Git & GitHub Overview"
         }
       ]
     },
@@ -197,17 +186,17 @@
         "MVT (Model-View-Template) Pattern"
       ],
       "prerequisite_concepts": [
-        "Python Web Development",
-        "HTTP and REST"
+        "Python Functions and Modules",
+        "Web Development Basics: HTTP and REST"
       ],
       "matches": [
         {
-          "concept": "Python Web Development",
-          "slug": "path-python-web",
-          "title": "Reading Path: Python Web Development"
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
         },
         {
-          "concept": "HTTP and REST",
+          "concept": "Web Development Basics: HTTP and REST",
           "slug": "web-http-rest",
           "title": "Web Development Basics: HTTP and REST"
         }
@@ -282,25 +271,19 @@
         "linear regression in practice"
       ],
       "prerequisite_concepts": [
-        "Machine Learning Overview: Supervised vs Unsupervised",
-        "Gradient Descent Intuition",
-        "Linear Regression in Practice"
+        "Python Basics: Variables and Data Types",
+        "Python Functions and Modules"
       ],
       "matches": [
         {
-          "concept": "Machine Learning Overview: Supervised vs Unsupervised",
-          "slug": "ml-supervised-unsupervised",
-          "title": "Machine Learning Overview: Supervised vs Unsupervised"
+          "concept": "Python Basics: Variables and Data Types",
+          "slug": "python-basics-variables",
+          "title": "Python Basics: Variables and Data Types"
         },
         {
-          "concept": "Gradient Descent Intuition",
-          "slug": "gradient-descent-intuition",
-          "title": "Gradient Descent Intuition"
-        },
-        {
-          "concept": "Linear Regression in Practice",
-          "slug": "linear-regression-practice",
-          "title": "Linear Regression in Practice"
+          "concept": "Python Functions and Modules",
+          "slug": "python-functions-modules",
+          "title": "Python Functions and Modules"
         }
       ]
     },
@@ -462,7 +445,7 @@
       ]
     },
     "20-agentic-ai-terms-every-developer-should-kn": {
-      "version": "a5acc62c831bd828",
+      "version": "52ad068e874c1431",
       "status": "ready",
       "difficulty": "intermediate",
       "article_concepts": [
@@ -472,26 +455,26 @@
         "Tool Calling"
       ],
       "prerequisite_concepts": [
+        "What Is RAG?",
         "Machine Learning Overview: Supervised vs Unsupervised",
-        "LLM (Language Model)",
-        "CI/CD Pipeline",
-        "Git & GitHub Project Setup"
+        "Web Development Basics: HTTP and REST",
+        "LLM (Language Model)"
       ],
       "matches": [
+        {
+          "concept": "What Is RAG?",
+          "slug": "what-is-rag",
+          "title": "What Is RAG?"
+        },
         {
           "concept": "Machine Learning Overview: Supervised vs Unsupervised",
           "slug": "ml-supervised-unsupervised",
           "title": "Machine Learning Overview: Supervised vs Unsupervised"
         },
         {
-          "concept": "CI/CD Pipeline",
-          "slug": "the-cicd-pipeline-that-was-lying-to-us-a-depl",
-          "title": "The CI/CD Pipeline That Was Lying to Us: A Deploy Debugging Story"
-        },
-        {
-          "concept": "Git & GitHub Project Setup",
-          "slug": "git-chapter-3-git-github-project-setup",
-          "title": "Chapter 3. Git & GitHub Project Setup"
+          "concept": "Web Development Basics: HTTP and REST",
+          "slug": "web-http-rest",
+          "title": "Web Development Basics: HTTP and REST"
         }
       ]
     },
@@ -521,18 +504,24 @@
       ]
     },
     "nginx-silently-rejects-the-new-http-query-met": {
-      "version": "b7636b7764071b83",
+      "version": "8d0fba031aa96081",
       "status": "ready",
       "difficulty": "intermediate",
       "article_concepts": [
         "HTTP QUERY method"
       ],
       "prerequisite_concepts": [
-        "HTTP methods",
-        "reverse proxies",
-        "web development frameworks"
+        "Web Development Basics: HTTP and REST",
+        "Reverse Proxies",
+        "HTTP Methods"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Web Development Basics: HTTP and REST",
+          "slug": "web-http-rest",
+          "title": "Web Development Basics: HTTP and REST"
+        }
+      ]
     },
     "5-devto-features-i-wish-existed-3-im-genuinel": {
       "version": "515970ed5b8656c0",
@@ -597,14 +586,14 @@
         "automate workflow"
       ],
       "prerequisite_concepts": [
-        "version control",
+        "Chapter 1. Git & GitHub Overview",
         "remote repository services"
       ],
       "matches": [
         {
-          "concept": "version control",
-          "slug": "git-what-is-version-control",
-          "title": "What Is Version Control?"
+          "concept": "Chapter 1. Git & GitHub Overview",
+          "slug": "git-chapter-1-git-github-overview",
+          "title": "Chapter 1. Git & GitHub Overview"
         }
       ]
     },
@@ -953,25 +942,13 @@
         "SSH"
       ],
       "prerequisite_concepts": [
-        "Git & GitHub Overview",
-        "Generating PAT (Personal Access Token)",
-        "GitHub SSH Setup"
+        "Git & GitHub Overview"
       ],
       "matches": [
         {
           "concept": "Git & GitHub Overview",
           "slug": "git-chapter-1-git-github-overview",
           "title": "Chapter 1. Git & GitHub Overview"
-        },
-        {
-          "concept": "Generating PAT (Personal Access Token)",
-          "slug": "git-generating-pat-personal-access-token",
-          "title": "Generating PAT (Personal Access Token)"
-        },
-        {
-          "concept": "GitHub SSH Setup",
-          "slug": "git-github-ssh-setup",
-          "title": "GitHub SSH Setup"
         }
       ]
     },
@@ -1107,32 +1084,14 @@
         "Non-project member"
       ],
       "prerequisite_concepts": [
-        "Git Local Repository",
-        "Remote Repository",
-        "git init",
-        "git clone",
-        "Fork"
+        "Chapter 3. Git & GitHub Project Setup",
+        "Git Local Repository"
       ],
       "matches": [
         {
-          "concept": "Remote Repository",
-          "slug": "git-upload-to-remote-repository-git-push",
-          "title": "Upload to Remote Repository – Git Push"
-        },
-        {
-          "concept": "git init",
-          "slug": "git-project-initiator-create-local-repository-git-init",
-          "title": "Project Initiator – Create Local Repository (git init)"
-        },
-        {
-          "concept": "git clone",
-          "slug": "git-project-member-create-copy-of-project-code-on-local-computer-git-clone",
-          "title": "Project Member – Create Copy of Project Code on Local Computer (git clone)"
-        },
-        {
-          "concept": "Fork",
-          "slug": "git-fork-vs-clone",
-          "title": "Fork vs. Clone"
+          "concept": "Chapter 3. Git & GitHub Project Setup",
+          "slug": "git-chapter-3-git-github-project-setup",
+          "title": "Chapter 3. Git & GitHub Project Setup"
         }
       ]
     },
@@ -1286,10 +1245,17 @@
         "Local Repository"
       ],
       "prerequisite_concepts": [
+        "Project Initiator – Key Steps To Launch Git Project",
         "directory and file creation",
         "command line interface"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Project Initiator – Key Steps To Launch Git Project",
+          "slug": "git-project-initiator-key-steps-to-launch-git-project",
+          "title": "Project Initiator – Key Steps To Launch Git Project"
+        }
+      ]
     },
     "git-project-initiator-make-the-first-commit": {
       "version": "767c04e113c12a63",
@@ -1302,31 +1268,13 @@
         "git log"
       ],
       "prerequisite_concepts": [
-        "git init",
-        "Local Repository",
-        "Staging Area",
-        "Working Tree"
+        "git init"
       ],
       "matches": [
         {
           "concept": "git init",
           "slug": "git-project-initiator-create-local-repository-git-init",
           "title": "Project Initiator – Create Local Repository (git init)"
-        },
-        {
-          "concept": "Local Repository",
-          "slug": "git-get-remote-repository-information-to-local-repository-git-fetch",
-          "title": "Get Remote Repository Information to Local Repository – Git Fetch"
-        },
-        {
-          "concept": "Staging Area",
-          "slug": "git-add-files-to-staging-area-git-add",
-          "title": "Add Files to Staging Area – git add"
-        },
-        {
-          "concept": "Working Tree",
-          "slug": "git-restore-files-to-working-tree-git-restore",
-          "title": "Restore Files to Working Tree – git restore"
         }
       ]
     },
@@ -1339,27 +1287,15 @@
         "The .gitignore file"
       ],
       "prerequisite_concepts": [
+        "Project Initiator – Make the First Commit",
         "Git version control system",
-        "Staging Area",
-        "git status",
-        "git add",
-        "git commit"
+        "git add"
       ],
       "matches": [
         {
-          "concept": "Staging Area",
-          "slug": "git-add-files-to-staging-area-git-add",
-          "title": "Add Files to Staging Area – git add"
-        },
-        {
-          "concept": "git status",
-          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
-          "title": "Check Status of Working Tree and Staging Area – git status"
-        },
-        {
-          "concept": "git commit",
-          "slug": "git-commit-files-git-commit",
-          "title": "Commit Files – git commit"
+          "concept": "Project Initiator – Make the First Commit",
+          "slug": "git-project-initiator-make-the-first-commit",
+          "title": "Project Initiator – Make the First Commit"
         }
       ]
     },
@@ -1412,19 +1348,13 @@
         "SSH"
       ],
       "prerequisite_concepts": [
-        "git init",
-        "git push"
+        "git init"
       ],
       "matches": [
         {
           "concept": "git init",
           "slug": "git-project-initiator-create-local-repository-git-init",
           "title": "Project Initiator – Create Local Repository (git init)"
-        },
-        {
-          "concept": "git push",
-          "slug": "git-upload-to-remote-repository-git-push",
-          "title": "Upload to Remote Repository – Git Push"
         }
       ]
     },
@@ -1466,7 +1396,6 @@
       ],
       "prerequisite_concepts": [
         "GitHub",
-        "Remote Repository",
         "Local Repository",
         "git remote add",
         "git push"
@@ -1476,11 +1405,6 @@
           "concept": "GitHub",
           "slug": "git-github-ssh-setup",
           "title": "GitHub SSH Setup"
-        },
-        {
-          "concept": "Remote Repository",
-          "slug": "git-upload-to-remote-repository-git-push",
-          "title": "Upload to Remote Repository – Git Push"
         },
         {
           "concept": "Local Repository",
@@ -1510,8 +1434,7 @@
       ],
       "prerequisite_concepts": [
         "git init",
-        "git remote add",
-        "git push"
+        "git remote add"
       ],
       "matches": [
         {
@@ -1523,11 +1446,6 @@
           "concept": "git remote add",
           "slug": "git-project-initiator-link-between-remote-and-local-repositories-git-remote-add",
           "title": "Project Initiator – Link Between Remote and Local Repositories (git remote add)"
-        },
-        {
-          "concept": "git push",
-          "slug": "git-upload-to-remote-repository-git-push",
-          "title": "Upload to Remote Repository – Git Push"
         }
       ]
     },
@@ -1542,7 +1460,6 @@
       ],
       "prerequisite_concepts": [
         "GitHub",
-        "Remote Repository",
         "Personal Access Token (PAT)",
         "SSH key pairs"
       ],
@@ -1551,11 +1468,6 @@
           "concept": "GitHub",
           "slug": "git-github-ssh-setup",
           "title": "GitHub SSH Setup"
-        },
-        {
-          "concept": "Remote Repository",
-          "slug": "git-upload-to-remote-repository-git-push",
-          "title": "Upload to Remote Repository – Git Push"
         }
       ]
     },
@@ -1569,8 +1481,6 @@
       "prerequisite_concepts": [
         "git clone",
         "GitHub",
-        "fork",
-        "remote repository",
         "local repository",
         "PAT (Personal Access Token)",
         "SSH key pairs"
@@ -1585,16 +1495,6 @@
           "concept": "GitHub",
           "slug": "git-github-ssh-setup",
           "title": "GitHub SSH Setup"
-        },
-        {
-          "concept": "fork",
-          "slug": "git-fork-vs-clone",
-          "title": "Fork vs. Clone"
-        },
-        {
-          "concept": "remote repository",
-          "slug": "git-upload-to-remote-repository-git-push",
-          "title": "Upload to Remote Repository – Git Push"
         },
         {
           "concept": "local repository",
@@ -1651,25 +1551,13 @@
         "Commit Files – git commit"
       ],
       "prerequisite_concepts": [
-        "Git Regular Workflow – Work With Branches",
-        "What Is Branch?",
-        "Branch Operation Basic Life Cycle"
+        "Fork vs. Clone"
       ],
       "matches": [
         {
-          "concept": "Git Regular Workflow – Work With Branches",
-          "slug": "git-regular-workflow-work-with-branches",
-          "title": "Git Regular Workflow – Work With Branches"
-        },
-        {
-          "concept": "What Is Branch?",
-          "slug": "git-what-is-branch",
-          "title": "What Is Branch?"
-        },
-        {
-          "concept": "Branch Operation Basic Life Cycle",
-          "slug": "git-branch-operation-basic-life-cycle",
-          "title": "Branch Operation Basic Life Cycle"
+          "concept": "Fork vs. Clone",
+          "slug": "git-fork-vs-clone",
+          "title": "Fork vs. Clone"
         }
       ]
     },
@@ -1684,14 +1572,14 @@
         "git log"
       ],
       "prerequisite_concepts": [
-        "Working Tree",
+        "Chapter 4. Edit & Commit",
         "Staging Area (INDEX)"
       ],
       "matches": [
         {
-          "concept": "Working Tree",
-          "slug": "git-restore-files-to-working-tree-git-restore",
-          "title": "Restore Files to Working Tree – git restore"
+          "concept": "Chapter 4. Edit & Commit",
+          "slug": "git-chapter-4-edit-commit",
+          "title": "Chapter 4. Edit & Commit"
         }
       ]
     },
@@ -1739,25 +1627,13 @@
         "HEAD"
       ],
       "prerequisite_concepts": [
-        "git init",
-        "git commit",
-        "git status"
+        "git init"
       ],
       "matches": [
         {
           "concept": "git init",
           "slug": "git-project-initiator-create-local-repository-git-init",
           "title": "Project Initiator – Create Local Repository (git init)"
-        },
-        {
-          "concept": "git commit",
-          "slug": "git-commit-files-git-commit",
-          "title": "Commit Files – git commit"
-        },
-        {
-          "concept": "git status",
-          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
-          "title": "Check Status of Working Tree and Staging Area – git status"
         }
       ]
     },
@@ -1771,25 +1647,13 @@
         "staging area"
       ],
       "prerequisite_concepts": [
-        "git add",
-        "git status",
-        "git log"
+        "git add"
       ],
       "matches": [
         {
           "concept": "git add",
           "slug": "git-add-files-to-staging-area-git-add",
           "title": "Add Files to Staging Area – git add"
-        },
-        {
-          "concept": "git status",
-          "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
-          "title": "Check Status of Working Tree and Staging Area – git status"
-        },
-        {
-          "concept": "git log",
-          "slug": "git-check-commit-histories-git-log",
-          "title": "Check Commit Histories – git log"
         }
       ]
     },
@@ -1837,19 +1701,13 @@
         "staged files"
       ],
       "prerequisite_concepts": [
-        "What Is Git?",
-        "Check Commit Histories – git log"
+        "What Is Git?"
       ],
       "matches": [
         {
           "concept": "What Is Git?",
           "slug": "git-what-is-git",
           "title": "What Is Git?"
-        },
-        {
-          "concept": "Check Commit Histories – git log",
-          "slug": "git-check-commit-histories-git-log",
-          "title": "Check Commit Histories – git log"
         }
       ]
     },
@@ -1927,7 +1785,6 @@
       ],
       "prerequisite_concepts": [
         "git diff",
-        "git checkout",
         "git add",
         "git commit",
         "HEAD and INDEX"
@@ -1937,11 +1794,6 @@
           "concept": "git diff",
           "slug": "git-check-differences-git-diff",
           "title": "Check Differences – git diff"
-        },
-        {
-          "concept": "git checkout",
-          "slug": "git-switch-current-branch-1-git-checkout",
-          "title": "Switch Current Branch (1) – Git Checkout"
         },
         {
           "concept": "git add",
@@ -1976,9 +1828,7 @@
         "git add",
         "git commit",
         "git log",
-        "git status",
-        "git branch",
-        "git checkout"
+        "git status"
       ],
       "matches": [
         {
@@ -2010,16 +1860,6 @@
           "concept": "git status",
           "slug": "git-check-status-of-working-tree-and-staging-area-git-status",
           "title": "Check Status of Working Tree and Staging Area – git status"
-        },
-        {
-          "concept": "git branch",
-          "slug": "git-create-branch-and-check-branch-status-git-branch",
-          "title": "Create Branch and Check Branch Status – Git Branch"
-        },
-        {
-          "concept": "git checkout",
-          "slug": "git-switch-current-branch-1-git-checkout",
-          "title": "Switch Current Branch (1) – Git Checkout"
         }
       ]
     },
@@ -2106,25 +1946,13 @@
         "Branch Operation Basic Life Cycle"
       ],
       "prerequisite_concepts": [
-        "Git Regular Workflow – Edit & Commit",
-        "What Is Branch?",
-        "Branch Operation Basic Life Cycle"
+        "Git Regular Workflow – Edit & Commit"
       ],
       "matches": [
         {
           "concept": "Git Regular Workflow – Edit & Commit",
           "slug": "git-regular-workflow-edit-commit",
           "title": "Git Regular Workflow – Edit & Commit"
-        },
-        {
-          "concept": "What Is Branch?",
-          "slug": "git-what-is-branch",
-          "title": "What Is Branch?"
-        },
-        {
-          "concept": "Branch Operation Basic Life Cycle",
-          "slug": "git-branch-operation-basic-life-cycle",
-          "title": "Branch Operation Basic Life Cycle"
         }
       ]
     },
@@ -2230,31 +2058,13 @@
         "delete unused branch"
       ],
       "prerequisite_concepts": [
-        "git checkout",
-        "git switch",
-        "git merge",
-        "git rebase"
+        "Branch Operation Basic Life Cycle"
       ],
       "matches": [
         {
-          "concept": "git checkout",
-          "slug": "git-switch-current-branch-1-git-checkout",
-          "title": "Switch Current Branch (1) – Git Checkout"
-        },
-        {
-          "concept": "git switch",
-          "slug": "git-switch-current-branch-2-git-switch",
-          "title": "Switch Current Branch (2) – Git Switch"
-        },
-        {
-          "concept": "git merge",
-          "slug": "git-merge-branches-git-merge",
-          "title": "Merge Branches – Git Merge"
-        },
-        {
-          "concept": "git rebase",
-          "slug": "git-rebase-branch-git-rebase",
-          "title": "Rebase Branch – Git Rebase"
+          "concept": "Branch Operation Basic Life Cycle",
+          "slug": "git-branch-operation-basic-life-cycle",
+          "title": "Branch Operation Basic Life Cycle"
         }
       ]
     },
@@ -2788,7 +2598,6 @@
         "git add",
         "git commit",
         "git log",
-        "git push",
         "git clone",
         "git branch",
         "git checkout"
@@ -2813,11 +2622,6 @@
           "concept": "git log",
           "slug": "git-check-commit-histories-git-log",
           "title": "Check Commit Histories – git log"
-        },
-        {
-          "concept": "git push",
-          "slug": "git-upload-to-remote-repository-git-push",
-          "title": "Upload to Remote Repository – Git Push"
         },
         {
           "concept": "git clone",
@@ -3264,12 +3068,19 @@
         "containers"
       ],
       "prerequisite_concepts": [
+        "Computing Environment and Dependency Conflict",
         "virtualization",
         "hypervisor",
         "microservices",
         "CI/CD pipelines"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Computing Environment and Dependency Conflict",
+          "slug": "docker-computing-environment-and-dependency-conflict",
+          "title": "Computing Environment and Dependency Conflict"
+        }
+      ]
     },
     "docker-what-is-docker": {
       "version": "ad7c69e14b478875",
@@ -3389,10 +3200,17 @@
         "Docker container lifecycle"
       ],
       "prerequisite_concepts": [
+        "Overview of Docker Workflow",
         "Linux Introduction Guide",
         "Command line basics"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Overview of Docker Workflow",
+          "slug": "docker-overview-of-docker-workflow",
+          "title": "Overview of Docker Workflow"
+        }
+      ]
     },
     "docker-chapter-3-docker-image-and-container": {
       "version": "20deae08178a982b",
@@ -3434,11 +3252,18 @@
         "Docker image life cycle"
       ],
       "prerequisite_concepts": [
+        "Chapter 3. Docker Image and Container",
         "Docker basics",
         "Containerization",
         "Version control systems (VCS)"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Chapter 3. Docker Image and Container",
+          "slug": "docker-chapter-3-docker-image-and-container",
+          "title": "Chapter 3. Docker Image and Container"
+        }
+      ]
     },
     "docker-container-lifecycle": {
       "version": "c11da717f3b7bd77",
@@ -3471,11 +3296,18 @@
         "docker inspect"
       ],
       "prerequisite_concepts": [
+        "Docker Container Lifecycle",
         "docker stop",
         "container lifecycle management",
         "CLI commands"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Docker Container Lifecycle",
+          "slug": "docker-container-lifecycle",
+          "title": "Docker Container Lifecycle"
+        }
+      ]
     },
     "docker-commands-to-interact-with-inside-of-containers": {
       "version": "eb92c5488e99ce80",
@@ -3490,10 +3322,17 @@
         "docker diff"
       ],
       "prerequisite_concepts": [
+        "Advanced Container Lifecycle Management",
         "containerized environments",
         "lifecycle commands (starting, stopping, restarting containers)"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Advanced Container Lifecycle Management",
+          "slug": "docker-advanced-container-lifecycle-management",
+          "title": "Advanced Container Lifecycle Management"
+        }
+      ]
     },
     "docker-chapter-4-docker-networking-and-storage": {
       "version": "8a15c05d6f5bf54c",
@@ -3506,11 +3345,18 @@
         "Microservices"
       ],
       "prerequisite_concepts": [
+        "Docker Commands to Interact with Inside of Containers",
         "Docker Basics",
         "Containerization",
         "Microservices"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Docker Commands to Interact with Inside of Containers",
+          "slug": "docker-commands-to-interact-with-inside-of-containers",
+          "title": "Docker Commands to Interact with Inside of Containers"
+        }
+      ]
     },
     "docker-networking": {
       "version": "e14076a6e9fa5a27",
@@ -3557,11 +3403,18 @@
         "data persistence in Docker"
       ],
       "prerequisite_concepts": [
+        "Docker Networking",
         "Docker containers",
         "ephemeral computing environments",
         "disposable nature of containers"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Docker Networking",
+          "slug": "docker-networking",
+          "title": "Docker Networking"
+        }
+      ]
     },
     "docker-chapter-5-building-and-sharing-docker-images": {
       "version": "e120d4ae0c43b541",
@@ -3594,10 +3447,17 @@
         "containerization"
       ],
       "prerequisite_concepts": [
+        "Chapter 5. Building and Sharing Docker Images",
         "What Is a Docker Container?",
         "Introduction to Docker"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Chapter 5. Building and Sharing Docker Images",
+          "slug": "docker-chapter-5-building-and-sharing-docker-images",
+          "title": "Chapter 5. Building and Sharing Docker Images"
+        }
+      ]
     },
     "docker-build-context-and-dockerignore-file": {
       "version": "2a62cc4d29792653",
@@ -3632,9 +3492,16 @@
         "Dockerfile syntax"
       ],
       "prerequisite_concepts": [
+        "Build Context and .dockerignore File",
         "Docker basics"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Build Context and .dockerignore File",
+          "slug": "docker-build-context-and-dockerignore-file",
+          "title": "Build Context and .dockerignore File"
+        }
+      ]
     },
     "docker-sharing-your-docker-images": {
       "version": "7ea666fd69b3d9d9",
@@ -3699,9 +3566,16 @@
         "YAML format"
       ],
       "prerequisite_concepts": [
+        "Chapter 6. Docker Compose and Deployment Practice",
         "Docker basics"
       ],
-      "matches": []
+      "matches": [
+        {
+          "concept": "Chapter 6. Docker Compose and Deployment Practice",
+          "slug": "docker-chapter-6-docker-compose-and-deployment-practice",
+          "title": "Chapter 6. Docker Compose and Deployment Practice"
+        }
+      ]
     },
     "docker-compose-commands": {
       "version": "3d1ea597f3909537",
@@ -3804,6 +3678,726 @@
     "d20a4ffc162401e73009b5cc": {
       "summary": "A repository is a location where different versions of codes are stored, with two types: local, installed on your computer, and remote, typically created on web platforms like GitHub.",
       "tier": "full"
+    },
+    "22da1f38db95327064064db8": {
+      "summary": "In \"Machine Learning Overview: Supervised vs Unsupervised\", Machine Learning Overview: Supervised vs Unsupervised covers: Core paradigms of modern machine learning algorithms",
+      "tier": "full"
+    },
+    "2ac2a474bebd92ba13c5921c": {
+      "summary": "Based on the public preview: In \"Machine Learning Overview: Supervised vs Unsupervised\", Machine Learning Overview: Supervised vs Unsupervised covers: Core paradigms of modern machine learning algorithms",
+      "tier": "preview"
+    },
+    "9fdd2504b6fb7b3443b5af58": {
+      "summary": "In \"Python Functions and Modules\", Python Functions and Modules covers: Structuring scalable Python programs with functions and modules",
+      "tier": "full"
+    },
+    "315e628668356872da93b449": {
+      "summary": "Based on the public preview: In \"Python Functions and Modules\", Python Functions and Modules covers: Structuring scalable Python programs with functions and modules",
+      "tier": "preview"
+    },
+    "48a8f3cfdbf36d911fe67881": {
+      "summary": "In \"Gradient Descent Intuition\", Gradient Descent Intuition covers: Mathematical intuition and mechanics behind first-order optimization",
+      "tier": "full"
+    },
+    "d6f638a8cfdd08e88a6a2994": {
+      "summary": "Based on the public preview: In \"Gradient Descent Intuition\", Gradient Descent Intuition covers: Mathematical intuition and mechanics behind first-order optimization",
+      "tier": "preview"
+    },
+    "21e9cd3049e7df8175f0a9d1": {
+      "summary": "In \"Python Basics: Variables and Data Types\", Python Basics: Variables and Data Types covers: Fundamental Python syntax, dynamic typing, and memory model",
+      "tier": "full"
+    },
+    "78f3901ab131e8c5c39b416f": {
+      "summary": "Based on the public preview: In \"Python Basics: Variables and Data Types\", Python Basics: Variables and Data Types covers: Fundamental Python syntax, dynamic typing, and memory model",
+      "tier": "preview"
+    },
+    "33e59261c48726bb58eb4dbb": {
+      "summary": "In \"Web Development Basics: HTTP and REST\", Web Development Basics: HTTP and REST covers: Core architectural principles of HTTP networking and RESTful API design",
+      "tier": "full"
+    },
+    "90051c2aa197118da09663f0": {
+      "summary": "Based on the public preview: In \"Web Development Basics: HTTP and REST\", Web Development Basics: HTTP and REST covers: Core architectural principles of HTTP networking and RESTful API design",
+      "tier": "preview"
+    },
+    "27fc1839eaa7176d342ae1aa": {
+      "summary": "In \"Django Project Structure Explained\", Django Project Structure Explained covers: Navigating Django application architecture and the MVT design pattern",
+      "tier": "full"
+    },
+    "b6918cf8937d9fd89d84aeff": {
+      "summary": "Based on the public preview: In \"Django Project Structure Explained\", Django Project Structure Explained covers: Navigating Django application architecture and the MVT design pattern",
+      "tier": "preview"
+    },
+    "c26edaa9936e36e86eb204ca": {
+      "summary": "In \"What Is Version Control?\", version control covers: Grasp the concepts of repository and commit in Git, essential for managing codin",
+      "tier": "full"
+    },
+    "2c62095571f7b8a9f4a9f43d": {
+      "summary": "Based on the public preview: In \"What Is Version Control?\", version control covers: Grasp the concepts of repository and commit in Git, essential for managing codin",
+      "tier": "preview"
+    },
+    "03c60200a1c0e615b31b7bde": {
+      "summary": "In \"What Is Git?\", git covers: Distinguish between Git and GitHub, recognizing Git as a version control system",
+      "tier": "full"
+    },
+    "6f8c398d6f13c9041b3b434d": {
+      "summary": "Based on the public preview: In \"What Is Git?\", git covers: Distinguish between Git and GitHub, recognizing Git as a version control system",
+      "tier": "preview"
+    },
+    "2ca86068686b514a11374fe7": {
+      "summary": "In \"Agent Tool Design Principles\", Agent Tool Design Principles covers: Architectural principles for reliable and auditable AI agent tools",
+      "tier": "full"
+    },
+    "149bd69f4fff92f876ff8685": {
+      "summary": "Based on the public preview: In \"Agent Tool Design Principles\", Agent Tool Design Principles covers: Architectural principles for reliable and auditable AI agent tools",
+      "tier": "preview"
+    },
+    "28280b32dd52dfb7db2027c1": {
+      "summary": "In \"Vibe Coding Isn't the Problem. Calling It Engineering Is\", Vibe Coding Isn't the Problem. Calling It Engineering Is covers: Let's Address the Elephant in the Room Again   Vibe coding has always been a ...",
+      "tier": "full"
+    },
+    "005ded31cbe7c0a8b9db7af8": {
+      "summary": "Based on the public preview: In \"Vibe Coding Isn't the Problem. Calling It Engineering Is\", Vibe Coding Isn't the Problem. Calling It Engineering Is covers: Let's Address the Elephant in the Room Again   Vibe coding has always been a ...",
+      "tier": "preview"
+    },
+    "8f95a85e996f7f643da62b57": {
+      "summary": "In \"20 Agentic AI Terms Every Developer Should Know (Explained Simply)\", 20 Agentic AI Terms Every Developer Should Know (Explained Simply) covers: 20 Agentic AI terms explained simply, including MCP (Model Context Protocol)",
+      "tier": "full"
+    },
+    "32949c8c3523d47b15346bc0": {
+      "summary": "Based on the public preview: In \"20 Agentic AI Terms Every Developer Should Know (Explained Simply)\", 20 Agentic AI Terms Every Developer Should Know (Explained Simply) covers: 20 Agentic AI terms explained simply, including MCP (Model Context Protocol)",
+      "tier": "preview"
+    },
+    "f48ec0efddf88857b6c7a760": {
+      "summary": "In \"What Is RAG?\", What Is RAG? covers: Overcoming LLM knowledge limits with Retrieval-Augmented Generation",
+      "tier": "full"
+    },
+    "a3e4d7716a9a9488c77285bf": {
+      "summary": "Based on the public preview: In \"What Is RAG?\", What Is RAG? covers: Overcoming LLM knowledge limits with Retrieval-Augmented Generation",
+      "tier": "preview"
+    },
+    "060a48a5b96f6c2a69a19ef0": {
+      "summary": "In \"Chapter 1. Git & GitHub Overview\", Git & GitHub Overview covers: Understand Git fundamentals and GitHub's role as a remote repository service, il",
+      "tier": "full"
+    },
+    "0acb0032803fd5aed89c2610": {
+      "summary": "Based on the public preview: In \"Chapter 1. Git & GitHub Overview\", Git & GitHub Overview covers: Understand Git fundamentals and GitHub's role as a remote repository service, il",
+      "tier": "preview"
+    },
+    "f333ab16491907e88a66097b": {
+      "summary": "In \"GitHub SSH Setup\", GitHub SSH Setup covers: Set up SSH connection with key pair (private & public). Upload the public key to",
+      "tier": "full"
+    },
+    "aa1826279f2bc2204a88631d": {
+      "summary": "Based on the public preview: In \"GitHub SSH Setup\", GitHub SSH Setup covers: Set up SSH connection with key pair (private & public). Upload the public key to",
+      "tier": "preview"
+    },
+    "70061c35e4814ee7a529079b": {
+      "summary": "In \"Chapter 1. Git & GitHub Overview\", Chapter 1. Git & GitHub Overview covers: Understand Git fundamentals and GitHub's role as a remote repository service, il",
+      "tier": "full"
+    },
+    "94e98291aa62fc28824bb18b": {
+      "summary": "Based on the public preview: In \"Chapter 1. Git & GitHub Overview\", Chapter 1. Git & GitHub Overview covers: Understand Git fundamentals and GitHub's role as a remote repository service, il",
+      "tier": "preview"
+    },
+    "3473099a83b6c76cc361f7a4": {
+      "summary": "Based on the public preview: In \"What Is Git?\", What Is Git? covers: Distinguish between Git and GitHub, recognizing Git as a version control system",
+      "tier": "preview"
+    },
+    "7a45324bc802d107b8181170": {
+      "summary": "Based on the public preview: In \"What Is Version Control?\", What Is Version Control? covers: Grasp the concepts of repository and commit in Git, essential for managing codin",
+      "tier": "preview"
+    },
+    "de562d3cd72bd14013a3eb8e": {
+      "summary": "In \"Git & GitHub Initial Settings Overview\", Git & GitHub Initial Settings Overview covers: Follow four key steps for Git and GitHub setup, including tool preparation, user",
+      "tier": "full"
+    },
+    "bd82f5c5aa0e9e95cc4a89af": {
+      "summary": "Based on the public preview: In \"Git & GitHub Initial Settings Overview\", Git & GitHub Initial Settings Overview covers: Follow four key steps for Git and GitHub setup, including tool preparation, user",
+      "tier": "preview"
+    },
+    "f54c721689e521487cf2f136": {
+      "summary": "In \"Key Tool Preparation (1) – Mac\", Key Tool Preparation (1) – Mac covers: Discover the preinstalled Git environment on Mac systems and utilize VS Code as",
+      "tier": "full"
+    },
+    "dac50919923e0021ccd2fe2c": {
+      "summary": "Based on the public preview: In \"Key Tool Preparation (1) – Mac\", Key Tool Preparation (1) – Mac covers: Discover the preinstalled Git environment on Mac systems and utilize VS Code as",
+      "tier": "preview"
+    },
+    "bfd8ca6b66a8d8901a262ce7": {
+      "summary": "In \"Key Tool Preparation (2) – Windows\", Key Tool Preparation (2) – Windows covers: Navigate the setup process for Git on Windows, leveraging Git Bash and configuri",
+      "tier": "full"
+    },
+    "ad355f381230e40a6974368e": {
+      "summary": "Based on the public preview: In \"Key Tool Preparation (2) – Windows\", Key Tool Preparation (2) – Windows covers: Navigate the setup process for Git on Windows, leveraging Git Bash and configuri",
+      "tier": "preview"
+    },
+    "37bff01b831d53166e29876d": {
+      "summary": "In \"GitHub Access Authentication Settings\", GitHub Access Authentication Settings covers: Access GitHub repositories via HTTPS or SSH. Choose your authentication method w",
+      "tier": "full"
+    },
+    "4736e5be88c82ac9f153868c": {
+      "summary": "Based on the public preview: In \"GitHub Access Authentication Settings\", GitHub Access Authentication Settings covers: Access GitHub repositories via HTTPS or SSH. Choose your authentication method w",
+      "tier": "preview"
+    },
+    "783aafa69a537b1a632187df": {
+      "summary": "In \"Key Tool Preparation (3) – Linux Remote Server\", Key Tool Preparation (3) – Linux Remote Server covers: Learn to manage Git on Linux servers connected to GitHub accounts, essential for",
+      "tier": "full"
+    },
+    "23d8b75363e07b61ff2f6887": {
+      "summary": "Based on the public preview: In \"Key Tool Preparation (3) – Linux Remote Server\", Key Tool Preparation (3) – Linux Remote Server covers: Learn to manage Git on Linux servers connected to GitHub accounts, essential for",
+      "tier": "preview"
+    },
+    "d069bcd89ae28ab1c951f96b": {
+      "summary": "In \"Git User Settings – git config\", Git User Settings – git config covers: After Git setup, register user profiles: 1) Name & email, 2) Text editor, 3) Ver",
+      "tier": "full"
+    },
+    "5375ea1daa8258293097ad23": {
+      "summary": "Based on the public preview: In \"Git User Settings – git config\", Git User Settings – git config covers: After Git setup, register user profiles: 1) Name & email, 2) Text editor, 3) Ver",
+      "tier": "preview"
+    },
+    "d3a3e86517ce273ae2ce3bef": {
+      "summary": "In \"Create GitHub Account\", Create GitHub Account covers: Sign up for GitHub on its website. Get started with the free plan suitable for l",
+      "tier": "full"
+    },
+    "d0ee2b5168f892508fef08a9": {
+      "summary": "Based on the public preview: In \"Create GitHub Account\", Create GitHub Account covers: Sign up for GitHub on its website. Get started with the free plan suitable for l",
+      "tier": "preview"
+    },
+    "0ffada29a45bc6766fe4e709": {
+      "summary": "In \"Generating PAT (Personal Access Token)\", Generating PAT (Personal Access Token) covers: For HTTPS connection, create a Personal Access Token: Tokens (classic) or Fine-g",
+      "tier": "full"
+    },
+    "6213098d63fdc544e1ef0127": {
+      "summary": "Based on the public preview: In \"Generating PAT (Personal Access Token)\", Generating PAT (Personal Access Token) covers: For HTTPS connection, create a Personal Access Token: Tokens (classic) or Fine-g",
+      "tier": "preview"
+    },
+    "18fcf813c23c73053298c954": {
+      "summary": "In \"Chapter 3. Git & GitHub Project Setup\", Chapter 3. Git & GitHub Project Setup covers: Setup Git project based on your role: 1) Owner, 2) Member, or 3) Forking an exis",
+      "tier": "full"
+    },
+    "3ed2cd98b058995f70700189": {
+      "summary": "Based on the public preview: In \"Chapter 3. Git & GitHub Project Setup\", Chapter 3. Git & GitHub Project Setup covers: Setup Git project based on your role: 1) Owner, 2) Member, or 3) Forking an exis",
+      "tier": "preview"
+    },
+    "6d4f8dc507e9930832ca4545": {
+      "summary": "In \"Project Initiator – Key Steps To Launch Git Project\", Project Initiator – Key Steps To Launch Git Project covers: Initiate your Git project on the right foot with our guide detailing key steps f",
+      "tier": "full"
+    },
+    "e0c742b45d1af8b811f37c9b": {
+      "summary": "Based on the public preview: In \"Project Initiator – Key Steps To Launch Git Project\", Project Initiator – Key Steps To Launch Git Project covers: Initiate your Git project on the right foot with our guide detailing key steps f",
+      "tier": "preview"
+    },
+    "3825741806dc4b2eb2634d40": {
+      "summary": "In \"Project Initiator – Create Local Repository (git init)\", git init covers: Learn the essential command git init to create a local repository in Git, laying",
+      "tier": "full"
+    },
+    "56b73f3a203035a162059ada": {
+      "summary": "Based on the public preview: In \"Project Initiator – Create Local Repository (git init)\", git init covers: Learn the essential command git init to create a local repository in Git, laying",
+      "tier": "preview"
+    },
+    "73e586d0d1697e8db893e871": {
+      "summary": "In \"Project Initiator – Make the First Commit\", Project Initiator – Make the First Commit covers: Understand the crucial first steps to making your project's first commit in Git,",
+      "tier": "full"
+    },
+    "054d0221919110b74eea0ac2": {
+      "summary": "Based on the public preview: In \"Project Initiator – Make the First Commit\", Project Initiator – Make the First Commit covers: Understand the crucial first steps to making your project's first commit in Git,",
+      "tier": "preview"
+    },
+    "d40f55f60377faf48c858c39": {
+      "summary": "In \"Project Initiator – Link Between Remote and Local Repositories (git remote add)\", link between remote and local repositories (git remote add) covers: Connect your local repository to GitHub with git remote add. This comprehensive",
+      "tier": "full"
+    },
+    "f9b8d9cc312db99bfcab47d8": {
+      "summary": "Based on the public preview: In \"Project Initiator – Link Between Remote and Local Repositories (git remote add)\", link between remote and local repositories (git remote add) covers: Connect your local repository to GitHub with git remote add. This comprehensive",
+      "tier": "preview"
+    },
+    "7f6a4675e1ece595830447e2": {
+      "summary": "In \"GitHub SSH Setup\", GitHub covers: Set up SSH connection with key pair (private & public). Upload the public key to",
+      "tier": "full"
+    },
+    "6c896e5388b8d02c8b9357c7": {
+      "summary": "Based on the public preview: In \"GitHub SSH Setup\", GitHub covers: Set up SSH connection with key pair (private & public). Upload the public key to",
+      "tier": "preview"
+    },
+    "0c9f7dca48d684e5a3e5f5dc": {
+      "summary": "In \"Project Initiator – Create Local Repository (git init)\", Local Repository covers: Learn the essential command git init to create a local repository in Git, laying",
+      "tier": "full"
+    },
+    "bce00a6de7d8441ad628db3e": {
+      "summary": "Based on the public preview: In \"Project Initiator – Create Local Repository (git init)\", Local Repository covers: Learn the essential command git init to create a local repository in Git, laying",
+      "tier": "preview"
+    },
+    "661525be1accac86d9c1baea": {
+      "summary": "In \"Project Initiator – Link Between Remote and Local Repositories (git remote add)\", git remote add covers: Connect your local repository to GitHub with git remote add. This comprehensive",
+      "tier": "full"
+    },
+    "7ef4d74b51e95b3cf45438c0": {
+      "summary": "Based on the public preview: In \"Project Initiator – Link Between Remote and Local Repositories (git remote add)\", git remote add covers: Connect your local repository to GitHub with git remote add. This comprehensive",
+      "tier": "preview"
+    },
+    "bf9c399ad610a79f4ea9a341": {
+      "summary": "In \"Project Initiator – Upload Local Repository to Remote Repository (git push)\", git push covers: Learn how to use git push to upload your project or code from a local repository",
+      "tier": "full"
+    },
+    "dc0adc95965382a6ed691a43": {
+      "summary": "Based on the public preview: In \"Project Initiator – Upload Local Repository to Remote Repository (git push)\", git push covers: Learn how to use git push to upload your project or code from a local repository",
+      "tier": "preview"
+    },
+    "f6a78e21c3de42a8677410cb": {
+      "summary": "In \"Project Member – Create Copy of Project Code on Local Computer (git clone)\", git clone covers: Master the git clone command to create a local copy of a remote repository, incl",
+      "tier": "full"
+    },
+    "f4b38818ab85d5c1fd49d9f4": {
+      "summary": "Based on the public preview: In \"Project Member – Create Copy of Project Code on Local Computer (git clone)\", git clone covers: Master the git clone command to create a local copy of a remote repository, incl",
+      "tier": "preview"
+    },
+    "59d53675dfdd32b3e16d1faa": {
+      "summary": "In \"Generating PAT (Personal Access Token)\", PAT (Personal Access Token) covers: For HTTPS connection, create a Personal Access Token: Tokens (classic) or Fine-g",
+      "tier": "full"
+    },
+    "ca382656a8edc8580d249ea8": {
+      "summary": "Based on the public preview: In \"Generating PAT (Personal Access Token)\", PAT (Personal Access Token) covers: For HTTPS connection, create a Personal Access Token: Tokens (classic) or Fine-g",
+      "tier": "preview"
+    },
+    "526bbbcdcf9e845b070b32b3": {
+      "summary": "In \"Fork vs. Clone\", Fork vs. Clone covers: Demystifying the differences between Fork and Clone: Learn how Fork creates a re",
+      "tier": "full"
+    },
+    "6e156ca7fce644bed792be48": {
+      "summary": "Based on the public preview: In \"Fork vs. Clone\", Fork vs. Clone covers: Demystifying the differences between Fork and Clone: Learn how Fork creates a re",
+      "tier": "preview"
+    },
+    "ce14d7fa5723f7bbab3dcdd2": {
+      "summary": "In \"Chapter 4. Edit & Commit\", Chapter 4. Edit & Commit covers: Dive into the world of Git with an introduction to key commands for editing and",
+      "tier": "full"
+    },
+    "c62868a2e3c60c80d9ac4eb4": {
+      "summary": "Based on the public preview: In \"Chapter 4. Edit & Commit\", Chapter 4. Edit & Commit covers: Dive into the world of Git with an introduction to key commands for editing and",
+      "tier": "preview"
+    },
+    "cb20a2e6b5b80a5ebe9cccf0": {
+      "summary": "In \"Add Files to Staging Area – git add\", git add covers: Learn how git add preps and reviews files for your repository, a crucial step fo",
+      "tier": "full"
+    },
+    "3f98f78f8c6c88b4f22bf3f8": {
+      "summary": "Based on the public preview: In \"Add Files to Staging Area – git add\", git add covers: Learn how git add preps and reviews files for your repository, a crucial step fo",
+      "tier": "preview"
+    },
+    "8ee21216e59edf545076d48d": {
+      "summary": "In \"Chapter 4. Edit & Commit\", Commit covers: Dive into the world of Git with an introduction to key commands for editing and",
+      "tier": "full"
+    },
+    "58f8aac3466af2855b12c9d6": {
+      "summary": "Based on the public preview: In \"Chapter 4. Edit & Commit\", Commit covers: Dive into the world of Git with an introduction to key commands for editing and",
+      "tier": "preview"
+    },
+    "d07b6d76f359e3c0a7beb731": {
+      "summary": "In \"Check Status of Working Tree and Staging Area – git status\", Check Status of Working Tree and Staging Area – git status covers: Master git status to assess your working tree and staging area, clearly identify",
+      "tier": "full"
+    },
+    "0be80af22da535d21177ffe0": {
+      "summary": "Based on the public preview: In \"Check Status of Working Tree and Staging Area – git status\", Check Status of Working Tree and Staging Area – git status covers: Master git status to assess your working tree and staging area, clearly identify",
+      "tier": "preview"
+    },
+    "1b3735208479cb0d56ca92a4": {
+      "summary": "In \"Commit Files – git commit\", git commit covers: Discover the git commit command to secure your work in the local repository, mak",
+      "tier": "full"
+    },
+    "998fe75a46eec08b4ffd8cec": {
+      "summary": "Based on the public preview: In \"Commit Files – git commit\", git commit covers: Discover the git commit command to secure your work in the local repository, mak",
+      "tier": "preview"
+    },
+    "e9a5205bd6daaf12db678d53": {
+      "summary": "In \"Check Status of Working Tree and Staging Area – git status\", git status covers: Master git status to assess your working tree and staging area, clearly identify",
+      "tier": "full"
+    },
+    "aaadad54b03c7d922b95f074": {
+      "summary": "Based on the public preview: In \"Check Status of Working Tree and Staging Area – git status\", git status covers: Master git status to assess your working tree and staging area, clearly identify",
+      "tier": "preview"
+    },
+    "cd860c274a8aecd72e83e7a0": {
+      "summary": "In \"Check Commit Histories – git log\", git log covers: Use git log to delve into your repository's commit history, an essential tool fo",
+      "tier": "full"
+    },
+    "6da87bdd74b27c0657b9e948": {
+      "summary": "Based on the public preview: In \"Check Commit Histories – git log\", git log covers: Use git log to delve into your repository's commit history, an essential tool fo",
+      "tier": "preview"
+    },
+    "51eeadd505f7749b1c7fba61": {
+      "summary": "In \"Check Differences – git diff\", git diff covers: Master git diff to spot differences in your working tree, staging area, and comm",
+      "tier": "full"
+    },
+    "9fe88663e135ce176a502b76": {
+      "summary": "Based on the public preview: In \"Check Differences – git diff\", git diff covers: Master git diff to spot differences in your working tree, staging area, and comm",
+      "tier": "preview"
+    },
+    "3fdac17b88864e85eead1f08": {
+      "summary": "In \"HEAD and INDEX\", HEAD and INDEX covers: Navigate Git's concepts of HEAD for the latest commit and INDEX as the staging a",
+      "tier": "full"
+    },
+    "bba8e01e9c4ee8a6cdcce100": {
+      "summary": "Based on the public preview: In \"HEAD and INDEX\", HEAD and INDEX covers: Navigate Git's concepts of HEAD for the latest commit and INDEX as the staging a",
+      "tier": "preview"
+    },
+    "1cf4198c6753bf55785382bf": {
+      "summary": "In \"HEAD and INDEX\", HEAD covers: Navigate Git's concepts of HEAD for the latest commit and INDEX as the staging a",
+      "tier": "full"
+    },
+    "2313f2f915c8c039eb03d9f9": {
+      "summary": "Based on the public preview: In \"HEAD and INDEX\", HEAD covers: Navigate Git's concepts of HEAD for the latest commit and INDEX as the staging a",
+      "tier": "preview"
+    },
+    "c7d4bf4e40279519609ae24a": {
+      "summary": "In \"Git & GitHub Project Setup Overview in Different Cases\", Git & GitHub Project Setup Overview in Different Cases covers: Discover step-by-step Git & GitHub setup for various roles. Ideal for developers",
+      "tier": "full"
+    },
+    "64473312c1b258be0313649e": {
+      "summary": "Based on the public preview: In \"Git & GitHub Project Setup Overview in Different Cases\", Git & GitHub Project Setup Overview in Different Cases covers: Discover step-by-step Git & GitHub setup for various roles. Ideal for developers",
+      "tier": "preview"
+    },
+    "28a828b10208839c9989b3bb": {
+      "summary": "In \"Git Regular Workflow – Edit & Commit\", Git Regular Workflow – Edit & Commit covers: Dive into mastering Git's editing and saving cycle with 8 key commands for creat",
+      "tier": "full"
+    },
+    "c8b0fc003254d979c8ba2425": {
+      "summary": "Based on the public preview: In \"Git Regular Workflow – Edit & Commit\", Git Regular Workflow – Edit & Commit covers: Dive into mastering Git's editing and saving cycle with 8 key commands for creat",
+      "tier": "preview"
+    },
+    "fbd648cdc9ca98750fb3af5d": {
+      "summary": "In \"Branch Operation Basic Life Cycle\", Branch Operation Basic Life Cycle covers: Discover the seven-step life cycle of branch operations in Git, from creation to",
+      "tier": "full"
+    },
+    "6e5eef890a91f76470d9b2c4": {
+      "summary": "Based on the public preview: In \"Branch Operation Basic Life Cycle\", Branch Operation Basic Life Cycle covers: Discover the seven-step life cycle of branch operations in Git, from creation to",
+      "tier": "preview"
+    },
+    "1b23e72b40f1631ef4321756": {
+      "summary": "In \"Create Branch and Check Branch Status – Git Branch\", git branch covers: Dive into git branch for creating new branches, checking statuses, and deleting",
+      "tier": "full"
+    },
+    "a2936fb8a46b96b33f36973f": {
+      "summary": "Based on the public preview: In \"Create Branch and Check Branch Status – Git Branch\", git branch covers: Dive into git branch for creating new branches, checking statuses, and deleting",
+      "tier": "preview"
+    },
+    "e4cd8adc7a6cd3abdc3aecfa": {
+      "summary": "In \"Switch Current Branch (1) – Git Checkout\", git checkout covers: Utilize git checkout to switch branches or create and switch to new ones with th",
+      "tier": "full"
+    },
+    "cb5e5b313dacbca68937e4ca": {
+      "summary": "Based on the public preview: In \"Switch Current Branch (1) – Git Checkout\", git checkout covers: Utilize git checkout to switch branches or create and switch to new ones with th",
+      "tier": "preview"
+    },
+    "27dcfbb0240b509962d9f17f": {
+      "summary": "In \"What Is Branch?\", branch covers: Learn how branches diverge and integrate in coding projects through tree and box",
+      "tier": "full"
+    },
+    "9c574fb8b566d114033c232c": {
+      "summary": "Based on the public preview: In \"What Is Branch?\", branch covers: Learn how branches diverge and integrate in coding projects through tree and box",
+      "tier": "preview"
+    },
+    "2b6209e0583b95cd13578dcf": {
+      "summary": "In \"Switch Current Branch (2) – Git Switch\", Git Switch covers: Learn about git switch, a modern alternative to git checkout for switching branc",
+      "tier": "full"
+    },
+    "8a5adda3e9a5f062696eb200": {
+      "summary": "Based on the public preview: In \"Switch Current Branch (2) – Git Switch\", Git Switch covers: Learn about git switch, a modern alternative to git checkout for switching branc",
+      "tier": "preview"
+    },
+    "e4064671faf4a536c97fe329": {
+      "summary": "In \"Merge Branches – Git Merge\", git merge covers: Master the four main cases of Git merges: Fast-Forward, Non-Fast-Forward, --no-f",
+      "tier": "full"
+    },
+    "3843db7585832a603cdb2e5a": {
+      "summary": "Based on the public preview: In \"Merge Branches – Git Merge\", git merge covers: Master the four main cases of Git merges: Fast-Forward, Non-Fast-Forward, --no-f",
+      "tier": "preview"
+    },
+    "94f7b64bc31e90abf7680b99": {
+      "summary": "In \"Fast-Forward Merge\", fast-forward merge covers: Unpack Fast-Forward Merge: a streamlined Git merging approach that incorporates",
+      "tier": "full"
+    },
+    "1b6def7ba38a2e04b4a6f90f": {
+      "summary": "Based on the public preview: In \"Fast-Forward Merge\", fast-forward merge covers: Unpack Fast-Forward Merge: a streamlined Git merging approach that incorporates",
+      "tier": "preview"
+    },
+    "d78a4475b9a13bcd11539953": {
+      "summary": "In \"Check Commit Histories – git log\", commit histories covers: Use git log to delve into your repository's commit history, an essential tool fo",
+      "tier": "full"
+    },
+    "abb8a2a8a158123873e12c68": {
+      "summary": "Based on the public preview: In \"Check Commit Histories – git log\", commit histories covers: Use git log to delve into your repository's commit history, an essential tool fo",
+      "tier": "preview"
+    },
+    "22e6d62980f8f0cfc892ebcc": {
+      "summary": "In \"Create Branch and Check Branch Status – Git Branch\", branch status covers: Dive into git branch for creating new branches, checking statuses, and deleting",
+      "tier": "full"
+    },
+    "1cbc49e4adcd5eb14a6812c6": {
+      "summary": "Based on the public preview: In \"Create Branch and Check Branch Status – Git Branch\", branch status covers: Dive into git branch for creating new branches, checking statuses, and deleting",
+      "tier": "preview"
+    },
+    "2cabfac8f3fde4a4696d24da": {
+      "summary": "In \"Project Initiator – Create Remote Repository\", Project Initiator – Create Remote Repository covers: Step-by-step guidance on creating a remote repository on GitHub, from setup to s",
+      "tier": "full"
+    },
+    "98f8e6473b6bad3c146719c6": {
+      "summary": "Based on the public preview: In \"Project Initiator – Create Remote Repository\", Project Initiator – Create Remote Repository covers: Step-by-step guidance on creating a remote repository on GitHub, from setup to s",
+      "tier": "preview"
+    },
+    "d6ddd038c7d6a7a41b6a90e9": {
+      "summary": "In \"Git & GitHub Basic Life Cycle\", Git & GitHub Basic Life Cycle covers: Get started with Git and GitHub by setting up accounts, configuring profiles, an",
+      "tier": "full"
+    },
+    "cb1a5f582e62f8c39e5eb0c3": {
+      "summary": "Based on the public preview: In \"Git & GitHub Basic Life Cycle\", Git & GitHub Basic Life Cycle covers: Get started with Git and GitHub by setting up accounts, configuring profiles, an",
+      "tier": "preview"
+    },
+    "ceff5f20a44bac37bbcad01e": {
+      "summary": "In \"Project Initiator – Link Between Remote and Local Repositories (git remote add)\", Project Initiator – Link Between Remote and Local Repositories (git remote add) covers: Connect your local repository to GitHub with git remote add. This comprehensive",
+      "tier": "full"
+    },
+    "dbad25997cd1ecc1b7c63879": {
+      "summary": "Based on the public preview: In \"Project Initiator – Link Between Remote and Local Repositories (git remote add)\", Project Initiator – Link Between Remote and Local Repositories (git remote add) covers: Connect your local repository to GitHub with git remote add. This comprehensive",
+      "tier": "preview"
+    },
+    "f982a4a2d80b6e29125514f4": {
+      "summary": "In \"Project Initiator – Upload Local Repository to Remote Repository (git push)\", Project Initiator – Upload Local Repository to Remote Repository (git push) covers: Learn how to use git push to upload your project or code from a local repository",
+      "tier": "full"
+    },
+    "bef9c4d0f020a011d46411b5": {
+      "summary": "Based on the public preview: In \"Project Initiator – Upload Local Repository to Remote Repository (git push)\", Project Initiator – Upload Local Repository to Remote Repository (git push) covers: Learn how to use git push to upload your project or code from a local repository",
+      "tier": "preview"
+    },
+    "289cd8e3b29a01861d84b686": {
+      "summary": "In \"Link With Remote Repository – Git Remote\", Remote Repository covers: Use git remote to set up and monitor the connection between your local repositor",
+      "tier": "full"
+    },
+    "1ec7e8a8da669d96a0e071da": {
+      "summary": "Based on the public preview: In \"Link With Remote Repository – Git Remote\", Remote Repository covers: Use git remote to set up and monitor the connection between your local repositor",
+      "tier": "preview"
+    },
+    "537b9b0e28a8efcdc92444e0": {
+      "summary": "In \"Upload to Remote Repository – Git Push\", git push covers: Master the git push command to reflect your local repository changes in the remo",
+      "tier": "full"
+    },
+    "01fb5f2a68fb34871cedaa3c": {
+      "summary": "Based on the public preview: In \"Upload to Remote Repository – Git Push\", git push covers: Master the git push command to reflect your local repository changes in the remo",
+      "tier": "preview"
+    },
+    "79d932889bc9a76bf6636cc1": {
+      "summary": "In \"Download Remote Repository and Merge to Local Repository – Git Pull\", git pull covers: Discover how git pull downloads and merges the latest changes from the remote re",
+      "tier": "full"
+    },
+    "0d1f29b2a9f90c754255da3c": {
+      "summary": "Based on the public preview: In \"Download Remote Repository and Merge to Local Repository – Git Pull\", git pull covers: Discover how git pull downloads and merges the latest changes from the remote re",
+      "tier": "preview"
+    },
+    "249de3bf52d9fa4606965446": {
+      "summary": "In \"Chapter 3. Git & GitHub Project Setup\", Git & GitHub Project Setup covers: Setup Git project based on your role: 1) Owner, 2) Member, or 3) Forking an exis",
+      "tier": "full"
+    },
+    "f20dca5e5b57d0dbeabad6e3": {
+      "summary": "Based on the public preview: In \"Chapter 3. Git & GitHub Project Setup\", Git & GitHub Project Setup covers: Setup Git project based on your role: 1) Owner, 2) Member, or 3) Forking an exis",
+      "tier": "preview"
+    },
+    "174867ceb2b941df69b55077": {
+      "summary": "In \"Edit and Commit Overview (1)\", Edit and Commit covers: Unpack Git's three-stage architecture for selective versioning in Chapter 1, ena",
+      "tier": "full"
+    },
+    "88c275677daafbfa2608f155": {
+      "summary": "Based on the public preview: In \"Edit and Commit Overview (1)\", Edit and Commit covers: Unpack Git's three-stage architecture for selective versioning in Chapter 1, ena",
+      "tier": "preview"
+    },
+    "a34e5ad17778ce3aeea4d023": {
+      "summary": "In \"Chapter 5. Work With Branches\", Work With Branches covers: Explore branch functionality in Git to work on different code versions simultane",
+      "tier": "full"
+    },
+    "ee319eba927f374e1c7ac5db": {
+      "summary": "Based on the public preview: In \"Chapter 5. Work With Branches\", Work With Branches covers: Explore branch functionality in Git to work on different code versions simultane",
+      "tier": "preview"
+    },
+    "7f3aa9f46ad3dde35e758206": {
+      "summary": "In \"Rebase Branch – Git Rebase\", git rebase covers: Learn to use git rebase to reapply commits from a topic branch atop the base bra",
+      "tier": "full"
+    },
+    "d9c16a28211d6bfeb19880b5": {
+      "summary": "Based on the public preview: In \"Rebase Branch – Git Rebase\", git rebase covers: Learn to use git rebase to reapply commits from a topic branch atop the base bra",
+      "tier": "preview"
+    },
+    "5651a1a4278338bfea16619a": {
+      "summary": "In \"Request for Review and Merge – Pull Request\", pull request covers: Navigate the process of creating a Pull Request on GitHub to request reviews and",
+      "tier": "full"
+    },
+    "9f18a63ac8392d8b88038c67": {
+      "summary": "Based on the public preview: In \"Request for Review and Merge – Pull Request\", pull request covers: Navigate the process of creating a Pull Request on GitHub to request reviews and",
+      "tier": "preview"
+    },
+    "e16d0e633cee232e54ceeade": {
+      "summary": "In \"Key Tool Preparation (1) – Mac\", Key Tool Preparation covers: Discover the preinstalled Git environment on Mac systems and utilize VS Code as",
+      "tier": "full"
+    },
+    "25fd9a7f07fe1b12dcee6660": {
+      "summary": "Based on the public preview: In \"Key Tool Preparation (1) – Mac\", Key Tool Preparation covers: Discover the preinstalled Git environment on Mac systems and utilize VS Code as",
+      "tier": "preview"
+    },
+    "75eef6a88651b291f0da538a": {
+      "summary": "In \"Git User Settings – git config\", git config covers: After Git setup, register user profiles: 1) Name & email, 2) Text editor, 3) Ver",
+      "tier": "full"
+    },
+    "4d60d2971548e01cd37332f9": {
+      "summary": "Based on the public preview: In \"Git User Settings – git config\", git config covers: After Git setup, register user profiles: 1) Name & email, 2) Text editor, 3) Ver",
+      "tier": "preview"
+    },
+    "872332a7c74fe2846aa38a49": {
+      "summary": "In \"Fork vs. Clone\", fork covers: Demystifying the differences between Fork and Clone: Learn how Fork creates a re",
+      "tier": "full"
+    },
+    "40280dd759203a1dae1838b7": {
+      "summary": "Based on the public preview: In \"Fork vs. Clone\", fork covers: Demystifying the differences between Fork and Clone: Learn how Fork creates a re",
+      "tier": "preview"
+    },
+    "b01202f0fe891deda437a620": {
+      "summary": "In \"How To Save Versions in Git?\", How To Save Versions in Git? covers: Learn how Git tracks changes by creating snapshots of committed files, providing",
+      "tier": "full"
+    },
+    "f53c469410af73805c138a7b": {
+      "summary": "Based on the public preview: In \"How To Save Versions in Git?\", How To Save Versions in Git? covers: Learn how Git tracks changes by creating snapshots of committed files, providing",
+      "tier": "preview"
+    },
+    "617f8053a94b661a5adeef9d": {
+      "summary": "In \"Computing Environment and Dependency Conflict\", Computing Environment and Dependency Conflict covers: Discover how computing environments impact software success and learn to manage",
+      "tier": "full"
+    },
+    "471ba65a3f38bebff1daaaef": {
+      "summary": "Based on the public preview: In \"Computing Environment and Dependency Conflict\", Computing Environment and Dependency Conflict covers: Discover how computing environments impact software success and learn to manage",
+      "tier": "preview"
+    },
+    "6b217ecb8708859e0c3acf4f": {
+      "summary": "In \"Containers vs. Virtual Machines\", virtual machines covers: Discover the key differences between Containers and Virtual Machines, their bene",
+      "tier": "full"
+    },
+    "914b0b8d1d95ea55c7cba0d0": {
+      "summary": "Based on the public preview: In \"Containers vs. Virtual Machines\", virtual machines covers: Discover the key differences between Containers and Virtual Machines, their bene",
+      "tier": "preview"
+    },
+    "4eb917123290695aafe5f1a5": {
+      "summary": "In \"Web Development Basics: HTTP and REST\", HTTP and REST covers: Core architectural principles of HTTP networking and RESTful API design",
+      "tier": "full"
+    },
+    "23867ed173a0089fff5be0f4": {
+      "summary": "Based on the public preview: In \"Web Development Basics: HTTP and REST\", HTTP and REST covers: Core architectural principles of HTTP networking and RESTful API design",
+      "tier": "preview"
+    },
+    "2cd9f91ec5079068760c14d1": {
+      "summary": "In \"Overview of Docker Workflow\", Overview of Docker Workflow covers: Discover the Docker Workflow and Docker Container Lifecycle to streamline app de",
+      "tier": "full"
+    },
+    "3da7473f1c746cc206143ee0": {
+      "summary": "Based on the public preview: In \"Overview of Docker Workflow\", Overview of Docker Workflow covers: Discover the Docker Workflow and Docker Container Lifecycle to streamline app de",
+      "tier": "preview"
+    },
+    "805dd1f83464c0640fb12e31": {
+      "summary": "In \"Chapter 3. Docker Image and Container\", Chapter 3. Docker Image and Container covers: Master Docker Image and Container management with insights on creation, lifecycl",
+      "tier": "full"
+    },
+    "826d09cad984c4b8ba4a1839": {
+      "summary": "Based on the public preview: In \"Chapter 3. Docker Image and Container\", Chapter 3. Docker Image and Container covers: Master Docker Image and Container management with insights on creation, lifecycl",
+      "tier": "preview"
+    },
+    "70698ef8afc747a38bd7456e": {
+      "summary": "In \"Docker Container Lifecycle\", Docker Container Lifecycle covers: Master Docker container management with our guide. Learn lifecycle stages, CLI c",
+      "tier": "full"
+    },
+    "be42b375a552ae5100eab016": {
+      "summary": "Based on the public preview: In \"Docker Container Lifecycle\", Docker Container Lifecycle covers: Master Docker container management with our guide. Learn lifecycle stages, CLI c",
+      "tier": "preview"
+    },
+    "3a73dcde57ffb88b995fd3b1": {
+      "summary": "In \"Advanced Container Lifecycle Management\", Advanced Container Lifecycle Management covers: Explore advanced Container Lifecycle Management techniques to optimize performan",
+      "tier": "full"
+    },
+    "476e8ec4987dc08ee6c09bea": {
+      "summary": "Based on the public preview: In \"Advanced Container Lifecycle Management\", Advanced Container Lifecycle Management covers: Explore advanced Container Lifecycle Management techniques to optimize performan",
+      "tier": "preview"
+    },
+    "8efecd78e00dce0de5d95d76": {
+      "summary": "In \"Docker Commands to Interact with Inside of Containers\", Docker Commands to Interact with Inside of Containers covers: Learn essential Docker commands like docker exec to interact with containers, de",
+      "tier": "full"
+    },
+    "1a460295b0438aa30cd632d8": {
+      "summary": "Based on the public preview: In \"Docker Commands to Interact with Inside of Containers\", Docker Commands to Interact with Inside of Containers covers: Learn essential Docker commands like docker exec to interact with containers, de",
+      "tier": "preview"
+    },
+    "bc765a331cf9d4ad190dce56": {
+      "summary": "In \"Containers vs. Virtual Machines\", containers covers: Discover the key differences between Containers and Virtual Machines, their bene",
+      "tier": "full"
+    },
+    "fd142e75f0f8d9152c6ef1a9": {
+      "summary": "Based on the public preview: In \"Containers vs. Virtual Machines\", containers covers: Discover the key differences between Containers and Virtual Machines, their bene",
+      "tier": "preview"
+    },
+    "544b9b72995a1f4b5d8237ba": {
+      "summary": "In \"What Is Docker?\", Docker covers: Discover what Docker is: a transformative platform for efficient app development",
+      "tier": "full"
+    },
+    "e057c0cbb45c12666f72ed18": {
+      "summary": "Based on the public preview: In \"What Is Docker?\", Docker covers: Discover what Docker is: a transformative platform for efficient app development",
+      "tier": "preview"
+    },
+    "66e5f68f3ec602d632e76306": {
+      "summary": "In \"Chapter 4. Docker Networking and Storage\", networking covers: Explore Docker Networking and Storage in Chapter 4 to master container communica",
+      "tier": "full"
+    },
+    "14b92174f863cf6ba1fa682e": {
+      "summary": "Based on the public preview: In \"Chapter 4. Docker Networking and Storage\", networking covers: Explore Docker Networking and Storage in Chapter 4 to master container communica",
+      "tier": "preview"
+    },
+    "3b736c52d7efce2ce2a5013d": {
+      "summary": "In \"Docker Networking\", Docker Networking covers: Master Docker networking to enable seamless container communication. Learn about",
+      "tier": "full"
+    },
+    "866262c7d292af15f6e25bd7": {
+      "summary": "Based on the public preview: In \"Docker Networking\", Docker Networking covers: Master Docker networking to enable seamless container communication. Learn about",
+      "tier": "preview"
+    },
+    "772d99b9f1dd8e9fbde8bb69": {
+      "summary": "In \"Chapter 5. Building and Sharing Docker Images\", Chapter 5. Building and Sharing Docker Images covers: Learn to build and manage Docker images with Dockerfiles, optimize builds, and s",
+      "tier": "full"
+    },
+    "593f4f5fcee9cabc7919f0fd": {
+      "summary": "Based on the public preview: In \"Chapter 5. Building and Sharing Docker Images\", Chapter 5. Building and Sharing Docker Images covers: Learn to build and manage Docker images with Dockerfiles, optimize builds, and s",
+      "tier": "preview"
+    },
+    "95922fce313da755021efce4": {
+      "summary": "In \"Project Initiator – .gitignore File\", Project Initiator – .gitignore File covers: Explore the functionality and importance of the .gitignore file in Git to effici",
+      "tier": "full"
+    },
+    "1e6e580669af25683aa2bf08": {
+      "summary": "Based on the public preview: In \"Project Initiator – .gitignore File\", Project Initiator – .gitignore File covers: Explore the functionality and importance of the .gitignore file in Git to effici",
+      "tier": "preview"
+    },
+    "5e2f73bc0102dacdab6b3451": {
+      "summary": "In \"Build Context and .dockerignore File\", Build Context and .dockerignore File covers: Optimize Docker builds with efficient build context management and .dockerignore",
+      "tier": "full"
+    },
+    "f6b8488ed7db0b72d9fa42bd": {
+      "summary": "Based on the public preview: In \"Build Context and .dockerignore File\", Build Context and .dockerignore File covers: Optimize Docker builds with efficient build context management and .dockerignore",
+      "tier": "preview"
+    },
+    "feeb70e7d9897d235a994137": {
+      "summary": "In \"Chapter 6. Docker Compose and Deployment Practice\", Chapter 6. Docker Compose and Deployment Practice covers: Master Docker Compose for efficient container orchestration. Learn to write, exe",
+      "tier": "full"
+    },
+    "6b0394fbe2f96f21b7137d5f": {
+      "summary": "Based on the public preview: In \"Chapter 6. Docker Compose and Deployment Practice\", Chapter 6. Docker Compose and Deployment Practice covers: Master Docker Compose for efficient container orchestration. Learn to write, exe",
+      "tier": "preview"
+    },
+    "b423dd6e132c6b09af8ef79d": {
+      "summary": "In \"Writing a Docker Compose File\", Docker Compose file covers: Learn to write a Docker Compose file to manage multi-container apps efficiently.",
+      "tier": "full"
+    },
+    "07add07aa82b8426c1ded51e": {
+      "summary": "Based on the public preview: In \"Writing a Docker Compose File\", Docker Compose file covers: Learn to write a Docker Compose file to manage multi-container apps efficiently.",
+      "tier": "preview"
     }
   }
 }
