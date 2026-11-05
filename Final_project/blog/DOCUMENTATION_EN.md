@@ -84,7 +84,7 @@ Nothing is saved or published **until the user confirms**.
 
 - Retrieval respects user access (anonymous / free / subscription / point-unlocked).
 - Locked paid articles return **preview snippets** only; LLM system prompts forbid leaking full paid body text.
-- Topics not in the corpus (e.g. “quantum computing article”) should be **refused**, not hallucinated.
+- Topics not in the corpus (e.g. a quantum-computing article, or Helm) get a fixed refusal in the main chat, then a question asking whether to look outside the blog. A public note is fetched only after the reader confirms. It is labeled as not a lesson on this site and is not added to SOURCES. Article-page Q&A does not answer a different topic with the lesson that is open.
 
 ---
 
@@ -252,6 +252,7 @@ File: `a_agent/services/orchestrator.py`
 | `action_add` | `propose_add_to_reading_list` |
 | `action_remove` | `propose_remove_from_reading_list` |
 | `action_comment` | `build_comment_draft` + `propose_post_comment` |
+| Outside note (no on-site hit, and the reader has confirmed) | `lookup_outside_the_blog`: DuckDuckGo instant answer first, then one English Wikipedia page summary |
 
 ---
 
@@ -274,6 +275,7 @@ File: `a_agent/models.py`
 Each tool file maps to one capability with clear inputs/outputs (suitable for Capstone tool specification tables):
 
 - **Retrieval**: `keyword_search` / `chunk_search` / `vector_search` / `article_scope`
+- **Outside note**: `external_lookup`. Called only after confirmation in the main chat. It fetches one public extract. It does not crawl the web or write the note into the lesson index.
 - **Personalization**: `browsing_history` / `recommend`
 - **Planning**: `reading_paths`
 - **Action**: `reading_list` / `comment_draft`
@@ -439,7 +441,7 @@ After login, use this order for a Sprint video (~5 min):
 3. Open an article — use the side panel “Summarize this article”
 4. “Add the RAG article to my reading list” — Confirm → check `/agent/reading-list/`
 5. Open a locked paid article — ask for full text — show paywall (no leak)
-6. Ask about a non-existent topic (e.g. quantum computing) — show refusal
+6. On `/agent/`, ask about a topic the blog does not have (e.g. Helm) — show the refusal, then press Look outside the blog and show the public note labeled as not a lesson on this site
 
 ---
 

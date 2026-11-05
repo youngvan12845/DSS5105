@@ -84,7 +84,7 @@ Agent 直接复用上述模块的数据与权限逻辑，无需重复建设用�
 
 - 检索层根据用户身份（未登录 / 免费 / 订阅 / 积分已解锁）决定可见文本范围。
 - 付费文章未解锁时，返回 **预览片段**，不泄漏全文；LLM 系统提示亦禁止输出付费正文。
-- 对不存在于站内的主题（如「量子计算文章」），应明确拒绝而非编造。
+- 对不存在于站内的主题（如「量子计算文章」或 Helm），主聊天先给出固定拒绝，并询问是否查看博客之外的公开说明。读者确认后才查询。外面的说明标明不是本站课文，不进入 SOURCES。文章页问答不把当前课文当成另一个主题的答案。
 
 ---
 
@@ -252,6 +252,7 @@ blog/
 | `action_add` | `propose_add_to_reading_list` |
 | `action_remove` | `propose_remove_from_reading_list` |
 | `action_comment` | `build_comment_draft` + `propose_post_comment` |
+| 站外说明（无站内命中且读者已确认） | `lookup_outside_the_blog`：先 DuckDuckGo 短摘要，没有再取英文维基百科的一条页面摘要 |
 
 ---
 
@@ -274,6 +275,7 @@ blog/
 每个 Tool 文件对应一类能力，输入/输出结构清晰，便于 Capstone 文档中的 Tool Specification 表格：
 
 - **Retrieval**：`keyword_search` / `chunk_search` / `vector_search` / `article_scope`
+- **Outside note**：`external_lookup`。只在主聊天确认之后调用，一次只取一段公开说明，不爬站、不写入课文索引。
 - **Personalization**：`browsing_history` / `recommend`
 - **Planning**：`reading_paths`
 - **Action**：`reading_list` / `comment_draft`
@@ -439,7 +441,7 @@ source .venv/bin/activate
 3. 进入某篇文章，使用右侧 Agent 面板「Summarize this article」
 4. 「Add the RAG article to my reading list」→ 展示 Confirm → 在 `/agent/reading-list/` 查看
 5. 打开一篇付费文章（未解锁），提问全文 → 展示 paywall 不泄漏
-6. 提问不存在的主题（如 quantum computing）→ 展示拒绝回答
+6. 在 `/agent/` 提问不存在的主题（如 Helm）→ 先展示拒绝，再点 Look outside the blog，展示标明不是本站课文的公开说明
 
 ---
 
