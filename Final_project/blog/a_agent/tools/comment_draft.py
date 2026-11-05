@@ -116,7 +116,7 @@ def build_comment_draft(
     if llm_configured():
         is_chinese = bool(re.search(r'[\u4e00-\u9fff]', query))
         lang_rule = (
-            '4. Write the comment in Traditional Chinese (繁體中文).'
+            '4. Write the comment in Simplified Chinese (简体中文). Regardless of whether the user wrote in Traditional or Simplified Chinese, always output Simplified Chinese.'
             if is_chinese
             else '4. Write the comment in English (unless the user explicitly requested another language).'
         )

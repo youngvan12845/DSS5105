@@ -276,8 +276,9 @@ class PanelStatusTests(SimpleTestCase):
         self.assertEqual(_article_ids_for_action(hits, [], []), [21])
         self.assertEqual(_article_ids_for_action(hits, [], [], limit=3), [21, 18, 19])
 
-    def test_markdown_sanitization_and_traditional_chinese_conversion(self):
+    def test_markdown_sanitization_and_simplified_chinese_conversion(self):
         from a_agent.services.orchestrator import (
+            _ensure_simplified_chinese,
             _ensure_traditional_chinese,
             _is_no_match_response,
             _sanitize_markdown_output,
@@ -293,12 +294,19 @@ class PanelStatusTests(SimpleTestCase):
         unclosed_fence = '```bash\ndocker compose up -d'
         self.assertTrue(_sanitize_markdown_output(unclosed_fence).endswith('```'))
 
+        trad_input = '透過設定預設伺服器和網路程式碼，理解人工智慧術語與協定。`程式碼`'
+        simp_output = _ensure_simplified_chinese(trad_input)
+        for expected in ('通过', '配置', '默认', '服务器', '网络', '代码', '人工智能', '术语', '协议'):
+            self.assertIn(expected, simp_output)
+        self.assertIn('`程式碼`', simp_output)
+
         simp = '通过配置默认服务器和网络代码，理解人工智能术语与协议。'
         trad = _ensure_traditional_chinese(simp)
         for expected in ('透過', '設定', '預設', '伺服器', '網路', '程式碼', '人工智慧', '術語', '協定'):
             self.assertIn(expected, trad)
 
         self.assertTrue(_is_no_match_response('I cannot find any article about that topic in the blog corpus.'))
+        self.assertTrue(_is_no_match_response('抱歉，找不到相关文章。'))
         self.assertTrue(_is_no_match_response('抱歉，找不到相關文章。'))
         self.assertFalse(_is_no_match_response('MCP stands for Model Context Protocol.'))
 

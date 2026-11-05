@@ -350,6 +350,7 @@ def _comment_action_reply(
             tool_trace=tool_trace,
         )
 
+    is_chinese = bool(re.search(r'[\u4e00-\u9fff]', query))
     draft = build_comment_draft(
         query,
         article_id,
@@ -360,15 +361,17 @@ def _comment_action_reply(
     )
     if not draft:
         return AgentReply(
-            content='I could not draft a comment for that article.',
+            content='抱歉，无法为该文章生成评论草稿。' if is_chinese else 'I could not draft a comment for that article.',
             citations=citations,
             tool_trace=tool_trace,
         )
+    if is_chinese:
+        draft = _ensure_simplified_chinese(draft)
 
     action = propose_post_comment(user, article_id, draft, request=request)
     if not action:
         return AgentReply(
-            content='That article is unavailable for commenting.',
+            content='该文章目前无法发表评论。' if is_chinese else 'That article is unavailable for commenting.',
             citations=citations,
             tool_trace=tool_trace,
         )
@@ -382,11 +385,18 @@ def _comment_action_reply(
         'article_url': payload.get('article_url', ''),
         'draft_content': payload.get('draft_content', ''),
     }
-    content = (
-        f'I drafted a comment for **{payload.get("article_title", "this article")}**:\n\n'
-        f'> {draft}\n\n'
-        'Click **Confirm** below to post it. Nothing is published until you confirm.'
-    )
+    if is_chinese:
+        content = (
+            f'我已为 **{payload.get("article_title", "这篇文章")}** 草拟了一条评论：\n\n'
+            f'> {draft}\n\n'
+            '您可以在下方文本框中直接修改内容，确认无误后点击 **Confirm** 发布。'
+        )
+    else:
+        content = (
+            f'I drafted a comment for **{payload.get("article_title", "this article")}**:\n\n'
+            f'> {draft}\n\n'
+            'Click **Confirm** below to post it. Nothing is published until you confirm.'
+        )
     return AgentReply(
         content=content,
         citations=citations,
@@ -744,6 +754,28 @@ _S2T_CHAR_MAP = {
 _S2T_CHAR_TABLE = str.maketrans({k: v for k, v in _S2T_CHAR_MAP.items() if len(k) == 1})
 
 
+_T2S_PHRASE_MAP = tuple((trad, simp) for simp, trad in _S2T_PHRASE_MAP)
+_T2S_CHAR_TABLE = str.maketrans(
+    {trad: simp for simp, trad in _S2T_CHAR_MAP.items() if len(simp) == 1 and len(trad) == 1}
+)
+
+
+def _ensure_simplified_chinese(text: str) -> str:
+    """Convert Traditional Chinese terms and characters to Simplified Chinese outside code blocks."""
+    parts = re.split(r'(```[\s\S]*?```|`[^`\n]+`)', text)
+    out = []
+    for idx, part in enumerate(parts):
+        if idx % 2 == 1:
+            out.append(part)
+            continue
+        converted = part
+        for trad, simp in _T2S_PHRASE_MAP:
+            converted = converted.replace(trad, simp)
+        converted = converted.translate(_T2S_CHAR_TABLE)
+        out.append(converted)
+    return ''.join(out)
+
+
 def _ensure_traditional_chinese(text: str) -> str:
     """Convert Simplified Chinese terms and characters to Traditional Chinese outside code blocks."""
     parts = re.split(r'(```[\s\S]*?```|`[^`\n]+`)', text)
@@ -839,6 +871,13 @@ def _is_no_match_response(text: str) -> bool:
         'not found in the blog corpus',
         'no articles found',
         'do not have any articles about',
+        '找不到相关文章',
+        '没有找到相关文章',
+        '找不到关于',
+        '没有关于',
+        '语料库中没有',
+        '找不到與此主題相關的文章',
+        '找不到与此主题相关的文章',
         '找不到相關文章',
         '沒有找到相關文章',
         '找不到關於',
@@ -1137,10 +1176,10 @@ def handle_user_message(
         other_link = f'[**{other_title}**]({other_url})' if other_url else f'**{other_title}**'
         if is_chinese:
             msg = (
-                f'📌 **文章範圍提示**：目前的「Article Q&A」面板僅專注於當前文章 **{article_scope.title}**，'
-                f'因此無法在此直接檢索或摘要另一篇文章 {other_link} 的內容。\n\n'
-                f'- 如果您想閱讀並詢問該文章，請直接點擊前往：{other_link}\n'
-                f'- 如果您想進行跨文章搜尋、比較或加入閱讀清單，請前往 [**Reading Assistant 主助手頁面**](/agent/) 提問！'
+                f'📌 **文章范围提示**：当前的「Article Q&A」面板仅专注于当前文章 **{article_scope.title}**，'
+                f'因此无法在此直接检索或摘要另一篇文章 {other_link} 的内容。\n\n'
+                f'- 如果您想阅读并询问该文章，请直接点击前往：{other_link}\n'
+                f'- 如果您想进行跨文章搜索、比较或加入阅读清单，请前往 [**Reading Assistant 主助手页面**](/agent/) 提问！'
             )
         else:
             msg = (
@@ -1163,7 +1202,7 @@ def handle_user_message(
     )
     if not has_any_corpus_match:
         no_match_msg = (
-            '抱歉，在目前的部落格文章庫中找不到與此主題相關的文章。請嘗試使用其他關鍵字搜尋！'
+            '抱歉，在当前的博客文章库中找不到与此主题相关的文章。请尝试使用其他关键字搜索！'
             if is_chinese
             else 'I cannot find any article about that topic in the blog corpus. Try searching with different keywords.'
         )
@@ -1179,9 +1218,9 @@ def handle_user_message(
     if llm_configured():
         if is_chinese:
             lang_directive = (
-                'CRITICAL LANGUAGE RULE: The user asked in Chinese. '
-                'You MUST write your entire response in 100% Traditional Chinese (繁體中文, Taiwan/HK standard). '
-                'NEVER use Simplified Chinese characters (e.g., write 術語 not 术语, 透過 not 通过, 網路 not 网络, 程式碼 not 代码, 設定 not 配置, 預設 not 默认).'
+                'CRITICAL LANGUAGE RULE: The user asked in Chinese (Traditional or Simplified). '
+                'You MUST write your entire response in 100% Simplified Chinese (简体中文). '
+                'NEVER use Traditional Chinese characters (e.g., write 术语 not 術語, 通过 not 透過, 网络 not 網路, 代码 not 程式碼, 配置 not 設定, 默认 not 預設).'
             )
         else:
             lang_directive = 'Respond in English unless the user writes in another language.'
@@ -1242,7 +1281,7 @@ def handle_user_message(
             f'Intents: {sorted(intents)}\n\n'
         )
         if is_chinese:
-            user_prompt = f'[Language Instruction: The user query is in Chinese. You MUST answer entirely in Traditional Chinese (繁體中文).]\n\n' + user_prompt
+            user_prompt = f'[Language Instruction: The user query is in Chinese (Traditional or Simplified). You MUST answer entirely in Simplified Chinese (简体中文).]\n\n' + user_prompt
         if chat_history:
             user_prompt += f'Recent conversation history (use this to resolve follow-up references like "the second concept" or "the second article you recommended"):\n{_format_chat_history(chat_history)}\n\n'
         if article_scope:
@@ -1264,7 +1303,7 @@ def handle_user_message(
             f'Pending action:\n{pending_action or None}'
         )
         if is_chinese:
-            user_prompt += '\n\n[Final Reminder: You MUST write your entire response in Traditional Chinese (繁體中文).]'
+            user_prompt += '\n\n[Final Reminder: Regardless of whether the user wrote in Traditional or Simplified Chinese, you MUST write your entire response in Simplified Chinese (简体中文).]'
         try:
             content = generate_answer(
                 system_prompt,
@@ -1274,7 +1313,7 @@ def handle_user_message(
             )
             content = _sanitize_markdown_output(content)
             if is_chinese:
-                content = _ensure_traditional_chinese(content)
+                content = _ensure_simplified_chinese(content)
             if _is_no_match_response(content) and not pending_action:
                 citations = []
             tool_trace.append({'tool': 'response_mode', 'mode': 'ai'})
@@ -1302,7 +1341,7 @@ def handle_user_message(
     )
     content = _sanitize_markdown_output(content)
     if is_chinese:
-        content = _ensure_traditional_chinese(content)
+        content = _ensure_simplified_chinese(content)
     if _is_no_match_response(content) and not pending_action:
         citations = []
     return AgentReply(
