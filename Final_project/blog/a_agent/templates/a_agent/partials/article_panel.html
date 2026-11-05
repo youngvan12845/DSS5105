@@ -120,7 +120,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                         </button>
-                        <select id="article-llm-model" name="llm_model" aria-label="Select AI Model" class="text-[11px] font-medium text-slate-600 bg-white border border-slate-200 rounded-md px-1.5 py-0.5 cursor-pointer">
+                        <select id="article-llm-model" name="llm_model" aria-label="Select AI Model" class="hidden">
                             {% for option in model_options %}
                             <option value="{{ option.id }}" data-vision="{{ option.vision|yesno:'true,false' }}" {% if option.id == selected_model %}selected{% endif %}>{{ option.label }}</option>
                             {% endfor %}

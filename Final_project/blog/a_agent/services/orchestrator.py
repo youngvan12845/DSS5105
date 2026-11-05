@@ -543,7 +543,6 @@ def _fallback_answer(
                 )
             )
 
-        lines = [f'关于 **{article_scope.title}** 的核心内容：' if is_zh else f'About **{article_scope.title}**:', '']
         pool = list(chunk_hits) if chunk_hits else list(vector_hits)
         if len(pool) > 3 and any(k in q for k in ('summarize', 'summary', 'bullet', '总结', '總結', '重点', '重點')):
             # Pick beginning, key middle technical chunk, and concluding takeaway chunk
@@ -555,6 +554,14 @@ def _fallback_answer(
             source_hits = [pool[0], pool[mid_idx], pool[-1]]
         else:
             source_hits = pool[:3]
+        lead_text = _clean_excerpt_text(source_hits[0].content, 260, query=query) if source_hits else article_scope.title
+        lines = [
+            f'🎯 **核心结论**：关于 **{article_scope.title}**，{lead_text}'
+            if is_zh
+            else f'🎯 **Core Takeaway**: Regarding **{article_scope.title}** — {lead_text}',
+            '',
+            '📌 **核心概念与重点解析**：' if is_zh else '📌 **Key Concepts & Breakdown**:',
+        ]
         for hit in source_hits:
             score_note = f' (score {hit.score})' if hasattr(hit, 'score') and hit.score and hit.score < 1.0 else ''
             lines.append(f'- {_clean_excerpt_text(hit.content, 700, query=query)}{score_note}')
@@ -1365,6 +1372,27 @@ def handle_user_message(
         else:
             lang_directive = 'Respond in English unless the user writes in another language.'
 
+        if is_chinese:
+            structure_guide = (
+                '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE (自适应中文教学结构)]:'
+                '\n1. 当用户询问「概念解释、文章总结、原理解析、技术对比、学习路径」等学习类问题时，请采用以下清晰的中文分层结构：'
+                '\n   🎯 **核心结论**：用 1–2 句话直观概括核心定义或整体结论。'
+                '\n   📌 **核心概念与重点解析**：使用列表项（`- **概念/要点**：解释`）清晰拆解核心机制、权衡或步骤。'
+                '\n   💻 **常用命令 / 代码示例**（仅在涉及 CLI 命令、配置或代码时提供）：使用 ```bash 或 ```python 代码块展示，并用行内代码标注关键参数。'
+                '\n   💡 **下一步学习建议**（如适用）：给出 1–2 条基于检索结果的延伸阅读建议（带文章 Markdown 链接）或启发性思考。'
+                '\n2. 当用户执行「加入/移除阅读清单、拟写评论、互动测验（Quiz Me / 考考我）、简短单句追问或未命中提示」时，请直接用简洁自然的短句回复，不要强行套用上述三段式标题。'
+            )
+        else:
+            structure_guide = (
+                '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE]:'
+                '\n1. When answering conceptual explanations, article summaries, technical comparisons, or learning path questions, organize your reply with clear learning sections:'
+                '\n   🎯 **Core Takeaway**: 1–2 direct sentences stating the core definition or synthesis.'
+                '\n   📌 **Key Concepts & Breakdown**: Clean bullet points (`- **Concept**: Explanation`) breaking down the mechanics, trade-offs, or steps.'
+                '\n   💻 **Commands / Code Example** (only when CLI commands, configs, or code apply): Use fenced code blocks (```bash or ```python) and inline `backticks`.'
+                '\n   💡 **Next Steps** (when applicable): 1–2 recommended follow-up links from the provided results or a brief learning takeaway.'
+                '\n2. When handling reading-list actions, comment drafts, interactive quizzes ("Quiz Me"), brief single-fact follow-ups, or ungrounded refusals, reply directly and concisely without forcing the section headers above.'
+            )
+
         format_directive = (
             '\n\n[CRITICAL FACTUAL INTEGRITY & ACRONYM RULES]:'
             '\n1. NEVER guess, invent, or fabricate the expansion of any acronym (e.g., in this corpus, MCP ALWAYS stands for "Model Context Protocol", A2A stands for "Agent2Agent Protocol", HITL stands for "Human-in-the-Loop").'
@@ -1373,12 +1401,7 @@ def handle_user_message(
             '\n2. Strictly preserve technical cause-and-effect from the text:'
             '\n   - Distinguish default behavior from optional hardening/configuration rules (e.g., when summarizing or answering about the nginx HTTP QUERY article, you MUST explicitly mention both plain nginx `proxy_pass` working by default AND `limit_except` blocking `QUERY` with 403, as well as Django `View.http_method_names` rejecting `QUERY` unless extended).'
             '\n3. When confirming a reading-list action (`pending_action`), clearly state the exact article title(s) listed in `pending_action.articles` and remind the user to click **Confirm** below.'
-            '\n\n[PEDAGOGICAL CO-PILOT STYLE & FORMATTING]:'
-            '\n1. Write naturally like a warm, knowledgeable engineering mentor and learning co-pilot — avoid robotic boilerplate headers on every single turn.'
-            '\n2. Structure your explanation for effortless reading:'
-            '\n   - Start directly with a clear, intuitive answer or concise synthesis.'
-            '\n   - Use clean bullet points (`- **Concept**: Explanation`) or numbered steps when breaking down multiple ideas, trade-offs, or architecture.'
-            '\n   - End with a brief, relevant takeaway or a natural follow-up learning question when helpful.'
+            f'{structure_guide}'
             '\n3. Code & CLI Commands MUST use dedicated markdown formatting:'
             '\n   - Use inline code `backticks` for flags, directives, methods, and short commands (e.g. `git add -A`, `proxy_pass`, `limit_except`).'
             '\n   - Use fenced code blocks ```bash or ```python for multi-line commands, configuration snippets, or code examples.'

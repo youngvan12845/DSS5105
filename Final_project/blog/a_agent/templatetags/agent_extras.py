@@ -67,6 +67,7 @@ def agent_markdown(value: str) -> str:
     )
 
     # 6. Bullet lists and Interactive Quiz Options
+    has_quiz_options = bool(re.search(r'(?:^|\n)\s*[A-D][\)\.\:]\s+', text))
     lines = text.split('\n')
     processed_lines = []
     current_q_num = '1'
@@ -76,7 +77,13 @@ def agent_markdown(value: str) -> str:
         q_match = re.match(r'^(?:###\s*)?(?:Question\s*)?(\d+)[\.\:]\s*(.+)$', stripped, re.IGNORECASE)
         opt_match = re.match(r'^\s*([A-D])[\)\.\:]\s+(.+)$', stripped, re.IGNORECASE)
 
-        if q_match and not opt_match and ('?' in stripped or any(kw in stripped.lower() for kw in ('question', 'which', 'what', 'how', 'why', 'who', 'where', 'when'))):
+        if (
+            has_quiz_options
+            and q_match
+            and not opt_match
+            and not q_match.group(2).strip().startswith('<a ')
+            and ('?' in stripped or '？' in stripped or any(kw in stripped.lower() for kw in ('question', 'which', 'what', 'how', 'why', 'who', 'where', 'when', '第', '题', '題')))
+        ):
             current_q_num = q_match.group(1)
             q_text = q_match.group(2).strip()
             processed_lines.append(
@@ -100,14 +107,15 @@ def agent_markdown(value: str) -> str:
             processed_lines.append(btn_html)
         elif stripped.startswith(('• ', '- ', '* ')):
             bullet_content = stripped[2:].strip()
-            processed_lines.append(f'<div class="flex items-start gap-2 my-1"><span class="text-purple-500 font-bold shrink-0">•</span><span>{bullet_content}</span></div>')
+            processed_lines.append(f'<div class="agent-bullet-item flex items-start gap-2 my-1"><span class="text-purple-500 font-bold shrink-0">•</span><span>{bullet_content}</span></div>')
         else:
             processed_lines.append(line)
 
     text = '<br>'.join(processed_lines)
-    # Clean up excess br tags around quiz elements
-    text = re.sub(r'<br>(<div class="quiz-question-header|<button type="button" class="quiz-option-btn)', r'\1', text)
-    text = re.sub(r'(</button>|</div>)<br>(<button type="button" class="quiz-option-btn)', r'\1\2', text)
+    # Clean up excess br tags around quiz elements and bullet items
+    text = re.sub(r'<br>(<div class="quiz-question-header|<button type="button" class="quiz-option-btn|<div class="agent-bullet-item)', r'\1', text)
+    text = re.sub(r'(</button>|</div>)<br>(<button type="button" class="quiz-option-btn|<div class="agent-bullet-item)', r'\1\2', text)
+    text = re.sub(r'(<div class="agent-bullet-item.*?</div>)<br>', r'\1', text)
     # Collapse multiple consecutive <br>
     text = re.sub(r'(<br>\s*){3,}', '<br><br>', text)
 
