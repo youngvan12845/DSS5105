@@ -338,10 +338,18 @@ def send_message_view(request: HttpRequest, session_id: int) -> HttpResponse:
         session.save(update_fields=['updated_at'])
 
     if request.htmx:
+        template = (
+            'a_agent/partials/message_pair.html'
+            if request.POST.get('outside_confirm') == '1'
+            else 'a_agent/partials/assistant_message.html'
+        )
         return render(
             request,
-            'a_agent/partials/assistant_message.html',
-            {'assistant_message': assistant_message},
+            template,
+            {
+                'user_message': user_message,
+                'assistant_message': assistant_message,
+            },
         )
 
     return redirect('a_agent:chat_session', session_id=session.pk)

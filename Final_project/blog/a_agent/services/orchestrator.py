@@ -15,6 +15,7 @@ from a_agent.tools.article_scope import (
     search_scoped_article_vectors,
 )
 from a_agent.tools.comment_draft import build_comment_draft, propose_post_comment
+from a_agent.tools.external_lookup import lookup_outside_the_blog, topic_from_query
 from a_agent.tools.browsing_history import get_browsing_history, history_to_dicts
 from a_agent.tools.chunk_search import _extract_terms_and_phrases, _word_match, chunk_hits_to_dicts, search_article_chunks
 from a_agent.tools.keyword_search import hits_to_dicts, keyword_search_articles
@@ -958,6 +959,42 @@ def _format_chat_history(chat_history) -> list[dict]:
     return formatted
 
 
+_OTHER_ARTICLE_RE = re.compile(
+    r'\b(?:article|lesson|post)\s+(?:about|titled|called)\b',
+    re.I,
+)
+_BLOG_WIDE_MARKERS = (
+    'on this blog',
+    'on this site',
+    'in the blog corpus',
+    'blog corpus',
+    '在这个博客',
+    '在本站',
+    '这篇博客',
+)
+
+
+def _question_leaves_this_article(query: str, article_scope) -> str:
+    """A blog-wide question asked inside one article's panel."""
+    if not article_scope:
+        return ''
+    text = query or ''
+    lower = text.lower()
+    if not any(marker in lower for marker in _BLOG_WIDE_MARKERS) and not _OTHER_ARTICLE_RE.search(text):
+        return ''
+    topic = topic_from_query(text)
+    if not topic:
+        return ''
+    title = (article_scope.title or '').lower()
+    words = [
+        word for word in re.findall(r'[a-z0-9]{4,}', topic.lower())
+        if word not in {'this', 'that', 'blog', 'article', 'about', 'with', 'from'}
+    ]
+    if words and any(word in title for word in words):
+        return ''
+    return topic
+
+
 def _detect_cross_article_in_scope(query: str, article_scope, request=None) -> dict | None:
     """Detect when a user inside Article A's scoped panel explicitly asks about another article B."""
     if not article_scope:
@@ -1018,6 +1055,148 @@ def _is_no_match_response(text: str) -> bool:
     return any(p in lower for p in no_match_phrases)
 
 
+def _outside_note_lines(notes: list[dict]) -> str:
+    lines = []
+    for note in notes:
+        title = note.get('title') or 'Outside note'
+        excerpt = (note.get('excerpt') or '').strip()
+        source = note.get('source_name') or 'the open web'
+        url = (note.get('url') or '').strip()
+        source_bit = f'{source}: {url}' if url else source
+        lines.append(f'- **{title}** — {excerpt} ({source_bit})')
+    return '\n'.join(lines)
+
+
+OUTSIDE_LOOKUP_PROMPT_EN = 'Yes, look outside the blog'
+OUTSIDE_LOOKUP_PROMPT_ZH = '好，查一下博客外面'
+_OUTSIDE_LOOKUP_SESSION_KEY = 'outside_lookup_query'
+
+
+def _is_outside_lookup_yes(query: str) -> bool:
+    q = (query or '').strip().lower()
+    return q in {
+        OUTSIDE_LOOKUP_PROMPT_EN.lower(),
+        OUTSIDE_LOOKUP_PROMPT_ZH,
+        'yes',
+        'y',
+        '是',
+        '好',
+        '查一下外面',
+    }
+
+
+def _is_explicit_outside_confirm(query: str) -> bool:
+    q = (query or '').strip().lower()
+    return q in {
+        OUTSIDE_LOOKUP_PROMPT_EN.lower(),
+        OUTSIDE_LOOKUP_PROMPT_ZH,
+        '查一下外面',
+    }
+
+
+def _topic_before_confirm(chat_history) -> str:
+    if not chat_history:
+        return ''
+    for msg in reversed(chat_history):
+        if getattr(msg, 'role', '') != 'user':
+            continue
+        text = (getattr(msg, 'content', '') or '').strip()
+        if text and not _is_outside_lookup_yes(text):
+            return text
+    return ''
+
+
+def _outside_offer(query: str, request, *, is_chinese: bool) -> tuple[str, dict]:
+    if request is not None and hasattr(request, 'session'):
+        request.session[_OUTSIDE_LOOKUP_SESSION_KEY] = query
+    if is_chinese:
+        content = (
+            '抱歉，在当前的博客文章库中找不到与此主题相关的文章。'
+            '要不要查一下博客外面的公开资料？那不是本站课文。'
+        )
+        trace = {
+            'tool': 'offer_external_lookup',
+            'label': '查一下外面',
+            'prompt': OUTSIDE_LOOKUP_PROMPT_ZH,
+        }
+    else:
+        content = (
+            'I cannot find any article about that topic in the blog corpus. '
+            'Should I look outside the blog? That would not be a lesson on this site.'
+        )
+        trace = {
+            'tool': 'offer_external_lookup',
+            'label': 'Look outside the blog',
+            'prompt': OUTSIDE_LOOKUP_PROMPT_EN,
+        }
+    return content, trace
+
+
+def _take_outside_offer(query: str, request) -> str:
+    """Return the saved topic for a confirmation, and skip blog search.
+
+    The saved topic stays until the user asks a different question, so a
+    second confirmation takes the same path as the first.
+    """
+    if request is None or not hasattr(request, 'session'):
+        return ''
+    saved = request.session.get(_OUTSIDE_LOOKUP_SESSION_KEY) or ''
+    if not saved:
+        return ''
+    if _is_outside_lookup_yes(query):
+        return saved
+    request.session.pop(_OUTSIDE_LOOKUP_SESSION_KEY, None)
+    return ''
+
+
+def _outside_blog_reply(
+    query: str,
+    notes: list[dict],
+    *,
+    is_chinese: bool,
+    model: str | None = None,
+    use_model: bool = True,
+    include_refusal: bool = True,
+) -> str:
+    if is_chinese:
+        opening = '抱歉，在当前的博客文章库中找不到与此主题相关的文章。'
+        label = '**博客之外**（不是本站课文）：'
+        empty = '博客外面没有找到可用的公开说明。'
+    else:
+        opening = 'I cannot find any article about that topic in the blog corpus.'
+        label = '**Outside the blog** (not a lesson on this site):'
+        empty = 'I looked outside the blog and did not find a usable public note.'
+    if not notes:
+        return f'{opening}\n\n{empty}' if not include_refusal else opening
+
+    body = _outside_note_lines(notes)
+    if use_model and llm_configured():
+        system_prompt = (
+            'You rewrite the outside notes into two or three short sentences for a student. '
+            'Use only those notes. Do not mention any CheeseO lesson, and do not invent a blog article. '
+            'Do not add a SOURCES list.'
+        )
+        if is_chinese:
+            system_prompt += ' Write in Simplified Chinese.'
+        try:
+            rewritten = generate_answer(
+                system_prompt,
+                f'Question: {query}\n\nOutside notes:\n{body}',
+                model=model,
+            )
+            rewritten = _sanitize_markdown_output(rewritten or '')
+            if is_chinese:
+                rewritten = _ensure_simplified_chinese(rewritten)
+            if rewritten.strip():
+                body = rewritten.strip()
+        except Exception:
+            pass
+    note = f'{label}\n{body}'
+    if include_refusal:
+        return f'{opening}\n\n{note}'
+    return note
+
+
 def handle_user_message(
     query: str,
     user: User | AnonymousUser,
@@ -1029,6 +1208,26 @@ def handle_user_message(
     chat_history: list | None = None,
 ) -> AgentReply:
     tool_trace: list[dict] = []
+    saved_outside_query = _take_outside_offer(query, request)
+    if not saved_outside_query and _is_explicit_outside_confirm(query):
+        saved_outside_query = _topic_before_confirm(chat_history)
+    if saved_outside_query:
+        is_chinese = bool(re.search(r'[\u4e00-\u9fff]', saved_outside_query))
+        outside_notes = lookup_outside_the_blog(saved_outside_query)
+        tool_trace.append({'tool': 'external_lookup', 'result_count': len(outside_notes)})
+        return AgentReply(
+            content=_outside_blog_reply(
+                saved_outside_query,
+                outside_notes,
+                is_chinese=is_chinese,
+                model=model,
+                include_refusal=False,
+            ),
+            citations=[],
+            tool_trace=tool_trace,
+            pending_action={},
+        )
+
     article_scope = get_article_scope(article_id, user, request=request) if article_id else None
     if article_id and article_scope is None:
         return AgentReply(
@@ -1109,20 +1308,20 @@ def handle_user_message(
                     vector_hits = [vh for vh in vector_hits if vh.score >= 0.52]
             tool_trace.append({'tool': 'search_article_vectors', 'result_count': len(vector_hits)})
 
-        # Follow-up coreference fallback: if query is a follow-up (e.g. "What about the second one?")
-        # and returned no search hits, pull context from the previous assistant message's citations.
+        # Only a follow-up that points at a previous item ("the second one") may reuse
+        # that answer's citations. A new topic with no on-site hit must stay unmatched.
         if not (keyword_hits or chunk_hits or vector_hits) and chat_history:
             ord_idx = _extract_ordinal_index(query)
-            for msg in reversed(chat_history):
-                if getattr(msg, 'role', '') == 'assistant' and getattr(msg, 'citations', None):
-                    cites = msg.citations
-                    target_cites = [cites[ord_idx]] if (ord_idx is not None and ord_idx < len(cites)) else cites[:2]
-                    for c in target_cites:
-                        cid = c.get('article_id')
-                        if cid:
-                            keyword_hits.extend(scoped_keyword_hit(int(cid), query, user, request=request))
-                            chunk_hits.extend(search_scoped_article_chunks(int(cid), query, user, limit=3, request=request))
-                    break
+            if ord_idx is not None:
+                for msg in reversed(chat_history):
+                    if getattr(msg, 'role', '') == 'assistant' and getattr(msg, 'citations', None):
+                        cites = msg.citations
+                        if ord_idx < len(cites):
+                            cid = cites[ord_idx].get('article_id')
+                            if cid:
+                                keyword_hits.extend(scoped_keyword_hit(int(cid), query, user, request=request))
+                                chunk_hits.extend(search_scoped_article_chunks(int(cid), query, user, limit=3, request=request))
+                        break
 
     recommend_hits = []
     if 'recommend' in intents and not article_scope:
@@ -1342,19 +1541,39 @@ def handle_user_message(
             pending_action={},
         )
 
-    # BUG-07: If not scoped and no tools returned any matches at all, return a clean no-match response with empty citations
+    if article_scope and not pending_action and not cross_article_target:
+        other_topic = _question_leaves_this_article(query, article_scope)
+        if other_topic:
+            if is_chinese:
+                msg = (
+                    f'这个问答只回答当前文章 **{article_scope.title}**。'
+                    f'你问的是 **{other_topic}**，不是这一篇，所以我不会拿这篇文章来总结。\n\n'
+                    '要在整个博客里找，请打开 [**Reading Assistant**](/agent/)。'
+                )
+            else:
+                msg = (
+                    f'This Article Q&A only covers **{article_scope.title}**. '
+                    f'You asked about **{other_topic}**, which is not this article, '
+                    'so I will not summarize this page as the answer.\n\n'
+                    'To ask about the whole blog, open the [**Reading Assistant**](/agent/).'
+                )
+            return AgentReply(
+                content=msg,
+                citations=[],
+                tool_trace=tool_trace,
+                pending_action={},
+            )
+
+    # BUG-07: no on-site match means no SOURCES. Ask before looking outside the blog.
     has_any_corpus_match = bool(
         article_scope or keyword_hits or chunk_hits or vector_hits
         or reading_path or history_items or reading_list or recommend_hits or pending_action
     )
     if not has_any_corpus_match:
-        no_match_msg = (
-            '抱歉，在当前的博客文章库中找不到与此主题相关的文章。请尝试使用其他关键字搜索！'
-            if is_chinese
-            else 'I cannot find any article about that topic in the blog corpus. Try searching with different keywords.'
-        )
+        content, offer = _outside_offer(query, request, is_chinese=is_chinese)
+        tool_trace.append(offer)
         return AgentReply(
-            content=no_match_msg,
+            content=content,
             citations=[],
             tool_trace=tool_trace,
             pending_action={},

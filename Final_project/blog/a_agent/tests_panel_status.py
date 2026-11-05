@@ -237,6 +237,88 @@ class PanelStatusTests(SimpleTestCase):
         self.assertIn('CheeseO Mascot', rendered)
         self.assertNotIn('>AI<', rendered)
 
+    def test_outside_blog_lookup_is_labeled_and_not_a_source(self):
+        import json
+
+        from a_agent.services.orchestrator import _outside_blog_reply
+        from a_agent.tools.external_lookup import lookup_outside_the_blog, topic_from_query
+
+        topic = topic_from_query(
+            'Summarize the article about Kubernetes Helm chart deployments on this blog.'
+        )
+        self.assertEqual(topic, 'Kubernetes Helm chart deployments')
+
+        pages = {
+            'duckduckgo': '{"AbstractText": "", "Heading": "", "AbstractURL": ""}',
+            'search': json.dumps({'query': {'search': [{'title': 'Helm (package manager)'}]}}),
+            'summary': json.dumps({
+                'title': 'Helm (package manager)',
+                'extract': 'Helm is a package manager for Kubernetes. It installs applications as charts.',
+                'content_urls': {'desktop': {'page': 'https://en.wikipedia.org/wiki/Helm_(package_manager)'}},
+            }),
+        }
+
+        def fetch(url):
+            if 'duckduckgo' in url:
+                return pages['duckduckgo']
+            if 'list=search' in url:
+                return pages['search']
+            return pages['summary']
+
+        notes = lookup_outside_the_blog(
+            'Summarize the article about Kubernetes Helm chart deployments on this blog.',
+            fetch=fetch,
+        )
+        self.assertEqual(len(notes), 1)
+        self.assertEqual(notes[0]['source_name'], 'Wikipedia')
+        reply = _outside_blog_reply(
+            'Summarize the article about Kubernetes Helm chart deployments on this blog.',
+            notes,
+            is_chinese=False,
+            model=None,
+            use_model=False,
+        )
+        self.assertIn('I cannot find any article about that topic in the blog corpus.', reply)
+        self.assertIn('not a lesson on this site', reply)
+        self.assertIn('Helm is a package manager for Kubernetes', reply)
+
+        from a_agent.services.orchestrator import _is_outside_lookup_yes, _outside_offer
+
+        class _Session(dict):
+            modified = False
+
+            def pop(self, key, default=None):
+                self.modified = True
+                return super().pop(key, default)
+
+        request = SimpleNamespace(session=_Session())
+        asked = 'Summarize the article about Kubernetes Helm chart deployments on this blog.'
+        content, offer = _outside_offer(asked, request, is_chinese=False)
+        self.assertIn('Should I look outside the blog?', content)
+        self.assertNotIn('Helm is a package manager', content)
+        self.assertEqual(offer['prompt'], 'Yes, look outside the blog')
+        self.assertEqual(request.session['outside_lookup_query'], asked)
+        from a_agent.services.orchestrator import _take_outside_offer
+        self.assertEqual(_take_outside_offer('Yes, look outside the blog', request), asked)
+        self.assertEqual(request.session['outside_lookup_query'], asked)
+        self.assertEqual(_take_outside_offer('Yes, look outside the blog', request), asked)
+        self.assertEqual(_take_outside_offer('What is Git?', request), '')
+        self.assertNotIn('outside_lookup_query', request.session)
+        self.assertTrue(_is_outside_lookup_yes('Yes, look outside the blog'))
+        self.assertFalse(_is_outside_lookup_yes('Summarize the article about Kubernetes Helm chart deployments on this blog.'))
+
+        from a_agent.services.orchestrator import _question_leaves_this_article
+        cicd = SimpleNamespace(title='The CI/CD Pipeline That Was Lying to Us: A Deploy Debugging Story')
+        self.assertEqual(
+            _question_leaves_this_article(
+                'Summarize the article about Kubernetes Helm chart deployments on this blog.',
+                cicd,
+            ),
+            'Kubernetes Helm chart deployments',
+        )
+        self.assertEqual(_question_leaves_this_article('Summarize this article.', cicd), '')
+        self.assertEqual(_question_leaves_this_article('What are the main points?', cicd), '')
+
     def test_scoped_retrieval_helpers_and_term_extraction(self):
         from a_agent.tools.article_scope import _extract_article_headings, is_summary_query
         from a_agent.tools.chunk_search import _extract_terms_and_phrases
@@ -260,6 +342,9 @@ class PanelStatusTests(SimpleTestCase):
         )
 
         self.assertEqual(_extract_ordinal_index('Add the second article you recommended'), 1)
+        self.assertIsNone(_extract_ordinal_index(
+            'Summarize the article about Kubernetes Helm chart deployments on this blog.'
+        ))
         self.assertEqual(_extract_ordinal_index('把你剛才推薦的第一篇加入清單'), 0)
         self.assertEqual(_extract_ordinal_index('Remove the 3rd article'), 2)
         self.assertIsNone(_extract_ordinal_index('Add this article to my reading list'))

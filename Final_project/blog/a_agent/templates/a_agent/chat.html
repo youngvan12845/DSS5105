@@ -756,11 +756,13 @@ document.addEventListener('DOMContentLoaded', () => {
         removeOptimisticUser();
     });
 
-    document.querySelectorAll('.agent-suggestion-chip').forEach((chip) => {
-        chip.addEventListener('click', () => {
-            chatInput.value = chip.dataset.prompt;
-            chatInput.focus();
-        });
+    document.addEventListener('click', (event) => {
+        const chip = event.target.closest('.agent-suggestion-chip');
+        if (!chip || !chip.dataset.prompt) {
+            return;
+        }
+        chatInput.value = chip.dataset.prompt;
+        chatInput.focus();
     });
 });
 </script>
