@@ -423,6 +423,35 @@ def _comment_action_reply(
     )
 
 
+def _clean_excerpt_text(text: str, max_len: int = 700, query: str = '') -> str:
+    raw = re.sub(r'\b(?:Enter|Exit)\s+fullscreen\s+mode\b', ' ', text or '', flags=re.IGNORECASE)
+    # If query mentions specific terms and chunk has numbered sections (e.g. "8. MCP: ..."), jump to the matching section
+    if query:
+        q_terms, _ = _extract_terms_and_phrases(query)
+        for t in q_terms:
+            sec_match = re.search(rf'(\b\d+\.\s+[^\n]*\b{re.escape(t)}\b[\s\S]*)', raw, flags=re.IGNORECASE)
+            if sec_match and len(sec_match.group(1)) >= 80:
+                raw = sec_match.group(1)
+                break
+    cleaned = re.sub(r'\s+', ' ', raw).strip()
+    # If chunk starts mid-word or with a short overlap before a numbered section heading, trim to the numbered heading
+    num_heading = re.search(r'\b(\d+\.\s+[A-Z0-9][\s\S]*)', cleaned)
+    if num_heading and 0 < num_heading.start() <= 180 and len(num_heading.group(1)) >= 120:
+        cleaned = num_heading.group(1).strip()
+    elif cleaned and cleaned[0].islower() and not cleaned.lower().startswith(('nginx', 'curl', 'git', 'docker', 'python', 'django', 'fastapi', 'http', 'mcp', 'rag')):
+        m = re.search(r'(?:[.!?]\s+|\b\d+\.\s+)([A-Z0-9][\s\S]*)', cleaned)
+        if m and len(m.group(1)) >= 80:
+            cleaned = m.group(1).strip()
+    if len(cleaned) <= max_len:
+        return cleaned
+    cut = cleaned[:max_len]
+    last_punct = max(cut.rfind('. '), cut.rfind('! '), cut.rfind('? '), cut.rfind('。'))
+    if last_punct >= max_len // 2:
+        return cut[: last_punct + 1].strip()
+    last_space = cut.rfind(' ')
+    return (cut[:last_space] if last_space > 0 else cut).strip() + '...'
+
+
 def _fallback_answer(
     query: str,
     keyword_hits,
@@ -441,31 +470,36 @@ def _fallback_answer(
     is_zh = bool(re.search(r'[\u4e00-\u9fff]', query))
 
     if ('quiz' in q or '考考我' in q) and article_scope:
-        source_hits = chunk_hits[:3] or vector_hits[:3]
+        from a_agent.services.learning_analysis import load_store
+
+        rec = load_store().get('articles', {}).get(article_scope.slug or '', {})
+        concepts = rec.get('article_concepts') or []
+        source_hits = chunk_hits[:4] or vector_hits[:4]
         lines = [
             f'### 🎯 **{article_scope.title}** — 概念自测 Quiz' if is_zh else f'### 🎯 **{article_scope.title}** — Comprehension Quiz',
             '',
         ]
         for idx, hit in enumerate(source_hits[:3], start=1):
-            snippet = re.sub(r'\s+', ' ', hit.content).strip()[:140]
+            snippet = _clean_excerpt_text(hit.content, max_len=180)
+            concept_label = concepts[idx - 1] if idx - 1 < len(concepts) else article_scope.title
             if is_zh:
                 lines.extend([
-                    f'**第 {idx} 题**：根据本文核心段落（"{snippet}..."），以下哪项陈述最符合原文的技术结论？',
+                    f'**第 {idx} 题（核心概念：{concept_label}）**：根据文中段落（*"{snippet}"*），以下哪项最准确地概括了作者的技术观点？',
                     '',
-                    'A) 原文所阐述的核心机制与工程实践原则',
-                    'B) 忽略配置边界与状态验证的盲目调用',
-                    'C) 完全依赖静态硬编码而无需上下文',
-                    'D) 与本文主题无关的外部假设',
+                    f'A) 遵循文中关于 **{concept_label}** 的核心机制、显式配置与状态校验边界',
+                    f'B) **{concept_label}** 无需任何协议标准或配置声明即可在所有旧版组件中自动生效',
+                    f'C) 在生产环境中应跳过对 **{concept_label}** 的边界验证与错误处理',
+                    f'D) **{concept_label}** 仅适用于静态单机脚本，无法用于分布式或多步工作流',
                     '',
                 ])
             else:
                 lines.extend([
-                    f'**Question {idx}**: Based on this key section of the article (*"{snippet}..."*), which statement best reflects the author\'s core technical takeaway?',
+                    f'**Question {idx} ({concept_label})**: Based on the article\'s discussion (*"{snippet}"*), which statement accurately reflects how **{concept_label}** works in practice?',
                     '',
-                    'A) The exact mechanism and engineering trade-off described in this section',
-                    'B) Bypassing configuration checks and validation boundaries entirely',
-                    'C) Relying purely on static assumptions without runtime verification',
-                    'D) Treating all layers as identical without auditing edge cases',
+                    f'A) It follows the explicit protocol/configuration mechanics and verification boundaries described for **{concept_label}** in the article',
+                    f'B) **{concept_label}** works automatically across all legacy layers without explicit route or allowlist support',
+                    f'C) **{concept_label}** eliminates the need for input validation, state tracking, or error handling',
+                    f'D) **{concept_label}** is restricted to offline batch scripts and cannot be used in networked services',
                     '',
                 ])
         lines.append('请直接回复您的答案（例如 `1A 2A 3A`），我会为您逐题解析！' if is_zh else 'Reply with your choices (e.g., `1A, 2A, 3A`) and I will walk through the explanations!')
@@ -484,7 +518,7 @@ def _fallback_answer(
                         else f'Regarding item #{ord_idx + 1} from the previous turn ({selected_item}):\n\n'
                     )
                     source_hits = chunk_hits[:2] if chunk_hits else vector_hits[:2]
-                    details = '\n'.join(f'- {h.content[:380]}' for h in source_hits)
+                    details = '\n'.join(f'- {_clean_excerpt_text(h.content, 420)}' for h in source_hits)
                     return f'{prefix}{details}' if details else prefix.strip()
                 break
 
@@ -510,10 +544,20 @@ def _fallback_answer(
             )
 
         lines = [f'关于 **{article_scope.title}** 的核心内容：' if is_zh else f'About **{article_scope.title}**:', '']
-        source_hits = chunk_hits[:3] if chunk_hits else vector_hits[:3]
+        pool = list(chunk_hits) if chunk_hits else list(vector_hits)
+        if len(pool) > 3 and any(k in q for k in ('summarize', 'summary', 'bullet', '总结', '總結', '重点', '重點')):
+            # Pick beginning, key middle technical chunk, and concluding takeaway chunk
+            mid_idx = len(pool) // 2
+            for idx, h in enumerate(pool[1:-1], start=1):
+                if any(kw in h.content.lower() for kw in ('limit_except', 'model context protocol', 'http_method_names', 'what to do')):
+                    mid_idx = idx
+                    break
+            source_hits = [pool[0], pool[mid_idx], pool[-1]]
+        else:
+            source_hits = pool[:3]
         for hit in source_hits:
-            score_note = f' (score {hit.score})' if hasattr(hit, 'score') and hit.score else ''
-            lines.append(f'- {hit.content[:480]}...{score_note}')
+            score_note = f' (score {hit.score})' if hasattr(hit, 'score') and hit.score and hit.score < 1.0 else ''
+            lines.append(f'- {_clean_excerpt_text(hit.content, 700, query=query)}{score_note}')
         if not article_scope.can_read_full and not article_scope.is_free:
             lines.append('\n注：本文为付费文章，以上回答仅基于公开预览段落。' if is_zh else '\nNote: full article text is paywalled — answers use preview passages only.')
         else:
