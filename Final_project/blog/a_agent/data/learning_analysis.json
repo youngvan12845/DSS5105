@@ -580,22 +580,8 @@
         "Version control and its importance in software development",
         "Collaborating on Git & GitHub – Remote Repository"
       ],
-      "prerequisite_concepts": [
-        "What Is Git?",
-        "What Is Version Control?"
-      ],
-      "matches": [
-        {
-          "concept": "What Is Git?",
-          "slug": "git-what-is-git",
-          "title": "What Is Git?"
-        },
-        {
-          "concept": "What Is Version Control?",
-          "slug": "git-what-is-version-control",
-          "title": "What Is Version Control?"
-        }
-      ]
+      "prerequisite_concepts": [],
+      "matches": []
     },
     "git-what-is-git": {
       "version": "c33d543b5470d56b",
@@ -3237,22 +3223,8 @@
         "containers and virtual machines",
         "CI/CD pipelines"
       ],
-      "prerequisite_concepts": [
-        "What Is Git?",
-        "Version Control"
-      ],
-      "matches": [
-        {
-          "concept": "What Is Git?",
-          "slug": "git-what-is-git",
-          "title": "What Is Git?"
-        },
-        {
-          "concept": "Version Control",
-          "slug": "git-what-is-version-control",
-          "title": "What Is Version Control?"
-        }
-      ]
+      "prerequisite_concepts": [],
+      "matches": []
     },
     "docker-computing-environment-and-dependency-conflict": {
       "version": "e172af8feda44449",

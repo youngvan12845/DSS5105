@@ -75,7 +75,8 @@ def calculate_article_readiness(
             'next_milestones': [],
         }
 
-    prereqs = article_meta.get('prerequisites', [])
+    from a_agent.services.learning_analysis import SERIES_FIRST_SLUGS
+    prereqs = [] if article_slug in SERIES_FIRST_SLUGS else article_meta.get('prerequisites', [])
     difficulty = article_meta.get('difficulty', 'beginner')
     intermediate_insights = article_meta.get('intermediate_insights', {})
     next_milestones = article_meta.get('next_milestones', [])

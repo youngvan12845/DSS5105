@@ -36,8 +36,10 @@ def build_article_graph_data(article) -> Dict[str, Any]:
     }
     nodes.append(current_node)
 
-    # 2. Prerequisites (Incoming)
-    prereqs = meta.get('prerequisites', [])
+    # 2. Prerequisites (Incoming) — never attach prerequisite articles to the first article of a series
+    from a_agent.services.learning_analysis import is_series_first_article
+    is_first_lesson = is_series_first_article(article)
+    prereqs = [] if is_first_lesson else meta.get('prerequisites', [])
     for idx, p in enumerate(prereqs):
         p_slug = p.get('slug')
         target_article = None
@@ -62,8 +64,8 @@ def build_article_graph_data(article) -> Dict[str, Any]:
             'label': 'prerequisite',
         })
 
-    # If no prerequisites in graph, check prev_lesson
-    if not prereqs and getattr(article, 'series_slug', None) and hasattr(article, 'get_prev_lesson'):
+    # If no prerequisites in graph, check prev_lesson (only when not the first lesson)
+    if not is_first_lesson and not prereqs and getattr(article, 'series_slug', None) and hasattr(article, 'get_prev_lesson'):
         prev = article.get_prev_lesson()
         if prev:
             node_id = 'prereq_prev'

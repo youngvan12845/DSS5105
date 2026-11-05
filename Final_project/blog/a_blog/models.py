@@ -84,11 +84,17 @@ class BlogPage(Page):
                 sorted_chapters = [chapters_dict[k] for k in sorted(chapters_dict.keys())]
                 total_lessons = sum(len(c["lessons"]) for c in sorted_chapters)
                 
+                first_lesson = (
+                    sorted_chapters[0]["lessons"][0]
+                    if sorted_chapters and sorted_chapters[0]["lessons"]
+                    else None
+                )
                 courses.append({
                     **meta,
                     "chapters": sorted_chapters,
                     "lesson_count": total_lessons,
                     "chapter_count": len(sorted_chapters),
+                    "first_lesson": first_lesson,
                 })
             
             context = super().get_context(request)

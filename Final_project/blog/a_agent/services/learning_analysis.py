@@ -290,6 +290,32 @@ def analysis_for_display(record: dict | None, *, current_version: str, live_titl
     return {'status': UNAVAILABLE}, []
 
 
+SERIES_FIRST_SLUGS = frozenset({
+    'git-chapter-1-git-github-overview',
+    'docker-chapter-1-docker-introduction',
+})
+
+
+def is_series_first_article(article) -> bool:
+    if not article:
+        return False
+    slug = getattr(article, 'slug', '') or ''
+    if slug in SERIES_FIRST_SLUGS:
+        return True
+    series_slug = getattr(article, 'series_slug', '') or ''
+    if not series_slug:
+        return False
+    if getattr(article, 'lesson_number', 0) == 1:
+        return True
+    if hasattr(article, 'get_prev_lesson'):
+        try:
+            if article.get_prev_lesson() is None:
+                return True
+        except Exception:
+            pass
+    return False
+
+
 def store_article_analysis(article, catalog: list[dict], generate: Callable[[str, str], str], *, path: str | None = None) -> dict:
     version = article_version(article)
     body = html_to_text(str(article.body or ''))
@@ -302,12 +328,17 @@ def store_article_analysis(article, catalog: list[dict], generate: Callable[[str
     )
     record = {'version': version, 'status': payload['status']}
     if payload['status'] == READY:
-        record.update(payload)
-        record['matches'] = match_concepts(
-            payload['prerequisite_concepts'],
-            catalog,
-            exclude_slug=article.slug,
-        )
+        if is_series_first_article(article):
+            payload['prerequisite_concepts'] = []
+            record.update(payload)
+            record['matches'] = []
+        else:
+            record.update(payload)
+            record['matches'] = match_concepts(
+                payload['prerequisite_concepts'],
+                catalog,
+                exclude_slug=article.slug,
+            )
     path = path or default_store_path()
     store = load_store(path)
     store['articles'][article.slug] = record
@@ -335,9 +366,15 @@ def display_analysis(article, *, path: str | None = None, live_titles: dict[str,
         from a_blog.models import ArticlePage
 
         live_titles = dict(ArticlePage.objects.live().values_list('slug', 'title'))
-    return analysis_for_display(record if isinstance(record, dict) else None,
-                                current_version=article_version(article),
-                                live_titles=live_titles)
+    payload, matches = analysis_for_display(
+        record if isinstance(record, dict) else None,
+        current_version=article_version(article),
+        live_titles=live_titles,
+    )
+    if is_series_first_article(article) and isinstance(payload, dict) and payload.get('status') == READY:
+        payload = dict(payload, prerequisite_concepts=[])
+        matches = []
+    return payload, matches
 
 
 def cached_bridge_summary(key: str, *, path: str | None = None) -> str | None:

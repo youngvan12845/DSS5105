@@ -69,9 +69,13 @@
                 <rect width="860" height="320" fill="url(#graph-grid)" />
 
                 <!-- Category Column Headings -->
+                {% if concept_graph.prereq_count %}
                 <text x="140" y="24" fill="#64748b" font-size="11" font-weight="700" letter-spacing="1.2" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">PREREQUISITES</text>
+                {% endif %}
                 <text x="430" y="24" fill="#a855f7" font-size="11" font-weight="700" letter-spacing="1.2" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">CURRENT CHAPTER</text>
+                {% if concept_graph.milestone_count %}
                 <text x="720" y="24" fill="#06b6d4" font-size="11" font-weight="700" letter-spacing="1.2" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">NEXT MILESTONES</text>
+                {% endif %}
 
                 <!-- Links / Edges will be rendered here by JS -->
                 <g id="svg-links-group"></g>

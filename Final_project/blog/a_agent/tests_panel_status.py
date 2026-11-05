@@ -363,3 +363,38 @@ class PanelStatusTests(SimpleTestCase):
             reverse('a_agent:clear_all_sessions'),
             '/agent/session/clear-all/',
         )
+
+    def test_series_first_article_has_no_prerequisites(self):
+        from a_agent.services.concept_graph import build_article_graph_data
+        from a_agent.services.learning_analysis import is_series_first_article, load_store
+        from a_agent.services.navigator import calculate_article_readiness
+
+        store = load_store()
+        for slug, series, title in (
+            ('git-chapter-1-git-github-overview', 'git', 'Chapter 1. Git & GitHub Overview'),
+            ('docker-chapter-1-docker-introduction', 'docker', 'Chapter 1. Docker Introduction'),
+        ):
+            rec = store['articles'].get(slug, {})
+            self.assertEqual(rec.get('prerequisite_concepts'), [])
+            self.assertEqual(rec.get('matches'), [])
+
+            mock_article = SimpleNamespace(
+                slug=slug,
+                title=title,
+                intro='Series Lesson 1',
+                url=f'/blog/series/{slug}/',
+                series_slug=series,
+                chapter_number=1,
+                lesson_number=1,
+                get_prev_lesson=lambda: None,
+                get_next_lesson=lambda: None,
+            )
+            self.assertTrue(is_series_first_article(mock_article))
+            readiness = calculate_article_readiness(None, slug)
+            self.assertEqual(readiness['gaps'], [])
+            self.assertEqual(readiness['ready_prereqs'], [])
+
+            graph_data = build_article_graph_data(mock_article)
+            self.assertEqual(graph_data['prereq_count'], 0)
+            prereq_nodes = [n for n in graph_data['nodes'] if n['type'] == 'prerequisite']
+            self.assertEqual(prereq_nodes, [])
