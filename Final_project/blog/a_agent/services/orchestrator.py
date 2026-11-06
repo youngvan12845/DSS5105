@@ -1206,6 +1206,7 @@ def handle_user_message(
     image_file=None,
     article_id: int | None = None,
     chat_history: list | None = None,
+    structured: bool = True,
 ) -> AgentReply:
     tool_trace: list[dict] = []
     saved_outside_query = _take_outside_offer(query, request)
@@ -1591,26 +1592,40 @@ def handle_user_message(
         else:
             lang_directive = 'Respond in English unless the user writes in another language.'
 
-        if is_chinese:
-            structure_guide = (
-                '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE (自适应中文教学结构)]:'
-                '\n1. 当用户询问「概念解释、文章总结、原理解析、技术对比、学习路径」等学习类问题时，请采用以下清晰的中文分层结构：'
-                '\n   🎯 **核心结论**：用 1–2 句话直观概括核心定义或整体结论。'
-                '\n   📌 **核心概念与重点解析**：使用列表项（`- **概念/要点**：解释`）清晰拆解核心机制、权衡或步骤。'
-                '\n   💻 **常用命令 / 代码示例**（仅在涉及 CLI 命令、配置或代码时提供）：使用 ```bash 或 ```python 代码块展示，并用行内代码标注关键参数。'
-                '\n   💡 **下一步学习建议**（如适用）：给出 1–2 条基于检索结果的延伸阅读建议（带文章 Markdown 链接）或启发性思考。'
-                '\n2. 当用户执行「加入/移除阅读清单、拟写评论、互动测验（Quiz Me / 考考我）、简短单句追问或未命中提示」时，请直接用简洁自然的短句回复，不要强行套用上述三段式标题。'
-            )
+        if structured:
+            if is_chinese:
+                structure_guide = (
+                    '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE (自适应中文教学结构)]:'
+                    '\n1. 当用户询问「概念解释、文章总结、原理解析、技术对比、学习路径」等学习类问题时，请采用以下清晰的中文分层结构：'
+                    '\n   🎯 **核心结论**：用 1–2 句话直观概括核心定义或整体结论。'
+                    '\n   📌 **核心概念与重点解析**：使用列表项（`- **概念/要点**：解释`）清晰拆解核心机制、权衡或步骤。'
+                    '\n   💻 **常用命令 / 代码示例**（仅在涉及 CLI 命令、配置或代码时提供）：使用 ```bash 或 ```python 代码块展示，并用行内代码标注关键参数。'
+                    '\n   💡 **下一步学习建议**（如适用）：给出 1–2 条基于检索结果的延伸阅读建议（带文章 Markdown 链接）或启发性思考。'
+                    '\n2. 当用户执行「加入/移除阅读清单、拟写评论、互动测验（Quiz Me / 考考我）、简短单句追问或未命中提示」时，请直接用简洁自然的短句回复，不要强行套用上述三段式标题。'
+                )
+            else:
+                structure_guide = (
+                    '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE]:'
+                    '\n1. When answering conceptual explanations, article summaries, technical comparisons, or learning path questions, organize your reply with clear learning sections:'
+                    '\n   🎯 **Core Takeaway**: 1–2 direct sentences stating the core definition or synthesis.'
+                    '\n   📌 **Key Concepts & Breakdown**: Clean bullet points (`- **Concept**: Explanation`) breaking down the mechanics, trade-offs, or steps.'
+                    '\n   💻 **Commands / Code Example** (only when CLI commands, configs, or code apply): Use fenced code blocks (```bash or ```python) and inline `backticks`.'
+                    '\n   💡 **Next Steps** (when applicable): 1–2 recommended follow-up links from the provided results or a brief learning takeaway.'
+                    '\n2. When handling reading-list actions, comment drafts, interactive quizzes ("Quiz Me"), brief single-fact follow-ups, or ungrounded refusals, reply directly and concisely without forcing the section headers above.'
+                )
         else:
-            structure_guide = (
-                '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE]:'
-                '\n1. When answering conceptual explanations, article summaries, technical comparisons, or learning path questions, organize your reply with clear learning sections:'
-                '\n   🎯 **Core Takeaway**: 1–2 direct sentences stating the core definition or synthesis.'
-                '\n   📌 **Key Concepts & Breakdown**: Clean bullet points (`- **Concept**: Explanation`) breaking down the mechanics, trade-offs, or steps.'
-                '\n   💻 **Commands / Code Example** (only when CLI commands, configs, or code apply): Use fenced code blocks (```bash or ```python) and inline `backticks`.'
-                '\n   💡 **Next Steps** (when applicable): 1–2 recommended follow-up links from the provided results or a brief learning takeaway.'
-                '\n2. When handling reading-list actions, comment drafts, interactive quizzes ("Quiz Me"), brief single-fact follow-ups, or ungrounded refusals, reply directly and concisely without forcing the section headers above.'
-            )
+            if is_chinese:
+                structure_guide = (
+                    '\n\n[RESPONSE STYLE (自然自由回答)]:'
+                    '\n请用自然、流畅、直接的对话风格回答用户。'
+                    '\n严禁套用「🎯 核心结论」「📌 核心概念与重点解析」「💻 常用命令」「💡 下一步学习建议」等任何模板化固定小标题。根据技术逻辑自然分段作答即可。'
+                )
+            else:
+                structure_guide = (
+                    '\n\n[RESPONSE STYLE]:'
+                    '\nAnswer naturally and conversationally in Markdown.'
+                    '\nDo NOT enforce any template headers (e.g. no 🎯 Core Takeaway, 📌 Key Concepts, 💡 Next Steps). Write in natural technical discussion format.'
+                )
 
         format_directive = (
             '\n\n[CRITICAL FACTUAL INTEGRITY & ACRONYM RULES]:'

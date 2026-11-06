@@ -4,6 +4,7 @@ import base64
 import json
 import logging
 import mimetypes
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -11,7 +12,18 @@ from typing import Any
 
 from django.conf import settings
 
-from a_agent.config import default_ollama_model, normalize_model
+from a_agent.config import (
+    ANTHROPIC_MODEL_IDS,
+    CLOUDFLARE_MODEL_IDS,
+    OLLAMA_MODEL_IDS,
+    OPENAI_MODEL_IDS,
+    default_anthropic_model,
+    default_cloudflare_model,
+    default_ollama_model,
+    default_openai_model,
+    is_vision_model,
+    normalize_model,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -25,13 +37,25 @@ class LLMInfo:
     vision: bool
 
 
-def _provider() -> str:
+def _provider(model: str | None = None) -> str:
+    if model:
+        if model in ANTHROPIC_MODEL_IDS or model.startswith('claude-'):
+            return 'anthropic'
+        if model in OPENAI_MODEL_IDS or model.startswith(('gpt-', 'o1-', 'o3-')):
+            return 'openai'
+        if model in CLOUDFLARE_MODEL_IDS or model.startswith('@cf/'):
+            return 'cloudflare'
+        if model in OLLAMA_MODEL_IDS:
+            return 'ollama'
+
     provider = getattr(settings, 'AGENT_LLM_PROVIDER', 'cloudflare').lower()
     if provider == 'ollama' and not ollama_reachable():
         if getattr(settings, 'CLOUDFLARE_API_TOKEN', ''):
             return 'cloudflare'
         if getattr(settings, 'AGENT_OPENAI_API_KEY', ''):
             return 'openai'
+        if getattr(settings, 'ANTHROPIC_API_KEY', ''):
+            return 'anthropic'
     return provider
 
 
@@ -51,20 +75,59 @@ def ollama_reachable() -> bool:
         return False
 
 
-def llm_configured() -> bool:
-    provider = _provider()
+def llm_configured(model: str | None = None) -> bool:
+    provider = _provider(model)
+    if provider == 'anthropic':
+        return bool(getattr(settings, 'ANTHROPIC_API_KEY', ''))
+    if provider == 'openai':
+        return bool(getattr(settings, 'AGENT_OPENAI_API_KEY', ''))
     if provider == 'ollama':
         return ollama_reachable()
     if provider == 'cloudflare':
         return bool(getattr(settings, 'CLOUDFLARE_API_TOKEN', ''))
-    return bool(getattr(settings, 'AGENT_OPENAI_API_KEY', ''))
+    return False
 
 
 def get_llm_info(model: str | None = None) -> LLMInfo:
-    from a_agent.config import is_vision_model
-
     selected = normalize_model(model)
-    provider = _provider()
+    provider = _provider(selected)
+
+    if provider == 'anthropic':
+        api_key = getattr(settings, 'ANTHROPIC_API_KEY', '')
+        if api_key:
+            return LLMInfo(
+                configured=True,
+                provider='anthropic',
+                model=selected,
+                label=f'Claude · {selected}',
+                vision=is_vision_model(selected),
+            )
+        return LLMInfo(
+            configured=False,
+            provider='fallback',
+            model='',
+            label='Claude offline (ANTHROPIC_API_KEY missing)',
+            vision=False,
+        )
+
+    if provider == 'openai':
+        api_key = getattr(settings, 'AGENT_OPENAI_API_KEY', '')
+        if api_key:
+            return LLMInfo(
+                configured=True,
+                provider='openai',
+                model=selected,
+                label=f'ChatGPT · {selected}',
+                vision=is_vision_model(selected),
+            )
+        return LLMInfo(
+            configured=False,
+            provider='fallback',
+            model='',
+            label='OpenAI offline (OPENAI_API_KEY missing)',
+            vision=False,
+        )
+
     if provider == 'ollama':
         if ollama_reachable():
             return LLMInfo(
@@ -84,7 +147,7 @@ def get_llm_info(model: str | None = None) -> LLMInfo:
 
     if provider == 'cloudflare':
         token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
-        cf_model = selected if selected.startswith('@cf/') else getattr(settings, 'CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
+        cf_model = selected if selected.startswith('@cf/') else getattr(settings, 'CLOUDFLARE_AI_MODEL', default_cloudflare_model())
         if token:
             display_name = cf_model.split('/')[-1]
             return LLMInfo(
@@ -102,17 +165,6 @@ def get_llm_info(model: str | None = None) -> LLMInfo:
             vision=False,
         )
 
-    api_key = getattr(settings, 'AGENT_OPENAI_API_KEY', '')
-    openai_model = getattr(settings, 'AGENT_OPENAI_MODEL', 'gpt-4o-mini')
-    if api_key:
-        return LLMInfo(
-            configured=True,
-            provider='openai',
-            model=openai_model,
-            label=f'OpenAI · {openai_model}',
-            vision=False,
-        )
-
     return LLMInfo(
         configured=False,
         provider='fallback',
@@ -122,29 +174,103 @@ def get_llm_info(model: str | None = None) -> LLMInfo:
     )
 
 
-def _build_user_message(user_prompt: str, image_file) -> str | list[dict]:
-    """Attach an uploaded image (a Django FieldFile) to the user message.
-
-    Reads through the storage backend rather than a filesystem path, so it
-    works with local media and with remote storage such as Supabase.
-    """
+def _read_image_base64(image_file) -> tuple[str, str]:
+    """Extract (base64_data, mime_type) from Django FieldFile."""
     if not image_file:
-        return user_prompt
-
+        return '', ''
     try:
         with image_file.open('rb') as fh:
             data = fh.read()
-    except Exception:
-        logger.warning('Could not read uploaded image %s; answering without it.', image_file.name)
-        return user_prompt
+        mime, _ = mimetypes.guess_type(getattr(image_file, 'name', 'image.jpg'))
+        mime = mime or 'image/jpeg'
+        encoded = base64.b64encode(data).decode('ascii')
+        return encoded, mime
+    except Exception as exc:
+        logger.warning('Could not read uploaded image; answering without it. %s', exc)
+        return '', ''
 
-    mime, _ = mimetypes.guess_type(image_file.name)
-    mime = mime or 'image/jpeg'
-    encoded = base64.b64encode(data).decode('ascii')
+
+def _build_openai_user_message(user_prompt: str, image_file) -> str | list[dict]:
+    encoded, mime = _read_image_base64(image_file)
+    if not encoded:
+        return user_prompt
     return [
         {'type': 'text', 'text': user_prompt},
         {'type': 'image_url', 'image_url': {'url': f'data:{mime};base64,{encoded}'}},
     ]
+
+
+def _call_anthropic(system_prompt: str, user_prompt: str, model: str, image_file=None) -> str:
+    """Call Anthropic Messages API (Claude 3.5 Sonnet / Haiku / Opus) via httpx."""
+    import httpx
+
+    api_key = getattr(settings, 'ANTHROPIC_API_KEY', '')
+    if not api_key:
+        raise RuntimeError('ANTHROPIC_API_KEY is not configured in settings or environment')
+    base_url = getattr(settings, 'AGENT_ANTHROPIC_BASE_URL', 'https://api.anthropic.com/v1').rstrip('/')
+
+    content_blocks = []
+    encoded, mime = _read_image_base64(image_file)
+    if encoded:
+        content_blocks.append({
+            'type': 'image',
+            'source': {
+                'type': 'base64',
+                'media_type': mime,
+                'data': encoded,
+            },
+        })
+    content_blocks.append({'type': 'text', 'text': user_prompt})
+
+    headers = {
+        'x-api-key': api_key,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+    }
+    payload: dict[str, Any] = {
+        'model': model,
+        'max_tokens': 1200,
+        'temperature': 0.1,
+        'messages': [
+            {'role': 'user', 'content': content_blocks},
+        ],
+    }
+    if system_prompt:
+        payload['system'] = system_prompt
+
+    with httpx.Client(timeout=35.0) as client:
+        resp = client.post(f'{base_url}/messages', headers=headers, json=payload)
+        resp.raise_for_status()
+        data = resp.json()
+        texts = [block['text'] for block in data.get('content', []) if block.get('type') == 'text']
+        return ''.join(texts).strip()
+
+
+def _call_openai(system_prompt: str, user_prompt: str, model: str, image_file=None) -> str:
+    """Call OpenAI API (ChatGPT: GPT-4o, GPT-4o-mini, o3-mini, etc.)."""
+    from openai import OpenAI
+
+    api_key = getattr(settings, 'AGENT_OPENAI_API_KEY', '')
+    if not api_key:
+        raise RuntimeError('OPENAI_API_KEY is not configured in settings or environment')
+    base_url = getattr(settings, 'AGENT_OPENAI_BASE_URL', None) or None
+    client = OpenAI(api_key=api_key, base_url=base_url, timeout=35.0)
+
+    user_content = _build_openai_user_message(user_prompt, image_file)
+    messages = [
+        {'role': 'system', 'content': system_prompt},
+        {'role': 'user', 'content': user_content},
+    ]
+
+    kwargs: dict[str, Any] = {'model': model, 'messages': messages}
+    if model.startswith(('o1', 'o3')):
+        kwargs['max_completion_tokens'] = 1200
+    else:
+        kwargs['temperature'] = 0.1
+        kwargs['max_tokens'] = 1200
+
+    response = client.chat.completions.create(**kwargs)
+    return (response.choices[0].message.content or '').strip()
 
 
 _CF_LLM_QUOTA_EXHAUSTED_UNTIL: float = 0.0
@@ -158,66 +284,80 @@ def generate_answer(
     image_file=None,
 ) -> str:
     global _CF_LLM_QUOTA_EXHAUSTED_UNTIL
-    import time
 
-    try:
+    selected_provider = _provider(model)
+
+    # 1. Anthropic (Claude)
+    if selected_provider == 'anthropic':
+        selected_model = model or getattr(settings, 'AGENT_ANTHROPIC_MODEL', default_anthropic_model())
+        return _call_anthropic(system_prompt, user_prompt, selected_model, image_file=image_file)
+
+    # 2. OpenAI (ChatGPT)
+    if selected_provider == 'openai':
+        selected_model = model or getattr(settings, 'AGENT_OPENAI_MODEL', default_openai_model())
+        return _call_openai(system_prompt, user_prompt, selected_model, image_file=image_file)
+
+    # 3. Ollama (Local)
+    if selected_provider == 'ollama':
         from openai import OpenAI
-    except ImportError as exc:
-        raise RuntimeError('openai package is not installed') from exc
 
-    provider = _provider()
-    if provider == 'cloudflare' and time.time() < _CF_LLM_QUOTA_EXHAUSTED_UNTIL:
-        raise RuntimeError('Cloudflare daily free neuron quota temporarily exhausted')
-    if provider == 'ollama':
         if not ollama_reachable():
             raise RuntimeError('Ollama is not running')
         base_url = getattr(settings, 'AGENT_OLLAMA_BASE_URL', 'http://127.0.0.1:11434/v1')
         selected_model = normalize_model(model)
-        client = OpenAI(base_url=base_url, api_key='ollama', timeout=25.0)
-    elif provider == 'cloudflare':
-        account_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
-        token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
-        if not token:
-            raise RuntimeError('CLOUDFLARE_API_TOKEN is not configured')
-        base_url = f'https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1'
-        if model and model.startswith('@cf/'):
-            selected_model = model
-        else:
-            selected_model = getattr(settings, 'CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
-        if image_file and 'scout' not in selected_model and 'vision' not in selected_model:
-            selected_model = getattr(settings, 'CLOUDFLARE_VISION_MODEL', '@cf/meta/llama-4-scout-17b-16e-instruct')
-        client = OpenAI(base_url=base_url, api_key=token, timeout=25.0)
-    else:
-        api_key = getattr(settings, 'AGENT_OPENAI_API_KEY', '')
-        if not api_key:
-            raise RuntimeError('OPENAI_API_KEY is not configured')
-        base_url = getattr(settings, 'AGENT_OPENAI_BASE_URL', None) or None
-        if model and (model.startswith('gpt-') or model.startswith('o1') or model.startswith('o3')):
-            selected_model = model
-        else:
-            selected_model = getattr(settings, 'AGENT_OPENAI_MODEL', 'gpt-4o-mini')
-        client = OpenAI(base_url=base_url, api_key=api_key, timeout=25.0)
+        client = OpenAI(base_url=base_url, api_key='ollama', timeout=30.0)
+        user_content = _build_openai_user_message(user_prompt, image_file)
+        response = client.chat.completions.create(
+            model=selected_model,
+            messages=[
+                {'role': 'system', 'content': system_prompt},
+                {'role': 'user', 'content': user_content},
+            ],
+            temperature=0.1,
+            max_tokens=900,
+        )
+        return (response.choices[0].message.content or '').strip()
 
-    user_content = _build_user_message(user_prompt, image_file)
+    # 4. Cloudflare Workers AI
+    if time.time() < _CF_LLM_QUOTA_EXHAUSTED_UNTIL:
+        raise RuntimeError('Cloudflare daily free neuron quota temporarily exhausted')
+
+    from openai import OpenAI
+
+    account_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
+    token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
+    if not token:
+        raise RuntimeError('CLOUDFLARE_API_TOKEN is not configured')
+    base_url = f'https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1'
+
+    if model and model.startswith('@cf/'):
+        selected_model = model
+    else:
+        selected_model = getattr(settings, 'CLOUDFLARE_AI_MODEL', default_cloudflare_model())
+
+    if image_file and 'scout' not in selected_model and 'vision' not in selected_model:
+        selected_model = getattr(settings, 'CLOUDFLARE_VISION_MODEL', '@cf/meta/llama-4-scout-17b-16e-instruct')
+
+    client = OpenAI(base_url=base_url, api_key=token, timeout=25.0)
+    user_content = _build_openai_user_message(user_prompt, image_file)
     messages = [
         {'role': 'system', 'content': system_prompt},
         {'role': 'user', 'content': user_content},
     ]
 
     candidate_models = [selected_model]
-    if provider == 'cloudflare':
-        fallback_cf = (
-            ['@cf/meta/llama-4-scout-17b-16e-instruct']
-            if image_file
-            else [
-                '@cf/qwen/qwen2.5-coder-32b-instruct',
-                '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
-                '@cf/meta/llama-4-scout-17b-16e-instruct',
-            ]
-        )
-        for m in fallback_cf:
-            if m not in candidate_models:
-                candidate_models.append(m)
+    fallback_cf = (
+        ['@cf/meta/llama-4-scout-17b-16e-instruct']
+        if image_file
+        else [
+            '@cf/qwen/qwen2.5-coder-32b-instruct',
+            '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+            '@cf/meta/llama-4-scout-17b-16e-instruct',
+        ]
+    )
+    for m in fallback_cf:
+        if m not in candidate_models:
+            candidate_models.append(m)
 
     last_exc = None
     for cand_model in candidate_models:
@@ -231,7 +371,7 @@ def generate_answer(
                 )
                 text = response.choices[0].message.content or ''
                 if text.strip():
-                    return text
+                    return text.strip()
             except Exception as exc:
                 last_exc = exc
                 err_str = str(exc)

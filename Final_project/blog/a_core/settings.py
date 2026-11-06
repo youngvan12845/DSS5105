@@ -186,11 +186,16 @@ WAGTAIL_SITE_NAME = 'Blog'
 WAGTAILADMIN_BASE_URL = os.environ.get('WAGTAILADMIN_BASE_URL', 'http://127.0.0.1:8000')
 
 # Reading Co-Pilot Agent — default: Cloudflare Workers AI (BGE-M3 1024-dim embeddings + Qwen 2.5 32B)
-# Provider: cloudflare (default) | openai | ollama
+# Provider: cloudflare (default) | openai | anthropic | ollama
 AGENT_LLM_PROVIDER = os.environ.get('AGENT_LLM_PROVIDER', 'cloudflare')
 AGENT_OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 AGENT_OPENAI_MODEL = os.environ.get('OPENAI_MODEL', 'gpt-4o-mini')
 AGENT_OPENAI_BASE_URL = os.environ.get('OPENAI_BASE_URL', '')
+
+# Claude (Anthropic)
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
+AGENT_ANTHROPIC_MODEL = os.environ.get('ANTHROPIC_MODEL', 'claude-3-5-sonnet-20241022')
+AGENT_ANTHROPIC_BASE_URL = os.environ.get('ANTHROPIC_BASE_URL', 'https://api.anthropic.com/v1')
 AGENT_OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://127.0.0.1:11434/v1')
 AGENT_OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'qwen2.5vl:7b')
 AGENT_OLLAMA_EMBED_MODEL = os.environ.get('OLLAMA_EMBED_MODEL', 'nomic-embed-text')
