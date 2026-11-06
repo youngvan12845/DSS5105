@@ -26,12 +26,19 @@ def article_search(request):
         articles = articles.filter(tags__name=tag)
     
     if search_query:
-        articles = articles.filter(
+        q_filter = (
             Q(title__icontains=search_query)
             | Q(intro__icontains=search_query)
             | Q(body__icontains=search_query)
             | Q(tags__name__icontains=search_query)
-        ).distinct()
+        )
+        articles = articles.filter(q_filter).distinct()
+        if not articles.exists():
+            # Fallback to searching all live articles (including series lessons) if no general blog post matched
+            all_pool = ArticlePage.objects.live()
+            if tag:
+                all_pool = all_pool.filter(tags__name=tag)
+            articles = all_pool.filter(q_filter).distinct()
     
     # 排序处理（转换为列表后安全排序，兼容 first_published_at 为 None）
     import datetime

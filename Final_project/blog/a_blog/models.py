@@ -105,9 +105,17 @@ class BlogPage(Page):
 
         # Regular Blog context
         tag = request.GET.get("tag")
+        search_query = request.GET.get("query", "").strip()
         articles = ArticlePage.objects.child_of(self).live()
         if tag:
             articles = articles.filter(tags__name=tag)
+        if search_query:
+            articles = articles.filter(
+                models.Q(title__icontains=search_query)
+                | models.Q(intro__icontains=search_query)
+                | models.Q(body__icontains=search_query)
+                | models.Q(tags__name__icontains=search_query)
+            ).distinct()
             
         articles = articles.order_by("-first_published_at")
             
