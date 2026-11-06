@@ -1,7 +1,7 @@
-"""Look up a topic outside the blog when on-site search finds nothing.
+"""Look up a topic outside the blog when on-site search finds nothing or when
+enriching deep mathematical/system principles and cross-domain analogies.
 
-Results are notes for the reply. They are not blog lessons and must not be
-added to the SOURCES list.
+Results are notes for the reply.
 """
 
 from __future__ import annotations
@@ -69,6 +69,8 @@ def _duckduckgo_note(topic: str, fetch) -> dict | None:
         'url': (payload.get('AbstractURL') or '').strip(),
         'excerpt': excerpt[:700],
         'source_name': 'DuckDuckGo',
+        'source_abbr': 'DDG',
+        'is_external': True,
     }
 
 
@@ -115,6 +117,8 @@ def _wikipedia_note(topic: str, fetch) -> dict | None:
         'url': (desktop.get('page') or '').strip(),
         'excerpt': excerpt[:700],
         'source_name': 'Wikipedia',
+        'source_abbr': 'Wiki',
+        'is_external': True,
     }
 
 
@@ -125,3 +129,60 @@ def lookup_outside_the_blog(query: str, *, fetch=None) -> list[dict]:
     fetch = fetch or _fetch
     note = _duckduckgo_note(topic, fetch) or _wikipedia_note(topic, fetch)
     return [note] if note else []
+
+
+def extract_enrichment_topics(query: str) -> list[str]:
+    """Extract targeted concepts for deep-dive principles or cross-domain analogy."""
+    q = (query or '').lower()
+    topics = []
+
+    # 1. Cross-domain comparison targets
+    if any(k in q for k in ('数据库', '資料庫', 'database', 'db')):
+        if any(w in q for w in ('index', '索引')):
+            topics.append('Database index')
+        if any(w in q for w in ('transaction', '事务', '事務')):
+            topics.append('Database transaction')
+    if any(k in q for k in ('前端', 'frontend', 'css', 'ui')):
+        if any(w in q for w in ('container', '容器')):
+            topics.append('Container query')
+    if any(k in q for k in ('机器学习', '機器學習', 'ml', 'ai', 'data science')):
+        if any(w in q for w in ('pipeline', '流水线', '管线')):
+            topics.append('Pipeline (computing)')
+
+    # 2. Mathematical and CS algorithmic internals
+    patterns = [
+        (r'\b(sha-?1|sha-?256|hash function|散列|哈希|散列函数)\b', 'Cryptographic hash function'),
+        (r'\b(dag|directed acyclic graph|有向无环图|有向無環圖)\b', 'Directed acyclic graph'),
+        (r'\b(cgroups?|control groups?|控制组)\b', 'Cgroups'),
+        (r'\b(namespaces?|命名空间|命名空間)\b', 'Linux namespaces'),
+        (r'\b(epoll|io multiplexing|多路复用|多路復用)\b', 'Epoll'),
+        (r'\b(b-?tree|b树|b\+树|b-樹)\b', 'B-tree'),
+        (r'\b(raft|paxos|consensus|共识算法)\b', 'Raft (algorithm)'),
+        (r'\b(crdt)\b', 'Conflict-free replicated data type'),
+    ]
+    for pattern, target in patterns:
+        if re.search(pattern, q, re.I) and target not in topics:
+            topics.append(target)
+
+    # 3. Fallback: If query explicitly asks for mathematical or underlying principles
+    if not topics and any(w in q for w in ('数学原理', '數學原理', '底层原理', '底層原理', 'algorithm', 'internals')):
+        acronyms = re.findall(r'\b[A-Z]{2,10}\b', query)
+        for acr in acronyms:
+            if acr not in ('HTTP', 'HTML', 'URL', 'GET', 'POST', 'GIT'):
+                topics.append(acr)
+
+    return topics[:2]
+
+
+def enrich_concept_lookup(query: str, *, fetch=None) -> list[dict]:
+    """Look up authoritative external concepts to enrich deep principles or cross-domain analogy."""
+    topics = extract_enrichment_topics(query)
+    if not topics:
+        return []
+    fetch = fetch or _fetch
+    results = []
+    for t in topics:
+        note = _wikipedia_note(t, fetch) or _duckduckgo_note(t, fetch)
+        if note:
+            results.append(note)
+    return results

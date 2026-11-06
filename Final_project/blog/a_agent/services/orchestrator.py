@@ -15,7 +15,7 @@ from a_agent.tools.article_scope import (
     search_scoped_article_vectors,
 )
 from a_agent.tools.comment_draft import build_comment_draft, propose_post_comment
-from a_agent.tools.external_lookup import lookup_outside_the_blog, topic_from_query
+from a_agent.tools.external_lookup import enrich_concept_lookup, lookup_outside_the_blog, topic_from_query
 from a_agent.tools.browsing_history import get_browsing_history, history_to_dicts
 from a_agent.tools.chunk_search import _extract_terms_and_phrases, _word_match, chunk_hits_to_dicts, search_article_chunks
 from a_agent.tools.keyword_search import hits_to_dicts, keyword_search_articles
@@ -155,6 +155,18 @@ COMMENT_HINTS = (
 )
 
 
+DEEP_PRINCIPLE_HINTS = (
+    '数学原理', '數學原理', '底层原理', '底層原理', '底层算法', '底層演算法',
+    '底层怎么实现', '底層怎麼實現', '数据结构', '資料結構', '公式', '证明', '證明',
+    'mathematical', 'internals of', 'under the hood', 'how it works internally',
+    'algorithm', 'hash function', '散列', '哈希', '有向无环图', '有向無環圖',
+)
+CROSS_DOMAIN_HINTS = (
+    '区别', '區別', '不同', '和数据库的', '和前端的', '和机器学习的',
+    'versus', 'vs.', 'vs ', 'difference between', 'compare with', 'in other fields',
+)
+
+
 def _classify_intents(query: str) -> set[str]:
     q = query.lower()
     intents: set[str] = set()
@@ -173,6 +185,10 @@ def _classify_intents(query: str) -> set[str]:
         intents.add('reading_list')
     if any(h in q for h in COMMENT_HINTS):
         intents.add('action_comment')
+    if any(h in q for h in DEEP_PRINCIPLE_HINTS):
+        intents.add('deep_dive')
+    if any(h in q for h in CROSS_DOMAIN_HINTS):
+        intents.add('cross_domain')
 
     search_triggers = (
         'what', 'which', 'summarize', 'explain', 'cover', 'mention',
@@ -1259,6 +1275,18 @@ def _handle_user_message_core(
         is_chinese = bool(re.search(r'[\u4e00-\u9fff]', saved_outside_query))
         outside_notes = lookup_outside_the_blog(saved_outside_query)
         tool_trace.append({'tool': 'external_lookup', 'result_count': len(outside_notes)})
+        ext_citations = [
+            {
+                'article_id': None,
+                'title': f"{n.get('source_abbr', 'EXT')}: {n.get('title')}",
+                'url': n.get('url', ''),
+                'source': 'external_lookup',
+                'source_abbr': n.get('source_abbr', 'Wiki'),
+                'is_external': True,
+            }
+            for n in outside_notes
+            if n.get('url')
+        ]
         return AgentReply(
             content=_outside_blog_reply(
                 saved_outside_query,
@@ -1267,7 +1295,7 @@ def _handle_user_message_core(
                 model=model,
                 include_refusal=False,
             ),
-            citations=[],
+            citations=ext_citations,
             tool_trace=tool_trace,
             pending_action={},
         )
@@ -1625,6 +1653,25 @@ def _handle_user_message_core(
 
     citations = _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=reading_path)
 
+    enrichment_notes = []
+    if 'deep_dive' in intents or 'cross_domain' in intents:
+        enrichment_notes = enrich_concept_lookup(query)
+        if enrichment_notes:
+            tool_trace.append({
+                'tool': 'enrich_concept_lookup',
+                'concepts': [n.get('title') for n in enrichment_notes],
+                'count': len(enrichment_notes),
+            })
+            for en in enrichment_notes:
+                citations.append({
+                    'article_id': None,
+                    'title': f"{en.get('source_abbr', 'Wiki')}: {en.get('title')}",
+                    'url': en.get('url', ''),
+                    'source': 'external_lookup',
+                    'source_abbr': en.get('source_abbr', 'Wiki'),
+                    'is_external': True,
+                })
+
     if llm_configured():
         if is_chinese:
             lang_directive = (
@@ -1742,6 +1789,16 @@ def _handle_user_message_core(
             f'Reading list:\n{reading_list_to_dicts(reading_list)}\n\n'
             f'Pending action:\n{pending_action or None}'
         )
+        if enrichment_notes:
+            user_prompt += (
+                f'\n\n[Supplementary External Background for Deep Principles / Cross-Domain Analogy]:\n'
+                f'{_outside_note_lines(enrichment_notes)}\n'
+                f'Instructions for Supplementary Notes:\n'
+                f'1. The core answer must remain firmly grounded in the blog articles above.\n'
+                f'2. Synthesize these external supplementary notes under a dedicated subsection titled '
+                f'"💡 延伸原理 / 跨领域对比" (or "💡 Deep Dive & Analogy") to enrich the student\'s understanding.\n'
+                f'3. Explicitly cite the source abbreviation with its title (e.g. "[Wiki: {enrichment_notes[0].get("title")}]").\n'
+            )
         if is_chinese:
             user_prompt += '\n\n[Final Reminder: Regardless of whether the user wrote in Traditional or Simplified Chinese, you MUST write your entire response in Simplified Chinese (简体中文).]'
         try:

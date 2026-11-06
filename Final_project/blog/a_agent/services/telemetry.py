@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import contextlib
 import logging
+import sys
 from typing import Any
 
 from django.conf import settings
@@ -63,16 +64,25 @@ def trace_agent(
     }
 
     try:
-        with client.start_as_current_observation(
+        cm = client.start_as_current_observation(
             name=name,
             as_type='agent',
             input={'query': query},
             metadata=meta,
-        ) as agent_obs:
-            yield agent_obs
+        )
+        obs = cm.__enter__()
     except Exception as exc:
-        logger.debug('Langfuse trace_agent observation error: %s', exc)
+        logger.debug('Langfuse trace_agent start error: %s', exc)
         yield None
+        return
+
+    try:
+        yield obs
+    except Exception:
+        cm.__exit__(*sys.exc_info())
+        raise
+    else:
+        cm.__exit__(None, None, None)
 
 
 @contextlib.contextmanager
@@ -84,16 +94,25 @@ def trace_retriever(name: str = 'Retrieval', query: str = '', metadata: dict[str
         return
 
     try:
-        with client.start_as_current_observation(
+        cm = client.start_as_current_observation(
             name=name,
             as_type='retriever',
             input={'query': query},
             metadata=metadata or {},
-        ) as ret_obs:
-            yield ret_obs
+        )
+        obs = cm.__enter__()
     except Exception as exc:
-        logger.debug('Langfuse trace_retriever observation error: %s', exc)
+        logger.debug('Langfuse trace_retriever start error: %s', exc)
         yield None
+        return
+
+    try:
+        yield obs
+    except Exception:
+        cm.__exit__(*sys.exc_info())
+        raise
+    else:
+        cm.__exit__(None, None, None)
 
 
 @contextlib.contextmanager
@@ -111,17 +130,26 @@ def trace_llm_generation(
         return
 
     try:
-        with client.start_as_current_observation(
+        cm = client.start_as_current_observation(
             name=name,
             as_type='generation',
             model=model,
             input={'system': system_prompt, 'user': user_prompt},
             metadata=metadata or {},
-        ) as gen_obs:
-            yield gen_obs
+        )
+        obs = cm.__enter__()
     except Exception as exc:
-        logger.debug('Langfuse trace_llm_generation observation error: %s', exc)
+        logger.debug('Langfuse trace_llm_generation start error: %s', exc)
         yield None
+        return
+
+    try:
+        yield obs
+    except Exception:
+        cm.__exit__(*sys.exc_info())
+        raise
+    else:
+        cm.__exit__(None, None, None)
 
 
 def flush_telemetry():
