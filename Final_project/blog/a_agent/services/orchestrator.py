@@ -29,6 +29,12 @@ from a_agent.tools.reading_paths import get_reading_path_for_user, reading_path_
 from a_agent.tools.recommend import recommend_articles, recommend_hits_to_dicts
 from a_agent.tools.vector_search import search_article_vectors, vector_hits_to_dicts
 from a_agent.services.llm import generate_answer, get_llm_info, llm_configured
+from a_agent.services.telemetry import (
+    flush_telemetry,
+    trace_agent,
+    trace_llm_generation,
+    trace_retriever,
+)
 
 
 @dataclass
@@ -1208,6 +1214,43 @@ def handle_user_message(
     chat_history: list | None = None,
     structured: bool = True,
 ) -> AgentReply:
+    with trace_agent(
+        name='CheeseO-Agent',
+        query=query,
+        user=user,
+        model=model,
+        metadata={'structured': structured, 'article_id': article_id},
+    ) as agent_trace:
+        reply = _handle_user_message_core(
+            query,
+            user,
+            request=request,
+            model=model,
+            image_file=image_file,
+            article_id=article_id,
+            chat_history=chat_history,
+            structured=structured,
+        )
+        if agent_trace:
+            agent_trace.update(
+                output=reply.content,
+                metadata={'citations_count': len(reply.citations)},
+            )
+        flush_telemetry()
+        return reply
+
+
+def _handle_user_message_core(
+    query: str,
+    user: User | AnonymousUser,
+    *,
+    request=None,
+    model: str | None = None,
+    image_file=None,
+    article_id: int | None = None,
+    chat_history: list | None = None,
+    structured: bool = True,
+) -> AgentReply:
     tool_trace: list[dict] = []
     saved_outside_query = _take_outside_offer(query, request)
     if not saved_outside_query and _is_explicit_outside_confirm(query):
@@ -1702,12 +1745,20 @@ def handle_user_message(
         if is_chinese:
             user_prompt += '\n\n[Final Reminder: Regardless of whether the user wrote in Traditional or Simplified Chinese, you MUST write your entire response in Simplified Chinese (简体中文).]'
         try:
-            content = generate_answer(
-                system_prompt,
-                user_prompt,
-                model=model,
-                image_file=image_file,
-            )
+            with trace_llm_generation(
+                name='CheeseO-LLM',
+                model=model or 'default',
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+            ) as gen_trace:
+                content = generate_answer(
+                    system_prompt,
+                    user_prompt,
+                    model=model,
+                    image_file=image_file,
+                )
+                if gen_trace:
+                    gen_trace.update(output=content)
             content = _sanitize_markdown_output(content)
             if is_chinese:
                 content = _ensure_simplified_chinese(content)

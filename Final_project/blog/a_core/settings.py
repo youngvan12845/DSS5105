@@ -206,6 +206,12 @@ CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', '')
 CLOUDFLARE_AI_MODEL = os.environ.get('CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
 CLOUDFLARE_EMBED_MODEL = os.environ.get('CLOUDFLARE_EMBED_MODEL', '@cf/baai/bge-m3')
 OPENAI_EMBED_MODEL = os.environ.get('OPENAI_EMBED_MODEL', 'text-embedding-3-small')
+
+# Langfuse Observability & Tracing (https://jp.cloud.langfuse.com)
+LANGFUSE_PUBLIC_KEY = os.environ.get('LANGFUSE_PUBLIC_KEY', '')
+LANGFUSE_SECRET_KEY = os.environ.get('LANGFUSE_SECRET_KEY', '')
+LANGFUSE_HOST = os.environ.get('LANGFUSE_HOST', 'https://jp.cloud.langfuse.com')
+LANGFUSE_ENABLED = bool(os.environ.get('LANGFUSE_PUBLIC_KEY', '') and os.environ.get('LANGFUSE_SECRET_KEY', ''))
 AGENT_OLLAMA_MODELS = [
     {'id': 'qwen2.5:7b', 'label': 'Qwen 2.5 7B (text)', 'vision': False},
     {'id': 'qwen2.5vl:7b', 'label': 'Qwen 2.5 VL 7B (multimodal)', 'vision': True},
