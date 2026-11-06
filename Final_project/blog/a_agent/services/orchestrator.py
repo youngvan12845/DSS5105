@@ -1636,16 +1636,52 @@ def _handle_user_message_core(
                 pending_action={},
             )
 
-    # BUG-07: no on-site match means no SOURCES. Ask before looking outside the blog.
+    # Autonomous external routing: if no on-site match is found in the blog corpus,
+    # autonomously query external sources without forcing the user to confirm.
     has_any_corpus_match = bool(
         article_scope or keyword_hits or chunk_hits or vector_hits
         or reading_path or history_items or reading_list or recommend_hits or pending_action
     )
     if not has_any_corpus_match:
-        content, offer = _outside_offer(query, request, is_chinese=is_chinese)
-        tool_trace.append(offer)
+        outside_notes = lookup_outside_the_blog(query)
+        tool_trace.append({
+            'tool': 'external_lookup',
+            'mode': 'autonomous',
+            'result_count': len(outside_notes),
+            'sources': [n.get('source_abbr', 'EXT') for n in outside_notes],
+        })
+        if outside_notes:
+            ext_citations = [
+                {
+                    'article_id': None,
+                    'title': f"{n.get('source_abbr', 'Web')}: {n.get('title')}",
+                    'url': n.get('url', ''),
+                    'source': 'external_lookup',
+                    'source_abbr': n.get('source_abbr', 'Web'),
+                    'is_external': True,
+                }
+                for n in outside_notes
+                if n.get('url')
+            ]
+            return AgentReply(
+                content=_outside_blog_reply(
+                    query,
+                    outside_notes,
+                    is_chinese=is_chinese,
+                    model=model,
+                    include_refusal=True,
+                ),
+                citations=ext_citations,
+                tool_trace=tool_trace,
+                pending_action={},
+            )
+        refusal = (
+            '抱歉，在当前的博客文章库中找不到与此主题相关的文章，外部公开检索亦无可用说明。'
+            if is_chinese else
+            'I cannot find any article about that topic in the blog corpus, and external lookup found no matching public notes.'
+        )
         return AgentReply(
-            content=content,
+            content=refusal,
             citations=[],
             tool_trace=tool_trace,
             pending_action={},

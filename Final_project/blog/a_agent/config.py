@@ -90,8 +90,8 @@ def is_vision_model(model: str) -> bool:
 
 
 def normalize_model(model: str | None) -> str:
+    provider = _active_provider()
     if not model:
-        provider = _active_provider()
         if provider == 'cloudflare':
             return default_cloudflare_model()
         if provider == 'openai':
@@ -100,21 +100,22 @@ def normalize_model(model: str | None) -> str:
             return default_anthropic_model()
         return default_ollama_model()
 
-    # If an explicit model is passed from any provider, preserve it
-    if model in CLOUDFLARE_MODEL_IDS or model.startswith('@cf/'):
-        return model
-    if model in OPENAI_MODEL_IDS or model.startswith(('gpt-', 'o1-', 'o3-')):
-        return model
-    if model in ANTHROPIC_MODEL_IDS or model.startswith('claude-'):
-        return model
+    # Provider-aware model validation:
+    if provider == 'cloudflare':
+        if model in CLOUDFLARE_MODEL_IDS or model.startswith('@cf/'):
+            return model
+        return default_cloudflare_model()
+
+    if provider == 'openai':
+        if model in OPENAI_MODEL_IDS or model.startswith(('gpt-', 'o1-', 'o3-')):
+            return model
+        return default_openai_model()
+
+    if provider == 'anthropic':
+        if model in ANTHROPIC_MODEL_IDS or model.startswith('claude-'):
+            return model
+        return default_anthropic_model()
+
     if model in OLLAMA_MODEL_IDS:
         return model
-
-    provider = _active_provider()
-    if provider == 'cloudflare':
-        return default_cloudflare_model()
-    if provider == 'openai':
-        return default_openai_model()
-    if provider == 'anthropic':
-        return default_anthropic_model()
     return default_ollama_model()
