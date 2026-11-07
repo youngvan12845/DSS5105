@@ -275,6 +275,10 @@ def _run_checks(task: dict, reply: AgentReply) -> list[CheckResult]:
                 )
             )
 
+    from a_agent.eval.outside_suite import outside_checks
+
+    checks.extend(outside_checks(task, reply))
+
     tools = {entry.get('tool') for entry in reply.tool_trace if isinstance(entry, dict)}
     for tool in expects.get('tools_any', []):
         checks.append(
@@ -339,20 +343,24 @@ def run_eval(
 
     results: list[TaskResult] = []
 
+    from a_agent.eval.outside_suite import outside_task_context
+
     for task in tasks:
         query = task['query']
         article_id = _resolve_article_id(task)
-        reply = _dispatch_message(
-            variant,
-            query,
-            user,
-            model=model,
-            article_id=article_id,
-        )
+        with outside_task_context(task, user):
+            reply = _dispatch_message(
+                variant,
+                query,
+                user,
+                model=model,
+                article_id=article_id,
+            )
         import time
         time.sleep(0.4)
         checks = _run_checks(task, reply)
         passed = all(check.passed for check in checks) if checks else True
+        preview_limit = 1600 if (task.get('expects') or {}).get('outside') else 240
         results.append(
             TaskResult(
                 task_id=task.get('id', 'unknown'),
@@ -360,7 +368,7 @@ def run_eval(
                 query=query,
                 passed=passed,
                 checks=checks,
-                reply_preview=(reply.content or '')[:240].replace('\n', ' '),
+                reply_preview=(reply.content or '')[:preview_limit].replace('\n', ' '),
                 citation_count=len(reply.citations),
                 pending_action_type=reply.pending_action.get('action_type', ''),
                 learning_record=_learning_record(reply),
