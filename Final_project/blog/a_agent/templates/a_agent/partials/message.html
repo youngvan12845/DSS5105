@@ -71,13 +71,23 @@
             {% if message.citations %}
             <div class="agent-sources">
                 <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Sources</div>
-                <ul class="space-y-1">
+                <ul class="space-y-1.5">
                     {% for cite in message.citations %}
-                    <li class="text-sm">
+                    <li class="text-sm flex items-center gap-1.5">
+                        {% if cite.is_external %}
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700 border border-purple-200 shrink-0">
+                            {{ cite.source_abbr|default:"EXT" }}
+                        </span>
+                        <a href="{{ cite.url }}" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:text-purple-700 hover:underline inline-flex items-center gap-1">
+                            <span>{{ cite.title }}</span>
+                            <svg class="w-3.5 h-3.5 opacity-60 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                        {% else %}
                         {% if cite.url %}
                         <a href="{{ cite.url|same_site_url }}" class="text-purple-600 hover:text-purple-700 hover:underline">{{ cite.title }}</a>
                         {% else %}
                         <span class="text-slate-600">{{ cite.title }}</span>
+                        {% endif %}
                         {% endif %}
                     </li>
                     {% endfor %}

@@ -21,6 +21,37 @@ _CHUNK_CACHE: dict = {'count': -1, 'chunks': []}
 
 
 def _get_cached_chunks() -> list[ArticleChunk]:
+    if _CHUNK_CACHE['chunks']:
+        return _CHUNK_CACHE['chunks']
+    import json
+    import os
+    from django.conf import settings
+
+    cache_path = os.path.join(settings.BASE_DIR, 'a_agent', 'data', 'chunks_cache.json')
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            chunks = []
+            for d in data:
+                c = ArticleChunk(
+                    id=d['id'],
+                    article_id=d['article_id'],
+                    article_title=d['article_title'],
+                    article_url=d['article_url'],
+                    chunk_index=d['chunk_index'],
+                    content=d['content'],
+                    tags=d['tags'],
+                    is_free=d['is_free'],
+                    embedding=d['embedding'],
+                )
+                chunks.append(c)
+            _CHUNK_CACHE['chunks'] = chunks
+            _CHUNK_CACHE['count'] = len(chunks)
+            return chunks
+        except Exception:
+            pass
+
     total = ArticleChunk.objects.count()
     if _CHUNK_CACHE['count'] != total or not _CHUNK_CACHE['chunks']:
         _CHUNK_CACHE['chunks'] = list(ArticleChunk.objects.exclude(embedding=[]))

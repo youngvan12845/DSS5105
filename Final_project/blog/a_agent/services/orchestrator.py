@@ -16,7 +16,12 @@ from a_agent.tools.article_scope import (
     search_scoped_article_vectors,
 )
 from a_agent.tools.comment_draft import build_comment_draft, propose_post_comment
-from a_agent.tools.external_lookup import lookup_outside_the_blog, topic_from_query, wants_several_sources
+from a_agent.tools.external_lookup import (
+    enrich_concept_lookup,
+    lookup_outside_the_blog,
+    topic_from_query,
+    wants_several_sources,
+)
 from a_agent.tools.browsing_history import get_browsing_history, history_to_dicts
 from a_agent.tools.chunk_search import _extract_terms_and_phrases, _word_match, chunk_hits_to_dicts, search_article_chunks
 from a_agent.tools.keyword_search import hits_to_dicts, keyword_search_articles
@@ -30,6 +35,12 @@ from a_agent.tools.reading_paths import get_reading_path_for_user, reading_path_
 from a_agent.tools.recommend import recommend_articles, recommend_hits_to_dicts
 from a_agent.tools.vector_search import search_article_vectors, vector_hits_to_dicts
 from a_agent.services.llm import generate_answer, get_llm_info, llm_configured
+from a_agent.services.telemetry import (
+    flush_telemetry,
+    trace_agent,
+    trace_llm_generation,
+    trace_retriever,
+)
 
 
 @dataclass
@@ -150,6 +161,18 @@ COMMENT_HINTS = (
 )
 
 
+DEEP_PRINCIPLE_HINTS = (
+    '数学原理', '數學原理', '底层原理', '底層原理', '底层算法', '底層演算法',
+    '底层怎么实现', '底層怎麼實現', '数据结构', '資料結構', '公式', '证明', '證明',
+    'mathematical', 'internals of', 'under the hood', 'how it works internally',
+    'algorithm', 'hash function', '散列', '哈希', '有向无环图', '有向無環圖',
+)
+CROSS_DOMAIN_HINTS = (
+    '区别', '區別', '不同', '和数据库的', '和前端的', '和机器学习的',
+    'versus', 'vs.', 'vs ', 'difference between', 'compare with', 'in other fields',
+)
+
+
 def _classify_intents(query: str) -> set[str]:
     q = query.lower()
     intents: set[str] = set()
@@ -168,6 +191,10 @@ def _classify_intents(query: str) -> set[str]:
         intents.add('reading_list')
     if any(h in q for h in COMMENT_HINTS):
         intents.add('action_comment')
+    if any(h in q for h in DEEP_PRINCIPLE_HINTS):
+        intents.add('deep_dive')
+    if any(h in q for h in CROSS_DOMAIN_HINTS):
+        intents.add('cross_domain')
 
     search_triggers = (
         'what', 'which', 'summarize', 'explain', 'cover', 'mention',
@@ -1374,6 +1401,44 @@ def handle_user_message(
     image_file=None,
     article_id: int | None = None,
     chat_history: list | None = None,
+    structured: bool = True,
+) -> AgentReply:
+    with trace_agent(
+        name='CheeseO-Agent',
+        query=query,
+        user=user,
+        model=model,
+        metadata={'structured': structured, 'article_id': article_id},
+    ) as agent_trace:
+        reply = _handle_user_message_core(
+            query,
+            user,
+            request=request,
+            model=model,
+            image_file=image_file,
+            article_id=article_id,
+            chat_history=chat_history,
+            structured=structured,
+        )
+        if agent_trace:
+            agent_trace.update(
+                output=reply.content,
+                metadata={'citations_count': len(reply.citations)},
+            )
+        flush_telemetry()
+        return reply
+
+
+def _handle_user_message_core(
+    query: str,
+    user: User | AnonymousUser,
+    *,
+    request=None,
+    model: str | None = None,
+    image_file=None,
+    article_id: int | None = None,
+    chat_history: list | None = None,
+    structured: bool = True,
 ) -> AgentReply:
     tool_trace: list[dict] = []
     article_scope = get_article_scope(article_id, user, request=request) if article_id else None
@@ -1710,7 +1775,7 @@ def handle_user_message(
                 pending_action={},
             )
 
-    # BUG-07: no on-site lesson means no SOURCES. History alone is not a lesson match.
+    # No on-site lesson means no SOURCES. History alone is not a lesson match.
     has_any_corpus_match = bool(
         article_scope or keyword_hits or chunk_hits or vector_hits
         or reading_path or reading_list or recommend_hits or pending_action
@@ -1741,6 +1806,25 @@ def handle_user_message(
 
     citations = _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=reading_path)
 
+    enrichment_notes = []
+    if 'deep_dive' in intents or 'cross_domain' in intents:
+        enrichment_notes = enrich_concept_lookup(query)
+        if enrichment_notes:
+            tool_trace.append({
+                'tool': 'enrich_concept_lookup',
+                'concepts': [n.get('title') for n in enrichment_notes],
+                'count': len(enrichment_notes),
+            })
+            for en in enrichment_notes:
+                citations.append({
+                    'article_id': None,
+                    'title': f"{en.get('source_abbr', 'Wiki')}: {en.get('title')}",
+                    'url': en.get('url', ''),
+                    'source': 'external_lookup',
+                    'source_abbr': en.get('source_abbr', 'Wiki'),
+                    'is_external': True,
+                })
+
     if llm_configured():
         if is_chinese:
             lang_directive = (
@@ -1751,26 +1835,40 @@ def handle_user_message(
         else:
             lang_directive = 'Respond in English unless the user writes in another language.'
 
-        if is_chinese:
-            structure_guide = (
-                '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE (自适应中文教学结构)]:'
-                '\n1. 当用户询问「概念解释、文章总结、原理解析、技术对比、学习路径」等学习类问题时，请采用以下清晰的中文分层结构：'
-                '\n   🎯 **核心结论**：用 1–2 句话直观概括核心定义或整体结论。'
-                '\n   📌 **核心概念与重点解析**：使用列表项（`- **概念/要点**：解释`）清晰拆解核心机制、权衡或步骤。'
-                '\n   💻 **常用命令 / 代码示例**（仅在涉及 CLI 命令、配置或代码时提供）：使用 ```bash 或 ```python 代码块展示，并用行内代码标注关键参数。'
-                '\n   💡 **下一步学习建议**（如适用）：给出 1–2 条基于检索结果的延伸阅读建议（带文章 Markdown 链接）或启发性思考。'
-                '\n2. 当用户执行「加入/移除阅读清单、拟写评论、互动测验（Quiz Me / 考考我）、简短单句追问或未命中提示」时，请直接用简洁自然的短句回复，不要强行套用上述三段式标题。'
-            )
+        if structured:
+            if is_chinese:
+                structure_guide = (
+                    '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE (自适应中文教学结构)]:'
+                    '\n1. 当用户询问「概念解释、文章总结、原理解析、技术对比、学习路径」等学习类问题时，请采用以下清晰的中文分层结构：'
+                    '\n   🎯 **核心结论**：用 1–2 句话直观概括核心定义或整体结论。'
+                    '\n   📌 **核心概念与重点解析**：使用列表项（`- **概念/要点**：解释`）清晰拆解核心机制、权衡或步骤。'
+                    '\n   💻 **常用命令 / 代码示例**（仅在涉及 CLI 命令、配置或代码时提供）：使用 ```bash 或 ```python 代码块展示，并用行内代码标注关键参数。'
+                    '\n   💡 **下一步学习建议**（如适用）：给出 1–2 条基于检索结果的延伸阅读建议（带文章 Markdown 链接）或启发性思考。'
+                    '\n2. 当用户执行「加入/移除阅读清单、拟写评论、互动测验（Quiz Me / 考考我）、简短单句追问或未命中提示」时，请直接用简洁自然的短句回复，不要强行套用上述三段式标题。'
+                )
+            else:
+                structure_guide = (
+                    '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE]:'
+                    '\n1. When answering conceptual explanations, article summaries, technical comparisons, or learning path questions, organize your reply with clear learning sections:'
+                    '\n   🎯 **Core Takeaway**: 1–2 direct sentences stating the core definition or synthesis.'
+                    '\n   📌 **Key Concepts & Breakdown**: Clean bullet points (`- **Concept**: Explanation`) breaking down the mechanics, trade-offs, or steps.'
+                    '\n   💻 **Commands / Code Example** (only when CLI commands, configs, or code apply): Use fenced code blocks (```bash or ```python) and inline `backticks`.'
+                    '\n   💡 **Next Steps** (when applicable): 1–2 recommended follow-up links from the provided results or a brief learning takeaway.'
+                    '\n2. When handling reading-list actions, comment drafts, interactive quizzes ("Quiz Me"), brief single-fact follow-ups, or ungrounded refusals, reply directly and concisely without forcing the section headers above.'
+                )
         else:
-            structure_guide = (
-                '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE]:'
-                '\n1. When answering conceptual explanations, article summaries, technical comparisons, or learning path questions, organize your reply with clear learning sections:'
-                '\n   🎯 **Core Takeaway**: 1–2 direct sentences stating the core definition or synthesis.'
-                '\n   📌 **Key Concepts & Breakdown**: Clean bullet points (`- **Concept**: Explanation`) breaking down the mechanics, trade-offs, or steps.'
-                '\n   💻 **Commands / Code Example** (only when CLI commands, configs, or code apply): Use fenced code blocks (```bash or ```python) and inline `backticks`.'
-                '\n   💡 **Next Steps** (when applicable): 1–2 recommended follow-up links from the provided results or a brief learning takeaway.'
-                '\n2. When handling reading-list actions, comment drafts, interactive quizzes ("Quiz Me"), brief single-fact follow-ups, or ungrounded refusals, reply directly and concisely without forcing the section headers above.'
-            )
+            if is_chinese:
+                structure_guide = (
+                    '\n\n[RESPONSE STYLE (自然自由回答)]:'
+                    '\n请用自然、流畅、直接的对话风格回答用户。'
+                    '\n严禁套用「🎯 核心结论」「📌 核心概念与重点解析」「💻 常用命令」「💡 下一步学习建议」等任何模板化固定小标题。根据技术逻辑自然分段作答即可。'
+                )
+            else:
+                structure_guide = (
+                    '\n\n[RESPONSE STYLE]:'
+                    '\nAnswer naturally and conversationally in Markdown.'
+                    '\nDo NOT enforce any template headers (e.g. no 🎯 Core Takeaway, 📌 Key Concepts, 💡 Next Steps). Write in natural technical discussion format.'
+                )
 
         format_directive = (
             '\n\n[CRITICAL FACTUAL INTEGRITY & ACRONYM RULES]:'
@@ -1884,15 +1982,33 @@ def handle_user_message(
                 'Do not write source numbers such as [1]. '
                 'That part is added after your reply.\n'
             )
+        if enrichment_notes:
+            user_prompt += (
+                f'\n\n[Supplementary External Background for Deep Principles / Cross-Domain Analogy]:\n'
+                f'{_outside_note_lines(enrichment_notes)}\n'
+                'Instructions for Supplementary Notes:\n'
+                '1. The core answer must remain firmly grounded in the blog articles above.\n'
+                '2. Synthesize these external supplementary notes under a dedicated subsection titled '
+                '"💡 延伸原理 / 跨领域对比" (or "💡 Deep Dive & Analogy") to enrich the student\'s understanding.\n'
+                '3. Cite the note with its title. Do not invent a blog lesson for it.\n'
+            )
         if is_chinese:
             user_prompt += '\n\n[Final Reminder: Regardless of whether the user wrote in Traditional or Simplified Chinese, you MUST write your entire response in Simplified Chinese (简体中文).]'
         try:
-            content = generate_answer(
-                system_prompt,
-                user_prompt,
-                model=model,
-                image_file=image_file,
-            )
+            with trace_llm_generation(
+                name='CheeseO-LLM',
+                model=model or 'default',
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+            ) as gen_trace:
+                content = generate_answer(
+                    system_prompt,
+                    user_prompt,
+                    model=model,
+                    image_file=image_file,
+                )
+                if gen_trace:
+                    gen_trace.update(output=content)
             content = _sanitize_markdown_output(content)
             if is_chinese:
                 content = _ensure_simplified_chinese(content)

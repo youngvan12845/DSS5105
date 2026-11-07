@@ -271,3 +271,52 @@ def lookup_outside_the_blog(query: str, *, fetch=None) -> list[dict]:
             notes.append(extra)
             seen.add(extra['url'])
     return notes
+
+
+def extract_enrichment_topics(query: str) -> list[str]:
+    """Concepts worth a short public note when the question asks for a deeper comparison."""
+    q = (query or '').lower()
+    topics = []
+    if any(k in q for k in ('数据库', '資料庫', 'database', 'db')):
+        if any(w in q for w in ('index', '索引')):
+            topics.append('Database index')
+        if any(w in q for w in ('transaction', '事务', '事務')):
+            topics.append('Database transaction')
+    if any(k in q for k in ('前端', 'frontend', 'css', 'ui')):
+        if any(w in q for w in ('container', '容器')):
+            topics.append('Container query')
+    if any(k in q for k in ('机器学习', '機器學習', 'ml', 'ai', 'data science')):
+        if any(w in q for w in ('pipeline', '流水线', '管线')):
+            topics.append('Pipeline (computing)')
+    patterns = [
+        (r'\b(sha-?1|sha-?256|hash function|散列|哈希|散列函数)\b', 'Cryptographic hash function'),
+        (r'\b(dag|directed acyclic graph|有向无环图|有向無環圖)\b', 'Directed acyclic graph'),
+        (r'\b(cgroups?|control groups?|控制组)\b', 'Cgroups'),
+        (r'\b(namespaces?|命名空间|命名空間)\b', 'Linux namespaces'),
+        (r'\b(epoll|io multiplexing|多路复用|多路復用)\b', 'Epoll'),
+        (r'\b(b-?tree|b树|b\+树|b-樹)\b', 'B-tree'),
+        (r'\b(raft|paxos|consensus|共识算法)\b', 'Raft (algorithm)'),
+        (r'\b(crdt)\b', 'Conflict-free replicated data type'),
+    ]
+    for pattern, target in patterns:
+        if re.search(pattern, q, re.I) and target not in topics:
+            topics.append(target)
+    if not topics and any(w in q for w in ('数学原理', '數學原理', '底层原理', '底層原理', 'algorithm', 'internals')):
+        for acronym in re.findall(r'\b[A-Z]{2,10}\b', query or ''):
+            if acronym not in ('HTTP', 'HTML', 'URL', 'GET', 'POST', 'GIT') and acronym not in topics:
+                topics.append(acronym)
+    return topics[:2]
+
+
+def enrich_concept_lookup(query: str, *, fetch=None) -> list[dict]:
+    """Public notes for a deep-dive or cross-domain question. Not blog lessons."""
+    notes = []
+    for topic in extract_enrichment_topics(query):
+        found = lookup_outside_the_blog(topic, fetch=fetch)
+        if not found:
+            continue
+        note = dict(found[0])
+        note['source_abbr'] = note.get('source_name') or 'Web'
+        note['is_external'] = True
+        notes.append(note)
+    return notes
