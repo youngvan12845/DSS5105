@@ -22,6 +22,7 @@ urlpatterns = [
     path('session/clear-all/', views.clear_all_sessions_view, name='clear_all_sessions'),
     path('session/<int:session_id>/delete/', views.delete_session_view, name='delete_session'),
     path('session/<int:session_id>/send/', views.send_message_view, name='send_message'),
+    path('session/<int:session_id>/stop/', views.stop_message_view, name='stop_message'),
     path('actions/<int:action_id>/confirm/', views.confirm_action_view, name='confirm_action'),
     path('actions/<int:action_id>/cancel/', views.cancel_action_view, name='cancel_action'),
     path('bridge/<slug:prereq_slug>/', views.concept_bridge_view, name='concept_bridge'),

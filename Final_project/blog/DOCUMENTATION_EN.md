@@ -84,7 +84,7 @@ Nothing is saved or published **until the user confirms**.
 
 - Retrieval respects user access (anonymous / free / subscription / point-unlocked).
 - Locked paid articles return **preview snippets** only; LLM system prompts forbid leaking full paid body text.
-- Topics not in the corpus (e.g. a quantum-computing article, or Helm) get a fixed refusal in the main chat, then a question asking whether to look outside the blog. A public note is fetched only after the reader confirms. It is labeled as not a lesson on this site and is not added to SOURCES. Article-page Q&A does not answer a different topic with the lesson that is open.
+- Topics not in the corpus (e.g. a quantum-computing article, or Helm) get a fixed refusal in the main chat, then a public web note labeled as not a lesson on this site. Source icons open the original pages and are not added to SOURCES. The reply also uses that reader's browsing history. Article-page Q&A does not answer a different topic with the lesson that is open.
 
 ---
 
@@ -252,7 +252,7 @@ File: `a_agent/services/orchestrator.py`
 | `action_add` | `propose_add_to_reading_list` |
 | `action_remove` | `propose_remove_from_reading_list` |
 | `action_comment` | `build_comment_draft` + `propose_post_comment` |
-| Outside note (no on-site hit, and the reader has confirmed) | `lookup_outside_the_blog`: DuckDuckGo instant answer first, then one English Wikipedia page summary |
+| Outside note (main chat, no on-site lesson) | `lookup_outside_the_blog`: up to four web results, plus a Wikipedia or search abstract that is not already listed |
 
 ---
 
@@ -275,7 +275,7 @@ File: `a_agent/models.py`
 Each tool file maps to one capability with clear inputs/outputs (suitable for Capstone tool specification tables):
 
 - **Retrieval**: `keyword_search` / `chunk_search` / `vector_search` / `article_scope`
-- **Outside note**: `external_lookup`. Called only after confirmation in the main chat. It fetches one public extract. It does not crawl the web or write the note into the lesson index.
+- **Outside note**: `external_lookup`. Called in the main chat when no lesson matches. Up to four public pages. The links are not written into the lesson index and are not SOURCES.
 - **Personalization**: `browsing_history` / `recommend`
 - **Planning**: `reading_paths`
 - **Action**: `reading_list` / `comment_draft`
@@ -441,7 +441,7 @@ After login, use this order for a Sprint video (~5 min):
 3. Open an article — use the side panel “Summarize this article”
 4. “Add the RAG article to my reading list” — Confirm → check `/agent/reading-list/`
 5. Open a locked paid article — ask for full text — show paywall (no leak)
-6. On `/agent/`, ask about a topic the blog does not have (e.g. Helm) — show the refusal, then press Look outside the blog and show the public note labeled as not a lesson on this site
+6. On `/agent/`, ask about a topic the blog does not have (e.g. Helm) — say the blog has no lesson, then show a public note labeled as not a lesson on this site. Click a source icon to open the page.
 
 ---
 

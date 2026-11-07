@@ -2,11 +2,19 @@
 <div class="agent-message-group space-y-2 mb-6">
     {% if message.role == 'user' %}
     <div class="flex items-end gap-3 justify-end">
-        <div class="max-w-[78%]">
+        <div class="agent-user-body max-w-[78%]">
             <div class="agent-bubble-user text-sm whitespace-pre-wrap">{{ message.content }}</div>
             {% if message.image %}
             <img src="{{ message.image.url }}" alt="Uploaded image" class="mt-2 max-w-full rounded-xl border border-white/30 max-h-56 object-contain bg-white/10" />
             {% endif %}
+            <div class="agent-msg-actions">
+                <button type="button" class="agent-msg-action" data-msg-action="copy" aria-label="Copy" title="Copy">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                </button>
+                <button type="button" class="agent-msg-action" data-msg-action="edit" aria-label="Edit" title="Edit">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2 2 0 0 0 0-2.8l-1.2-1.2a2 2 0 0 0-2.8 0L4 16v4z"/></svg>
+                </button>
+            </div>
         </div>
         <div class="agent-avatar agent-avatar-user shrink-0">You</div>
     </div>
@@ -15,27 +23,49 @@
         <div class="agent-avatar agent-avatar-bot shrink-0 overflow-hidden" title="CheeseO Mascot">
             <img src="{% static 'images/cheese.png' %}" alt="CheeseO" class="w-full h-full object-contain p-0.5" />
         </div>
-        <div class="max-w-[78%] space-y-2">
+        <div class="agent-assistant-body max-w-[78%] space-y-2">
             {% for trace in message.tool_trace %}
             {% if trace.tool == 'response_mode' and trace.mode == 'fallback' %}
             <p class="text-xs text-amber-800" role="note">Search-based reply · AI did not generate this response.</p>
             {% endif %}
             {% endfor %}
             <div class="agent-bubble-assistant text-sm">{{ message.content|agent_markdown }}</div>
+            <div class="agent-msg-actions">
+                <button type="button" class="agent-msg-action" data-msg-action="copy" aria-label="Copy" title="Copy">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                </button>
+            </div>
             {% for trace in message.tool_trace %}
-            {% if trace.tool == 'offer_external_lookup' %}
-            <form
-                class="mt-3"
-                hx-post="{% url 'a_agent:send_message' message.session_id %}"
-                hx-target="#chat-messages"
-                hx-swap="beforeend"
-                hx-disabled-elt="find button"
-            >
-                {% csrf_token %}
-                <input type="hidden" name="content" value="{{ trace.prompt }}">
-                <input type="hidden" name="outside_confirm" value="1">
-                <button type="submit" class="agent-suggestion-chip">{{ trace.label }}</button>
-            </form>
+            {% if trace.tool == 'external_sources' and trace.sources %}
+            <div class="ext-source-pack">
+                <button type="button" class="ext-source-chip" aria-expanded="false" data-panel-title="{% if message.content|looks_chinese %}网页{% else %}Web pages{% endif %}">
+                    <span class="ext-source-chip-marks" aria-hidden="true">
+                        {% for source in trace.sources|slice:":3" %}
+                        <span class="ext-source-favicon">
+                            {% if source.host %}<img src="https://www.google.com/s2/favicons?domain={{ source.host }}&sz=64" alt="" onerror="this.remove()">{% endif %}
+                            <span>{{ source.source_name|slice:":1" }}</span>
+                        </span>
+                        {% endfor %}
+                    </span>
+                    {% if message.content|looks_chinese %}{{ trace.sources|length }} 个网页{% else %}{{ trace.sources|length }} web page{{ trace.sources|length|pluralize }}{% endif %}
+                </button>
+                <div class="ext-source-list" hidden>
+                    {% for source in trace.sources %}
+                    <a class="ext-source-item" href="{{ source.url }}" target="_blank" rel="noopener noreferrer">
+                        <span class="ext-source-item-top">
+                            <span class="ext-source-favicon">
+                                {% if source.host %}<img src="https://www.google.com/s2/favicons?domain={{ source.host }}&sz=64" alt="" onerror="this.remove()">{% endif %}
+                                <span>{{ source.source_name|slice:":1" }}</span>
+                            </span>
+                            <span class="ext-source-site">{{ source.source_name }}</span>
+                            <span class="ext-source-num">{{ forloop.counter }}</span>
+                        </span>
+                        <span class="ext-source-item-title">{{ source.title }}</span>
+                        {% if source.excerpt %}<span class="ext-source-item-excerpt">{{ source.excerpt }}</span>{% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
             {% endif %}
             {% endfor %}
             {% if message.citations %}

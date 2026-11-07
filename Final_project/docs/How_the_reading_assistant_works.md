@@ -12,7 +12,7 @@ A visitor who is not logged in can read the article. They do not see the assista
 
 ## What the agent is
 
-The agent is not a chatbot that can talk about anything. It is a reading assistant for this blog. It answers from the lessons on the site, and it can help with a few reading tasks. If the topic is not on the site, the first reply says it cannot find an article. It does not fill that gap from its own general knowledge. In the full chat, it then asks whether to look outside the blog. An outside note is labeled as not a lesson on this site, and it is not listed under SOURCES.
+The agent is not a chatbot that can talk about anything. It is a reading assistant for this blog. It answers from the lessons on the site, and it can help with a few reading tasks. If the topic is not on the site, the first sentence says it cannot find an article. It does not fill that gap from its own general knowledge. In the full chat, it then adds a short public note and labels it as not a lesson on this site. Source icons under the reply open the pages it used. Those links are not listed under SOURCES. The reply also uses the lessons this reader has already opened.
 
 Every reply follows the same three steps:
 
@@ -35,13 +35,12 @@ The learning panel is not part of this question-answering agent. The difficulty 
 - Give a reading path that was written ahead of time. The paths we have are Git for beginners, Git branching, Docker, Python basics, Python web, and a machine-learning introduction.
 - Show the reader's own reading list.
 - Prepare three actions: add a lesson to the list, remove one, or write a comment. All three wait for Confirm.
-- In the full chat, when no lesson matches, ask before looking outside the blog. If the reader agrees, show one short public note and label it as not a lesson on this site.
+- In the full chat, when no lesson matches, add a public note from the web and label it as not a lesson on this site. Icons under the reply open the source pages.
 
 ## What it will not do
 
 - It does not pretend a missing lesson exists. The Helm question is the example. The first reply says the blog has no such article. It does not say "the article explains it like this."
-- It does not search outside the blog until the reader agrees. The button sends the sentence "Yes, look outside the blog". Typing that same sentence does the same thing.
-- It does not put an outside note under SOURCES, and it does not call that note a CheeseO lesson.
+- It does not put an outside note under SOURCES, and it does not call that note a CheeseO lesson. A source icon only opens the page the note came from.
 - It does not copy the body of a paid lesson. A reader who has not unlocked it only sees a short note that the lesson is paid.
 - It does not give company revenue, passwords, or secret keys. Those questions get one fixed refusal and are never sent to the model.
 - It does not change the reading list or post a comment before the reader confirms. If the article number does not exist, it does not prepare the action either.
@@ -94,9 +93,9 @@ Every question goes through the same steps. The model writes the reply only at t
 
 6. Saving and posting wait for Confirm. "Add this to my reading list", "remove this", and "post a comment" only prepare a card. The change is saved when the reader presses Confirm. Cancel throws it away.
 
-7. If the full chat finds no lesson, the reply is a fixed sentence, not a model answer: "I cannot find any article about that topic in the blog corpus. Should I look outside the blog?" Nothing is fetched yet. The original question is kept for this conversation. A button, **Look outside the blog**, sends the sentence "Yes, look outside the blog".
+7. If the full chat finds no lesson, the first sentence is still fixed: "I cannot find any article about that topic in the blog corpus." The assistant then looks up public web pages, without waiting for a button. It keeps up to four results, each with a title, a short extract, and a URL. A Wikipedia summary or a search-engine abstract is added when that page is not already in the list. The model may rewrite those extracts into two or three sentences, and it may use only those extracts. The reply is labeled **Outside the blog** (not a lesson on this site). Icons under the reply open the source pages. Those URLs are not SOURCES. If nothing usable comes back, the reply says no public note was found. The model does not invent one.
 
-8. That confirmation does not search the blog again. The assistant asks DuckDuckGo's public instant-answer interface for one short abstract. DuckDuckGo is a search engine. This step calls one interface, and it does not open the website or crawl other pages. If that abstract is missing, it asks the English Wikipedia search interface for one page title, then the Wikipedia summary interface for the opening extract. For the Helm question, DuckDuckGo returned nothing, and the note came from the Wikipedia page "Helm (package manager)". The model may rewrite that extract into two or three sentences. It is told to use only that extract. The reply is labeled **Outside the blog** (not a lesson on this site). The note is not a source. If both interfaces fail, time out, or return only a very short extract, the reply says no usable public note was found. The model does not invent one.
+8. The reply uses lessons this reader has already opened. On an article page, prerequisite gaps are compared with that reading history: a lesson already opened counts as read. When an eval question is about one article, the result records that article's related lessons and prerequisites. Outside links are recorded too. This record does not change whether the question passed.
 
 9. When the blog does have matching lessons, the online model receives the question and those search results, and it writes the reply. It is told to use only those results. The reply keeps links back to the lessons it used.
 
@@ -147,4 +146,4 @@ On 13 September the full assistant and three simpler systems answered the same 3
 
 A later run asked the online Qwen 32B model the same kind of questions and it passed 26/33. That run did not include the three simpler systems, so the comparison to quote is still 25 against 5, 7, and 17.
 
-The outside-lookup step above was added after that comparison. The Helm question in that round was scored on the refusal alone. The first reply still refuses. The public note appears only after the reader agrees, and it is not counted as a lesson on this site.
+The outside-lookup step above was added after that comparison. The Helm question in that round was scored on the refusal alone. The first sentence still refuses. The public note is labeled as not a lesson on this site, so it is not part of that 25/33 score.

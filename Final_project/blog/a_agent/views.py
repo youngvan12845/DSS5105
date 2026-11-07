@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -280,10 +281,31 @@ def delete_session_view(request: HttpRequest, session_id: int) -> HttpResponse:
     return redirect('a_agent:chat')
 
 
+def _cancel_key(session_id: int) -> str:
+    return f'agent-send-cancel-{session_id}'
+
+
+def _drop_cancelled_send(session, user_message) -> bool:
+    if not cache.get(_cancel_key(session.pk)):
+        return False
+    cache.delete(_cancel_key(session.pk))
+    user_message.delete()
+    return True
+
+
+@login_required
+@require_POST
+def stop_message_view(request: HttpRequest, session_id: int) -> HttpResponse:
+    session = get_object_or_404(ChatSession, pk=session_id, user=request.user)
+    cache.set(_cancel_key(session.pk), True, timeout=120)
+    return HttpResponse(status=204)
+
+
 @login_required
 @require_POST
 def send_message_view(request: HttpRequest, session_id: int) -> HttpResponse:
     session = get_object_or_404(ChatSession, pk=session_id, user=request.user)
+    cache.delete(_cancel_key(session.pk))
     content = request.POST.get('content', '').strip()
     image_file = request.FILES.get('image')
     selected_model = normalize_model(request.POST.get('llm_model') or session.llm_model or None)
@@ -322,6 +344,8 @@ def send_message_view(request: HttpRequest, session_id: int) -> HttpResponse:
         article_id=article_id,
         chat_history=prior_messages,
     )
+    if _drop_cancelled_send(session, user_message):
+        return HttpResponse(status=204)
     assistant_message = ChatMessage.objects.create(
         session=session,
         role=ChatMessage.ROLE_ASSISTANT,
@@ -547,6 +571,7 @@ def master_prerequisite_view(request: HttpRequest) -> HttpResponse:
 def article_send_message_view(request: HttpRequest, article_id: int) -> HttpResponse:
     article = get_object_or_404(ArticlePage.objects.live(), pk=article_id)
     session = _get_or_create_article_session(request.user, article)
+    cache.delete(_cancel_key(session.pk))
     content = request.POST.get('content', '').strip()
     image_file = request.FILES.get('image')
     selected_model = normalize_model(request.POST.get('llm_model') or session.llm_model or None)
@@ -583,6 +608,8 @@ def article_send_message_view(request: HttpRequest, article_id: int) -> HttpResp
         article_id=article_id,
         chat_history=prior_messages,
     )
+    if _drop_cancelled_send(session, user_message):
+        return HttpResponse(status=204)
     assistant_message = ChatMessage.objects.create(
         session=session,
         role=ChatMessage.ROLE_ASSISTANT,

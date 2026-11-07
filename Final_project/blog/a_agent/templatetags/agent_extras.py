@@ -1,4 +1,5 @@
 import re
+from urllib.parse import unquote, urlparse
 
 from django import template
 from django.utils.html import escape
@@ -21,6 +22,30 @@ def agent_markdown(value: str) -> str:
         return ''
 
     text = article_link_in_text(value)
+
+    ext_cites = []
+
+    def save_ext_cite(match):
+        number, url = match.group(1), match.group(2)
+        if not url.startswith(('http://', 'https://')):
+            return match.group(0)
+        host = (urlparse(url).hostname or '').removeprefix('www.')
+        title = unquote(match.group(3) or '').strip() or host
+        site = unquote(match.group(4) or '').strip() or host
+        excerpt = unquote(match.group(5) or '').strip()
+        token = f'___EXT_CITE_{len(ext_cites)}___'
+        ext_cites.append(
+            f'<a href="{escape(url)}" target="_blank" rel="noopener noreferrer" class="ext-cite"'
+            f' data-ext-title="{escape(title)}" data-ext-site="{escape(site)}" data-ext-excerpt="{escape(excerpt)}">'
+            f'{escape(number)}</a>'
+        )
+        return token
+
+    text = re.sub(
+        r'\{\{cite:(\d+):(https?://[^}|]+)(?:\|([^|]*)\|([^|]*)\|([^}]*))?\}\}',
+        save_ext_cite,
+        text,
+    )
 
     # 1. Protect fenced code blocks ```lang\ncode\n```
     code_blocks = []
@@ -126,6 +151,8 @@ def agent_markdown(value: str) -> str:
         text = text.replace(f'<br>___CODE_BLOCK_{i}___', f'___CODE_BLOCK_{i}___')
         text = text.replace(f'___CODE_BLOCK_{i}___<br>', f'___CODE_BLOCK_{i}___')
         text = text.replace(f'___CODE_BLOCK_{i}___', block_html)
+    for index, cite_html in enumerate(ext_cites):
+        text = text.replace(f'___EXT_CITE_{index}___', cite_html)
 
     return mark_safe(text)
 
@@ -136,6 +163,11 @@ def article_link_in_text(value: str) -> str:
     for host in parsed_hosts:
         value = value.replace(host, '')
     return value
+
+
+@register.filter(name='looks_chinese')
+def looks_chinese(value: str) -> bool:
+    return bool(re.search(r'[\u4e00-\u9fff]', value or ''))
 
 
 @register.filter(name='session_title')

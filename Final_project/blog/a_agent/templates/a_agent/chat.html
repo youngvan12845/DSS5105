@@ -173,6 +173,7 @@
                 <form
                     id="chat-form"
                     hx-post="{% url 'a_agent:send_message' session.id %}"
+                    data-stop-url="{% url 'a_agent:stop_message' session.id %}"
                     hx-target="#chat-messages"
                     hx-swap="beforeend"
                     hx-encoding="multipart/form-data"
@@ -331,6 +332,220 @@
     line-height: 1.6;
 }
 
+a.ext-cite {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.05rem;
+    height: 1.05rem;
+    margin: 0 0.12rem;
+    padding: 0 0.22rem;
+    border-radius: 0.28rem;
+    background: #e8edf3;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 650;
+    line-height: 1;
+    text-decoration: none;
+    vertical-align: super;
+}
+
+a.ext-cite:hover {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.ext-cite-preview {
+    position: fixed;
+    z-index: 80;
+    width: min(18rem, calc(100vw - 24px));
+    padding: 12px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
+    pointer-events: none;
+}
+.ext-cite-preview-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.3;
+}
+.ext-cite-preview-mark {
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.ext-cite-preview-title {
+    display: block;
+    margin-top: 6px;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+.ext-cite-preview-excerpt {
+    display: -webkit-box;
+    margin-top: 4px;
+    overflow: hidden;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.45;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.ext-source-pack { margin-top: 0.15rem; }
+.ext-source-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.28rem 0.75rem 0.28rem 0.4rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    background: #fff;
+    color: #334155;
+    font-size: 13px;
+    line-height: 1.2;
+    cursor: pointer;
+}
+.ext-source-chip:hover,
+.ext-source-chip[aria-expanded="true"] {
+    border-color: #c4b5fd;
+    background: #faf5ff;
+}
+.ext-source-chip-marks { display: inline-flex; align-items: center; }
+.ext-source-favicon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    overflow: hidden;
+}
+.ext-source-chip-marks .ext-source-favicon + .ext-source-favicon { margin-left: -5px; }
+.ext-source-favicon img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #fff;
+}
+.ext-source-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    width: min(22rem, 100vw);
+    height: 100vh;
+    background: #fff;
+    border-left: 1px solid #e2e8f0;
+    box-shadow: -12px 0 32px rgba(15, 23, 42, 0.12);
+}
+.ext-source-panel[hidden] { display: none; }
+.ext-source-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+    font-size: 15px;
+}
+.ext-source-panel-close {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #475569 !important;
+    font-size: 22px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    cursor: pointer;
+    transform: none !important;
+}
+.ext-source-panel-close:hover,
+.ext-source-panel-close:active {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    transform: none !important;
+}
+.ext-source-panel-body { overflow: auto; padding: 8px 12px 24px; }
+.ext-source-item {
+    display: block;
+    padding: 12px 8px;
+    border-bottom: 1px solid #f1f5f9;
+    color: inherit;
+    text-decoration: none;
+}
+.ext-source-item:hover { background: #f8fafc; }
+.ext-source-item-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 12px;
+}
+.ext-source-site { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ext-source-num {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: #e8edf3;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 650;
+    flex-shrink: 0;
+}
+.ext-source-item-title {
+    display: block;
+    margin-top: 6px;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+.ext-source-item-excerpt {
+    display: block;
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
 .agent-avatar {
     width: 2rem;
     height: 2rem;
@@ -411,6 +626,45 @@
 
 .agent-send-btn:hover {
     filter: brightness(1.05);
+}
+
+.agent-msg-actions {
+    display: flex;
+    gap: 2px;
+    margin-top: 4px;
+}
+.agent-user-body .agent-msg-actions { justify-content: flex-end; }
+.agent-msg-action {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #64748b !important;
+    cursor: pointer;
+    transform: none !important;
+}
+.agent-msg-action svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.agent-msg-action:hover,
+.agent-msg-action:active {
+    background: #f1f5f9 !important;
+    color: #6d28d9 !important;
+    transform: none !important;
 }
 
 .agent-confirm-btn {
@@ -590,8 +844,120 @@
     40% { opacity: 1; }
 }
 
-.htmx-request .agent-send-btn { opacity: 0.7; pointer-events: none; }
+.htmx-request .agent-send-btn.is-stop { opacity: 1; pointer-events: auto; }
+.agent-send-btn.is-stop {
+    background: #fff !important;
+    color: #7e22ce !important;
+    border: 1px solid #d8b4fe !important;
+    box-shadow: none !important;
+}
 </style>
+
+<script>
+(function () {
+    if (window.__extCitePreview) return;
+    window.__extCitePreview = true;
+    const card = document.createElement('div');
+    card.className = 'ext-cite-preview';
+    card.hidden = true;
+    document.body.appendChild(card);
+
+    const place = (link) => {
+        const site = link.dataset.extSite || (link.hostname || '').replace(/^www\./, '');
+        const title = link.dataset.extTitle || site;
+        const excerpt = link.dataset.extExcerpt || '';
+        const mark = (site || title || '?').trim().charAt(0).toUpperCase();
+        card.innerHTML = '';
+        const meta = document.createElement('div');
+        meta.className = 'ext-cite-preview-meta';
+        const badge = document.createElement('span');
+        badge.className = 'ext-cite-preview-mark';
+        badge.textContent = mark;
+        const siteName = document.createElement('span');
+        siteName.textContent = site;
+        meta.append(badge, siteName);
+        const heading = document.createElement('span');
+        heading.className = 'ext-cite-preview-title';
+        heading.textContent = title;
+        card.append(meta, heading);
+        if (excerpt) {
+            const snippet = document.createElement('span');
+            snippet.className = 'ext-cite-preview-excerpt';
+            snippet.textContent = excerpt;
+            card.append(snippet);
+        }
+        card.hidden = false;
+        const rect = link.getBoundingClientRect();
+        const width = card.offsetWidth;
+        const height = card.offsetHeight;
+        let left = rect.left + rect.width / 2 - width / 2;
+        left = Math.max(8, Math.min(left, window.innerWidth - width - 8));
+        let top = rect.top - height - 8;
+        if (top < 8) top = rect.bottom + 8;
+        card.style.left = left + 'px';
+        card.style.top = top + 'px';
+    };
+    const hide = () => { card.hidden = true; };
+    document.addEventListener('mouseover', (event) => {
+        const link = event.target.closest && event.target.closest('a.ext-cite');
+        if (link) place(link);
+    });
+    document.addEventListener('mouseout', (event) => {
+        const link = event.target.closest && event.target.closest('a.ext-cite');
+        if (link) hide();
+    });
+    document.addEventListener('focusin', (event) => {
+        const link = event.target.closest && event.target.closest('a.ext-cite');
+        if (link) place(link);
+    });
+    document.addEventListener('focusout', (event) => {
+        const link = event.target.closest && event.target.closest('a.ext-cite');
+        if (link) hide();
+    });
+})();
+</script>
+
+<script>
+(function () {
+    if (window.__extSourcePanel) return;
+    window.__extSourcePanel = true;
+    const panel = document.createElement('aside');
+    panel.className = 'ext-source-panel';
+    panel.hidden = true;
+    panel.innerHTML = '<div class="ext-source-panel-head"><strong></strong><button type="button" class="ext-source-panel-close" aria-label="Close">×</button></div><div class="ext-source-panel-body"></div>';
+    document.body.appendChild(panel);
+    const title = panel.querySelector('strong');
+    const body = panel.querySelector('.ext-source-panel-body');
+    const close = () => {
+        panel.hidden = true;
+        document.querySelectorAll('.ext-source-chip[aria-expanded="true"]').forEach((el) => {
+            el.setAttribute('aria-expanded', 'false');
+        });
+    };
+    panel.querySelector('.ext-source-panel-close').addEventListener('click', close);
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') close();
+    });
+    document.addEventListener('click', (event) => {
+        const chip = event.target.closest && event.target.closest('.ext-source-chip');
+        if (chip) {
+            event.preventDefault();
+            const pack = chip.closest('.ext-source-pack');
+            const list = pack && pack.querySelector('.ext-source-list');
+            if (!list) return;
+            const wasOpen = chip.getAttribute('aria-expanded') === 'true';
+            close();
+            if (wasOpen) return;
+            chip.setAttribute('aria-expanded', 'true');
+            title.textContent = chip.dataset.panelTitle || 'Web pages';
+            body.innerHTML = list.innerHTML;
+            panel.hidden = false;
+            return;
+        }
+        if (!panel.hidden && !(event.target.closest && event.target.closest('.ext-source-panel'))) close();
+    });
+})();
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -674,6 +1040,51 @@ document.addEventListener('DOMContentLoaded', () => {
         return div.innerHTML;
     };
 
+    const sendBtn = document.getElementById('chat-send-btn');
+    let activeXhr = null;
+    let pendingDraft = '';
+
+    const setSending = (on) => {
+        sendBtn.type = on ? 'button' : 'submit';
+        sendBtn.textContent = on ? 'Stop' : 'Send';
+        sendBtn.classList.toggle('is-stop', on);
+        sendBtn.setAttribute('aria-label', on ? 'Stop' : 'Send');
+    };
+
+    const stopSending = () => {
+        const token = chatForm.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        const stopUrl = chatForm.dataset.stopUrl;
+        if (stopUrl && token) {
+            fetch(stopUrl, {method: 'POST', headers: {'X-CSRFToken': token}});
+        }
+        activeXhr?.abort();
+    };
+
+    sendBtn.addEventListener('click', (event) => {
+        if (!sendBtn.classList.contains('is-stop')) return;
+        event.preventDefault();
+        stopSending();
+    });
+
+    document.addEventListener('click', (event) => {
+        const action = event.target.closest('[data-msg-action]');
+        if (!action) return;
+        const root = action.closest('.agent-user-body, .agent-assistant-body');
+        const bubble = root?.querySelector('.agent-bubble-user, .agent-bubble-assistant');
+        const text = (bubble?.innerText || '').trim();
+        if (!text) return;
+        if (action.dataset.msgAction === 'copy') {
+            navigator.clipboard.writeText(text).then(() => {
+                action.title = 'Copied';
+                setTimeout(() => { action.title = 'Copy'; }, 1200);
+            });
+            return;
+        }
+        if (sendBtn.classList.contains('is-stop')) return;
+        chatInput.value = text;
+        chatInput.focus();
+    });
+
     const appendUserMessage = (content, imageSrc) => {
         const imageHtml = imageSrc
             ? `<img src="${imageSrc}" alt="Uploaded image" class="mt-2 max-w-full rounded-xl border border-white/30 max-h-56 object-contain bg-white/10" />`
@@ -681,9 +1092,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const html = `
             <div class="agent-message-group agent-optimistic-user space-y-2 mb-6">
                 <div class="flex items-end gap-3 justify-end">
-                    <div class="max-w-[78%]">
+                    <div class="agent-user-body max-w-[78%]">
                         <div class="agent-bubble-user text-sm whitespace-pre-wrap">${escapeHtml(content)}</div>
                         ${imageHtml}
+                        <div class="agent-msg-actions">
+                            <button type="button" class="agent-msg-action" data-msg-action="copy" aria-label="Copy" title="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
+                            <button type="button" class="agent-msg-action" data-msg-action="edit" aria-label="Edit" title="Edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2 2 0 0 0 0-2.8l-1.2-1.2a2 2 0 0 0-2.8 0L4 16v4z"/></svg></button>
+                        </div>
                     </div>
                     <div class="agent-avatar agent-avatar-user shrink-0">You</div>
                 </div>
@@ -730,6 +1145,9 @@ document.addEventListener('DOMContentLoaded', () => {
         appendUserMessage(content, imageSrc);
         appendThinking();
         scrollToBottom();
+        pendingDraft = text;
+        activeXhr = event.detail.xhr || null;
+        setSending(true);
 
         // Clear input immediately — file input kept for upload until afterRequest
         chatInput.value = '';
@@ -740,7 +1158,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     chatForm.addEventListener('htmx:afterRequest', (e) => {
+        const aborted = !e.detail.successful && e.detail.xhr && e.detail.xhr.status === 0;
         removeThinking();
+        setSending(false);
+        activeXhr = null;
+        if (aborted) {
+            removeOptimisticUser();
+            if (pendingDraft) {
+                chatInput.value = pendingDraft;
+                chatInput.focus();
+            }
+            pendingDraft = '';
+            return;
+        }
+        pendingDraft = '';
         if (e.detail.successful) {
             const currentModel = modelSelect.value;
             chatForm.reset();
@@ -751,7 +1182,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    chatForm.addEventListener('htmx:responseError', () => {
+    chatForm.addEventListener('htmx:responseError', (event) => {
+        if (event.detail?.xhr?.status === 0) return;
         removeThinking();
         removeOptimisticUser();
     });

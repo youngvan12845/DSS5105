@@ -72,6 +72,7 @@ class TaskResult:
     reply_preview: str = ''
     citation_count: int = 0
     pending_action_type: str = ''
+    learning_record: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -311,6 +312,21 @@ def _dispatch_message(
     )
 
 
+def _learning_record(reply: AgentReply) -> dict:
+    """Related lessons, prerequisites, and outside links used for this reply."""
+    record: dict = {}
+    for entry in reply.tool_trace or []:
+        if not isinstance(entry, dict):
+            continue
+        if entry.get('tool') == 'article_learning_record':
+            record['article_slug'] = entry.get('article_slug') or ''
+            record['related'] = entry.get('related') or []
+            record['prerequisites'] = entry.get('prerequisites') or {}
+        elif entry.get('tool') == 'external_sources':
+            record['outside_sources'] = entry.get('sources') or []
+    return record
+
+
 def run_eval(
     tasks: list[dict],
     user: User,
@@ -347,6 +363,7 @@ def run_eval(
                 reply_preview=(reply.content or '')[:240].replace('\n', ' '),
                 citation_count=len(reply.citations),
                 pending_action_type=reply.pending_action.get('action_type', ''),
+                learning_record=_learning_record(reply),
             )
         )
 

@@ -1,5 +1,5 @@
 {% load agent_extras static %}
-<link rel="stylesheet" href="{% static 'css/article-agent-panel.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/article-agent-panel.css' %}?v=6">
 <div id="article-agent-shell" class="article-agent-chat" data-article-id="{{ article.id }}">
     <button type="button" id="article-agent-restore" class="article-agent-restore hidden" title="Expand AI reading assistant" aria-label="Expand AI reading assistant">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7"/></svg>
@@ -79,6 +79,7 @@
             <form
                 id="article-chat-form"
                 hx-post="{% url 'a_agent:article_send_message' article.id %}"
+                data-stop-url="{% url 'a_agent:stop_message' session.id %}"
                 hx-target="#article-chat-messages"
                 hx-swap="beforeend"
                 hx-encoding="multipart/form-data"
@@ -507,6 +508,112 @@
 
 <script>
 (function () {
+    if (window.__extCitePreview) return;
+    window.__extCitePreview = true;
+    const card = document.createElement('div');
+    card.className = 'ext-cite-preview';
+    card.hidden = true;
+    document.body.appendChild(card);
+
+    const place = (link) => {
+        const site = link.dataset.extSite || (link.hostname || '').replace(/^www\./, '');
+        const title = link.dataset.extTitle || site;
+        const excerpt = link.dataset.extExcerpt || '';
+        const mark = (site || title || '?').trim().charAt(0).toUpperCase();
+        card.innerHTML = '';
+        const meta = document.createElement('div');
+        meta.className = 'ext-cite-preview-meta';
+        const badge = document.createElement('span');
+        badge.className = 'ext-cite-preview-mark';
+        badge.textContent = mark;
+        const siteName = document.createElement('span');
+        siteName.textContent = site;
+        meta.append(badge, siteName);
+        const heading = document.createElement('span');
+        heading.className = 'ext-cite-preview-title';
+        heading.textContent = title;
+        card.append(meta, heading);
+        if (excerpt) {
+            const snippet = document.createElement('span');
+            snippet.className = 'ext-cite-preview-excerpt';
+            snippet.textContent = excerpt;
+            card.append(snippet);
+        }
+        card.hidden = false;
+        const rect = link.getBoundingClientRect();
+        const width = card.offsetWidth;
+        const height = card.offsetHeight;
+        let left = rect.left + rect.width / 2 - width / 2;
+        left = Math.max(8, Math.min(left, window.innerWidth - width - 8));
+        let top = rect.top - height - 8;
+        if (top < 8) top = rect.bottom + 8;
+        card.style.left = left + 'px';
+        card.style.top = top + 'px';
+    };
+    const hide = () => { card.hidden = true; };
+    document.addEventListener('mouseover', (event) => {
+        const link = event.target.closest && event.target.closest('a.ext-cite');
+        if (link) place(link);
+    });
+    document.addEventListener('mouseout', (event) => {
+        const link = event.target.closest && event.target.closest('a.ext-cite');
+        if (link) hide();
+    });
+    document.addEventListener('focusin', (event) => {
+        const link = event.target.closest && event.target.closest('a.ext-cite');
+        if (link) place(link);
+    });
+    document.addEventListener('focusout', (event) => {
+        const link = event.target.closest && event.target.closest('a.ext-cite');
+        if (link) hide();
+    });
+})();
+</script>
+
+<script>
+(function () {
+    if (window.__extSourcePanel) return;
+    window.__extSourcePanel = true;
+    const panel = document.createElement('aside');
+    panel.className = 'ext-source-panel';
+    panel.hidden = true;
+    panel.innerHTML = '<div class="ext-source-panel-head"><strong></strong><button type="button" class="ext-source-panel-close" aria-label="Close">×</button></div><div class="ext-source-panel-body"></div>';
+    document.body.appendChild(panel);
+    const title = panel.querySelector('strong');
+    const body = panel.querySelector('.ext-source-panel-body');
+    const close = () => {
+        panel.hidden = true;
+        document.querySelectorAll('.ext-source-chip[aria-expanded="true"]').forEach((el) => {
+            el.setAttribute('aria-expanded', 'false');
+        });
+    };
+    panel.querySelector('.ext-source-panel-close').addEventListener('click', close);
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') close();
+    });
+    document.addEventListener('click', (event) => {
+        const chip = event.target.closest && event.target.closest('.ext-source-chip');
+        if (chip) {
+            event.preventDefault();
+            const pack = chip.closest('.ext-source-pack');
+            const list = pack && pack.querySelector('.ext-source-list');
+            if (!list) return;
+            const wasOpen = chip.getAttribute('aria-expanded') === 'true';
+            close();
+            if (wasOpen) return;
+            chip.setAttribute('aria-expanded', 'true');
+            title.textContent = chip.dataset.panelTitle || 'Web pages';
+            body.innerHTML = list.innerHTML;
+            panel.hidden = false;
+            return;
+        }
+        if (!panel.hidden && !(event.target.closest && event.target.closest('.ext-source-panel'))) close();
+    });
+})();
+</script>
+
+<script>
+(function () {
     const shell = document.getElementById('article-agent-shell');
     const form = document.getElementById('article-chat-form');
     const input = document.getElementById('article-chat-input');
@@ -581,6 +688,7 @@
     const scrollToBottom = () => { messages.scrollTop = messages.scrollHeight; };
 
     let sending = false;
+    let activeXhr = null;
     const sendButton = form.querySelector('.article-agent-send-btn');
     const requestStatus = document.createElement('p');
     requestStatus.setAttribute('role', 'status');
@@ -589,10 +697,45 @@
     const setSending = (value) => {
         sending = value;
         input.readOnly = value;
-        if (sendButton) { sendButton.disabled = value; sendButton.textContent = value ? 'Sending…' : 'Send'; }
+        if (sendButton) {
+            sendButton.type = value ? 'button' : 'submit';
+            sendButton.disabled = false;
+            sendButton.textContent = value ? 'Stop' : 'Send';
+            sendButton.classList.toggle('is-stop', value);
+        }
         if (imageBtn) imageBtn.disabled = value;
         if (imageClearBtn) imageClearBtn.disabled = value;
     };
+    const stopSending = () => {
+        const token = form.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        if (form.dataset.stopUrl && token) {
+            fetch(form.dataset.stopUrl, {method: 'POST', headers: {'X-CSRFToken': token}});
+        }
+        activeXhr?.abort();
+    };
+    sendButton?.addEventListener('click', (event) => {
+        if (!sendButton.classList.contains('is-stop')) return;
+        event.preventDefault();
+        stopSending();
+    });
+    document.addEventListener('click', (event) => {
+        const action = event.target.closest('[data-msg-action]');
+        if (!action) return;
+        const root = action.closest('.agent-user-body, .agent-assistant-body');
+        const bubble = root?.querySelector('.agent-bubble-user, .agent-bubble-assistant');
+        const text = (bubble?.innerText || '').trim();
+        if (!text) return;
+        if (action.dataset.msgAction === 'copy') {
+            navigator.clipboard.writeText(text).then(() => {
+                action.title = 'Copied';
+                setTimeout(() => { action.title = 'Copy'; }, 1200);
+            });
+            return;
+        }
+        if (sending) return;
+        input.value = text;
+        input.focus();
+    });
     form.addEventListener('htmx:beforeRequest', (event) => {
         if (sending) { event.preventDefault(); return; }
         const text = input.value.trim();
@@ -600,6 +743,7 @@
         const content = text || (hasImage ? '[Image attached]' : '');
         if (!content) { event.preventDefault(); input.value = ''; return; }
         setSending(true);
+        activeXhr = event.detail.xhr || null;
         requestStatus.textContent = '';
 
         messages.querySelector('.article-agent-empty')?.remove();
@@ -628,8 +772,15 @@
     });
 
     form.addEventListener('htmx:afterRequest', (e) => {
+        const aborted = !e.detail.successful && e.detail.xhr && e.detail.xhr.status === 0;
         document.getElementById('article-chat-thinking')?.remove();
         setSending(false);
+        activeXhr = null;
+        if (aborted) {
+            messages.querySelector('.article-optimistic-user')?.remove();
+            input.focus();
+            return;
+        }
         if (e.detail.successful) {
             messages.querySelector('.article-optimistic-user')?.remove();
             const currentModel = modelSelect ? modelSelect.value : null;
@@ -645,7 +796,8 @@
     });
 
     for (const name of ['htmx:responseError', 'htmx:sendError', 'htmx:timeout']) {
-        form.addEventListener(name, () => {
+        form.addEventListener(name, (event) => {
+            if (event.detail?.xhr?.status === 0) return;
             setSending(false);
             document.getElementById('article-chat-thinking')?.remove();
             messages.querySelector('.article-optimistic-user')?.remove();

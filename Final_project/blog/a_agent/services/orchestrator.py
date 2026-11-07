@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from urllib.parse import quote, urlparse
 
 from django.contrib.auth.models import AnonymousUser, User
 
@@ -15,7 +16,7 @@ from a_agent.tools.article_scope import (
     search_scoped_article_vectors,
 )
 from a_agent.tools.comment_draft import build_comment_draft, propose_post_comment
-from a_agent.tools.external_lookup import lookup_outside_the_blog, topic_from_query
+from a_agent.tools.external_lookup import lookup_outside_the_blog, topic_from_query, wants_several_sources
 from a_agent.tools.browsing_history import get_browsing_history, history_to_dicts
 from a_agent.tools.chunk_search import _extract_terms_and_phrases, _word_match, chunk_hits_to_dicts, search_article_chunks
 from a_agent.tools.keyword_search import hits_to_dicts, keyword_search_articles
@@ -1057,96 +1058,247 @@ def _is_no_match_response(text: str) -> bool:
 
 def _outside_note_lines(notes: list[dict]) -> str:
     lines = []
-    for note in notes:
+    for index, note in enumerate(notes, start=1):
         title = note.get('title') or 'Outside note'
         excerpt = (note.get('excerpt') or '').strip()
-        source = note.get('source_name') or 'the open web'
-        url = (note.get('url') or '').strip()
-        source_bit = f'{source}: {url}' if url else source
-        lines.append(f'- **{title}** — {excerpt} ({source_bit})')
+        lines.append(f'[{index}] **{title}** — {excerpt}')
     return '\n'.join(lines)
 
 
-OUTSIDE_LOOKUP_PROMPT_EN = 'Yes, look outside the blog'
-OUTSIDE_LOOKUP_PROMPT_ZH = '好，查一下博客外面'
-_OUTSIDE_LOOKUP_SESSION_KEY = 'outside_lookup_query'
+def _lesson_title_text(hits: list) -> str:
+    return ' '.join(
+        f"{getattr(hit, 'title', '')} {getattr(hit, 'article_title', '')}"
+        for hit in hits
+    ).lower()
 
 
-def _is_outside_lookup_yes(query: str) -> bool:
-    q = (query or '').strip().lower()
-    return q in {
-        OUTSIDE_LOOKUP_PROMPT_EN.lower(),
-        OUTSIDE_LOOKUP_PROMPT_ZH,
-        'yes',
-        'y',
-        '是',
-        '好',
-        '查一下外面',
-    }
-
-
-def _is_explicit_outside_confirm(query: str) -> bool:
-    q = (query or '').strip().lower()
-    return q in {
-        OUTSIDE_LOOKUP_PROMPT_EN.lower(),
-        OUTSIDE_LOOKUP_PROMPT_ZH,
-        '查一下外面',
-    }
-
-
-def _topic_before_confirm(chat_history) -> str:
-    if not chat_history:
+def _uncovered_outside_topic(query: str, hits: list) -> str:
+    """The part of a question that no on-site lesson title covers."""
+    if not hits:
         return ''
-    for msg in reversed(chat_history):
-        if getattr(msg, 'role', '') != 'user':
+    titles = _lesson_title_text(hits)
+    if not titles.strip():
+        return ''
+    parts = [
+        part.strip(' ,，。?？')
+        for part in re.split(r'\s+\band\b\s+|以及|顺便|还有|另外', query or '', flags=re.I)
+        if part.strip(' ,，。?？')
+    ]
+    if len(parts) >= 2:
+        outside_parts = []
+        saw_lesson = False
+        for part in parts:
+            terms, _ = _extract_terms_and_phrases(part)
+            if terms and any(_word_match(term, titles) for term in terms):
+                saw_lesson = True
+            elif terms:
+                outside_parts.append(part)
+        if saw_lesson and outside_parts:
+            return ' '.join(outside_parts)[:120]
+    terms, _ = _extract_terms_and_phrases(query)
+    matched = [term for term in terms if _word_match(term, titles)]
+    missed = [term for term in terms if term not in matched and len(term) >= 4]
+    if matched and missed:
+        return ' '.join(missed)[:120]
+    return ''
+
+
+def _cite_token(number: int, note: dict) -> str:
+    url = (note.get('url') or '').strip()
+    title = re.sub(r'\s+', ' ', (note.get('title') or '')).strip()[:160]
+    site = re.sub(r'\s+', ' ', (note.get('source_name') or '')).strip()[:80]
+    excerpt = re.sub(r'\s+', ' ', (note.get('excerpt') or '')).strip()[:180]
+    return '{{cite:%d:%s|%s|%s|%s}}' % (
+        number,
+        url,
+        quote(title, safe=''),
+        quote(site, safe=''),
+        quote(excerpt, safe=''),
+    )
+
+
+def _attach_source_marks(body: str, notes: list[dict], *, several: bool = True) -> str:
+    """Turn [1] at a sentence end into a clickable source mark."""
+    usable = [
+        note for note in notes
+        if (note.get('url') or '').strip().startswith(('http://', 'https://'))
+    ]
+    if not usable or not body:
+        return body
+
+    def repl(match):
+        number = int(match.group(1))
+        if 1 <= number <= len(usable):
+            return _cite_token(number, usable[number - 1])
+        return match.group(0)
+
+    if re.search(r'\[(\d+)\]', body):
+        if not several:
+            body = re.sub(r'(\[\d+\])(?:\[\d+\])+', r'\1', body)
+        return re.sub(r'\[(\d+)\]', repl, body)
+    chosen = usable if several else usable[:1]
+    suffix = ''.join(_cite_token(index, note) for index, note in enumerate(chosen, start=1))
+    return body.rstrip() + suffix
+
+
+def _opened_lesson_note(content: str, history_items: list, hits: list, is_chinese: bool) -> str:
+    """Name opened lessons that this answer is actually using."""
+    if not history_items or not hits:
+        return ''
+    hit_ids = set()
+    hit_titles = set()
+    for hit in hits:
+        article_id = getattr(hit, 'article_id', None)
+        if article_id:
+            hit_ids.add(article_id)
+        for attr in ('title', 'article_title'):
+            title = (getattr(hit, attr, None) or '').strip()
+            if title:
+                hit_titles.add(title.casefold())
+    opened = []
+    body = content or ''
+    body_lower = body.lower()
+    for item in history_items:
+        title = (getattr(item, 'article_title', None) or '').strip()
+        if not title or title in opened:
             continue
-        text = (getattr(msg, 'content', '') or '').strip()
-        if text and not _is_outside_lookup_yes(text):
-            return text
-    return ''
-
-
-def _outside_offer(query: str, request, *, is_chinese: bool) -> tuple[str, dict]:
-    if request is not None and hasattr(request, 'session'):
-        request.session[_OUTSIDE_LOOKUP_SESSION_KEY] = query
+        article_id = getattr(item, 'article_id', None)
+        if article_id not in hit_ids and title.casefold() not in hit_titles:
+            continue
+        if title.lower() in body_lower and any(
+            mark in body_lower for mark in ('already opened', 'already read', '打开过', '读过', '看过')
+        ):
+            continue
+        opened.append(title)
+        if len(opened) == 3:
+            break
+    if not opened:
+        return ''
+    names = '、'.join(f'**{title}**' for title in opened) if is_chinese else ', '.join(f'**{title}**' for title in opened)
     if is_chinese:
-        content = (
-            '抱歉，在当前的博客文章库中找不到与此主题相关的文章。'
-            '要不要查一下博客外面的公开资料？那不是本站课文。'
+        return f'你已经打开过{names}。'
+    if len(opened) == 1:
+        return f'You already opened {names}.'
+    return f'You already opened {names}.'
+
+
+def _append_opened_lesson_note(content: str, history_items: list, hits: list, is_chinese: bool) -> str:
+    note = _opened_lesson_note(content, history_items, hits, is_chinese)
+    if not note:
+        return content
+    return content.rstrip() + '\n\n' + note
+
+
+def _drop_outside_from_lesson(content: str, uncovered: str) -> str:
+    """Keep the on-site answer. Drop the outside topic and any raw [1] marks."""
+    name = topic_from_query(uncovered) or (uncovered or '').strip()
+    text = re.sub(r'\[\d+\]', '', content or '')
+    text = re.sub(r'\{\{cite:\d+:[^}]+\}\}', '', text)
+    text = re.sub(r'[ \t]{2,}', ' ', text).strip()
+    if not name:
+        return text
+    mention = re.compile(rf'(?<![A-Za-z0-9]){re.escape(name)}(?![A-Za-z0-9])', re.I)
+    paragraphs = []
+    for para in re.split(r'\n\s*\n', text):
+        pieces = re.split(r'(?<=[.!?。！？])\s+', para.strip())
+        kept = [piece for piece in pieces if piece.strip() and not mention.search(piece)]
+        if kept:
+            paragraphs.append(' '.join(kept))
+    return '\n\n'.join(paragraphs).strip()
+
+
+def _break_outside_paragraphs(body: str) -> str:
+    """Keep the outside note in short paragraphs instead of one block."""
+    text = (body or '').strip()
+    if not text or '\n\n' in text:
+        return text
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if len(lines) > 1:
+        return '\n\n'.join(lines)
+    sentences = [part.strip() for part in re.split(r'(?<=[.!?。！？])\s+', text) if part.strip()]
+    if len(sentences) <= 1:
+        return text
+    return sentences[0] + '\n\n' + ' '.join(sentences[1:])
+
+
+def _mixed_outside_lead(name: str, is_chinese: bool) -> str:
+    if is_chinese:
+        return f'**关于 {name}**（站内没有，站外给你解答）：'
+    return f'**About {name}** (not on this site, so here is a note from outside):'
+
+
+def _mixed_outside_block(
+    uncovered: str,
+    notes: list[dict],
+    *,
+    is_chinese: bool,
+    model: str | None = None,
+    use_model: bool = True,
+    several: bool = False,
+) -> str:
+    name = topic_from_query(uncovered) or (uncovered or '').strip() or 'that'
+    body = _outside_blog_reply(
+        uncovered,
+        notes,
+        is_chinese=is_chinese,
+        model=model,
+        use_model=use_model,
+        include_refusal=False,
+        several=several,
+    )
+    body = re.sub(
+        r'^(This point is not a lesson on this site\.|This is not a lesson on this site\.)\s*',
+        '',
+        body,
+        flags=re.I,
+    )
+    body = re.sub(r'^这一点不是本站课文。\s*', '', body)
+    return f'{_mixed_outside_lead(name, is_chinese)}\n\n{body.strip()}'
+
+
+def _soften_outside_heading(content: str, uncovered: str, is_chinese: bool) -> str:
+    """Turn the outside label into a sentence so the two halves read as one answer."""
+    name = topic_from_query(uncovered) or (uncovered or '').strip() or 'This'
+    if is_chinese:
+        softened = re.sub(
+            r'\*\*博客之外\*\*\s*[（(]不是本站课文[)）]\s*[:：]?\s*',
+            f'{name}不是本站课文。',
+            content,
+            count=1,
         )
-        trace = {
-            'tool': 'offer_external_lookup',
-            'label': '查一下外面',
-            'prompt': OUTSIDE_LOOKUP_PROMPT_ZH,
-        }
-    else:
-        content = (
-            'I cannot find any article about that topic in the blog corpus. '
-            'Should I look outside the blog? That would not be a lesson on this site.'
-        )
-        trace = {
-            'tool': 'offer_external_lookup',
-            'label': 'Look outside the blog',
-            'prompt': OUTSIDE_LOOKUP_PROMPT_EN,
-        }
-    return content, trace
+        return softened
+    softened = re.sub(
+        r'\*\*Outside the blog\*\*\s*\(not a lesson on this site\)\s*:?\s*',
+        f'{name} is not a lesson on this site. ',
+        content,
+        count=1,
+        flags=re.I,
+    )
+    return re.sub(
+        rf'({re.escape(name)} is not a lesson on this site\. )\s*{re.escape(name)} is ',
+        r'\1It is ',
+        softened,
+        count=1,
+        flags=re.I,
+    )
 
 
-def _take_outside_offer(query: str, request) -> str:
-    """Return the saved topic for a confirmation, and skip blog search.
-
-    The saved topic stays until the user asks a different question, so a
-    second confirmation takes the same path as the first.
-    """
-    if request is None or not hasattr(request, 'session'):
-        return ''
-    saved = request.session.get(_OUTSIDE_LOOKUP_SESSION_KEY) or ''
-    if not saved:
-        return ''
-    if _is_outside_lookup_yes(query):
-        return saved
-    request.session.pop(_OUTSIDE_LOOKUP_SESSION_KEY, None)
-    return ''
+def _external_source_trace(notes: list[dict]) -> dict:
+    sources = []
+    for note in notes:
+        url = (note.get('url') or '').strip()
+        if not url.startswith(('http://', 'https://')):
+            continue
+        host = (urlparse(url).hostname or '').removeprefix('www.')
+        excerpt = re.sub(r'\s+', ' ', (note.get('excerpt') or '')).strip()[:220]
+        sources.append({
+            'title': note.get('title') or note.get('source_name') or 'Source',
+            'url': url,
+            'source_name': note.get('source_name') or host or 'Web',
+            'host': host,
+            'excerpt': excerpt,
+        })
+    return {'tool': 'external_sources', 'sources': sources}
 
 
 def _outside_blog_reply(
@@ -1157,6 +1309,7 @@ def _outside_blog_reply(
     model: str | None = None,
     use_model: bool = True,
     include_refusal: bool = True,
+    several: bool = True,
 ) -> str:
     if is_chinese:
         opening = '抱歉，在当前的博客文章库中找不到与此主题相关的文章。'
@@ -1171,11 +1324,23 @@ def _outside_blog_reply(
 
     body = _outside_note_lines(notes)
     if use_model and llm_configured():
-        system_prompt = (
-            'You rewrite the outside notes into two or three short sentences for a student. '
-            'Use only those notes. Do not mention any CheeseO lesson, and do not invent a blog article. '
-            'Do not add a SOURCES list.'
-        )
+        if include_refusal:
+            system_prompt = (
+                'You rewrite the numbered outside notes into a short answer for a student. '
+                'Use only those notes. Do not mention any CheeseO lesson, and do not invent a blog article. '
+                'Do not write URLs and do not add a SOURCES list. '
+                'At the end of each sentence, add the note numbers that sentence used, with no space, like [1] or [2][3]. '
+                'Put a blank line between sentences. '
+                'A simple question can use one note. A question with several parts must use more than one note.'
+            )
+        else:
+            system_prompt = (
+                'Rewrite the numbered notes into one or two short sentences. '
+                'Put a blank line between the sentences. '
+                'Do not add a heading. Do not mention the blog, and do not say whether this is a lesson. '
+                'Do not write URLs and do not add a SOURCES list. '
+                'A short definition ends with [1] only. Add [2] or [3] only when a later sentence uses that note.'
+            )
         if is_chinese:
             system_prompt += ' Write in Simplified Chinese.'
         try:
@@ -1188,13 +1353,16 @@ def _outside_blog_reply(
             if is_chinese:
                 rewritten = _ensure_simplified_chinese(rewritten)
             if rewritten.strip():
-                body = rewritten.strip()
+                body = _break_outside_paragraphs(rewritten.strip())
         except Exception:
             pass
-    note = f'{label}\n{body}'
-    if include_refusal:
-        return f'{opening}\n\n{note}'
-    return note
+    else:
+        body = _break_outside_paragraphs(body)
+    body = _attach_source_marks(body, notes, several=several or include_refusal)
+    if not include_refusal:
+        return body
+    note = f'{label}\n\n{body}'
+    return f'{opening}\n\n{note}'
 
 
 def handle_user_message(
@@ -1208,26 +1376,6 @@ def handle_user_message(
     chat_history: list | None = None,
 ) -> AgentReply:
     tool_trace: list[dict] = []
-    saved_outside_query = _take_outside_offer(query, request)
-    if not saved_outside_query and _is_explicit_outside_confirm(query):
-        saved_outside_query = _topic_before_confirm(chat_history)
-    if saved_outside_query:
-        is_chinese = bool(re.search(r'[\u4e00-\u9fff]', saved_outside_query))
-        outside_notes = lookup_outside_the_blog(saved_outside_query)
-        tool_trace.append({'tool': 'external_lookup', 'result_count': len(outside_notes)})
-        return AgentReply(
-            content=_outside_blog_reply(
-                saved_outside_query,
-                outside_notes,
-                is_chinese=is_chinese,
-                model=model,
-                include_refusal=False,
-            ),
-            citations=[],
-            tool_trace=tool_trace,
-            pending_action={},
-        )
-
     article_scope = get_article_scope(article_id, user, request=request) if article_id else None
     if article_id and article_scope is None:
         return AgentReply(
@@ -1256,10 +1404,8 @@ def handle_user_message(
         }
     )
 
-    history_items = []
-    if 'history' in intents or 'recommend' in intents:
-        history_items = get_browsing_history(user, limit=5)
-        tool_trace.append({'tool': 'get_browsing_history', 'result_count': len(history_items)})
+    history_items = get_browsing_history(user, limit=5)
+    tool_trace.append({'tool': 'get_browsing_history', 'result_count': len(history_items)})
 
     is_chinese = bool(re.search(r'[\u4e00-\u9fff]', query))
     keyword_hits = []
@@ -1564,20 +1710,34 @@ def handle_user_message(
                 pending_action={},
             )
 
-    # BUG-07: no on-site match means no SOURCES. Ask before looking outside the blog.
+    # BUG-07: no on-site lesson means no SOURCES. History alone is not a lesson match.
     has_any_corpus_match = bool(
         article_scope or keyword_hits or chunk_hits or vector_hits
-        or reading_path or history_items or reading_list or recommend_hits or pending_action
+        or reading_path or reading_list or recommend_hits or pending_action
     )
     if not has_any_corpus_match:
-        content, offer = _outside_offer(query, request, is_chinese=is_chinese)
-        tool_trace.append(offer)
+        outside_notes = lookup_outside_the_blog(query)
+        tool_trace.append({'tool': 'external_lookup', 'result_count': len(outside_notes)})
+        tool_trace.append(_external_source_trace(outside_notes))
         return AgentReply(
-            content=content,
+            content=_outside_blog_reply(query, outside_notes, is_chinese=is_chinese, model=model),
             citations=[],
             tool_trace=tool_trace,
             pending_action={},
         )
+
+    outside_notes = []
+    uncovered = ''
+    if not article_scope:
+        uncovered = _uncovered_outside_topic(query, [*keyword_hits, *chunk_hits, *vector_hits])
+        if uncovered:
+            outside_notes = lookup_outside_the_blog(uncovered)
+            tool_trace.append({
+                'tool': 'external_lookup',
+                'result_count': len(outside_notes),
+                'topic': uncovered,
+            })
+            tool_trace.append(_external_source_trace(outside_notes))
 
     citations = _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=reading_path)
 
@@ -1634,6 +1794,9 @@ def handle_user_message(
                 'If the user asks whether they can understand this article or asks about prerequisites, reference the provided prerequisite diagnosis. '
                 'If the user is an experienced or senior reader, provide architectural insights and production pitfalls instead of basic definitions. '
                 'Do not mention or cite other articles unless discussing prerequisites. '
+                'Use the browsing history in the answer. '
+                'If this article or one of its prerequisites is already in that history, say the reader has opened it. '
+                'A lesson already opened counts as read. '
                 f'{lang_directive} '
                 'If the user requests a quiz, comprehension test, or "Quiz Me" / "考考我": '
                 'generate 2 to 3 interactive multiple-choice or scenario questions based directly on the core technical concepts and tradeoffs in this article. '
@@ -1652,6 +1815,10 @@ def handle_user_message(
                 'When finding or recommending articles on a specific topic, prioritize the Search results (Keyword hits, Chunk passages, Vector hits), and summarize how each article addresses the topic. '
                 'When reading path or recommendations are provided, present the structured steps and their notes clearly. '
                 f'{lang_directive} '
+                'The browsing history lists lessons this reader has already opened. '
+                'If one of those lessons is relevant to the question or appears in the search results, say they have already opened it, using its exact title. '
+                'Do not recommend an already opened lesson as if it were new. '
+                'If none of the opened lessons relate to the question, do not mention the history. '
                 'Cite article titles and include markdown links when URLs are available. '
                 'If content is paywalled and the user cannot read the full text, do not leak paid body text. '
                 'If the user asks about an article or topic not found in the blog corpus (or tool results are empty), refuse clearly by stating: "I cannot find any article about that in the blog corpus." '
@@ -1672,8 +1839,35 @@ def handle_user_message(
                 from a_agent.services.navigator import calculate_article_readiness
                 session_mastered = request.session.get('mastered_prereqs', []) if request and hasattr(request, 'session') else []
                 readiness_diag = calculate_article_readiness(user, article_scope.slug, session_mastered=session_mastered)
+                related_titles = []
+                for hit in [*keyword_hits, *chunk_hits, *vector_hits]:
+                    title = getattr(hit, 'title', None) or getattr(hit, 'article_title', '')
+                    if title and title not in related_titles:
+                        related_titles.append(title)
+                tool_trace.append({
+                    'tool': 'article_learning_record',
+                    'article_slug': article_scope.slug,
+                    'related': related_titles[:8],
+                    'prerequisites': {
+                        'ready': [
+                            item.get('title') or item.get('slug')
+                            for item in (readiness_diag.get('ready_prereqs') or [])
+                            if isinstance(item, dict)
+                        ],
+                        'gaps': [
+                            item.get('title') or item.get('slug')
+                            for item in (readiness_diag.get('gaps') or [])
+                            if isinstance(item, dict)
+                        ],
+                    },
+                })
                 tool_trace.append({'tool': 'calculate_article_readiness', 'status': readiness_diag.get('status'), 'score': readiness_diag.get('score')})
                 user_prompt += f'Prerequisite diagnosis & readiness:\n{readiness_diag}\n\n'
+                if history_items:
+                    user_prompt += (
+                        'Use this reader\'s browsing history in the answer. '
+                        'A lesson already in the history counts as opened.\n\n'
+                    )
         user_prompt += (
             f'Search results (Keyword hits):\n{hits_to_dicts(keyword_hits)}\n\n'
             f'Search results (Relevant chunk passages):\n{chunk_hits_to_dicts(chunk_hits)}\n\n'
@@ -1684,6 +1878,12 @@ def handle_user_message(
             f'Reading list:\n{reading_list_to_dicts(reading_list)}\n\n'
             f'Pending action:\n{pending_action or None}'
         )
+        if uncovered:
+            user_prompt += (
+                f'\n\nDo not answer "{uncovered}". Do not mention it. '
+                'Do not write source numbers such as [1]. '
+                'That part is added after your reply.\n'
+            )
         if is_chinese:
             user_prompt += '\n\n[Final Reminder: Regardless of whether the user wrote in Traditional or Simplified Chinese, you MUST write your entire response in Simplified Chinese (简体中文).]'
         try:
@@ -1696,7 +1896,32 @@ def handle_user_message(
             content = _sanitize_markdown_output(content)
             if is_chinese:
                 content = _ensure_simplified_chinese(content)
-            if _is_no_match_response(content) and not pending_action:
+            content = _append_opened_lesson_note(
+                content,
+                history_items,
+                [*keyword_hits, *chunk_hits, *vector_hits],
+                is_chinese,
+            )
+            if uncovered:
+                content = _drop_outside_from_lesson(content, uncovered)
+                name = topic_from_query(uncovered) or uncovered
+                if outside_notes:
+                    content = (
+                        content.rstrip()
+                        + '\n\n'
+                        + _mixed_outside_block(
+                            uncovered,
+                            outside_notes,
+                            is_chinese=is_chinese,
+                            model=model,
+                            several=wants_several_sources(query),
+                        )
+                    )
+                else:
+                    missing = '没有找到可用的公开说明。' if is_chinese else 'I did not find a usable public note.'
+                    content = content.rstrip() + '\n\n' + _mixed_outside_lead(name, is_chinese) + '\n' + missing
+            lesson_hits = keyword_hits or chunk_hits or vector_hits or reading_path
+            if _is_no_match_response(content) and not pending_action and not lesson_hits:
                 citations = []
             tool_trace.append({'tool': 'response_mode', 'mode': 'ai'})
             return AgentReply(
@@ -1725,7 +1950,29 @@ def handle_user_message(
     content = _sanitize_markdown_output(content)
     if is_chinese:
         content = _ensure_simplified_chinese(content)
-    if _is_no_match_response(content) and not pending_action:
+    content = _append_opened_lesson_note(
+        content,
+        history_items,
+        [*keyword_hits, *chunk_hits, *vector_hits],
+        is_chinese,
+    )
+    if uncovered:
+        content = _drop_outside_from_lesson(content, uncovered)
+    if outside_notes:
+        content = (
+            content.rstrip()
+            + '\n\n'
+            + _mixed_outside_block(
+                uncovered or query,
+                outside_notes,
+                is_chinese=is_chinese,
+                model=model,
+                use_model=False,
+                several=wants_several_sources(query),
+            )
+        )
+    lesson_hits = keyword_hits or chunk_hits or vector_hits or reading_path
+    if _is_no_match_response(content) and not pending_action and not lesson_hits:
         citations = []
     return AgentReply(
         content=content,

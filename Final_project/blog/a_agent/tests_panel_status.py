@@ -248,7 +248,15 @@ class PanelStatusTests(SimpleTestCase):
         )
         self.assertEqual(topic, 'Kubernetes Helm chart deployments')
 
+        web_html = (
+            '<a class="result__a" href="https://duckduckgo.com/l/?uddg='
+            'https%3A%2F%2Fkubernetes.io%2Fdocs%2Fconcepts%2Fworkloads%2Fcontrollers%2Fdeployment%2F">'
+            'Kubernetes Deployments</a>'
+            '<a class="result__snippet" href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">'
+            'A Deployment provides declarative updates for Pods and ReplicaSets.</a>'
+        )
         pages = {
+            'web': web_html,
             'duckduckgo': '{"AbstractText": "", "Heading": "", "AbstractURL": ""}',
             'search': json.dumps({'query': {'search': [{'title': 'Helm (package manager)'}]}}),
             'summary': json.dumps({
@@ -259,7 +267,9 @@ class PanelStatusTests(SimpleTestCase):
         }
 
         def fetch(url):
-            if 'duckduckgo' in url:
+            if 'html.duckduckgo.com' in url:
+                return pages['web']
+            if 'api.duckduckgo.com' in url:
                 return pages['duckduckgo']
             if 'list=search' in url:
                 return pages['search']
@@ -269,8 +279,10 @@ class PanelStatusTests(SimpleTestCase):
             'Summarize the article about Kubernetes Helm chart deployments on this blog.',
             fetch=fetch,
         )
-        self.assertEqual(len(notes), 1)
-        self.assertEqual(notes[0]['source_name'], 'Wikipedia')
+        urls = [note['url'] for note in notes]
+        self.assertIn('https://kubernetes.io/docs/concepts/workloads/controllers/deployment/', urls)
+        self.assertIn('https://en.wikipedia.org/wiki/Helm_(package_manager)', urls)
+        self.assertTrue(any(note['source_name'] == 'Wikipedia' for note in notes))
         reply = _outside_blog_reply(
             'Summarize the article about Kubernetes Helm chart deployments on this blog.',
             notes,
@@ -281,31 +293,85 @@ class PanelStatusTests(SimpleTestCase):
         self.assertIn('I cannot find any article about that topic in the blog corpus.', reply)
         self.assertIn('not a lesson on this site', reply)
         self.assertIn('Helm is a package manager for Kubernetes', reply)
+        self.assertIn('{{cite:2:https://en.wikipedia.org/wiki/Helm_(package_manager)|', reply)
 
-        from a_agent.services.orchestrator import _is_outside_lookup_yes, _outside_offer
+        from a_agent.templatetags.agent_extras import agent_markdown
+        from a_agent.tools.external_lookup import wants_several_sources
+        rendered = str(agent_markdown(
+            'Charts use YAML.{{cite:1:https://kubernetes.io/docs/concepts/workloads/controllers/deployment/'
+            '|Helm%20is%20a%20package%20manager|helm.sh|It%20installs%20charts.}}'
+        ))
+        self.assertIn('class="ext-cite"', rendered)
+        self.assertIn('target="_blank"', rendered)
+        self.assertIn('>1</a>', rendered)
+        self.assertIn('data-ext-title="Helm is a package manager"', rendered)
+        self.assertIn('data-ext-excerpt="It installs charts."', rendered)
+        self.assertFalse(wants_several_sources(
+            'Summarize the article about Kubernetes Helm chart deployments on this blog.'
+        ))
+        self.assertTrue(wants_several_sources('请给我解释一下优必选这个公司，并判断，他们大数据开发工程师要不要去'))
 
-        class _Session(dict):
-            modified = False
-
-            def pop(self, key, default=None):
-                self.modified = True
-                return super().pop(key, default)
-
-        request = SimpleNamespace(session=_Session())
-        asked = 'Summarize the article about Kubernetes Helm chart deployments on this blog.'
-        content, offer = _outside_offer(asked, request, is_chinese=False)
-        self.assertIn('Should I look outside the blog?', content)
-        self.assertNotIn('Helm is a package manager', content)
-        self.assertEqual(offer['prompt'], 'Yes, look outside the blog')
-        self.assertEqual(request.session['outside_lookup_query'], asked)
-        from a_agent.services.orchestrator import _take_outside_offer
-        self.assertEqual(_take_outside_offer('Yes, look outside the blog', request), asked)
-        self.assertEqual(request.session['outside_lookup_query'], asked)
-        self.assertEqual(_take_outside_offer('Yes, look outside the blog', request), asked)
-        self.assertEqual(_take_outside_offer('What is Git?', request), '')
-        self.assertNotIn('outside_lookup_query', request.session)
-        self.assertTrue(_is_outside_lookup_yes('Yes, look outside the blog'))
-        self.assertFalse(_is_outside_lookup_yes('Summarize the article about Kubernetes Helm chart deployments on this blog.'))
+        from a_agent.services.orchestrator import (
+            _append_opened_lesson_note,
+            _break_outside_paragraphs,
+            _drop_outside_from_lesson,
+            _external_source_trace,
+            _mixed_outside_lead,
+            _soften_outside_heading,
+            _uncovered_outside_topic,
+        )
+        stiff = (
+            'Git tracks changes.\n\n'
+            '**Outside the blog** (not a lesson on this site):\n'
+            'Helm is a package manager for Kubernetes.[1][2][3][4]'
+        )
+        self.assertEqual(
+            _soften_outside_heading(stiff, 'what is Helm', False),
+            'Git tracks changes.\n\nHelm is not a lesson on this site. It is a package manager for Kubernetes.[1][2][3][4]',
+        )
+        self.assertEqual(
+            _drop_outside_from_lesson(
+                'Git tracks changes. Helm, on the other hand, is a package manager. [1]',
+                'what is Helm',
+            ),
+            'Git tracks changes.',
+        )
+        self.assertEqual(
+            _mixed_outside_lead('Helm', False),
+            '**About Helm** (not on this site, so here is a note from outside):',
+        )
+        self.assertIn('站内没有，站外给你解答', _mixed_outside_lead('Helm', True))
+        self.assertEqual(
+            _break_outside_paragraphs('Helm is a package manager. It installs charts.[1]'),
+            'Helm is a package manager.\n\nIt installs charts.[1]',
+        )
+        opened = SimpleNamespace(article_id=7, article_title='What Is Git?')
+        git_lesson = SimpleNamespace(article_id=7, title='What Is Git?')
+        other_lesson = SimpleNamespace(article_id=8, title='Docker Volumes')
+        self.assertEqual(
+            _append_opened_lesson_note('Git tracks files.', [opened], [git_lesson], False),
+            'Git tracks files.\n\nYou already opened **What Is Git?**.',
+        )
+        self.assertEqual(
+            _append_opened_lesson_note('Git tracks files.', [opened], [other_lesson], False),
+            'Git tracks files.',
+        )
+        git_hit = SimpleNamespace(
+            title='What Is Git?',
+            article_title='',
+            snippet='A helm is mentioned only in the body, not the title.',
+            content='helm',
+            intro='',
+        )
+        self.assertEqual(
+            _uncovered_outside_topic('What is Git, and what is Helm?', [git_hit]),
+            'what is Helm',
+        )
+        self.assertEqual(_uncovered_outside_topic('What is Git?', [git_hit]), '')
+        sources = _external_source_trace(notes)['sources']
+        self.assertTrue(all(item['url'].startswith('https://') for item in sources))
+        self.assertTrue(all(item.get('host') for item in sources))
+        self.assertGreaterEqual(len(sources), 2)
 
         from a_agent.services.orchestrator import _question_leaves_this_article
         cicd = SimpleNamespace(title='The CI/CD Pipeline That Was Lying to Us: A Deploy Debugging Story')

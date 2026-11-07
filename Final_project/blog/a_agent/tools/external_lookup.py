@@ -1,7 +1,7 @@
-"""Look up a topic outside the blog when on-site search finds nothing.
+"""Look up a topic on the public web when the blog has no lesson.
 
-Results are notes for the reply. They are not blog lessons and must not be
-added to the SOURCES list.
+Notes are not blog lessons and must not be added to the SOURCES list.
+Each note keeps the page it came from so the reply can link to it.
 """
 
 from __future__ import annotations
@@ -11,6 +11,7 @@ import re
 import urllib.error
 import urllib.parse
 import urllib.request
+from html.parser import HTMLParser
 
 _STRIP_PATTERNS = (
     r'\bsummarize the article (about|titled|called)\b',
@@ -28,13 +29,31 @@ _LEADING = re.compile(
     r'^(please |can you |could you |what is |what\'s |explain |tell me about )+',
     re.I,
 )
+_MAX_NOTES = 4
 
 
-def topic_from_query(query: str) -> str:
+def wants_several_sources(query: str) -> bool:
+    """A long or multi-part question should cite more than one public page."""
+    text = query or ''
+    words = re.findall(r'[A-Za-z0-9\u4e00-\u9fff]+', text)
+    if len(words) >= 18:
+        return True
+    lower = text.lower()
+    return any(mark in lower for mark in (
+        'compare', 'difference', 'versus', ' vs ', 'whether',
+        '判断', '比较', '区别', '以及', '还是', '要不要',
+    ))
+
+
+def _cleaned_query(query: str) -> str:
     text = re.sub(r'\s+', ' ', (query or '')).strip(' ?.')
     for pattern in _STRIP_PATTERNS:
         text = re.sub(pattern, ' ', text, flags=re.I)
-    text = _LEADING.sub('', text)
+    return re.sub(r'\s+', ' ', text).strip(' ?.\"\'')
+
+
+def topic_from_query(query: str) -> str:
+    text = _LEADING.sub('', _cleaned_query(query))
     text = re.sub(r'\s+', ' ', text).strip(' ?.\"\'')
     if len(text) < 3 or len(text.split()) > 12:
         return ''
@@ -42,12 +61,108 @@ def topic_from_query(query: str) -> str:
 
 
 def _fetch(url: str, timeout: float = 4.0) -> str:
+    # A short bot name gets an empty DuckDuckGo page, so this uses a browser header.
     request = urllib.request.Request(
         url,
-        headers={'User-Agent': 'CheeseO-Reading-Assistant/1.0 (educational project)'},
+        headers={
+            'User-Agent': (
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
+                'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            ),
+        },
     )
     with urllib.request.urlopen(request, timeout=timeout) as response:
         return response.read().decode('utf-8', errors='replace')
+
+
+def _source_name(url: str, fallback: str = '') -> str:
+    host = (urllib.parse.urlparse(url).hostname or '').removeprefix('www.')
+    return host or fallback
+
+
+def _public_url(href: str) -> str:
+    href = (href or '').strip()
+    if href.startswith('//'):
+        href = 'https:' + href
+    parsed = urllib.parse.urlparse(href)
+    target = urllib.parse.parse_qs(parsed.query).get('uddg', [''])[0]
+    url = target or href
+    if not url.startswith(('http://', 'https://')):
+        return ''
+    host = (urllib.parse.urlparse(url).hostname or '').lower()
+    if host.endswith('duckduckgo.com'):
+        return ''
+    return url
+
+
+class _WebResultParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.notes: list[dict] = []
+        self._capture = ''
+        self._href = ''
+        self._buf: list[str] = []
+        self._pending: dict | None = None
+
+    def handle_starttag(self, tag, attrs):
+        if tag != 'a':
+            return
+        attr = dict(attrs)
+        classes = attr.get('class', '')
+        if 'result__a' in classes:
+            self._capture = 'title'
+            self._href = attr.get('href', '')
+            self._buf = []
+        elif 'result__snippet' in classes:
+            self._capture = 'snippet'
+            self._buf = []
+
+    def handle_data(self, data):
+        if self._capture:
+            self._buf.append(data)
+
+    def handle_endtag(self, tag):
+        if tag != 'a' or not self._capture:
+            return
+        text = re.sub(r'\s+', ' ', ''.join(self._buf)).strip()
+        if self._capture == 'title':
+            url = _public_url(self._href)
+            if url and text:
+                self._pending = {
+                    'title': text[:180],
+                    'url': url,
+                    'excerpt': '',
+                    'source_name': _source_name(url, 'Web'),
+                }
+        elif self._capture == 'snippet' and self._pending is not None:
+            self._pending['excerpt'] = text[:700]
+            self.notes.append(self._pending)
+            self._pending = None
+        self._capture = ''
+        self._buf = []
+
+
+def _web_notes(topic: str, fetch, limit: int) -> list[dict]:
+    url = 'https://html.duckduckgo.com/html/?' + urllib.parse.urlencode({'q': topic})
+    try:
+        html = fetch(url)
+    except (urllib.error.URLError, TimeoutError, OSError, ValueError):
+        return []
+    parser = _WebResultParser()
+    try:
+        parser.feed(html or '')
+    except Exception:
+        return []
+    notes = []
+    seen = set()
+    for note in parser.notes:
+        if note['url'] in seen:
+            continue
+        seen.add(note['url'])
+        notes.append(note)
+        if len(notes) >= limit:
+            break
+    return notes
 
 
 def _duckduckgo_note(topic: str, fetch) -> dict | None:
@@ -62,60 +177,82 @@ def _duckduckgo_note(topic: str, fetch) -> dict | None:
     except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError, ValueError):
         return None
     excerpt = (payload.get('AbstractText') or '').strip()
-    if len(excerpt) < 40:
+    page = (payload.get('AbstractURL') or '').strip()
+    if len(excerpt) < 40 or not page.startswith(('http://', 'https://')):
         return None
     return {
         'title': (payload.get('Heading') or topic).strip(),
-        'url': (payload.get('AbstractURL') or '').strip(),
+        'url': page,
         'excerpt': excerpt[:700],
-        'source_name': 'DuckDuckGo',
+        'source_name': _source_name(page, 'DuckDuckGo'),
     }
 
 
-def _wikipedia_title(topic: str, fetch) -> str:
+def _wikipedia_titles(topic: str, fetch, limit: int) -> list[str]:
     search_url = 'https://en.wikipedia.org/w/api.php?' + urllib.parse.urlencode({
         'action': 'query',
         'list': 'search',
         'srsearch': topic,
-        'srlimit': '3',
+        'srlimit': str(max(3, limit)),
         'format': 'json',
     })
     try:
         found = json.loads(fetch(search_url))
     except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError, ValueError):
-        return ''
+        return []
     hits = (found.get('query') or {}).get('search') or []
     topic_words = {word.lower() for word in re.findall(r'[A-Za-z0-9]+', topic) if len(word) > 3}
+    single_word = len(topic.split()) == 1
+    titles = []
     for hit in hits:
         title = (hit.get('title') or '').strip()
         title_words = {word.lower() for word in re.findall(r'[A-Za-z0-9]+', title)}
-        if title and topic_words & title_words:
-            return title
-    if hits:
-        return (hits[0].get('title') or '').strip()
-    return ''
+        if single_word:
+            relevant = title.lower().startswith(topic.lower())
+        else:
+            relevant = bool(topic_words & title_words)
+        if title and relevant and title not in titles:
+            titles.append(title)
+        if len(titles) >= limit:
+            return titles
+    return titles
 
 
-def _wikipedia_note(topic: str, fetch) -> dict | None:
-    title = _wikipedia_title(topic, fetch)
-    if not title:
-        return None
+def _wikipedia_summary(title: str, fetch) -> dict | None:
     summary_url = 'https://en.wikipedia.org/api/rest_v1/page/summary/' + urllib.parse.quote(title, safe='')
     try:
         payload = json.loads(fetch(summary_url))
     except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError, ValueError):
         return None
     excerpt = (payload.get('extract') or '').strip()
+    if payload.get('type') == 'disambiguation' or 'may refer to' in excerpt[:80].lower():
+        return None
     if len(excerpt) < 40:
         return None
     content_urls = payload.get('content_urls') or {}
     desktop = content_urls.get('desktop') or {}
+    page = (desktop.get('page') or '').strip()
+    if not page.startswith(('http://', 'https://')):
+        return None
     return {
         'title': (payload.get('title') or title).strip(),
-        'url': (desktop.get('page') or '').strip(),
+        'url': page,
         'excerpt': excerpt[:700],
         'source_name': 'Wikipedia',
     }
+
+
+def _wikipedia_notes(topic: str, fetch, limit: int) -> list[dict]:
+    notes = []
+    seen = set()
+    for title in _wikipedia_titles(topic, fetch, limit):
+        note = _wikipedia_summary(title, fetch)
+        if note and note['url'] not in seen:
+            notes.append(note)
+            seen.add(note['url'])
+        if len(notes) >= limit:
+            break
+    return notes
 
 
 def lookup_outside_the_blog(query: str, *, fetch=None) -> list[dict]:
@@ -123,5 +260,14 @@ def lookup_outside_the_blog(query: str, *, fetch=None) -> list[dict]:
     if not topic:
         return []
     fetch = fetch or _fetch
-    note = _duckduckgo_note(topic, fetch) or _wikipedia_note(topic, fetch)
-    return [note] if note else []
+    limit = 6 if wants_several_sources(query) else _MAX_NOTES
+    wiki_limit = 3 if wants_several_sources(query) else 1
+    web_query = _cleaned_query(query) or topic
+    notes = _web_notes(web_query, fetch, limit)
+    seen = {note['url'] for note in notes}
+    extra_notes = [_duckduckgo_note(topic, fetch), *_wikipedia_notes(topic, fetch, wiki_limit)]
+    for extra in extra_notes:
+        if extra and extra['url'] not in seen and len(notes) < limit:
+            notes.append(extra)
+            seen.add(extra['url'])
+    return notes
