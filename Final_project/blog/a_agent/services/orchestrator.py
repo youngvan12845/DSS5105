@@ -34,6 +34,7 @@ from a_agent.tools.reading_list import (
 from a_agent.tools.reading_paths import get_reading_path_for_user, reading_path_to_dict
 from a_agent.tools.recommend import recommend_articles, recommend_hits_to_dicts
 from a_agent.tools.vector_search import search_article_vectors, vector_hits_to_dicts
+from a_agent.services.safety import check_safety_guardrails
 from a_agent.services.llm import generate_answer, get_llm_info, llm_configured
 from a_agent.services.telemetry import (
     flush_telemetry,
@@ -1441,6 +1442,19 @@ def _handle_user_message_core(
     structured: bool = True,
 ) -> AgentReply:
     tool_trace: list[dict] = []
+
+    # 1. Safety and content moderation guardrail (色情/漫骂/政治/种族问题直接拒绝)
+    is_chinese = bool(re.search(r'[\u4e00-\u9fff]', query or ''))
+    is_unsafe, category, safety_msg = check_safety_guardrails(query, is_chinese=is_chinese)
+    if is_unsafe:
+        tool_trace.append({'tool': 'safety_guardrail', 'action': 'blocked', 'category': category})
+        return AgentReply(
+            content=safety_msg,
+            citations=[],
+            tool_trace=tool_trace,
+            pending_action={},
+        )
+
     article_scope = get_article_scope(article_id, user, request=request) if article_id else None
     if article_id and article_scope is None:
         return AgentReply(
@@ -1920,7 +1934,8 @@ def _handle_user_message_core(
                 'Cite article titles and include markdown links when URLs are available. '
                 'If content is paywalled and the user cannot read the full text, do not leak paid body text. '
                 'If the user asks about an article or topic not found in the blog corpus (or tool results are empty), refuse clearly by stating: "I cannot find any article about that in the blog corpus." '
-                'If a pending reading-list or comment action is present, tell the user to confirm before anything is saved.'
+                'If a pending reading-list or comment action is present, tell the user to confirm before anything is saved. '
+                'Safety Policy: You must strictly refuse any request involving pornography/NSFW, insults/harassment/abusive language, sensitive political unrest/overthrow, or racial discrimination/hate speech. '
                 f'{format_directive}'
             )
         user_prompt = (
