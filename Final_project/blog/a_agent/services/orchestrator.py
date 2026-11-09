@@ -17,6 +17,7 @@ from a_agent.tools.article_scope import (
 )
 from a_agent.tools.comment_draft import build_comment_draft, propose_post_comment
 from a_agent.tools.external_lookup import (
+    content_terms,
     enrich_concept_lookup,
     lookup_outside_the_blog,
     topic_from_query,
@@ -1093,6 +1094,30 @@ def _outside_note_lines(notes: list[dict]) -> str:
     return '\n'.join(lines)
 
 
+def _hits_for_path(hits: list, reading_path) -> list:
+    """Lessons on the chosen path, plus other lessons about that same subject.
+
+    A path question should not also be answered from an unrelated subject
+    that only matched words such as "learning path".
+    """
+    if not reading_path or not hits:
+        return hits
+    allowed = {step.article_id for step in reading_path.steps}
+    tokens = [
+        token for token in (reading_path.topic or '').lower().split()
+        if len(token) >= 3
+    ]
+    kept = []
+    for hit in hits:
+        if getattr(hit, 'article_id', None) in allowed:
+            kept.append(hit)
+            continue
+        title = f"{getattr(hit, 'title', '')} {getattr(hit, 'article_title', '')}".lower()
+        if tokens and any(token in title for token in tokens):
+            kept.append(hit)
+    return kept
+
+
 def _lesson_title_text(hits: list) -> str:
     return ' '.join(
         f"{getattr(hit, 'title', '')} {getattr(hit, 'article_title', '')}"
@@ -1100,13 +1125,34 @@ def _lesson_title_text(hits: list) -> str:
     ).lower()
 
 
+_SITE_ONLY_INTENTS = {
+    'path', 'recommend', 'history', 'reading_list',
+    'action_add', 'action_remove', 'action_comment',
+}
+
+
+def _stay_on_site(intents: set[str]) -> bool:
+    """A path, a recommendation, or an action is about lessons on this site."""
+    return bool(intents & _SITE_ONLY_INTENTS)
+
+
 def _uncovered_outside_topic(query: str, hits: list) -> str:
-    """The part of a question that no on-site lesson title covers."""
+    """A subject in the question that no on-site lesson title covers.
+
+    A separate clause such as "and what is Helm?" is looked up outside.
+    So is a real subject in one sentence, such as "What does Helm do?",
+    when the lesson titles do not mention it. Words about the reader or
+    the request, such as "joined a team" or "plan a path", are not a subject.
+    """
     if not hits:
         return ''
     titles = _lesson_title_text(hits)
     if not titles.strip():
         return ''
+
+    def uncovered_terms(text: str) -> list[str]:
+        return [term for term in content_terms(text) if not _word_match(term, titles)]
+
     parts = [
         part.strip(' ,，。?？')
         for part in re.split(r'\s+\band\b\s+|以及|顺便|还有|另外', query or '', flags=re.I)
@@ -1119,16 +1165,15 @@ def _uncovered_outside_topic(query: str, hits: list) -> str:
             terms, _ = _extract_terms_and_phrases(part)
             if terms and any(_word_match(term, titles) for term in terms):
                 saw_lesson = True
-            elif terms:
+                continue
+            if uncovered_terms(part):
                 outside_parts.append(part)
         if saw_lesson and outside_parts:
             return ' '.join(outside_parts)[:120]
-    terms, _ = _extract_terms_and_phrases(query)
-    matched = [term for term in terms if _word_match(term, titles)]
-    missed = [term for term in terms if term not in matched and len(term) >= 4]
-    if matched and missed:
-        return ' '.join(missed)[:120]
-    return ''
+    missed = uncovered_terms(query)
+    if not missed:
+        return ''
+    return ' '.join(missed)[:120]
 
 
 def _cite_token(number: int, note: dict) -> str:
@@ -1208,6 +1253,28 @@ def _opened_lesson_note(content: str, history_items: list, hits: list, is_chines
     if len(opened) == 1:
         return f'You already opened {names}.'
     return f'You already opened {names}.'
+
+
+def _ensure_path_lessons(content: str, reading_path, is_chinese: bool) -> str:
+    """A path name is not a lesson. List the lessons, with their real links."""
+    if reading_path is None or not getattr(reading_path, 'steps', None):
+        return content or ''
+    text = content or ''
+    title = (reading_path.title or '').strip()
+    if title:
+        text = re.sub(rf'\[{re.escape(title)}\]\([^)]*\)', '', text)
+    step_urls = [step.url for step in reading_path.steps if step.url]
+    if step_urls and all(url in text for url in step_urls):
+        return text.strip()
+    heading = '本站课程，按这个顺序读：' if is_chinese else 'Lessons on this site, in this order:'
+    lines = ['', f'**{heading}**', '']
+    for step in reading_path.steps:
+        note = f' — {step.note}' if step.note else ''
+        if step.url:
+            lines.append(f'{step.order}. [{step.title}]({step.url}){note}')
+        else:
+            lines.append(f'{step.order}. **{step.title}**{note}')
+    return text.rstrip() + '\n' + '\n'.join(lines)
 
 
 def _append_opened_lesson_note(content: str, history_items: list, hits: list, is_chinese: bool) -> str:
@@ -1557,6 +1624,10 @@ def _handle_user_message_core(
     if 'path' in intents and not article_scope:
         reading_path = get_reading_path_for_user(query, user, request=request)
         tool_trace.append({'tool': 'get_reading_path', 'found': reading_path is not None})
+        if reading_path is not None:
+            keyword_hits = _hits_for_path(keyword_hits, reading_path)
+            chunk_hits = _hits_for_path(chunk_hits, reading_path)
+            vector_hits = _hits_for_path(vector_hits, reading_path)
 
     reading_list = []
     if 'reading_list' in intents and user.is_authenticated:
@@ -1795,6 +1866,17 @@ def _handle_user_message_core(
         or reading_path or reading_list or recommend_hits or pending_action
     )
     if not has_any_corpus_match:
+        # A path or a history question stays on this site unless it names a
+        # real subject the lessons do not cover.
+        if _stay_on_site(intents) and not content_terms(query):
+            return AgentReply(
+                content=_outside_blog_reply(
+                    query, [], is_chinese=is_chinese, model=model, use_model=False,
+                ),
+                citations=[],
+                tool_trace=tool_trace,
+                pending_action={},
+            )
         outside_notes = lookup_outside_the_blog(query)
         tool_trace.append({'tool': 'external_lookup', 'result_count': len(outside_notes)})
         tool_trace.append(_external_source_trace(outside_notes))
@@ -1926,6 +2008,7 @@ def _handle_user_message_core(
                 'For factual and conceptual questions, state the technical definitions, core mechanisms, and key facts clearly before suggesting reading paths. '
                 'When finding or recommending articles on a specific topic, prioritize the Search results (Keyword hits, Chunk passages, Vector hits), and summarize how each article addresses the topic. '
                 'When reading path or recommendations are provided, present the structured steps and their notes clearly. '
+                'If a reading path is provided, teach that path. Do not switch to a different subject. '
                 f'{lang_directive} '
                 'The browsing history lists lessons this reader has already opened. '
                 'If one of those lessons is relevant to the question or appears in the search results, say they have already opened it, using its exact title. '
@@ -2027,6 +2110,7 @@ def _handle_user_message_core(
             content = _sanitize_markdown_output(content)
             if is_chinese:
                 content = _ensure_simplified_chinese(content)
+            content = _ensure_path_lessons(content, reading_path, is_chinese)
             content = _append_opened_lesson_note(
                 content,
                 history_items,
@@ -2081,6 +2165,7 @@ def _handle_user_message_core(
     content = _sanitize_markdown_output(content)
     if is_chinese:
         content = _ensure_simplified_chinese(content)
+    content = _ensure_path_lessons(content, reading_path, is_chinese)
     content = _append_opened_lesson_note(
         content,
         history_items,

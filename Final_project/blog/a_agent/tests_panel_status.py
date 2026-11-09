@@ -368,6 +368,105 @@ class PanelStatusTests(SimpleTestCase):
             'what is Helm',
         )
         self.assertEqual(_uncovered_outside_topic('What is Git?', [git_hit]), '')
+        self.assertEqual(
+            _uncovered_outside_topic(
+                'I have just joined a team project, but I do not know how to use Git. '
+                'Could you help me plan a learning path using lessons on this site,',
+                [git_hit],
+            ),
+            '',
+        )
+        self.assertEqual(
+            _uncovered_outside_topic(
+                'I have just joined a team project, but I don\'t know how to use Git. '
+                'Could you help me plana learning path using lessons on this site,',
+                [git_hit],
+            ),
+            '',
+        )
+        self.assertEqual(
+            _uncovered_outside_topic(
+                'What is Git, and I just joined a team project?',
+                [git_hit],
+            ),
+            '',
+        )
+        self.assertEqual(_uncovered_outside_topic('What does Helm do?', [git_hit]), 'helm')
+        self.assertEqual(
+            _uncovered_outside_topic('Could you plan a learning path for Helm?', [git_hit]),
+            'helm',
+        )
+        from a_agent.tools.external_lookup import notes_about_the_question
+        kept = notes_about_the_question(
+            [
+                {
+                    'title': 'Helm',
+                    'url': 'https://helm.sh/',
+                    'excerpt': 'Helm is a package manager for Kubernetes.',
+                },
+                {
+                    'title': 'Marshall Plan',
+                    'url': 'https://example.com/marshall-plan',
+                    'excerpt': 'The Marshall Plan was an American initiative enacted in 1948.',
+                },
+            ],
+            'what is Helm',
+        )
+        self.assertEqual([item['title'] for item in kept], ['Helm'])
+        kept_git = notes_about_the_question(
+            [
+                {'title': 'Git', 'url': 'https://git-scm.com/', 'excerpt': 'Git is a version control system.'},
+                {
+                    'title': 'Marshall Plan',
+                    'url': 'https://example.com/marshall-plan',
+                    'excerpt': 'The Marshall Plan was an American initiative enacted in 1948.',
+                },
+            ],
+            'Git',
+        )
+        self.assertEqual([item['title'] for item in kept_git], ['Git'])
+        plana_pages = notes_about_the_question(
+            [
+                {
+                    'title': 'PLANA',
+                    'url': 'https://example.com/plana',
+                    'excerpt': 'PLANA is here to make your day trips easier.',
+                },
+            ],
+            'plana',
+        )
+        self.assertEqual(plana_pages, [])
+        from a_agent.services.orchestrator import _hits_for_path
+        path = SimpleNamespace(topic='git', steps=[SimpleNamespace(article_id=7)])
+        kept_hits = _hits_for_path(
+            [
+                SimpleNamespace(article_id=3, title='Supervised Learning in Depth', article_title=''),
+                SimpleNamespace(article_id=9, title='Rebase Branch – Git Rebase', article_title=''),
+                SimpleNamespace(article_id=7, title='What Is Git?', article_title=''),
+            ],
+            path,
+        )
+        self.assertEqual([hit.article_id for hit in kept_hits], [9, 7])
+        from a_agent.services.orchestrator import _ensure_path_lessons
+        lesson_path = SimpleNamespace(
+            title='Git & Version Control Starter Path',
+            steps=[
+                SimpleNamespace(
+                    order=1,
+                    title='Chapter 1. Git & GitHub Overview',
+                    url='https://example.com/git-overview',
+                    note='Start here',
+                ),
+            ],
+        )
+        fixed = _ensure_path_lessons(
+            'Click the link below:\n\n[Git & Version Control Starter Path](#path)',
+            lesson_path,
+            False,
+        )
+        self.assertNotIn('Starter Path](', fixed)
+        self.assertIn('https://example.com/git-overview', fixed)
+        self.assertIn('Chapter 1. Git & GitHub Overview', fixed)
         sources = _external_source_trace(notes)['sources']
         self.assertTrue(all(item['url'].startswith('https://') for item in sources))
         self.assertTrue(all(item.get('host') for item in sources))

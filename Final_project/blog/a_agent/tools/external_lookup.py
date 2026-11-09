@@ -30,6 +30,66 @@ _LEADING = re.compile(
     re.I,
 )
 _MAX_NOTES = 4
+# Words about the reader or the request. They are not something to look up.
+_NOT_A_TOPIC = {
+    'able', 'about', 'after', 'again', 'also', 'another', 'around', 'because',
+    'basic', 'basics', 'been', 'before', 'begin', 'beginner', 'being', 'blog',
+    'blogs', 'could', 'course', 'courses',
+    'does', 'doing', 'done', 'dont', 'each', 'from', 'give', 'have', 'help',
+    'here', 'into', 'join', 'joined', 'just', 'know', 'learning', 'lesson',
+    'lessons', 'like', 'make', 'many', 'more', 'most', 'much', 'need',     'only', 'order',
+    'other', 'over', 'path', 'paths', 'plan', 'planning', 'plans', 'please',
+    'project', 'projects', 'read', 'reading',
+    'really', 'should', 'show', 'site', 'some', 'someone', 'something', 'start', 'started',
+    'still', 'such', 'team', 'tell', 'than', 'that', 'their', 'them', 'then',
+    'track', 'tracks',
+    'there', 'these', 'they', 'this', 'those', 'through', 'under', 'using',
+    'very', 'want', 'were', 'what', 'when', 'where', 'which', 'while', 'with',
+    'work', 'working', 'would', 'your',
+}
+
+
+def _request_word(word: str) -> bool:
+    """A request word, including a short typo such as "plana" for "plan a"."""
+    if word in _NOT_A_TOPIC:
+        return True
+    for blocked in _NOT_A_TOPIC:
+        extra = len(word) - len(blocked)
+        if len(blocked) >= 4 and word.startswith(blocked) and 0 < extra <= 2:
+            return True
+    return False
+
+
+def content_terms(text: str) -> list[str]:
+    """Words that could be a subject, not the wording of the request."""
+    seen: list[str] = []
+    for word in re.findall(r'[a-z0-9]+', (text or '').lower()):
+        if len(word) < 4 or _request_word(word) or word in seen:
+            continue
+        seen.append(word)
+    return seen
+
+
+def notes_about_the_question(notes: list[dict], query: str) -> list[dict]:
+    """Keep a public note only when it is actually about the question."""
+    topic = topic_from_query(query) or (query or '')
+    terms = content_terms(topic)
+    if not terms:
+        terms = []
+        for word in re.findall(r'[a-z0-9]+', topic.lower()):
+            if len(word) >= 3 and not _request_word(word) and word not in terms:
+                terms.append(word)
+    if not terms:
+        return []
+    kept = []
+    for note in notes or []:
+        blob = f"{note.get('title') or ''} {note.get('excerpt') or ''}".lower()
+        if any(
+            re.search(rf'(?<![a-z0-9]){re.escape(term)}(?![a-z0-9])', blob)
+            for term in terms
+        ):
+            kept.append(note)
+    return kept
 
 
 def wants_several_sources(query: str) -> bool:
@@ -270,7 +330,7 @@ def lookup_outside_the_blog(query: str, *, fetch=None) -> list[dict]:
         if extra and extra['url'] not in seen and len(notes) < limit:
             notes.append(extra)
             seen.add(extra['url'])
-    return notes
+    return notes_about_the_question(notes, topic)
 
 
 def extract_enrichment_topics(query: str) -> list[str]:
