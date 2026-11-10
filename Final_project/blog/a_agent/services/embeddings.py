@@ -88,8 +88,11 @@ def _embed_texts_cloudflare(texts: Sequence[str]) -> list[list[float]]:
                     body_text = exc.read().decode('utf-8', errors='ignore')
                 except Exception:
                     pass
-                if exc.code == 429 and ('4006' in body_text or 'daily free allocation' in body_text):
-                    mark_cloudflare_account_exhausted(account_id)
+                if (
+                    (exc.code == 429 and ('4006' in body_text or 'daily free allocation' in body_text))
+                    or exc.code in (401, 403)
+                ):
+                    mark_cloudflare_account_exhausted(account_id, token)
                     account_exhausted = True
                     break
                 if exc.code in (429, 500, 502, 503, 504) and attempt == 0:

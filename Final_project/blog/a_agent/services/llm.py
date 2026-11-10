@@ -38,14 +38,43 @@ class LLMInfo:
 
 
 _CF_ACCOUNT_EXHAUSTED_UNTIL: dict[str, float] = {}
+_CF_DB_POOL_CACHE: list[tuple[str, str]] = []
+_CF_DB_POOL_FETCHED_AT: float = 0.0
+
+
+def _load_db_cloudflare_accounts() -> list[tuple[str, str]]:
+    """Load shared Cloudflare account pool from Supabase PostgreSQL (agent_cloudflare_pool)."""
+    global _CF_DB_POOL_CACHE, _CF_DB_POOL_FETCHED_AT
+    if getattr(settings, 'RUNNING_TESTS', False):
+        return []
+    now = time.time()
+    if now - _CF_DB_POOL_FETCHED_AT < 60.0:
+        return _CF_DB_POOL_CACHE
+    _CF_DB_POOL_FETCHED_AT = now
+    try:
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute(
+                'SELECT account_id, api_token FROM agent_cloudflare_pool '
+                'WHERE active = TRUE ORDER BY priority ASC, updated_at DESC'
+            )
+            rows = cursor.fetchall()
+            _CF_DB_POOL_CACHE = [(str(r[0]).strip(), str(r[1]).strip()) for r in rows if r[0] and r[1]]
+    except Exception:
+        pass
+    return _CF_DB_POOL_CACHE
 
 
 def get_cloudflare_accounts() -> list[tuple[str, str]]:
     """Return configured (account_id, api_token) pairs with non-exhausted accounts first."""
     raw_pairs: list[tuple[str, str]] = []
+    for acc_id, tok in _load_db_cloudflare_accounts():
+        if acc_id and tok and (acc_id, tok) not in raw_pairs:
+            raw_pairs.append((acc_id, tok))
+
     primary_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
     primary_token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
-    if primary_id and primary_token:
+    if primary_id and primary_token and (primary_id, primary_token) not in raw_pairs:
         raw_pairs.append((primary_id, primary_token))
 
     for acc_id, tok in getattr(settings, 'CLOUDFLARE_ACCOUNTS', []):
@@ -53,11 +82,13 @@ def get_cloudflare_accounts() -> list[tuple[str, str]]:
             raw_pairs.append((acc_id, tok))
 
     now = time.time()
-    active = [pair for pair in raw_pairs if now >= _CF_ACCOUNT_EXHAUSTED_UNTIL.get(pair[0], 0.0)]
+    active = [pair for pair in raw_pairs if now >= _CF_ACCOUNT_EXHAUSTED_UNTIL.get(f'{pair[0]}:{pair[1][:12]}', 0.0)]
     return active
 
 
 def has_any_cloudflare_account() -> bool:
+    if _load_db_cloudflare_accounts():
+        return True
     primary_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
     primary_token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
     if primary_id and primary_token:
@@ -65,10 +96,11 @@ def has_any_cloudflare_account() -> bool:
     return bool(getattr(settings, 'CLOUDFLARE_ACCOUNTS', []))
 
 
-def mark_cloudflare_account_exhausted(account_id: str, cooldown: float = 1800.0) -> None:
-    _CF_ACCOUNT_EXHAUSTED_UNTIL[account_id] = time.time() + cooldown
+def mark_cloudflare_account_exhausted(account_id: str, token: str = '', cooldown: float = 1800.0) -> None:
+    key = f'{account_id}:{token[:12]}' if token else account_id
+    _CF_ACCOUNT_EXHAUSTED_UNTIL[key] = time.time() + cooldown
     logger.warning(
-        'Cloudflare account %s hit 10k neuron limit; switching to next fallback account for %.0fs.',
+        'Cloudflare account %s unavailable/exhausted; switching to next fallback account for %.0fs.',
         account_id[:8],
         cooldown,
     )
@@ -416,8 +448,14 @@ def generate_answer(
                 except Exception as exc:
                     last_exc = exc
                     err_str = str(exc)
-                    if '4006' in err_str or 'daily free allocation' in err_str:
-                        mark_cloudflare_account_exhausted(account_id)
+                    if (
+                        '4006' in err_str
+                        or 'daily free allocation' in err_str
+                        or '401' in err_str
+                        or '10000' in err_str
+                        or 'Authentication error' in err_str
+                    ):
+                        mark_cloudflare_account_exhausted(account_id, token)
                         account_exhausted = True
                         break
                     if ('429' in err_str or '502' in err_str or '503' in err_str) and attempt == 0:
