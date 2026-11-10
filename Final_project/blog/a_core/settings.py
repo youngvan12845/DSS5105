@@ -200,9 +200,22 @@ AGENT_OLLAMA_BASE_URL = os.environ.get('OLLAMA_BASE_URL', 'http://127.0.0.1:1143
 AGENT_OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'qwen2.5vl:7b')
 AGENT_OLLAMA_EMBED_MODEL = os.environ.get('OLLAMA_EMBED_MODEL', 'nomic-embed-text')
 
-# Cloudflare Workers AI (free tier 10,000 neurons/day)
+# Cloudflare Workers AI (free tier 10,000 neurons/day per account, with multi-account auto-failover)
 CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID', '5b38fbc6c3f08b3f6aeb75b980ff2e69')
 CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', '')
+CLOUDFLARE_ACCOUNT_ID_2 = os.environ.get('CLOUDFLARE_ACCOUNT_ID_2', 'baf6315cc70508c4204f21835aaa3ef4')
+CLOUDFLARE_API_TOKEN_2 = os.environ.get('CLOUDFLARE_API_TOKEN_2', '')
+CLOUDFLARE_ACCOUNT_ID_3 = os.environ.get('CLOUDFLARE_ACCOUNT_ID_3', '1691903c0de422200608e72aa53da2a2')
+CLOUDFLARE_API_TOKEN_3 = os.environ.get('CLOUDFLARE_API_TOKEN_3', '')
+CLOUDFLARE_ACCOUNTS = [
+    pair
+    for pair in [
+        (CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN),
+        (CLOUDFLARE_ACCOUNT_ID_2, CLOUDFLARE_API_TOKEN_2),
+        (CLOUDFLARE_ACCOUNT_ID_3, CLOUDFLARE_API_TOKEN_3),
+    ]
+    if pair[0] and pair[1]
+]
 CLOUDFLARE_AI_MODEL = os.environ.get('CLOUDFLARE_AI_MODEL', '@cf/qwen/qwen2.5-coder-32b-instruct')
 CLOUDFLARE_EMBED_MODEL = os.environ.get('CLOUDFLARE_EMBED_MODEL', '@cf/baai/bge-m3')
 OPENAI_EMBED_MODEL = os.environ.get('OPENAI_EMBED_MODEL', 'text-embedding-3-small')
