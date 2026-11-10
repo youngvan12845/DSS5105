@@ -5,6 +5,7 @@ import re
 from django.contrib.auth.models import User
 
 from a_agent.models import AgentActionLog
+from a_agent.services.language import wants_chinese
 from a_agent.services.llm import generate_answer, llm_configured
 from a_blog.models import ArticlePage, Comment
 
@@ -120,9 +121,11 @@ def build_comment_draft(
     user_intent = _extract_comment_intent(query)
 
     if llm_configured():
-        is_chinese = bool(re.search(r'[\u4e00-\u9fff]', query))
+        is_chinese = wants_chinese(query)
         lang_rule = (
-            '4. Write the comment in Simplified Chinese (简体中文). Regardless of whether the user wrote in Traditional or Simplified Chinese, always output Simplified Chinese.'
+            '4. Write the comment in Simplified Chinese (简体中文). '
+            'If the user wrote in Chinese or asked for Chinese (for example "in Chinese" / "用中文"), '
+            'always output Simplified Chinese.'
             if is_chinese
             else '4. Write the comment in English (unless the user explicitly requested another language).'
         )

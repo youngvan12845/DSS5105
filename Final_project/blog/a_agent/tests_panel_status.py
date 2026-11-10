@@ -386,6 +386,29 @@ class PanelStatusTests(SimpleTestCase):
         )
         self.assertEqual(
             _uncovered_outside_topic(
+                'Please summarize this article in Chinese, and explain what a repository '
+                'and a commit are using an example of a group assignment.',
+                [git_hit],
+            ),
+            '',
+        )
+        from a_agent.services.orchestrator import (
+            _is_direct_answer_query,
+            _refers_to_opened_article,
+        )
+        self.assertTrue(_refers_to_opened_article('请用中文总结这篇文章'))
+        self.assertTrue(_refers_to_opened_article(
+            'Please summarize this article in Chinese, and explain what a repository is.'
+        ))
+        self.assertTrue(_is_direct_answer_query('What is version control?'))
+        self.assertTrue(_is_direct_answer_query(
+            '请用中文总结这篇文章，并用一个小组作业的例子解释什么是 repository 和 commit。'
+        ))
+        self.assertFalse(_is_direct_answer_query(
+            'Could you help me plan a learning path using lessons on this site'
+        ))
+        self.assertEqual(
+            _uncovered_outside_topic(
                 'What is Git, and I just joined a team project?',
                 [git_hit],
             ),
@@ -527,12 +550,22 @@ class PanelStatusTests(SimpleTestCase):
         self.assertEqual(_article_ids_for_action(hits, [], [], limit=3), [21, 18, 19])
 
     def test_markdown_sanitization_and_simplified_chinese_conversion(self):
+        from a_agent.services.language import wants_chinese
         from a_agent.services.orchestrator import (
             _ensure_simplified_chinese,
             _ensure_traditional_chinese,
             _is_no_match_response,
             _sanitize_markdown_output,
         )
+
+        self.assertTrue(wants_chinese(
+            '请用中文总结这篇文章，并用一个小组作业的例子解释什么是 repository 和 commit。'
+        ))
+        self.assertTrue(wants_chinese(
+            'Please summarize this article in Chinese, and explain what a repository and a commit are.'
+        ))
+        self.assertTrue(wants_chinese('Summarize this article in Chinese'))
+        self.assertFalse(wants_chinese('What is version control?'))
 
         dirty = 'Here is [Key Concepts](#concepts) and a truncated link [Read More](https://example.com/unfin'
         cleaned = _sanitize_markdown_output(dirty)

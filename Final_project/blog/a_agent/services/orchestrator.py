@@ -36,6 +36,7 @@ from a_agent.tools.reading_paths import get_reading_path_for_user, reading_path_
 from a_agent.tools.recommend import recommend_articles, recommend_hits_to_dicts
 from a_agent.tools.vector_search import search_article_vectors, vector_hits_to_dicts
 from a_agent.services.safety import check_safety_guardrails
+from a_agent.services.language import wants_chinese
 from a_agent.services.llm import generate_answer, get_llm_info, llm_configured
 from a_agent.services.telemetry import (
     flush_telemetry,
@@ -399,7 +400,7 @@ def _comment_action_reply(
             tool_trace=tool_trace,
         )
 
-    is_chinese = bool(re.search(r'[\u4e00-\u9fff]', query))
+    is_chinese = wants_chinese(query)
     draft = build_comment_draft(
         query,
         article_id,
@@ -498,7 +499,7 @@ def _fallback_answer(
     chat_history=None,
 ) -> str:
     q = query.lower()
-    is_zh = bool(re.search(r'[\u4e00-\u9fff]', query))
+    is_zh = wants_chinese(query)
 
     if ('quiz' in q or '考考我' in q) and article_scope:
         from a_agent.services.learning_analysis import load_store
@@ -600,6 +601,8 @@ def _fallback_answer(
             lines.append('\n注：本文为付费文章，以上回答仅基于公开预览段落。' if is_zh else '\nNote: full article text is paywalled — answers use preview passages only.')
         else:
             lines.append('\n以上回答完全基于当前文章内容。' if is_zh else '\nThis answer is grounded in this article only.')
+        if is_zh:
+            lines.append('\n（当前为检索兜底：下面仍是英文原文摘录。可用的 AI 会把整段改写成中文。）')
         return '\n'.join(lines)
 
     if pending_action:
@@ -922,6 +925,32 @@ _T2S_CHAR_TABLE = str.maketrans(
 )
 
 
+def _rewrite_reply_in_chinese(content: str, *, model: str | None = None) -> str | None:
+    """Turn an English search fallback into a Simplified Chinese reply when the model is available."""
+    text = (content or '').strip()
+    if not text or not llm_configured(model):
+        return None
+    latin = len(re.findall(r'[A-Za-z]', text))
+    chinese = len(re.findall(r'[\u4e00-\u9fff]', text))
+    if latin < 40 or latin <= chinese * 2:
+        return None
+    try:
+        rewritten = generate_answer(
+            (
+                'Rewrite the assistant reply into 100% Simplified Chinese (简体中文). '
+                'Keep the same Markdown structure, headings, bullet points, and links. '
+                'Translate English lesson excerpts into Simplified Chinese. '
+                'Do not add new facts. Output only the rewritten reply.'
+            ),
+            text,
+            model=model,
+        )
+    except Exception:
+        return None
+    rewritten = (rewritten or '').strip()
+    return rewritten or None
+
+
 def _ensure_simplified_chinese(text: str) -> str:
     """Convert Traditional Chinese terms and characters to Simplified Chinese outside code blocks."""
     parts = re.split(r'(```[\s\S]*?```|`[^`\n]+`)', text)
@@ -1136,6 +1165,53 @@ def _stay_on_site(intents: set[str]) -> bool:
     return bool(intents & _SITE_ONLY_INTENTS)
 
 
+def _refers_to_opened_article(query: str) -> bool:
+    """True when the user is asking about the article they are already reading."""
+    q = (query or '').lower()
+    return any(
+        mark in q
+        for mark in (
+            'this article',
+            'the article',
+            '这篇文章',
+            '這篇文章',
+            '本文',
+            'summarize this article',
+            'summarize the article',
+            '总结这篇文章',
+            '總結這篇文章',
+            '总结一下这篇文章',
+            '總結一下這篇文章',
+        )
+    )
+
+
+def _is_direct_answer_query(query: str) -> bool:
+    """A definition, summary, or explain-with-example question — not a reading list."""
+    q = (query or '').lower()
+    return any(
+        mark in q
+        for mark in (
+            'what is',
+            "what's",
+            'what are',
+            'summarize',
+            'summary',
+            'explain',
+            '什么是',
+            '什麼是',
+            '总结',
+            '總結',
+            '解释',
+            '解釋',
+            '举例',
+            '舉例',
+            '例子',
+            'example',
+        )
+    )
+
+
 def _uncovered_outside_topic(query: str, hits: list) -> str:
     """A subject in the question that no on-site lesson title covers.
 
@@ -1143,8 +1219,11 @@ def _uncovered_outside_topic(query: str, hits: list) -> str:
     So is a real subject in one sentence, such as "What does Helm do?",
     when the lesson titles do not mention it. Words about the reader or
     the request, such as "joined a team" or "plan a path", are not a subject.
+    A request to summarize the opened article stays on site.
     """
     if not hits:
+        return ''
+    if _refers_to_opened_article(query):
         return ''
     titles = _lesson_title_text(hits)
     if not titles.strip():
@@ -1511,7 +1590,7 @@ def _handle_user_message_core(
     tool_trace: list[dict] = []
 
     # 1. Safety and content moderation guardrail (色情/漫骂/政治/种族问题直接拒绝)
-    is_chinese = bool(re.search(r'[\u4e00-\u9fff]', query or ''))
+    is_chinese = wants_chinese(query or '')
     is_unsafe, category, safety_msg = check_safety_guardrails(query, is_chinese=is_chinese)
     if is_unsafe:
         tool_trace.append({'tool': 'safety_guardrail', 'action': 'blocked', 'category': category})
@@ -1553,7 +1632,25 @@ def _handle_user_message_core(
     history_items = get_browsing_history(user, limit=5)
     tool_trace.append({'tool': 'get_browsing_history', 'result_count': len(history_items)})
 
-    is_chinese = bool(re.search(r'[\u4e00-\u9fff]', query))
+    # "总结这篇文章" in the main chat means the lesson the reader just opened.
+    if (
+        not article_scope
+        and _refers_to_opened_article(query)
+        and history_items
+        and getattr(history_items[0], 'article_id', None)
+    ):
+        scoped = get_article_scope(history_items[0].article_id, user, request=request)
+        if scoped is not None:
+            article_scope = scoped
+            action_intents = {intent for intent in intents if intent.startswith('action_')}
+            intents = {'article_scope', 'keyword', 'chunk', 'vector'} | action_intents
+            tool_trace.append({
+                'tool': 'article_scope',
+                'article': article_scope_to_dict(article_scope),
+                'from': 'browsing_history',
+            })
+
+    is_chinese = wants_chinese(query)
     keyword_hits = []
     chunk_hits = []
     vector_hits = []
@@ -1924,14 +2021,33 @@ def _handle_user_message_core(
     if llm_configured():
         if is_chinese:
             lang_directive = (
-                'CRITICAL LANGUAGE RULE: The user asked in Chinese (Traditional or Simplified). '
+                'CRITICAL LANGUAGE RULE: The user asked in Chinese, or explicitly asked for a Chinese reply '
+                '(for example "in Chinese" / "用中文"). '
                 'You MUST write your entire response in 100% Simplified Chinese (简体中文). '
+                'Translate English lesson passages into Simplified Chinese; do not paste long English excerpts as the answer. '
                 'NEVER use Traditional Chinese characters (e.g., write 术语 not 術語, 通过 not 透過, 网络 not 網路, 代码 not 程式碼, 配置 not 設定, 默认 not 預設).'
             )
         else:
             lang_directive = 'Respond in English unless the user writes in another language.'
 
-        if structured:
+        direct_answer = _is_direct_answer_query(query)
+        if direct_answer:
+            if is_chinese:
+                structure_guide = (
+                    '\n\n[DIRECT ANSWER STRUCTURE (直接回答)]:'
+                    '\n直接回答用户的每一个问题部分，可用简短小标题，例如「文章总结」「repository / commit 解释」「小组作业例子」。'
+                    '\n禁止输出荐课列表、阅读路径、「接下来读什么」或「你可能感兴趣的文章」。'
+                    '\n如果用户要例子，必须写出完整的小组作业式例子，不要只写半句。'
+                )
+            else:
+                structure_guide = (
+                    '\n\n[DIRECT ANSWER STRUCTURE]:'
+                    '\nAnswer every part of the question. Short section headers are fine '
+                    '(for example Summary, Definitions, Group-assignment example).'
+                    '\nDo NOT output recommendation lists, reading paths, or "what to read next".'
+                    '\nIf an example is requested, write a complete concrete example.'
+                )
+        elif structured:
             if is_chinese:
                 structure_guide = (
                     '\n\n[ADAPTIVE PEDAGOGICAL STRUCTURE (自适应中文教学结构)]:'
@@ -1981,13 +2097,46 @@ def _handle_user_message_core(
             '\n4. NEVER invent `#anchor` links (like `[Topic](#topic)`) or fake URLs. Only use real URLs present in the provided tool results.'
         )
 
-        if article_scope:
+        if direct_answer:
+            if article_scope:
+                system_prompt = (
+                    'You are CheeseO, a blog reading co-pilot focused on ONE article. '
+                    'Answer the user question about this article using ONLY the passages below. '
+                    'If the user asks for a summary, write a complete summary of this article. '
+                    'If the user asks what a term means, define it from the passages. '
+                    'If the user asks for an example (such as a group assignment / 小组作业), '
+                    'give a short concrete example that shows the concept in practice. '
+                    'If several parts are asked, answer every part completely. Do not stop mid-sentence. '
+                    'FORBIDDEN: do not recommend other articles, reading paths, next chapters, or "continue reading" lists. '
+                    'FORBIDDEN: do not say what the user has already opened; that note is added later. '
+                    f'{lang_directive} '
+                    'If content is paywalled and passages are preview-only, say so clearly. '
+                    'If passages are empty, say the article is not indexed yet.'
+                    f'{format_directive}'
+                )
+            else:
+                system_prompt = (
+                    'You are CheeseO, a blog reading co-pilot. '
+                    'Answer the user question directly using ONLY the search passages below. '
+                    'For "what is X", give a clear definition first. '
+                    'For a summary or explain-with-example request, cover every asked part completely. '
+                    'FORBIDDEN: do not replace the answer with a list of recommended articles or a reading path. '
+                    'FORBIDDEN: do not invent a learning journey from browsing history. '
+                    'You may mention one article title when it is the source of a fact. '
+                    f'{lang_directive} '
+                    'If content is paywalled and the user cannot read the full text, do not leak paid body text. '
+                    'If the passages do not contain the answer, say: "I cannot find any article about that in the blog corpus." '
+                    'Safety Policy: refuse pornography/NSFW, insults/harassment, sensitive political unrest, or racial hate speech.'
+                    f'{format_directive}'
+                )
+        elif article_scope:
             system_prompt = (
-                'You are CheeseO, an active blog reading co-pilot and learning path navigator focused on ONE article. '
+                'You are CheeseO, an active blog reading co-pilot focused on ONE article. '
                 'Answer ONLY using passages and prerequisite diagnosis from the scoped article below. '
                 'If the user asks whether they can understand this article or asks about prerequisites, reference the provided prerequisite diagnosis. '
                 'If the user is an experienced or senior reader, provide architectural insights and production pitfalls instead of basic definitions. '
                 'Do not mention or cite other articles unless discussing prerequisites. '
+                'Do not replace the answer with a list of recommended articles. '
                 'Use the browsing history in the answer. '
                 'If this article or one of its prerequisites is already in that history, say the reader has opened it. '
                 'A lesson already opened counts as read. '
@@ -1997,7 +2146,8 @@ def _handle_user_message_core(
                 'Format each question cleanly with options A), B), C), D), and invite the user to reply with their chosen answers before revealing the solutions. '
                 'When the user replies with their answers, evaluate them warmly with constructive explanations. '
                 'If the user quotes or highlights an excerpt from the article, explain that specific excerpt directly with deep technical context. '
-                'If the user asks for a summary, synthesize the provided passages. '
+                'If the user asks for a summary, synthesize the provided passages in your own words. '
+                'If the user asks for an example (such as a group assignment), invent a short concrete classroom-style example that matches the article concepts. '
                 'If content is paywalled and passages are preview-only, say so clearly. '
                 'If passages are empty, say the article is not indexed yet.'
                 f'{format_directive}'
@@ -2005,10 +2155,13 @@ def _handle_user_message_core(
         else:
             system_prompt = (
                 'You are CheeseO, a blog reading co-pilot and learning path navigator. Answer questions accurately and directly using ONLY the provided tool results. '
-                'For factual and conceptual questions, state the technical definitions, core mechanisms, and key facts clearly before suggesting reading paths. '
+                'For factual and conceptual questions such as "what is X", summaries, or explain-with-example requests, '
+                'answer the question first with clear definitions and the requested example. '
+                'Do NOT replace that answer with a list of article recommendations. '
+                'Only recommend further reading after the direct answer, or when the user asks what to read next. '
                 'When finding or recommending articles on a specific topic, prioritize the Search results (Keyword hits, Chunk passages, Vector hits), and summarize how each article addresses the topic. '
                 'When reading path or recommendations are provided, present the structured steps and their notes clearly. '
-                'If a reading path is provided, teach that path. Do not switch to a different subject. '
+                'If a reading path is provided and the user asked for a learning path, teach that path. Do not switch to a different subject. '
                 f'{lang_directive} '
                 'The browsing history lists lessons this reader has already opened. '
                 'If one of those lessons is relevant to the question or appears in the search results, say they have already opened it, using its exact title. '
@@ -2025,9 +2178,22 @@ def _handle_user_message_core(
             f'User question: {query}\n\n'
             f'Intents: {sorted(intents)}\n\n'
         )
+        if direct_answer:
+            user_prompt = (
+                '[Direct-answer instruction: Answer the user question itself. '
+                'Cover every asked part (summary, definitions, requested example). '
+                'Do not output a recommendation list, reading path, or "next articles" section.]\n\n'
+                + user_prompt
+            )
         if is_chinese:
-            user_prompt = f'[Language Instruction: The user query is in Chinese (Traditional or Simplified). You MUST answer entirely in Simplified Chinese (简体中文).]\n\n' + user_prompt
-        if chat_history:
+            user_prompt = (
+                '[Language Instruction: The user asked in Chinese or requested a Chinese reply '
+                '(for example "in Chinese" / "用中文"). '
+                'You MUST answer entirely in Simplified Chinese (简体中文). '
+                'Translate on-site lesson content into Simplified Chinese; do not leave the main answer in English.]\n\n'
+                + user_prompt
+            )
+        if chat_history and not direct_answer:
             user_prompt += f'Recent conversation history (use this to resolve follow-up references like "the second concept" or "the second article you recommended"):\n{_format_chat_history(chat_history)}\n\n'
         if article_scope:
             user_prompt += f'Focused article:\n{article_scope_to_dict(article_scope)}\n\n'
@@ -2058,22 +2224,32 @@ def _handle_user_message_core(
                     },
                 })
                 tool_trace.append({'tool': 'calculate_article_readiness', 'status': readiness_diag.get('status'), 'score': readiness_diag.get('score')})
-                user_prompt += f'Prerequisite diagnosis & readiness:\n{readiness_diag}\n\n'
-                if history_items:
-                    user_prompt += (
-                        'Use this reader\'s browsing history in the answer. '
-                        'A lesson already in the history counts as opened.\n\n'
-                    )
-        user_prompt += (
-            f'Search results (Keyword hits):\n{hits_to_dicts(keyword_hits)}\n\n'
-            f'Search results (Relevant chunk passages):\n{chunk_hits_to_dicts(chunk_hits)}\n\n'
-            f'Search results (Semantic vector hits):\n{vector_hits_to_dicts(vector_hits)}\n\n'
-            f'General profile recommendations (from user history):\n{recommend_hits_to_dicts(recommend_hits)}\n\n'
-            f'Reading path:\n{reading_path_to_dict(reading_path)}\n\n'
-            f'Browsing history:\n{history_to_dicts(history_items)}\n\n'
-            f'Reading list:\n{reading_list_to_dicts(reading_list)}\n\n'
-            f'Pending action:\n{pending_action or None}'
-        )
+                if not direct_answer:
+                    user_prompt += f'Prerequisite diagnosis & readiness:\n{readiness_diag}\n\n'
+                    if history_items:
+                        user_prompt += (
+                            'Use this reader\'s browsing history in the answer. '
+                            'A lesson already in the history counts as opened.\n\n'
+                        )
+        if direct_answer:
+            user_prompt += (
+                f'Search results (Keyword hits):\n{hits_to_dicts(keyword_hits)}\n\n'
+                f'Search results (Relevant chunk passages):\n{chunk_hits_to_dicts(chunk_hits)}\n\n'
+                f'Search results (Semantic vector hits):\n{vector_hits_to_dicts(vector_hits)}\n\n'
+                'Do not use browsing history, reading paths, or profile recommendations for this reply.\n'
+                f'Pending action:\n{pending_action or None}'
+            )
+        else:
+            user_prompt += (
+                f'Search results (Keyword hits):\n{hits_to_dicts(keyword_hits)}\n\n'
+                f'Search results (Relevant chunk passages):\n{chunk_hits_to_dicts(chunk_hits)}\n\n'
+                f'Search results (Semantic vector hits):\n{vector_hits_to_dicts(vector_hits)}\n\n'
+                f'General profile recommendations (from user history):\n{recommend_hits_to_dicts(recommend_hits)}\n\n'
+                f'Reading path:\n{reading_path_to_dict(reading_path)}\n\n'
+                f'Browsing history:\n{history_to_dicts(history_items)}\n\n'
+                f'Reading list:\n{reading_list_to_dicts(reading_list)}\n\n'
+                f'Pending action:\n{pending_action or None}'
+            )
         if uncovered:
             user_prompt += (
                 f'\n\nDo not answer "{uncovered}". Do not mention it. '
@@ -2091,7 +2267,10 @@ def _handle_user_message_core(
                 '3. Cite the note with its title. Do not invent a blog lesson for it.\n'
             )
         if is_chinese:
-            user_prompt += '\n\n[Final Reminder: Regardless of whether the user wrote in Traditional or Simplified Chinese, you MUST write your entire response in Simplified Chinese (简体中文).]'
+            user_prompt += (
+                '\n\n[Final Reminder: Write the entire response in Simplified Chinese (简体中文). '
+                'If the source passages are English, translate them; do not paste English as the main answer.]'
+            )
         try:
             with trace_llm_generation(
                 name='CheeseO-LLM',
@@ -2148,7 +2327,6 @@ def _handle_user_message_core(
         except Exception as exc:
             tool_trace.append({'tool': 'llm', 'error': str(exc)})
 
-    tool_trace.append({'tool': 'response_mode', 'mode': 'fallback'})
     content = _fallback_answer(
         query,
         keyword_hits,
@@ -2163,8 +2341,15 @@ def _handle_user_message_core(
         chat_history=chat_history,
     )
     content = _sanitize_markdown_output(content)
+    response_mode = 'fallback'
     if is_chinese:
         content = _ensure_simplified_chinese(content)
+        rewritten = _rewrite_reply_in_chinese(content, model=model)
+        if rewritten:
+            content = _sanitize_markdown_output(_ensure_simplified_chinese(rewritten))
+            response_mode = 'ai'
+            tool_trace.append({'tool': 'chinese_rewrite', 'from': 'fallback'})
+    tool_trace.append({'tool': 'response_mode', 'mode': response_mode})
     content = _ensure_path_lessons(content, reading_path, is_chinese)
     content = _append_opened_lesson_note(
         content,

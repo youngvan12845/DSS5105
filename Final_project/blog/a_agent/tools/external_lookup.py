@@ -32,20 +32,21 @@ _LEADING = re.compile(
 _MAX_NOTES = 4
 # Words about the reader or the request. They are not something to look up.
 _NOT_A_TOPIC = {
-    'able', 'about', 'after', 'again', 'also', 'another', 'around', 'because',
-    'basic', 'basics', 'been', 'before', 'begin', 'beginner', 'being', 'blog',
-    'blogs', 'could', 'course', 'courses',
-    'does', 'doing', 'done', 'dont', 'each', 'from', 'give', 'have', 'help',
-    'here', 'into', 'join', 'joined', 'just', 'know', 'learning', 'lesson',
-    'lessons', 'like', 'make', 'many', 'more', 'most', 'much', 'need',     'only', 'order',
-    'other', 'over', 'path', 'paths', 'plan', 'planning', 'plans', 'please',
-    'project', 'projects', 'read', 'reading',
-    'really', 'should', 'show', 'site', 'some', 'someone', 'something', 'start', 'started',
-    'still', 'such', 'team', 'tell', 'than', 'that', 'their', 'them', 'then',
-    'track', 'tracks',
-    'there', 'these', 'they', 'this', 'those', 'through', 'under', 'using',
-    'very', 'want', 'were', 'what', 'when', 'where', 'which', 'while', 'with',
-    'work', 'working', 'would', 'your',
+    'able', 'about', 'after', 'again', 'also', 'another', 'answer', 'around',
+    'article', 'articles', 'assignment', 'because', 'basic', 'basics', 'been',
+    'before', 'begin', 'beginner', 'being', 'blog', 'blogs', 'chinese',
+    'concept', 'concepts', 'could', 'course', 'courses', 'does', 'doing', 'done',
+    'dont', 'each', 'english', 'example', 'examples', 'explain', 'from', 'give',
+    'group', 'have', 'help', 'here', 'into', 'join', 'joined', 'just', 'know',
+    'language', 'learning', 'lesson', 'lessons', 'like', 'make', 'mandarin',
+    'many', 'more', 'most', 'much', 'need', 'only', 'order', 'other', 'over',
+    'path', 'paths', 'plan', 'planning', 'plans', 'please', 'project', 'projects',
+    'read', 'reading', 'really', 'reply', 'response', 'should', 'show', 'site',
+    'some', 'someone', 'something', 'start', 'started', 'still', 'such',
+    'summarize', 'summary', 'team', 'tell', 'than', 'that', 'their', 'them',
+    'then', 'there', 'these', 'they', 'this', 'those', 'through', 'track',
+    'tracks', 'under', 'using', 'very', 'want', 'were', 'what', 'when', 'where',
+    'which', 'while', 'with', 'work', 'working', 'would', 'your',
 }
 
 
