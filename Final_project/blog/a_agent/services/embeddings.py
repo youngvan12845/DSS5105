@@ -9,7 +9,13 @@ from typing import Sequence
 
 from django.conf import settings
 
-from a_agent.services.llm import _ollama_base_host, ollama_reachable
+from a_agent.services.llm import (
+    _ollama_base_host,
+    get_cloudflare_accounts,
+    has_any_cloudflare_account,
+    mark_cloudflare_account_exhausted,
+    ollama_reachable,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +23,7 @@ logger = logging.getLogger(__name__)
 def embed_provider() -> str:
     provider = getattr(settings, 'AGENT_LLM_PROVIDER', 'cloudflare').lower()
     if provider == 'ollama' and not ollama_reachable():
-        if getattr(settings, 'CLOUDFLARE_API_TOKEN', ''):
+        if has_any_cloudflare_account():
             return 'cloudflare'
         if getattr(settings, 'AGENT_OPENAI_API_KEY', ''):
             return 'openai'
@@ -36,9 +42,7 @@ def embed_model() -> str:
 def embeddings_available() -> bool:
     provider = embed_provider()
     if provider == 'cloudflare':
-        return bool(getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')) and bool(
-            getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
-        )
+        return has_any_cloudflare_account()
     if provider == 'openai':
         return bool(getattr(settings, 'AGENT_OPENAI_API_KEY', ''))
     return ollama_reachable()
@@ -54,48 +58,56 @@ def _embed_texts_cloudflare(texts: Sequence[str]) -> list[list[float]]:
     if time.time() < _CF_EMBED_QUOTA_EXHAUSTED_UNTIL:
         return []
 
-    account_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
-    token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
+    cf_accounts = get_cloudflare_accounts()
     model = embed_model()
-    if not account_id or not token:
+    if not cf_accounts:
         return []
 
-    url = f'https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{model}'
     payload = json.dumps({'text': list(texts)}).encode('utf-8')
-    req = urllib.request.Request(
-        url,
-        data=payload,
-        headers={
-            'Authorization': f'Bearer {token}',
-            'Content-Type': 'application/json',
-        },
-        method='POST',
-    )
     data = None
-    for attempt in range(2):
-        try:
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                data = json.loads(resp.read().decode('utf-8'))
-                break
-        except urllib.error.HTTPError as exc:
-            body_text = ''
+    for account_id, token in cf_accounts:
+        url = f'https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{model}'
+        req = urllib.request.Request(
+            url,
+            data=payload,
+            headers={
+                'Authorization': f'Bearer {token}',
+                'Content-Type': 'application/json',
+            },
+            method='POST',
+        )
+        account_exhausted = False
+        for attempt in range(2):
             try:
-                body_text = exc.read().decode('utf-8', errors='ignore')
-            except Exception:
-                pass
-            if exc.code == 429 and ('4006' in body_text or 'daily free allocation' in body_text):
-                _CF_EMBED_QUOTA_EXHAUSTED_UNTIL = time.time() + 120.0
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    data = json.loads(resp.read().decode('utf-8'))
+                    break
+            except urllib.error.HTTPError as exc:
+                body_text = ''
+                try:
+                    body_text = exc.read().decode('utf-8', errors='ignore')
+                except Exception:
+                    pass
+                if exc.code == 429 and ('4006' in body_text or 'daily free allocation' in body_text):
+                    mark_cloudflare_account_exhausted(account_id)
+                    account_exhausted = True
+                    break
+                if exc.code in (429, 500, 502, 503, 504) and attempt == 0:
+                    time.sleep(0.8)
+                    continue
+                logger.warning('Cloudflare embedding failed: %s', exc)
                 return []
-            if exc.code in (429, 500, 502, 503, 504) and attempt == 0:
-                time.sleep(0.8)
-                continue
-            logger.warning('Cloudflare embedding failed: %s', exc)
-            return []
-        except Exception as exc:
-            logger.warning('Cloudflare embedding failed: %s', exc)
+            except Exception as exc:
+                logger.warning('Cloudflare embedding failed: %s', exc)
+                return []
+        if data:
+            break
+        if not account_exhausted:
             return []
 
     if not data:
+        if not get_cloudflare_accounts():
+            _CF_EMBED_QUOTA_EXHAUSTED_UNTIL = time.time() + 120.0
         return []
 
     raw_data = data.get('result', {}).get('data', [])

@@ -37,6 +37,43 @@ class LLMInfo:
     vision: bool
 
 
+_CF_ACCOUNT_EXHAUSTED_UNTIL: dict[str, float] = {}
+
+
+def get_cloudflare_accounts() -> list[tuple[str, str]]:
+    """Return configured (account_id, api_token) pairs with non-exhausted accounts first."""
+    raw_pairs: list[tuple[str, str]] = []
+    primary_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
+    primary_token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
+    if primary_id and primary_token:
+        raw_pairs.append((primary_id, primary_token))
+
+    for acc_id, tok in getattr(settings, 'CLOUDFLARE_ACCOUNTS', []):
+        if acc_id and tok and (acc_id, tok) not in raw_pairs:
+            raw_pairs.append((acc_id, tok))
+
+    now = time.time()
+    active = [pair for pair in raw_pairs if now >= _CF_ACCOUNT_EXHAUSTED_UNTIL.get(pair[0], 0.0)]
+    return active
+
+
+def has_any_cloudflare_account() -> bool:
+    primary_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
+    primary_token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
+    if primary_id and primary_token:
+        return True
+    return bool(getattr(settings, 'CLOUDFLARE_ACCOUNTS', []))
+
+
+def mark_cloudflare_account_exhausted(account_id: str, cooldown: float = 1800.0) -> None:
+    _CF_ACCOUNT_EXHAUSTED_UNTIL[account_id] = time.time() + cooldown
+    logger.warning(
+        'Cloudflare account %s hit 10k neuron limit; switching to next fallback account for %.0fs.',
+        account_id[:8],
+        cooldown,
+    )
+
+
 def _provider(model: str | None = None) -> str:
     if model:
         if model in ANTHROPIC_MODEL_IDS or model.startswith('claude-'):
@@ -50,7 +87,7 @@ def _provider(model: str | None = None) -> str:
 
     provider = getattr(settings, 'AGENT_LLM_PROVIDER', 'cloudflare').lower()
     if provider == 'ollama' and not ollama_reachable():
-        if getattr(settings, 'CLOUDFLARE_API_TOKEN', ''):
+        if has_any_cloudflare_account():
             return 'cloudflare'
         if getattr(settings, 'AGENT_OPENAI_API_KEY', ''):
             return 'openai'
@@ -84,7 +121,7 @@ def llm_configured(model: str | None = None) -> bool:
     if provider == 'ollama':
         return ollama_reachable()
     if provider == 'cloudflare':
-        return bool(getattr(settings, 'CLOUDFLARE_API_TOKEN', ''))
+        return has_any_cloudflare_account()
     return False
 
 
@@ -146,9 +183,8 @@ def get_llm_info(model: str | None = None) -> LLMInfo:
         )
 
     if provider == 'cloudflare':
-        token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
         cf_model = selected if selected.startswith('@cf/') else getattr(settings, 'CLOUDFLARE_AI_MODEL', default_cloudflare_model())
-        if token:
+        if has_any_cloudflare_account():
             display_name = cf_model.split('/')[-1]
             return LLMInfo(
                 configured=True,
@@ -318,17 +354,17 @@ def generate_answer(
         )
         return (response.choices[0].message.content or '').strip()
 
-    # 4. Cloudflare Workers AI
+    # 4. Cloudflare Workers AI (with automatic multi-account rotation on HTTP 429 / Code 4006)
     if time.time() < _CF_LLM_QUOTA_EXHAUSTED_UNTIL:
-        raise RuntimeError('Cloudflare daily free neuron quota temporarily exhausted')
+        raise RuntimeError('Cloudflare daily free neuron quota temporarily exhausted across all accounts')
 
     from openai import OpenAI
 
-    account_id = getattr(settings, 'CLOUDFLARE_ACCOUNT_ID', '')
-    token = getattr(settings, 'CLOUDFLARE_API_TOKEN', '')
-    if not token:
-        raise RuntimeError('CLOUDFLARE_API_TOKEN is not configured')
-    base_url = f'https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1'
+    cf_accounts = get_cloudflare_accounts()
+    if not cf_accounts:
+        if not has_any_cloudflare_account():
+            raise RuntimeError('CLOUDFLARE_API_TOKEN is not configured')
+        raise RuntimeError('Cloudflare daily free neuron quota temporarily exhausted across all accounts')
 
     if model and model.startswith('@cf/'):
         selected_model = model
@@ -338,7 +374,6 @@ def generate_answer(
     if image_file and 'scout' not in selected_model and 'vision' not in selected_model:
         selected_model = getattr(settings, 'CLOUDFLARE_VISION_MODEL', '@cf/meta/llama-4-scout-17b-16e-instruct')
 
-    client = OpenAI(base_url=base_url, api_key=token, timeout=25.0)
     user_content = _build_openai_user_message(user_prompt, image_file)
     messages = [
         {'role': 'system', 'content': system_prompt},
@@ -360,28 +395,40 @@ def generate_answer(
             candidate_models.append(m)
 
     last_exc = None
-    for cand_model in candidate_models:
-        for attempt in range(2):
-            try:
-                response = client.chat.completions.create(
-                    model=cand_model,
-                    messages=messages,
-                    temperature=0.1,
-                    max_tokens=900,
-                )
-                text = response.choices[0].message.content or ''
-                if text.strip():
-                    return text.strip()
-            except Exception as exc:
-                last_exc = exc
-                err_str = str(exc)
-                if '4006' in err_str or 'daily free allocation' in err_str:
-                    _CF_LLM_QUOTA_EXHAUSTED_UNTIL = time.time() + 120.0
-                    raise exc
-                if ('429' in err_str or '502' in err_str or '503' in err_str) and attempt == 0:
-                    time.sleep(0.8)
-                    continue
+    for account_id, token in cf_accounts:
+        base_url = f'https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1'
+        client = OpenAI(base_url=base_url, api_key=token, timeout=25.0)
+        account_exhausted = False
+        for cand_model in candidate_models:
+            if account_exhausted:
                 break
+            for attempt in range(2):
+                try:
+                    response = client.chat.completions.create(
+                        model=cand_model,
+                        messages=messages,
+                        temperature=0.1,
+                        max_tokens=900,
+                    )
+                    text = response.choices[0].message.content or ''
+                    if text.strip():
+                        return text.strip()
+                except Exception as exc:
+                    last_exc = exc
+                    err_str = str(exc)
+                    if '4006' in err_str or 'daily free allocation' in err_str:
+                        mark_cloudflare_account_exhausted(account_id)
+                        account_exhausted = True
+                        break
+                    if ('429' in err_str or '502' in err_str or '503' in err_str) and attempt == 0:
+                        time.sleep(0.8)
+                        continue
+                    break
+        if not account_exhausted:
+            break
+
+    if not get_cloudflare_accounts():
+        _CF_LLM_QUOTA_EXHAUSTED_UNTIL = time.time() + 120.0
     if last_exc:
         raise last_exc
     return ''
