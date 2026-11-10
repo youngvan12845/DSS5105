@@ -202,11 +202,20 @@ AGENT_OLLAMA_EMBED_MODEL = os.environ.get('OLLAMA_EMBED_MODEL', 'nomic-embed-tex
 
 # Cloudflare Workers AI (free tier 10,000 neurons/day per account, with multi-account auto-failover)
 CLOUDFLARE_ACCOUNT_ID = os.environ.get('CLOUDFLARE_ACCOUNT_ID', '5b38fbc6c3f08b3f6aeb75b980ff2e69')
-CLOUDFLARE_API_TOKEN = os.environ.get('CLOUDFLARE_API_TOKEN', '')
+CLOUDFLARE_API_TOKEN = os.environ.get(
+    'CLOUDFLARE_API_TOKEN',
+    '' if RUNNING_TESTS else 'cfut_EJumhnyMNrU7lyBCrVo6zQnpEF3ewDnS5B8ZDJEV60687416',
+)
 CLOUDFLARE_ACCOUNT_ID_2 = os.environ.get('CLOUDFLARE_ACCOUNT_ID_2', 'baf6315cc70508c4204f21835aaa3ef4')
-CLOUDFLARE_API_TOKEN_2 = os.environ.get('CLOUDFLARE_API_TOKEN_2', '')
+CLOUDFLARE_API_TOKEN_2 = os.environ.get(
+    'CLOUDFLARE_API_TOKEN_2',
+    '' if RUNNING_TESTS else 'cfut_JydWNIEtFywyU09ReQpjWHGvD4baa6CL0lqmRFTibdfd249e',
+)
 CLOUDFLARE_ACCOUNT_ID_3 = os.environ.get('CLOUDFLARE_ACCOUNT_ID_3', '1691903c0de422200608e72aa53da2a2')
-CLOUDFLARE_API_TOKEN_3 = os.environ.get('CLOUDFLARE_API_TOKEN_3', '')
+CLOUDFLARE_API_TOKEN_3 = os.environ.get(
+    'CLOUDFLARE_API_TOKEN_3',
+    '' if RUNNING_TESTS else 'cfut_nn8ciDHgWhvWVA2Hm0AQCOOuFOntXbCm5ZPHjCr140e1198e',
+)
 CLOUDFLARE_ACCOUNTS = [
     pair
     for pair in [
