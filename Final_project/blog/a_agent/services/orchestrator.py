@@ -210,6 +210,32 @@ def _classify_intents(query: str) -> set[str]:
     return intents
 
 
+def _hit_matches_query_terms(hit, terms: list[str]) -> bool:
+    """True when the lesson title/tags, or its snippet, clearly matches the question."""
+    if not terms:
+        return True
+    title = f"{getattr(hit, 'title', '')} {getattr(hit, 'article_title', '')} {getattr(hit, 'tags', '')}".lower()
+    title_hits = sum(1 for term in terms if _word_match(term, title))
+    # Short queries such as "version control" need both words in the title.
+    title_needed = len(terms) if len(terms) <= 2 else (len(terms) + 1) // 2
+    if title_hits >= title_needed:
+        return True
+    body = f"{getattr(hit, 'content', '')} {getattr(hit, 'snippet', '')} {getattr(hit, 'intro', '')}".lower()
+    matched = sum(1 for term in terms if _word_match(term, body))
+    return matched >= min(2, len(terms))
+
+
+def _filter_hits_to_query(hits: list, query: str) -> list:
+    """Drop lessons that only matched weakly, such as Wagtail on a version-control question."""
+    if not hits:
+        return hits
+    terms = content_terms(query)
+    if not terms:
+        return hits
+    kept = [hit for hit in hits if _hit_matches_query_terms(hit, terms)]
+    return kept if kept else hits
+
+
 def _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=None) -> list[dict]:
     citations: list[dict] = []
     seen: set[int] = set()
@@ -229,10 +255,11 @@ def _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=None) 
         if citations:
             return citations[:5]
 
+    # Prefer keyword/chunk matches over vector so weak semantic hits stay out of Sources.
     for hits, source in (
-        (vector_hits, 'vector_search'),
-        (chunk_hits, 'chunk_search'),
         (keyword_hits, 'keyword_search'),
+        (chunk_hits, 'chunk_search'),
+        (vector_hits, 'vector_search'),
     ):
         for hit in hits:
             article_id = getattr(hit, 'article_id', None)
@@ -587,22 +614,21 @@ def _fallback_answer(
         else:
             source_hits = pool[:3]
         lead_text = _clean_excerpt_text(source_hits[0].content, 260, query=query) if source_hits else article_scope.title
+        # Keep search-fallback excerpts in English. If the user asked for Chinese,
+        # the caller may rewrite the whole reply; do not mix Chinese headers with
+        # English lesson text here.
         lines = [
-            f'🎯 **核心结论**：关于 **{article_scope.title}**，{lead_text}'
-            if is_zh
-            else f'🎯 **Core Takeaway**: Regarding **{article_scope.title}** — {lead_text}',
+            f'🎯 **Core Takeaway**: Regarding **{article_scope.title}** — {lead_text}',
             '',
-            '📌 **核心概念与重点解析**：' if is_zh else '📌 **Key Concepts & Breakdown**:',
+            '📌 **Key Concepts & Breakdown**:',
         ]
         for hit in source_hits:
             score_note = f' (score {hit.score})' if hasattr(hit, 'score') and hit.score and hit.score < 1.0 else ''
             lines.append(f'- {_clean_excerpt_text(hit.content, 700, query=query)}{score_note}')
         if not article_scope.can_read_full and not article_scope.is_free:
-            lines.append('\n注：本文为付费文章，以上回答仅基于公开预览段落。' if is_zh else '\nNote: full article text is paywalled — answers use preview passages only.')
+            lines.append('\nNote: full article text is paywalled — answers use preview passages only.')
         else:
-            lines.append('\n以上回答完全基于当前文章内容。' if is_zh else '\nThis answer is grounded in this article only.')
-        if is_zh:
-            lines.append('\n（当前为检索兜底：下面仍是英文原文摘录。可用的 AI 会把整段改写成中文。）')
+            lines.append('\nThis answer is grounded in this article only.')
         return '\n'.join(lines)
 
     if pending_action:
@@ -925,14 +951,16 @@ _T2S_CHAR_TABLE = str.maketrans(
 )
 
 
+def _mostly_english(text: str) -> bool:
+    latin = len(re.findall(r'[A-Za-z]', text or ''))
+    chinese = len(re.findall(r'[\u4e00-\u9fff]', text or ''))
+    return latin >= 40 and latin > chinese * 2
+
+
 def _rewrite_reply_in_chinese(content: str, *, model: str | None = None) -> str | None:
     """Turn an English search fallback into a Simplified Chinese reply when the model is available."""
     text = (content or '').strip()
-    if not text or not llm_configured(model):
-        return None
-    latin = len(re.findall(r'[A-Za-z]', text))
-    chinese = len(re.findall(r'[\u4e00-\u9fff]', text))
-    if latin < 40 or latin <= chinese * 2:
+    if not text or not llm_configured(model) or not _mostly_english(text):
         return None
     try:
         rewritten = generate_answer(
@@ -948,7 +976,18 @@ def _rewrite_reply_in_chinese(content: str, *, model: str | None = None) -> str 
     except Exception:
         return None
     rewritten = (rewritten or '').strip()
-    return rewritten or None
+    if not rewritten or _mostly_english(rewritten):
+        return None
+    return rewritten
+
+
+def _chinese_unavailable_notice(article_title: str = '') -> str:
+    title = (article_title or '').strip()
+    about = f'关于 **{title}** 的' if title else ''
+    return (
+        f'当前 AI 暂时无法生成中文回答，所以我没有直接粘贴英文原文。\n\n'
+        f'请稍后再试{about}中文总结；如果只需要英文摘录，请用英文提问。'
+    )
 
 
 def _ensure_simplified_chinese(text: str) -> str:
@@ -1997,6 +2036,10 @@ def _handle_user_message_core(
             })
             tool_trace.append(_external_source_trace(outside_notes))
 
+    if not article_scope:
+        keyword_hits = _filter_hits_to_query(keyword_hits, query)
+        chunk_hits = _filter_hits_to_query(chunk_hits, query)
+        vector_hits = _filter_hits_to_query(vector_hits, query)
     citations = _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=reading_path)
 
     enrichment_notes = []
@@ -2343,12 +2386,18 @@ def _handle_user_message_core(
     content = _sanitize_markdown_output(content)
     response_mode = 'fallback'
     if is_chinese:
-        content = _ensure_simplified_chinese(content)
         rewritten = _rewrite_reply_in_chinese(content, model=model)
         if rewritten:
             content = _sanitize_markdown_output(_ensure_simplified_chinese(rewritten))
             response_mode = 'ai'
             tool_trace.append({'tool': 'chinese_rewrite', 'from': 'fallback'})
+        elif _mostly_english(content):
+            # Avoid Chinese headers wrapped around English excerpts.
+            title = getattr(article_scope, 'title', '') if article_scope else ''
+            content = _chinese_unavailable_notice(title)
+            tool_trace.append({'tool': 'chinese_rewrite', 'from': 'fallback', 'status': 'unavailable'})
+        else:
+            content = _ensure_simplified_chinese(content)
     tool_trace.append({'tool': 'response_mode', 'mode': response_mode})
     content = _ensure_path_lessons(content, reading_path, is_chinese)
     content = _append_opened_lesson_note(

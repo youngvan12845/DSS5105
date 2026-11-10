@@ -566,6 +566,49 @@ class PanelStatusTests(SimpleTestCase):
         ))
         self.assertTrue(wants_chinese('Summarize this article in Chinese'))
         self.assertFalse(wants_chinese('What is version control?'))
+        from a_agent.services.orchestrator import (
+            _chinese_unavailable_notice,
+            _mostly_english,
+        )
+        self.assertTrue(_mostly_english(
+            'What Is Version Control? Grasp the concepts of repository and commit in Git. '
+            'When coding, you need to manage several files which are dependent on one another.'
+        ))
+        self.assertFalse(_mostly_english('这是一段完整的中文总结，没有大段英文原文。'))
+        notice = _chinese_unavailable_notice('What Is Version Control?')
+        self.assertIn('暂时无法生成中文回答', notice)
+        self.assertNotIn('Core Takeaway', notice)
+        from a_agent.services.orchestrator import _filter_hits_to_query, _format_citations
+        mixed = [
+            SimpleNamespace(
+                article_id=29,
+                article_title='What Is Version Control?',
+                title='',
+                tags='git',
+                content='Version control tracks changes.',
+                article_url='/vc/',
+            ),
+            SimpleNamespace(
+                article_id=88,
+                article_title='I Built a Version Bump Tool in Rust',
+                title='',
+                tags='rust',
+                content='A faster version bump CLI.',
+                article_url='/rust/',
+            ),
+            SimpleNamespace(
+                article_id=99,
+                article_title='Wagtail CMS Quick Start',
+                title='',
+                tags='cms',
+                content='Publish pages with Wagtail.',
+                article_url='/wagtail/',
+            ),
+        ]
+        kept = _filter_hits_to_query(mixed, 'What is version control?')
+        self.assertEqual([hit.article_id for hit in kept], [29])
+        cites = _format_citations([], [], kept)
+        self.assertEqual([c['title'] for c in cites], ['What Is Version Control?'])
 
         dirty = 'Here is [Key Concepts](#concepts) and a truncated link [Read More](https://example.com/unfin'
         cleaned = _sanitize_markdown_output(dirty)
