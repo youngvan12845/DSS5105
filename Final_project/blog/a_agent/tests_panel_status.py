@@ -407,6 +407,23 @@ class PanelStatusTests(SimpleTestCase):
         self.assertFalse(_is_direct_answer_query(
             'Could you help me plan a learning path using lessons on this site'
         ))
+        self.assertFalse(_is_direct_answer_query(
+            'Add "What is Version Control?" to my reading list'
+        ))
+        self.assertEqual(
+            _uncovered_outside_topic(
+                'Add "What is Version Control?" to my reading list',
+                [git_hit],
+            ),
+            '',
+        )
+        self.assertEqual(
+            _uncovered_outside_topic(
+                'Where did I leave off last time?',
+                [git_hit],
+            ),
+            '',
+        )
         self.assertEqual(
             _uncovered_outside_topic(
                 'What is Git, and I just joined a team project?',

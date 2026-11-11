@@ -176,28 +176,42 @@ CROSS_DOMAIN_HINTS = (
 )
 
 
+_QUOTED_TITLE_RE = re.compile(r'["“「『《]([^"”」』》]{3,})["”」』》]|\'([^\']{4,})\'')
+
+
+def _strip_quoted_titles(query: str) -> str:
+    """Strip quoted article titles so words inside titles ('What Is ...') do not trigger QA/outside intents."""
+    return _QUOTED_TITLE_RE.sub(' ', query or '')
+
+
 def _classify_intents(query: str) -> set[str]:
-    q = query.lower()
+    q = (query or '').lower()
+    unquoted_q = _strip_quoted_titles(query).lower().strip() or q
     intents: set[str] = set()
 
-    if any(h in q for h in CONTINUE_READING_HINTS):
+    if any(h in unquoted_q for h in CONTINUE_READING_HINTS):
         intents.add('history')
-    if any(h in q for h in RECOMMEND_HINTS):
+    if any(h in unquoted_q for h in RECOMMEND_HINTS):
         intents.add('recommend')
-    if any(h in q for h in PATH_HINTS) or ('path' in q and not any(h in q for h in CONTINUE_READING_HINTS)):
+    if any(h in unquoted_q for h in PATH_HINTS) or ('path' in unquoted_q and not any(h in unquoted_q for h in CONTINUE_READING_HINTS)):
         intents.add('path')
-    if any(h in q for h in REMOVE_LIST_HINTS) or (('remove' in q or 'delete' in q) and ('reading list' in q or 'from list' in q)):
+    if any(h in unquoted_q for h in REMOVE_LIST_HINTS) or (('remove' in unquoted_q or 'delete' in unquoted_q) and ('reading list' in unquoted_q or 'from list' in unquoted_q)):
         intents.add('action_remove')
-    elif any(h in q for h in ADD_LIST_HINTS) or (('add' in q or 'save' in q) and ('reading list' in q or 'to list' in q)):
+    elif any(h in unquoted_q for h in ADD_LIST_HINTS) or (('add' in unquoted_q or 'save' in unquoted_q) and ('reading list' in unquoted_q or 'to list' in unquoted_q)):
         intents.add('action_add')
-    elif any(h in q for h in LIST_QUERY_HINTS):
+    elif any(h in unquoted_q for h in LIST_QUERY_HINTS):
         intents.add('reading_list')
-    if any(h in q for h in COMMENT_HINTS):
+    if any(h in unquoted_q for h in COMMENT_HINTS):
         intents.add('action_comment')
-    if any(h in q for h in DEEP_PRINCIPLE_HINTS):
+    if any(h in unquoted_q for h in DEEP_PRINCIPLE_HINTS):
         intents.add('deep_dive')
-    if any(h in q for h in CROSS_DOMAIN_HINTS):
+    if any(h in unquoted_q for h in CROSS_DOMAIN_HINTS):
         intents.add('cross_domain')
+
+    if intents & {'action_add', 'action_remove', 'action_comment', 'reading_list'}:
+        if 'action_add' in intents or 'action_remove' in intents:
+            intents.add('keyword')
+        return intents
 
     search_triggers = (
         'what', 'which', 'summarize', 'explain', 'cover', 'mention',
@@ -1225,9 +1239,12 @@ def _refers_to_opened_article(query: str) -> bool:
     )
 
 
-def _is_direct_answer_query(query: str) -> bool:
-    """A definition, summary, or explain-with-example question — not a reading list."""
-    q = (query or '').lower()
+def _is_direct_answer_query(query: str, intents: set[str] | None = None) -> bool:
+    """A definition, summary, or explain-with-example question — not a reading list or action."""
+    active_intents = intents if intents is not None else _classify_intents(query or '')
+    if _stay_on_site(active_intents):
+        return False
+    q = _strip_quoted_titles(query).lower()
     return any(
         mark in q
         for mark in (
@@ -1251,7 +1268,7 @@ def _is_direct_answer_query(query: str) -> bool:
     )
 
 
-def _uncovered_outside_topic(query: str, hits: list) -> str:
+def _uncovered_outside_topic(query: str, hits: list, intents: set[str] | None = None) -> str:
     """A subject in the question that no on-site lesson title covers.
 
     A separate clause such as "and what is Helm?" is looked up outside.
@@ -1264,16 +1281,21 @@ def _uncovered_outside_topic(query: str, hits: list) -> str:
         return ''
     if _refers_to_opened_article(query):
         return ''
+    active_intents = intents if intents is not None else _classify_intents(query or '')
+    if active_intents & {'action_add', 'action_remove', 'action_comment', 'reading_list', 'history'}:
+        return ''
     titles = _lesson_title_text(hits)
     if not titles.strip():
         return ''
+
+    unquoted_query = _strip_quoted_titles(query)
 
     def uncovered_terms(text: str) -> list[str]:
         return [term for term in content_terms(text) if not _word_match(term, titles)]
 
     parts = [
         part.strip(' ,，。?？')
-        for part in re.split(r'\s+\band\b\s+|以及|顺便|还有|另外', query or '', flags=re.I)
+        for part in re.split(r'\s+\band\b\s+|以及|顺便|还有|另外', unquoted_query or '', flags=re.I)
         if part.strip(' ,，。?？')
     ]
     if len(parts) >= 2:
@@ -1288,7 +1310,7 @@ def _uncovered_outside_topic(query: str, hits: list) -> str:
                 outside_parts.append(part)
         if saw_lesson and outside_parts:
             return ' '.join(outside_parts)[:120]
-    missed = uncovered_terms(query)
+    missed = uncovered_terms(unquoted_query)
     if not missed:
         return ''
     return ' '.join(missed)[:120]
@@ -2015,6 +2037,60 @@ def _handle_user_message_core(
                 pending_action={},
             )
 
+    # Matched reading-list actions (add/remove): return deterministic confirmation card immediately
+    # without waiting on external web lookup or long-form LLM summaries.
+    if pending_action:
+        citations = _format_citations(keyword_hits, chunk_hits, vector_hits)
+        titles = ', '.join(item['title'] for item in pending_action.get('articles', []))
+        if pending_action.get('action_type') == 'remove_from_reading_list':
+            content = (
+                f'已为您准备将 **{titles}** 从阅读清单中移除。\n\n请点击下方 **Confirm** 按钮确认移除，确认前不会更改。'
+                if is_chinese
+                else (
+                    f'I prepared to remove these articles from your reading list: **{titles}**.\n\n'
+                    'Click **Confirm** below to remove them. Nothing changes until you confirm.'
+                )
+            )
+        else:
+            content = (
+                f'已为您准备将 **{titles}** 加入阅读清单。\n\n请点击下方 **Confirm** 按钮确认保存，确认前不会写入。'
+                if is_chinese
+                else (
+                    f'I prepared a reading-list action for: **{titles}**.\n\n'
+                    'Click **Confirm** below to add them. Nothing is saved until you confirm.'
+                )
+            )
+        tool_trace.append({'tool': 'response_mode', 'mode': 'action_card'})
+        return AgentReply(
+            content=content,
+            citations=citations,
+            tool_trace=tool_trace,
+            pending_action=pending_action,
+        )
+
+    # Reading-list display: return deterministic reading list card immediately.
+    if 'reading_list' in intents and not pending_action:
+        if not reading_list:
+            content = (
+                '您的阅读清单目前为空。您可以让我将检索到的文章加入阅读清单。'
+                if is_chinese
+                else 'Your reading list is empty. Ask me to add articles from search results.'
+            )
+        else:
+            header = '您的阅读清单：' if is_chinese else 'Your reading list:'
+            lines = [header, '']
+            for i, item in enumerate(reading_list, start=1):
+                badge = 'Free' if item.is_free else 'Paid'
+                lines.append(f'{i}. [{item.title}]({item.url}) ({badge})')
+            content = '\n'.join(lines)
+        tool_trace.append({'tool': 'response_mode', 'mode': 'reading_list_card'})
+        return AgentReply(
+            content=content,
+            citations=[],
+            tool_trace=tool_trace,
+            pending_action={},
+        )
+
     # Matched learning paths: return a deterministic lesson card immediately.
     # Waiting on the LLM + outside lookup is what made path answers disappear
     # on the demo site when the proxy timed out after "Thinking…".
@@ -2037,10 +2113,11 @@ def _handle_user_message_core(
             pending_action={},
         )
 
-    # No on-site lesson means no SOURCES. History alone is not a lesson match.
+    # No on-site lesson means no SOURCES. History alone is not a lesson match unless the user asked for history.
     has_any_corpus_match = bool(
         article_scope or keyword_hits or chunk_hits or vector_hits
         or reading_path or reading_list or recommend_hits or pending_action
+        or ('history' in intents and history_items)
     )
     if not has_any_corpus_match:
         # A path or a history question stays on this site unless it names a
@@ -2067,7 +2144,7 @@ def _handle_user_message_core(
     outside_notes = []
     uncovered = ''
     if not article_scope:
-        uncovered = _uncovered_outside_topic(query, [*keyword_hits, *chunk_hits, *vector_hits])
+        uncovered = _uncovered_outside_topic(query, [*keyword_hits, *chunk_hits, *vector_hits], intents=intents)
         if uncovered:
             outside_notes = lookup_outside_the_blog(uncovered)
             tool_trace.append({
@@ -2114,7 +2191,7 @@ def _handle_user_message_core(
         else:
             lang_directive = 'Respond in English unless the user writes in another language.'
 
-        direct_answer = _is_direct_answer_query(query)
+        direct_answer = _is_direct_answer_query(query, intents=intents)
         if direct_answer:
             if is_chinese:
                 structure_guide = (
