@@ -302,6 +302,10 @@ def _extract_ordinal_index(query: str) -> int | None:
         return 1
     if any(tok in q for tok in ('third', '3rd', '第三篇', '第三個', '第三个', '第3篇', '第 3 篇')):
         return 2
+    if any(tok in q for tok in ('fourth', '4th', '第四篇', '第四個', '第四个', '第4篇', '第 4 篇')):
+        return 3
+    if any(tok in q for tok in ('fifth', '5th', '第五篇', '第五個', '第五个', '第5篇', '第 5 篇')):
+        return 4
     return None
 
 
@@ -348,17 +352,40 @@ def _resolve_action_article_ids(
 ) -> list[int]:
     q_lower = query.lower()
 
-    # 1. Check ordinal references (e.g. "the second one you recommended" / "你剛才推薦的第二篇")
+    # 1. Check ordinal references (e.g. "the second one you recommended" / "add the third article")
     ordinal_idx = _extract_ordinal_index(query)
     if ordinal_idx is not None:
         if chat_history:
+            all_live_pages = None
             for msg in reversed(chat_history):
-                if getattr(msg, 'role', '') == 'assistant':
-                    cites = getattr(msg, 'citations', None) or []
-                    if ordinal_idx < len(cites):
-                        cid = cites[ordinal_idx].get('article_id')
-                        if cid:
-                            return [int(cid)]
+                if getattr(msg, 'role', '') != 'assistant':
+                    continue
+                if getattr(msg, 'pending_action', None):
+                    continue
+                cites = [
+                    c for c in (getattr(msg, 'citations', None) or [])
+                    if c.get('article_id')
+                ]
+                if ordinal_idx < len(cites):
+                    return [int(cites[ordinal_idx]['article_id'])]
+                msg_text = (getattr(msg, 'content', '') or '').lower()
+                if msg_text:
+                    if all_live_pages is None:
+                        all_live_pages = list(ArticlePage.objects.live())
+                    pos_matches = []
+                    for page in all_live_pages:
+                        t_low = (page.title or '').strip().lower()
+                        if len(t_low) >= 6:
+                            idx = msg_text.find(t_low)
+                            if idx >= 0:
+                                pos_matches.append((idx, page.pk))
+                    pos_matches.sort(key=lambda x: x[0])
+                    dedup_ids = []
+                    for _, pk in pos_matches:
+                        if pk not in dedup_ids:
+                            dedup_ids.append(pk)
+                    if ordinal_idx < len(dedup_ids):
+                        return [dedup_ids[ordinal_idx]]
         if is_remove and current_list and ordinal_idx < len(current_list):
             return [current_list[ordinal_idx].article_id]
 
