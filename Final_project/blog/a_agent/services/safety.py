@@ -48,8 +48,8 @@ SAFETY_PATTERNS: dict[str, list[str]] = {
         r'(色情|黄色小说|黄色网站|成人影片|成人视频|做爱|性交|自慰|裸聊|约炮|援交|三级片|A片|AV女优|强奸|淫秽|幼女色情|换妻)',
     ],
     'abuse': [
-        r'\b(fuck you|fucking idiot|bitch|asshole|motherfucker|kill yourself|bastard|shithead|piece of shit)\b',
-        r'(操你妈|草你妈|傻逼|煞笔|弱智|脑残|婊子|去死吧|狗东西|贱人|王八蛋|垃圾狗|死全家|狗娘养|死逼|CNM|MLGB)',
+        r'\b(fuck you|fucking idiot|you are an idiot|you\'re an idiot|you idiot|idiot|moron|dumbass|you are stupid|you\'re stupid|bitch|asshole|motherfucker|kill yourself|bastard|shithead|piece of shit)\b',
+        r'(操你妈|草你妈|傻逼|煞笔|弱智|脑残|婊子|去死吧|狗东西|贱人|王八蛋|垃圾狗|死全家|狗娘养|死逼|白痴|蠢货|CNM|MLGB)',
     ],
     'politics': [
         r'\b(overthrow the government|assassinate the president|political coup|color revolution|anti-government uprising|subvert state power)\b',

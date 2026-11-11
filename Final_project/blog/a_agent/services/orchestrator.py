@@ -213,13 +213,21 @@ def _classify_intents(query: str) -> set[str]:
             intents.add('keyword')
         return intents
 
+    if (
+        (intents & {'history', 'recommend'})
+        and not (intents & {'path', 'deep_dive', 'cross_domain'})
+        and not content_terms(_strip_quoted_titles(query))
+        and not wants_chinese(query)
+    ):
+        return intents
+
     search_triggers = (
         'what', 'which', 'summarize', 'explain', 'cover', 'mention',
         'recommend', 'suggest', 'about', 'related', 'find', 'how', 'why',
         'give', 'progression', 'path', 'docker', 'git', 'rag', 'agent',
         'quiz', 'test', 'question', 'exam', 'pitfall', 'pitfalls', 'excerpt',
     )
-    if not intents or any(word in q for word in search_triggers):
+    if not intents or any(word in unquoted_q for word in search_triggers):
         intents.update({'keyword', 'chunk', 'vector'})
     return intents
 
@@ -250,7 +258,14 @@ def _filter_hits_to_query(hits: list, query: str) -> list:
     return kept if kept else hits
 
 
-def _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=None) -> list[dict]:
+def _format_citations(
+    keyword_hits,
+    chunk_hits,
+    vector_hits,
+    reading_path=None,
+    recommend_hits=None,
+    history_items=None,
+) -> list[dict]:
     citations: list[dict] = []
     seen: set[int] = set()
 
@@ -291,6 +306,27 @@ def _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=None) 
                     'source': source,
                 }
             )
+    if not citations and (history_items or recommend_hits):
+        for hits, source in (
+            (history_items or [], 'browsing_history'),
+            (recommend_hits or [], 'recommend_articles'),
+        ):
+            for hit in hits:
+                article_id = getattr(hit, 'article_id', None)
+                if article_id is None or article_id in seen:
+                    continue
+                title = getattr(hit, 'article_title', getattr(hit, 'title', '')).strip()
+                if not title:
+                    continue
+                seen.add(article_id)
+                citations.append(
+                    {
+                        'article_id': article_id,
+                        'title': title,
+                        'url': getattr(hit, 'article_url', getattr(hit, 'url', '')),
+                        'source': source,
+                    }
+                )
     return citations[:5]
 
 
@@ -2142,6 +2178,60 @@ def _handle_user_message_core(
             pending_action={},
         )
 
+    # Continue reading / next recommendation card: return fast deterministic response when history is present
+    # and no topic-specific search was needed.
+    if (
+        (intents & {'history', 'recommend'})
+        and not (keyword_hits or chunk_hits or vector_hits or reading_path or pending_action)
+        and history_items
+    ):
+        citations = _format_citations(
+            keyword_hits,
+            chunk_hits,
+            vector_hits,
+            recommend_hits=recommend_hits,
+            history_items=history_items[:2],
+        )
+        latest = history_items[0]
+        latest_title = getattr(latest, 'article_title', None) or getattr(latest, 'title', '')
+        latest_url = getattr(latest, 'article_url', None) or getattr(latest, 'url', '')
+        lines = []
+        if is_chinese:
+            lines.append(f'您上次阅读到 [**{latest_title}**]({latest_url})。')
+            if len(history_items) > 1:
+                prev_links = '、'.join(
+                    f"[**{getattr(h, 'article_title', None) or getattr(h, 'title', '')}**]({getattr(h, 'article_url', None) or getattr(h, 'url', '')})"
+                    for h in history_items[1:3]
+                )
+                lines.append(f'近期还阅读过：{prev_links}。')
+            if recommend_hits:
+                lines.extend(['', '根据您的阅读进度，推荐您接下来阅读：', ''])
+                for idx, rec in enumerate(recommend_hits, start=1):
+                    badge = 'Free' if rec.is_free else 'Paid'
+                    reason = f' — {rec.reason}' if rec.reason else ''
+                    lines.append(f'{idx}. [**{rec.title}**]({rec.url}) ({badge}){reason}')
+        else:
+            lines.append(f'You last left off at [**{latest_title}**]({latest_url}).')
+            if len(history_items) > 1:
+                prev_links = ', '.join(
+                    f"[**{getattr(h, 'article_title', None) or getattr(h, 'title', '')}**]({getattr(h, 'article_url', None) or getattr(h, 'url', '')})"
+                    for h in history_items[1:3]
+                )
+                lines.append(f'Previously opened: {prev_links}.')
+            if recommend_hits:
+                lines.extend(['', 'Recommended next lessons based on your reading history:', ''])
+                for idx, rec in enumerate(recommend_hits, start=1):
+                    badge = 'Free' if rec.is_free else 'Paid'
+                    reason = f' — {rec.reason}' if rec.reason else ''
+                    lines.append(f'{idx}. [**{rec.title}**]({rec.url}) ({badge}){reason}')
+        tool_trace.append({'tool': 'response_mode', 'mode': 'continue_reading_card'})
+        return AgentReply(
+            content='\n'.join(lines),
+            citations=citations,
+            tool_trace=tool_trace,
+            pending_action={},
+        )
+
     # No on-site lesson means no SOURCES. History alone is not a lesson match unless the user asked for history.
     has_any_corpus_match = bool(
         article_scope or keyword_hits or chunk_hits or vector_hits
@@ -2187,7 +2277,14 @@ def _handle_user_message_core(
         keyword_hits = _filter_hits_to_query(keyword_hits, query)
         chunk_hits = _filter_hits_to_query(chunk_hits, query)
         vector_hits = _filter_hits_to_query(vector_hits, query)
-    citations = _format_citations(keyword_hits, chunk_hits, vector_hits, reading_path=reading_path)
+    citations = _format_citations(
+        keyword_hits,
+        chunk_hits,
+        vector_hits,
+        reading_path=reading_path,
+        recommend_hits=recommend_hits,
+        history_items=history_items[:1] if 'history' in intents else None,
+    )
 
     enrichment_notes = []
     if 'deep_dive' in intents or 'cross_domain' in intents:

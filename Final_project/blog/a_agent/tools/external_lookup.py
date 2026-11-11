@@ -33,7 +33,7 @@ _MAX_NOTES = 4
 # Words about the reader or the request. They are not something to look up.
 _NOT_A_TOPIC = {
     'able', 'about', 'add', 'added', 'adding', 'after', 'again', 'also',
-    'another', 'answer', 'around', 'article', 'articles', 'assignment',
+    'another', 'answer', 'appropriate', 'around', 'article', 'articles', 'assignment',
     'because', 'basic', 'basics', 'been', 'before', 'begin', 'beginner',
     'being', 'blog', 'blogs', 'bookmark', 'bookmarks', 'browsing', 'chinese',
     'concept', 'concepts', 'continue', 'could', 'course', 'courses', 'delete',
@@ -44,10 +44,12 @@ _NOT_A_TOPIC = {
     'like', 'list', 'lists', 'make', 'mandarin', 'many', 'more', 'most',
     'much', 'need', 'next', 'off', 'only', 'order', 'other', 'over', 'path',
     'paths', 'pick', 'plan', 'planning', 'plans', 'please', 'project',
-    'projects', 'read', 'reading', 'really', 'recent', 'recently', 'remove',
+    'projects', 'read', 'reading', 'really', 'recent', 'recently', 'recommend',
+    'recommended', 'recommending', 'relevant', 'remove',
     'removed', 'reply', 'response', 'save', 'saved', 'second', 'series',
     'should', 'show', 'site', 'some', 'someone', 'something', 'start',
-    'started', 'still', 'stopped', 'such', 'summarize', 'summary', 'team',
+    'started', 'still', 'stopped', 'such', 'suggest', 'suggested', 'suitable',
+    'summarize', 'summary', 'team',
     'tell', 'than', 'that', 'their', 'them', 'then', 'there', 'these',
     'they', 'third', 'this', 'those', 'through', 'time', 'track', 'tracks', 'under', 'using', 'very', 'visited', 'want', 'were', 'what',
     'when', 'where', 'which', 'while', 'with', 'work', 'working', 'would',
