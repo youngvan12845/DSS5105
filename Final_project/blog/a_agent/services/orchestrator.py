@@ -368,17 +368,19 @@ def _resolve_action_article_ids(
                 ]
                 if ordinal_idx < len(cites):
                     return [int(cites[ordinal_idx]['article_id'])]
-                msg_text = (getattr(msg, 'content', '') or '').lower()
+                msg_text = re.sub(r'\s*[-–—]\s*', ' - ', (getattr(msg, 'content', '') or '').lower())
                 if msg_text:
                     if all_live_pages is None:
                         all_live_pages = list(ArticlePage.objects.live())
                     pos_matches = []
                     for page in all_live_pages:
-                        t_low = (page.title or '').strip().lower()
+                        t_low = re.sub(r'\s*[-–—]\s*', ' - ', (page.title or '').strip().lower())
                         if len(t_low) >= 6:
                             idx = msg_text.find(t_low)
                             if idx >= 0:
                                 pos_matches.append((idx, page.pk))
+                        elif page.slug and f'/{page.slug}/' in msg_text:
+                            pos_matches.append((msg_text.find(f'/{page.slug}/'), page.pk))
                     pos_matches.sort(key=lambda x: x[0])
                     dedup_ids = []
                     for _, pk in pos_matches:
