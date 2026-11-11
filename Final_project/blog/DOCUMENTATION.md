@@ -59,7 +59,8 @@ Agent 直接复用上述模块的数据与权限逻辑，无需重复建设用�
 #### （3）阅读路径规划（Reading Path Planning）
 
 - 路径由 `a_agent/data/reading_paths.json` **人工策展**（按主题/标签匹配）。
-- Agent 识别学习意图后返回有序文章列表及说明。
+- Agent 识别学习意图且匹配到路径后，直接返回有序课程卡片（`path_card`）与真实链接，**不经过 LLM**，避免代理超时导致问答消失。
+- 主聊天 HTMX 回包使用 `message_pair`；失败/超时时保留问题气泡并提示重试；发送中使用独立 Stop 按钮。
 
 **示例**：「I want to learn machine learning. What reading path should I follow?」
 

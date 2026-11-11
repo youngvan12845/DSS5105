@@ -470,7 +470,7 @@ class PanelStatusTests(SimpleTestCase):
             path,
         )
         self.assertEqual([hit.article_id for hit in kept_hits], [9, 7])
-        from a_agent.services.orchestrator import _ensure_path_lessons
+        from a_agent.services.orchestrator import _ensure_path_lessons, _path_card_answer
         lesson_path = SimpleNamespace(
             title='Git & Version Control Starter Path',
             steps=[
@@ -479,6 +479,7 @@ class PanelStatusTests(SimpleTestCase):
                     title='Chapter 1. Git & GitHub Overview',
                     url='https://example.com/git-overview',
                     note='Start here',
+                    is_free=True,
                 ),
             ],
         )
@@ -490,6 +491,10 @@ class PanelStatusTests(SimpleTestCase):
         self.assertNotIn('Starter Path](', fixed)
         self.assertIn('https://example.com/git-overview', fixed)
         self.assertIn('Chapter 1. Git & GitHub Overview', fixed)
+        card = _path_card_answer(lesson_path, False)
+        self.assertIn('Lessons on this site, in this order:', card)
+        self.assertIn('https://example.com/git-overview', card)
+        self.assertIn('Chapter 1. Git & GitHub Overview', card)
         sources = _external_source_trace(notes)['sources']
         self.assertTrue(all(item['url'].startswith('https://') for item in sources))
         self.assertTrue(all(item.get('host') for item in sources))

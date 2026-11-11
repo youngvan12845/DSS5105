@@ -59,7 +59,8 @@ Aligned with the project proposal (`PROJECT_OVERVIEW.md` §4):
 #### (3) Reading Path Planning
 
 - Paths are **manually curated** in `a_agent/data/reading_paths.json` (matched by topic/tags).
-- The Agent returns an ordered article list with notes when it detects a learning intent.
+- When a path matches, the Agent returns an ordered lesson card (`path_card`) with real links **without calling the LLM**, so proxy timeouts do not wipe the Q&A after Thinking.
+- Main-chat HTMX replies use `message_pair`; on failure/timeout the question stays on screen with a retry note; Stop is a separate button while sending.
 
 **Example**: “I want to learn machine learning. What reading path should I follow?”
 

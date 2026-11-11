@@ -32,7 +32,7 @@ The learning panel is not part of this question-answering agent. The difficulty 
 - Find a topic across the whole blog, such as Git or Docker, and say which lessons cover it.
 - Suggest what to read next from the lessons this person opened recently. The suggestion comes from matching tags, not from the model picking a title on its own.
 - Say what this person read recently, so they can continue.
-- Give a reading path that was written ahead of time. The paths we have are Git for beginners, Git branching, Docker, Python basics, Python web, and a machine-learning introduction.
+- Give a reading path that was written ahead of time. The paths we have are Git for beginners, Git branching, Docker, Python basics, Python web, and a machine-learning introduction. When a path matches, the full chat returns that ordered lesson card with real links right away, without waiting on the model, so the demo does not time out after Thinking.
 - Show the reader's own reading list.
 - Prepare three actions: add a lesson to the list, remove one, or write a comment. All three wait for Confirm.
 - In the full chat, when no lesson matches, add a public note from the web and label it as not a lesson on this site. Icons under the reply open the source pages.
@@ -118,7 +118,7 @@ Opening a lesson does not ask the model to decide the difficulty on the spot. Th
 
 The panel shows the notes only when the file says the lesson is ready and the concept lists are properly filled in. The reader then sees the difficulty and links to related lessons. If the check failed, or the lesson was edited after the check, the panel says Unavailable. Publishing a lesson marks the old notes as out of date. It does not call the model again by itself. Someone has to run the command again.
 
-If a lesson has no notes yet, the panel can use a hand-written file, `prerequisites_graph.json`, when that lesson is listed there. Otherwise it says Unavailable. A third file, `reading_paths.json`, is used when a reader asks for a path through a topic.
+If a lesson has no notes yet, the panel can use a hand-written file, `prerequisites_graph.json`, when that lesson is listed there. Otherwise it says Unavailable. A third file, `reading_paths.json`, is used when a reader asks for a path through a topic. A matched path is shown as a lesson card with Sources. The chat keeps the question on screen if a request fails or times out, uses a separate Stop button while sending, and leaves space between the reply bubble and Sources.
 
 ## What is stored
 

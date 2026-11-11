@@ -177,13 +177,14 @@
                     hx-target="#chat-messages"
                     hx-swap="beforeend"
                     hx-encoding="multipart/form-data"
+                    hx-timeout="120000"
                     class="space-y-2"
                 >
                     {% csrf_token %}
                     {% if scoped_article_id %}
                     <input type="hidden" name="article_id" value="{{ scoped_article_id }}" />
                     {% endif %}
-                    <input id="image-input" type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" class="sr-only" />
+                    <input id="image-input" type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" class="agent-file-input" tabindex="-1" aria-hidden="true" />
 
                     <!-- Image preview -->
                     <div id="image-preview-wrap" class="hidden">
@@ -214,10 +215,14 @@
                             placeholder="Ask a question…"
                             class="agent-text-input flex-1 !bg-transparent !py-2.5 !px-1 !shadow-none border-0 focus:ring-0"
                         />
+                        <button type="button" id="chat-stop-btn" class="agent-stop-btn agent-composer-btn-hidden shrink-0 !px-4 !py-2.5 !rounded-xl !text-sm !font-semibold" aria-label="Stop" hidden>
+                            Stop
+                        </button>
                         <button type="submit" id="chat-send-btn" class="agent-send-btn shrink-0 !px-4 !py-2.5 !rounded-xl !text-sm !font-semibold">
                             Send
                         </button>
                     </div>
+                    <p id="chat-request-status" class="text-xs text-amber-700 min-h-[1rem]" role="status" aria-live="polite"></p>
 
                     <div class="hidden">
                         <p id="vision-tip"></p>
@@ -285,6 +290,22 @@
 }
 
 #image-upload-btn.agent-upload-hidden {
+    display: none !important;
+}
+
+.agent-file-input {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.agent-composer-btn-hidden {
     display: none !important;
 }
 
@@ -576,7 +597,28 @@ a.ext-cite:hover {
     object-fit: contain;
 }
 
+.agent-message-pair {
+    margin-bottom: 0.75rem;
+}
+
+.agent-message-group {
+    margin-bottom: 1.5rem !important;
+}
+
+.agent-assistant-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.agent-assistant-body .agent-msg-actions {
+    margin-top: 0.15rem;
+    margin-bottom: 0.15rem;
+}
+
 .agent-sources {
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
     padding: 0.75rem 1rem;
     background: #fff;
     border: 1px solid #e2e8f0;
@@ -844,12 +886,14 @@ a.ext-cite:hover {
     40% { opacity: 1; }
 }
 
-.htmx-request .agent-send-btn.is-stop { opacity: 1; pointer-events: auto; }
-.agent-send-btn.is-stop {
+.agent-stop-btn {
     background: #fff !important;
     color: #7e22ce !important;
     border: 1px solid #d8b4fe !important;
     box-shadow: none !important;
+}
+.agent-stop-btn:hover {
+    background: #faf5ff !important;
 }
 </style>
 
@@ -1041,14 +1085,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const sendBtn = document.getElementById('chat-send-btn');
+    const stopBtn = document.getElementById('chat-stop-btn');
+    const requestStatus = document.getElementById('chat-request-status');
     let activeXhr = null;
     let pendingDraft = '';
+    let sending = false;
 
     const setSending = (on) => {
-        sendBtn.type = on ? 'button' : 'submit';
-        sendBtn.textContent = on ? 'Stop' : 'Send';
-        sendBtn.classList.toggle('is-stop', on);
-        sendBtn.setAttribute('aria-label', on ? 'Stop' : 'Send');
+        sending = on;
+        sendBtn.classList.toggle('agent-composer-btn-hidden', on);
+        stopBtn.classList.toggle('agent-composer-btn-hidden', !on);
+        sendBtn.hidden = on;
+        stopBtn.hidden = !on;
+        sendBtn.disabled = on;
     };
 
     const stopSending = () => {
@@ -1060,9 +1109,9 @@ document.addEventListener('DOMContentLoaded', () => {
         activeXhr?.abort();
     };
 
-    sendBtn.addEventListener('click', (event) => {
-        if (!sendBtn.classList.contains('is-stop')) return;
+    stopBtn.addEventListener('click', (event) => {
         event.preventDefault();
+        if (!sending) return;
         stopSending();
     });
 
@@ -1080,7 +1129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             return;
         }
-        if (sendBtn.classList.contains('is-stop')) return;
+        if (sending) return;
         chatInput.value = text;
         chatInput.focus();
     });
@@ -1129,7 +1178,34 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages.querySelector('.agent-optimistic-user')?.remove();
     };
 
+    const restoreDraft = () => {
+        if (!pendingDraft) return;
+        chatInput.value = pendingDraft;
+        chatInput.focus();
+        pendingDraft = '';
+    };
+
+    const showRequestError = (message) => {
+        if (requestStatus) requestStatus.textContent = message;
+        chatMessages.insertAdjacentHTML('beforeend', `
+            <div class="agent-message-group agent-request-error mb-6">
+                <div class="flex items-start gap-3">
+                    <div class="agent-avatar agent-avatar-bot shrink-0 shadow-sm" title="CheeseO Mascot">
+                        <img src="/static/images/cheese.png" alt="CheeseO Mascot" class="w-full h-full object-contain p-0.5" />
+                    </div>
+                    <div class="agent-bubble-assistant text-sm text-amber-800 bg-amber-50 border border-amber-100">
+                        ${escapeHtml(message)}
+                    </div>
+                </div>
+            </div>`);
+        scrollToBottom();
+    };
+
     chatForm.addEventListener('htmx:beforeRequest', (event) => {
+        if (sending) {
+            event.preventDefault();
+            return;
+        }
         const text = chatInput.value.trim();
         const hasImage = imageInput.files.length > 0;
         const content = text || (hasImage ? '[Image attached]' : '');
@@ -1142,6 +1218,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ? imagePreviewImg.src
             : null;
 
+        if (requestStatus) requestStatus.textContent = '';
+        chatMessages.querySelectorAll('.agent-request-error').forEach((node) => node.remove());
         appendUserMessage(content, imageSrc);
         appendThinking();
         scrollToBottom();
@@ -1158,35 +1236,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     chatForm.addEventListener('htmx:afterRequest', (e) => {
-        const aborted = !e.detail.successful && e.detail.xhr && e.detail.xhr.status === 0;
+        const xhr = e.detail.xhr;
+        const aborted = !e.detail.successful && xhr && xhr.status === 0;
+        const failed = !e.detail.successful && !aborted;
         removeThinking();
         setSending(false);
         activeXhr = null;
         if (aborted) {
+            // Intentional Stop: clear the temporary bubbles and put the draft back.
             removeOptimisticUser();
-            if (pendingDraft) {
-                chatInput.value = pendingDraft;
-                chatInput.focus();
-            }
-            pendingDraft = '';
+            restoreDraft();
+            return;
+        }
+        if (failed) {
+            // Keep the question on screen. Timeout/proxy errors used to wipe both Q and A.
+            showRequestError('Request failed or timed out. Your question is still above — retry, or refresh if the answer was already saved.');
+            restoreDraft();
             return;
         }
         pendingDraft = '';
-        if (e.detail.successful) {
-            const currentModel = modelSelect.value;
-            chatForm.reset();
-            modelSelect.value = currentModel;
-            clearImage();
-            syncVisionUi();
-            scrollToBottom();
+        const body = (xhr && xhr.responseText) ? xhr.responseText.trim() : '';
+        if (!body) {
+            // Cancelled after the server finished (204): drop the temporary user bubble.
+            removeOptimisticUser();
+            return;
         }
+        removeOptimisticUser();
+        const currentModel = modelSelect.value;
+        chatForm.reset();
+        modelSelect.value = currentModel;
+        clearImage();
+        syncVisionUi();
+        scrollToBottom();
     });
 
-    chatForm.addEventListener('htmx:responseError', (event) => {
-        if (event.detail?.xhr?.status === 0) return;
-        removeThinking();
-        removeOptimisticUser();
-    });
+    for (const name of ['htmx:responseError', 'htmx:sendError', 'htmx:timeout']) {
+        chatForm.addEventListener(name, (event) => {
+            if (event.detail?.xhr?.status === 0) return;
+            removeThinking();
+            setSending(false);
+        });
+    }
 
     document.addEventListener('click', (event) => {
         const chip = event.target.closest('.agent-suggestion-chip');

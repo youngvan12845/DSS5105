@@ -23,7 +23,7 @@
         <div class="agent-avatar agent-avatar-bot shrink-0 overflow-hidden" title="CheeseO Mascot">
             <img src="{% static 'images/cheese.png' %}" alt="CheeseO" class="w-full h-full object-contain p-0.5" />
         </div>
-        <div class="agent-assistant-body max-w-[78%] space-y-2">
+        <div class="agent-assistant-body max-w-[78%]">
             {% for trace in message.tool_trace %}
             {% if trace.tool == 'response_mode' and trace.mode == 'fallback' %}
             <p class="text-xs text-amber-800" role="note">Search-based reply · AI did not generate this response.</p>

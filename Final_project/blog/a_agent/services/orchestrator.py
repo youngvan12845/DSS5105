@@ -1373,6 +1373,25 @@ def _opened_lesson_note(content: str, history_items: list, hits: list, is_chines
     return f'You already opened {names}.'
 
 
+def _path_card_answer(reading_path, is_chinese: bool) -> str:
+    """Deterministic learning-path card with real lesson links (no LLM wait)."""
+    if reading_path is None or not getattr(reading_path, 'steps', None):
+        return ''
+    title = (reading_path.title or '').strip() or 'Learning path'
+    if is_chinese:
+        lines = [f'**{title}**', '', '本站课程，按这个顺序读：', '']
+    else:
+        lines = [f'**{title}**', '', 'Lessons on this site, in this order:', '']
+    for step in reading_path.steps:
+        note = f' — {step.note}' if step.note else ''
+        badge = 'Free' if step.is_free else 'Paid'
+        if step.url:
+            lines.append(f'{step.order}. [{step.title}]({step.url}) ({badge}){note}')
+        else:
+            lines.append(f'{step.order}. **{step.title}** ({badge}){note}')
+    return '\n'.join(lines)
+
+
 def _ensure_path_lessons(content: str, reading_path, is_chinese: bool) -> str:
     """A path name is not a lesson. List the lessons, with their real links."""
     if reading_path is None or not getattr(reading_path, 'steps', None):
@@ -1995,6 +2014,28 @@ def _handle_user_message_core(
                 tool_trace=tool_trace,
                 pending_action={},
             )
+
+    # Matched learning paths: return a deterministic lesson card immediately.
+    # Waiting on the LLM + outside lookup is what made path answers disappear
+    # on the demo site when the proxy timed out after "Thinking…".
+    if reading_path is not None and 'path' in intents and not pending_action:
+        citations = _format_citations(
+            keyword_hits, chunk_hits, vector_hits, reading_path=reading_path,
+        )
+        content = _path_card_answer(reading_path, is_chinese)
+        content = _append_opened_lesson_note(
+            content,
+            history_items,
+            [*keyword_hits, *chunk_hits, *vector_hits],
+            is_chinese,
+        )
+        tool_trace.append({'tool': 'response_mode', 'mode': 'path_card'})
+        return AgentReply(
+            content=content,
+            citations=citations,
+            tool_trace=tool_trace,
+            pending_action={},
+        )
 
     # No on-site lesson means no SOURCES. History alone is not a lesson match.
     has_any_corpus_match = bool(
